@@ -87,20 +87,19 @@ router.post('/', authRequired, adminRequired, async (req, res) => {
 
     const sku = await createUniqueSKU(supabase, body.category, year);
     
-    // ✅ FIXED: Removed brand_id to prevent UUID error
     const productInput = {
       name: body.name,
       category: body.category,
       price: body.price,
       supplier: body.supplier ?? null,
       description: body.description ?? null,
-      // brand_id: 'JORIQUE',  // ❌ REMOVED - was causing UUID error
       images: body.images ?? [],
       tags: body.tags ?? null,
       sku,
       quantity,
       discount_price: body.discount_price ?? null,
       year,
+      badge: body.badge ?? null,
     };
 
     const { data: product, error: productError } = await supabase
@@ -159,7 +158,7 @@ router.put('/serial/:serialNumber/status', authRequired, adminRequired, async (r
 
 router.put('/:id', authRequired, adminRequired, async (req, res) => {
   try {
-    const allowed = ['name', 'category', 'price', 'supplier', 'description', 'images', 'tags', 'discount_price', 'year'];
+    const allowed = ['name', 'category', 'price', 'supplier', 'description', 'images', 'tags', 'discount_price', 'year', 'badge'];
     const updates = Object.fromEntries(
       Object.entries(req.body || {}).filter(([key]) => allowed.includes(key))
     );

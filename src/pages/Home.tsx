@@ -1,3 +1,4 @@
+import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { ArrowRight, Truck, RefreshCw, Shield } from 'lucide-react';
@@ -5,7 +6,8 @@ import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import ProductCard from '../components/ProductCard';
 import Button from '../components/Button';
-import { featuredProducts } from '../data/products';
+import { productService } from '../lib/api/products';
+import { Product } from '../types';
 
 const HERO_IMAGE = '/images/hero.png';
 
@@ -16,11 +18,52 @@ const perks = [
 ];
 
 export default function Home() {
+  const [featuredProducts, setFeaturedProducts] = useState<Product[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const fetchProducts = async () => {
+      try {
+        setLoading(true);
+        setError(null);
+        // Fetch only 3 products for featured section
+        const products = await productService.getFeaturedProducts(3);
+        setFeaturedProducts(products);
+      } catch (err) {
+        console.error('Error fetching products:', err);
+        setError('Failed to load products');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchProducts();
+  }, []);
+
+  if (error) {
+    return (
+      <div className="min-h-screen bg-background">
+        <Navbar />
+        <div className="flex flex-col items-center justify-center min-h-[60vh] px-6">
+          <p className="text-secondary mb-4">{error}</p>
+          <button
+            onClick={() => window.location.reload()}
+            className="text-primary border-b border-primary pb-0.5 text-sm font-medium"
+          >
+            Try Again
+          </button>
+        </div>
+        <Footer />
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-background">
       <Navbar />
 
-      {/* Hero */}
+      {/* Hero Section */}
       <section className="relative h-screen min-h-[600px] overflow-hidden">
         <div className="absolute inset-0">
           <img
@@ -126,7 +169,7 @@ export default function Home() {
         </motion.div>
       </section>
 
-      {/* Featured Products */}
+      {/* Featured Products - Only 3 Products */}
       <section className="pb-24 lg:pb-32 px-6">
         <div className="max-w-7xl mx-auto">
           <motion.div
@@ -144,11 +187,19 @@ export default function Home() {
             </h2>
           </motion.div>
 
-          <div className="grid grid-cols-2 lg:grid-cols-3 gap-5 lg:gap-8">
-            {featuredProducts.map((product, index) => (
-              <ProductCard key={product.id} product={product} index={index} />
-            ))}
-          </div>
+          {loading ? (
+            <div className="flex justify-center py-12">
+              <div className="w-10 h-10 border-2 border-primary border-t-transparent rounded-full animate-spin"></div>
+            </div>
+          ) : featuredProducts.length === 0 ? (
+            <p className="text-center text-secondary py-12">No products available</p>
+          ) : (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 lg:gap-8 max-w-5xl mx-auto">
+              {featuredProducts.map((product, index) => (
+                <ProductCard key={product.id} product={product} index={index} />
+              ))}
+            </div>
+          )}
 
           <motion.div
             className="text-center mt-14"

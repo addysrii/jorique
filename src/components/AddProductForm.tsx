@@ -18,6 +18,7 @@ export default function AddProductForm() {
   const [generatedSerials, setGeneratedSerials] = useState<string[]>([]);
   const [productName, setProductName] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isSuccess, setIsSuccess] = useState(false);
   const { token } = useAuth();
 
   const {
@@ -124,6 +125,18 @@ export default function AddProductForm() {
     });
   };
 
+  const handleReset = () => {
+    reset();
+    setImages([]);
+    setValue('images', []);
+    setValue('tags', '');
+    setValue('quantity', 1);
+    setShowAllSerials(false);
+    setIsSuccess(false);
+    setGeneratedSerials([]);
+    setProductName('');
+  };
+
   const onSubmit = async (data: ProductFormValues) => {
     try {
       setIsSubmitting(true);
@@ -145,21 +158,20 @@ export default function AddProductForm() {
         tags: tagsArray,
         discount_price: data.discount_price || null,
         year: data.year || new Date().getFullYear(),
+        badge: data.badge || null,
       };
 
       const result = await createProductRequest(productData, token);
 
-      // Store generated serials for QR display
       const serials = result.data.serials.map((serial) => serial.serial_number);
       setGeneratedSerials(serials);
       setProductName(data.name);
+      setIsSuccess(true);
       
-      // Show QR modal with all serials
       if (serials.length > 0) {
         setShowQRModal(true);
       }
 
-      // Reset form
       reset();
       setImages([]);
       setValue('images', []);
@@ -169,6 +181,7 @@ export default function AddProductForm() {
 
     } catch (error) {
       alert('Error saving product: ' + (error as Error).message);
+      setIsSuccess(false);
     } finally {
       setIsSubmitting(false);
     }
@@ -186,7 +199,6 @@ export default function AddProductForm() {
 
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-6 bg-white p-6 shadow-sm rounded-lg">
           
-          {/* Image Upload Section */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
               Product Images
@@ -239,7 +251,6 @@ export default function AddProductForm() {
             )}
           </div>
 
-          {/* Product Name */}
           <div>
             <label className="block text-sm font-medium text-gray-700">Product Name *</label>
             <input
@@ -250,7 +261,6 @@ export default function AddProductForm() {
             {errors.name && <p className="mt-1 text-sm text-red-600">{errors.name.message}</p>}
           </div>
 
-          {/* Category */}
           <div>
             <label className="block text-sm font-medium text-gray-700">Category *</label>
             <select
@@ -270,7 +280,6 @@ export default function AddProductForm() {
             {errors.category && <p className="mt-1 text-sm text-red-600">{errors.category.message}</p>}
           </div>
 
-          {/* Price, Discount & Quantity */}
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
             <div>
               <label className="block text-sm font-medium text-gray-700">Price (₹) *</label>
@@ -309,7 +318,22 @@ export default function AddProductForm() {
             </div>
           </div>
 
-          {/* Serial Preview */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700">Badge</label>
+            <select
+              {...register('badge')}
+              className="mt-1 w-full rounded-md border border-gray-300 px-3 py-2 focus:border-blue-500 focus:outline-none"
+            >
+              <option value="">No Badge</option>
+              <option value="NEW">New</option>
+              <option value="SALE">Sale</option>
+              <option value="BEST SELLER">Best Seller</option>
+              <option value="LIMITED">Limited Edition</option>
+              <option value="EXCLUSIVE">Exclusive</option>
+            </select>
+            <p className="mt-1 text-xs text-gray-500">Select a badge to display on the product card</p>
+          </div>
+
           <div className="rounded-md border border-gray-200 bg-gray-50 p-4">
             <div className="flex items-center justify-between">
               <p className="text-sm font-medium text-gray-700">Serial Preview</p>
@@ -335,7 +359,6 @@ export default function AddProductForm() {
             )}
           </div>
 
-          {/* Supplier & Year */}
           <div className="grid grid-cols-2 gap-4">
             <div>
               <label className="block text-sm font-medium text-gray-700">Supplier</label>
@@ -356,7 +379,6 @@ export default function AddProductForm() {
             </div>
           </div>
 
-          {/* Tags */}
           <div>
             <label className="block text-sm font-medium text-gray-700">Tags (comma separated)</label>
             <input
@@ -368,7 +390,6 @@ export default function AddProductForm() {
             <p className="mt-1 text-xs text-gray-500">Separate tags with commas: e.g., cotton, premium, soft</p>
           </div>
 
-          {/* Description */}
           <div>
             <label className="block text-sm font-medium text-gray-700">Description</label>
             <textarea
@@ -379,7 +400,6 @@ export default function AddProductForm() {
             />
           </div>
 
-          {/* Submit */}
           <div className="flex gap-3 pt-4 border-t">
             <button
               type="submit"
@@ -391,87 +411,97 @@ export default function AddProductForm() {
             </button>
             <button
               type="button"
-              onClick={() => {
-                reset();
-                setImages([]);
-                setValue('images', []);
-                setValue('tags', '');
-                setValue('quantity', 1);
-                setShowAllSerials(false);
-              }}
+              onClick={handleReset}
               className="rounded-md border border-gray-300 px-6 py-2 text-sm text-gray-700 hover:bg-gray-50"
             >
               Clear
             </button>
           </div>
         </form>
-      </div>
 
-      {/* QR Code Modal */}
-      {showQRModal && generatedSerials.length > 0 && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-lg max-w-4xl w-full max-h-[90vh] overflow-hidden">
-            <div className="flex items-center justify-between p-4 border-b">
-              <div>
-                <h2 className="text-xl font-semibold text-gray-900">
-                  QR Codes Generated
-                </h2>
-                <p className="text-sm text-gray-600">
-                  {productName} - {generatedSerials.length} serials
-                </p>
-              </div>
-              <button
-                onClick={() => setShowQRModal(false)}
-                className="p-2 hover:bg-gray-100 rounded-full transition-colors"
-              >
-                <X size={20} />
-              </button>
+        {isSuccess && generatedSerials.length > 0 && (
+          <div className="mt-6 bg-green-50 border border-green-200 rounded-lg p-4 flex items-center justify-between">
+            <div>
+              <p className="text-sm font-medium text-green-800">
+                Product created successfully! {generatedSerials.length} serials generated.
+              </p>
+              <p className="text-xs text-green-600">{productName}</p>
             </div>
+            <button
+              onClick={() => setShowQRModal(true)}
+              className="inline-flex items-center gap-2 bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 transition-colors text-sm"
+            >
+              <Download size={16} />
+              Download QR Codes
+            </button>
+          </div>
+        )}
 
-            <div className="p-4 overflow-y-auto max-h-[60vh]">
-              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
-                {generatedSerials.map((serial) => (
-                  <div key={serial} className="border rounded-lg p-3 text-center hover:shadow-md transition-shadow">
-                    <div className="bg-white p-2 rounded">
-                      <QRCodeSVG
-                        id={`qr-${serial}`}
-                        value={`https://joriqie.in/p/${serial}`}
-                        size={120}
-                        level="H"
-                        includeMargin
-                      />
+        {showQRModal && generatedSerials.length > 0 && (
+          <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+            <div className="bg-white rounded-lg max-w-4xl w-full max-h-[90vh] overflow-hidden">
+              <div className="flex items-center justify-between p-4 border-b">
+                <div>
+                  <h2 className="text-xl font-semibold text-gray-900">
+                    QR Codes Generated
+                  </h2>
+                  <p className="text-sm text-gray-600">
+                    {productName} - {generatedSerials.length} serials
+                  </p>
+                </div>
+                <button
+                  onClick={() => setShowQRModal(false)}
+                  className="p-2 hover:bg-gray-100 rounded-full transition-colors"
+                >
+                  <X size={20} />
+                </button>
+              </div>
+
+              <div className="p-4 overflow-y-auto max-h-[60vh]">
+                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
+                  {generatedSerials.map((serial) => (
+                    <div key={serial} className="border rounded-lg p-3 text-center hover:shadow-md transition-shadow">
+                      <div className="bg-white p-2 rounded">
+                        <QRCodeSVG
+                          id={`qr-${serial}`}
+                          value={`https://joriqie.in/p/${serial}`}
+                          size={120}
+                          level="H"
+                          includeMargin
+                        />
+                      </div>
+                      <p className="text-xs font-mono mt-2 truncate text-gray-600">{serial}</p>
+                      <button
+                        onClick={() => downloadQR(serial)}
+                        className="mt-2 inline-flex items-center gap-1 text-xs text-blue-600 hover:text-blue-800"
+                      >
+                        <Download size={12} />
+                        Download
+                      </button>
                     </div>
-                    <p className="text-xs font-mono mt-2 truncate text-gray-600">{serial}</p>
-                    <button
-                      onClick={() => downloadQR(serial)}
-                      className="mt-2 inline-flex items-center gap-1 text-xs text-blue-600 hover:text-blue-800"
-                    >
-                      <Download size={12} />
-                      Download
-                    </button>
-                  </div>
-                ))}
+                  ))}
+                </div>
               </div>
-            </div>
 
-            <div className="flex gap-3 p-4 border-t bg-gray-50">
-              <button
-                onClick={downloadAllQRs}
-                className="flex-1 inline-flex items-center justify-center gap-2 bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition-colors"
-              >
-                <Download size={16} />
-                Download All QR Codes
-              </button>
-              <button
-                onClick={() => setShowQRModal(false)}
-                className="px-6 py-2 border border-gray-300 rounded hover:bg-gray-100 transition-colors"
-              >
-                Close
-              </button>
+              <div className="flex gap-3 p-4 border-t bg-gray-50">
+                <button
+                  onClick={downloadAllQRs}
+                  className="flex-1 inline-flex items-center justify-center gap-2 bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition-colors"
+                >
+                  <Download size={16} />
+                  Download All QR Codes
+                </button>
+                <button
+                  onClick={() => setShowQRModal(false)}
+                  className="px-6 py-2 border border-gray-300 rounded hover:bg-gray-100 transition-colors"
+                >
+                  Close
+                </button>
+              </div>
             </div>
           </div>
-        </div>
-      )}
+        )}
+      </div>
     </main>
   );
 }
