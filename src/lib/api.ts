@@ -73,3 +73,11 @@ export function meRequest(token: string) {
 export function dashboardRequest<T>(role: AppUser['role'], token: string) {
   return apiRequest<T>(`/api/dashboard/${role}`, { token });
 }
+
+export function createProductRequest(product: Record<string, unknown>, token: string) {
+  return apiRequest<{ success: boolean; data: unknown }>('/api/products', {
+    method: 'POST',
+    body: JSON.stringify(product),
+    token,
+  });
+}

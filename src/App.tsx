@@ -5,11 +5,11 @@ import { AuthProvider } from './context/AuthContext';
 import ComingSoon from './pages/ComingSoon';
 import Connection from './pages/Connection';
 
-/* 
-========================================================================
-PAGE IMPORTS (Temporarily commented out for Launch Phase)
-Uncomment these imports when ready to restore full website functionality:
-========================================================================
+ 
+// ========================================================================
+// PAGE IMPORTS (Temporarily commented out for Launch Phase)
+// Uncomment these imports when ready to restore full website functionality:
+// ========================================================================
 import Home from './pages/Home';
 import Shop from './pages/Shop';
 import ProductDetails from './pages/ProductDetails';
@@ -21,7 +21,8 @@ import VerifyOtp from './pages/VerifyOtp';
 import UserDashboard from './pages/UserDashboard';
 import AdminDashboard from './pages/AdminDashboard';
 import ProtectedRoute from './components/ProtectedRoute';
-*/
+import AddNewProducts from './pages/AddNewProducts';
+
 
 function ScrollToTop() {
   const { pathname } = useLocation();
@@ -89,11 +90,11 @@ function AnimatedRoutes() {
         {/* Catch-all route: Redirect all other URLs to Coming Soon page during launch phase */}
         <Route path="*" element={<Navigate to="/" replace />} />
 
-        {/* 
-        ========================================================================
+        
+        {/* ========================================================================
         FULL WEBSITE ROUTES (Temporarily commented out for launch phase)
         Uncomment the routes below (and the imports at top) when full website goes live:
-        ========================================================================
+        ======================================================================== */}
 
         <Route
           path="/home"
@@ -179,7 +180,17 @@ function AnimatedRoutes() {
             </PageTransition>
           }
         />
-        */}
+        <Route
+          path="/admin/products/new"
+          element={
+            <PageTransition>
+              <ProtectedRoute role="admin">
+                <AddNewProducts/>
+              </ProtectedRoute>
+            </PageTransition>
+          }
+        />
+        
       </Routes>
     </AnimatePresence>
   );

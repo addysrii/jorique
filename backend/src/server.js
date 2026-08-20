@@ -2,6 +2,11 @@ import "dotenv/config";
 import express from "express";
 import cors from "cors";
 import { registerAuthRoutes, authRequired } from "./auth.js";
+import productsRouter from "./routes/products.js";
+import ordersRouter from "./routes/orders.js";
+import reviewsRouter from "./routes/reviews.js";
+import giftsRouter from "./routes/gifts.js";
+import analyticsRouter from "./routes/analytics.js";
 
 if (!process.env.JWT_SECRET) {
   throw new Error("Missing JWT_SECRET");
@@ -34,6 +39,12 @@ app.use(cors({
 }));
 app.options("*", cors());
 app.use(express.json());
+
+app.use("/api/products", productsRouter);
+app.use("/api/orders", ordersRouter);
+app.use("/api/reviews", reviewsRouter);
+app.use("/api/gifts", giftsRouter);
+app.use("/api/analytics", analyticsRouter);
 
 app.get("/api/health", (_req, res) => {
   res.json({ ok: true, service: "jorique-backend" });
