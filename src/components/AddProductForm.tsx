@@ -3,20 +3,34 @@ import { useForm } from 'react-hook-form';
 import { ArrowLeft, Save, Upload, X } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { supabase } from '../lib/supabase';
+import { createProductRequest } from '../lib/api';
+import { generateSKU, generateSerials } from '../lib/utils/product';
+import { useAuth } from '../context/AuthContext';
 import type { ProductFormValues } from '../types/product';
 
 export default function AddProductForm() {
   const [images, setImages] = useState<string[]>([]);
   const [uploading, setUploading] = useState(false);
   const [uploadError, setUploadError] = useState('');
+  const [showAllSerials, setShowAllSerials] = useState(false);
+  const { token } = useAuth();
 
   const {
     register,
     handleSubmit,
     formState: { errors, isSubmitting },
     reset,
-    setValue
-  } = useForm<ProductFormValues>();
+    setValue,
+    watch
+  } = useForm<ProductFormValues>({
+    defaultValues: { quantity: 1, year: new Date().getFullYear() },
+  });
+
+  const category = watch('category');
+  const year = watch('year');
+  const quantity = watch('quantity');
+  const previewSku = generateSKU(category || 'GEN', year || new Date().getFullYear(), 1);
+  const previewSerials = generateSerials(previewSku, Number.isInteger(quantity) ? quantity : 0);
 
   const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
@@ -77,6 +91,8 @@ export default function AddProductForm() {
 
   const onSubmit = async (data: ProductFormValues) => {
     try {
+      if (!token) throw new Error('You must be signed in as an admin to create a product.');
+
       // ✅ FIXED: Convert comma-separated tags to array
       const tagsArray = data.tags
         ? data.tags.split(',').map(tag => tag.trim()).filter(tag => tag.length > 0)
@@ -86,25 +102,23 @@ export default function AddProductForm() {
         name: data.name,
         category: data.category,
         price: data.price,
-        cost: Number.isFinite(data.cost) ? data.cost : null,
+        quantity: data.quantity,
         supplier: data.supplier || null,
         description: data.description || null,
         images: images,
         tags: tagsArray,  // ✅ Now it's an array like ['cotton', 'premium']
-        sku: data.sku || null,
         discount_price: data.discount_price || null,
         year: data.year || new Date().getFullYear(),
       };
 
-      const { error } = await supabase.from('products').insert(productData);
-
-      if (error) throw error;
+      await createProductRequest(productData, token);
 
       alert('Product saved successfully!');
       reset();
       setImages([]);
       setValue('images', []);
       setValue('tags', '');  // Reset tags field
+      setShowAllSerials(false);
     } catch (error) {
       alert('Error saving product: ' + (error as Error).message);
     }
@@ -206,19 +220,8 @@ export default function AddProductForm() {
             {errors.category && <p className="mt-1 text-sm text-red-600">{errors.category.message}</p>}
           </div>
 
-          {/* SKU */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700">SKU</label>
-            <input
-              type="text"
-              {...register('sku')}
-              placeholder="JR-BS-2026-001"
-              className="mt-1 w-full rounded-md border border-gray-300 px-3 py-2 focus:border-blue-500 focus:outline-none"
-            />
-          </div>
-
-          {/* Price, Discount & Cost */}
-          <div className="grid grid-cols-3 gap-4">
+          {/* Price, Discount & Quantity */}
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
             <div>
               <label className="block text-sm font-medium text-gray-700">Price (₹) *</label>
               <input
@@ -239,14 +242,40 @@ export default function AddProductForm() {
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700">Cost (₹)</label>
+              <label className="block text-sm font-medium text-gray-700">Quantity *</label>
               <input
                 type="number"
-                step="0.01"
-                {...register('cost', { min: 0, valueAsNumber: true })}
+                min={1}
+                max={100000}
+                {...register('quantity', {
+                  required: 'Quantity is required',
+                  min: { value: 1, message: 'Quantity must be at least 1' },
+                  max: { value: 100000, message: 'Quantity cannot exceed 100000' },
+                  valueAsNumber: true,
+                })}
                 className="mt-1 w-full rounded-md border border-gray-300 px-3 py-2 focus:border-blue-500 focus:outline-none"
               />
+              {errors.quantity && <p className="mt-1 text-sm text-red-600">{errors.quantity.message}</p>}
             </div>
+          </div>
+
+          <div className="rounded-md border border-gray-200 bg-gray-50 p-4">
+            <p className="text-sm font-medium text-gray-700">Serial preview</p>
+            <p className="mt-1 text-xs text-gray-500">SKU will be generated automatically. Preview: {previewSku}</p>
+            <div className="mt-2 grid gap-1 text-sm text-gray-700 sm:grid-cols-2">
+              {(showAllSerials ? previewSerials : previewSerials.slice(0, 5)).map((serial) => (
+                <span key={serial}>{serial}</span>
+              ))}
+            </div>
+            {previewSerials.length > 5 && (
+              <button
+                type="button"
+                onClick={() => setShowAllSerials((value) => !value)}
+                className="mt-3 text-sm font-medium text-blue-700 hover:underline"
+              >
+                {showAllSerials ? 'Show Less' : 'Show All'}
+              </button>
+            )}
           </div>
 
           {/* Supplier & Year */}
@@ -310,6 +339,8 @@ export default function AddProductForm() {
                 setImages([]);
                 setValue('images', []);
                 setValue('tags', '');
+                setValue('quantity', 1);
+                setShowAllSerials(false);
               }}
               className="rounded-md border border-gray-300 px-6 py-2 text-sm text-gray-700 hover:bg-gray-50"
             >

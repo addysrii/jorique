@@ -6,6 +6,7 @@ export interface Product {
   description: string;
   images: string[];
   category: string;
+  quantity?: number;
   features: string[];
   inStock: boolean;
   badge?: string;

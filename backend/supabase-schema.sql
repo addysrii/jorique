@@ -28,13 +28,13 @@ create table if not exists public.products (
   name text not null,
   category text not null,
   price decimal(10,2) not null default 0,
-  cost decimal(10,2),
   supplier text,
   description text,
   -- brand_id text,
   images jsonb not null default '[]'::jsonb,
   tags jsonb,
   sku text not null unique,
+  quantity integer not null default 0 check (quantity >= 0),
   discount_price decimal(10,2),
   year integer not null default (extract(year from now())::integer),
   created_at timestamptz not null default now(),
@@ -95,6 +95,29 @@ create index if not exists orders_customer_id_idx on public.orders (customer_id)
 create index if not exists orders_created_at_idx on public.orders (created_at desc);
 create index if not exists reviews_product_id_idx on public.reviews (product_id);
 create index if not exists gift_redemption_customer_id_idx on public.gift_redemption (customer_id);
+
+create or replace function public.sync_product_quantity()
+returns trigger
+language plpgsql
+as $$
+begin
+  update public.products
+  set quantity = (
+    select count(*)::integer
+    from public.product_serials
+    where product_id = coalesce(new.product_id, old.product_id)
+  )
+  where id = coalesce(new.product_id, old.product_id);
+
+  return coalesce(new, old);
+end;
+$$;
+
+drop trigger if exists product_serials_quantity_sync on public.product_serials;
+create trigger product_serials_quantity_sync
+after insert or delete on public.product_serials
+for each row
+execute function public.sync_product_quantity();
 
 alter table public.profiles enable row level security;
 alter table public.email_otps enable row level security;

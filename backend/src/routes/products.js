@@ -1,30 +1,13 @@
 import { Router } from 'express';
 import { supabase } from '../supabase.js';
 import { adminRequired, authRequired } from '../middleware/auth.js';
+import { createUniqueSKU, generateSerials } from '../utils/product.js';
 
 const router = Router();
 const SERIAL_STATUSES = ['available', 'reserved', 'sold', 'returned', 'damaged'];
 
 function errorMessage(error) {
   return error?.message || 'Request failed.';
-}
-
-function categoryCode(category) {
-  return String(category || 'GEN').replace(/[^a-z0-9]/gi, '').toUpperCase().slice(0, 3).padEnd(3, 'X');
-}
-
-function generatedSku(category, year) {
-  return `JR-${categoryCode(category)}-${year}-${String(Math.floor(Math.random() * 1000)).padStart(3, '0')}`;
-}
-
-async function createUniqueSku(category, year) {
-  for (let attempt = 0; attempt < 3; attempt += 1) {
-    const sku = generatedSku(category, year);
-    const { data, error } = await supabase.from('products').select('id').eq('sku', sku).maybeSingle();
-    if (error) throw error;
-    if (!data) return sku;
-  }
-  throw new Error('Unable to generate a unique SKU. Please try again.');
 }
 
 router.get('/sku/:sku', async (req, res) => {
@@ -95,27 +78,27 @@ router.post('/', authRequired, adminRequired, async (req, res) => {
     const quantity = Number(body.quantity ?? 0);
     const year = Number(body.year || new Date().getFullYear());
     
-    if (!body.name || !body.category || !Number.isInteger(quantity) || quantity < 0 || quantity > 100000) {
+    if (!body.name || !body.category || !Number.isInteger(quantity) || quantity < 1 || quantity > 100000) {
       return res.status(400).json({ 
         success: false, 
         message: 'name, category, and a valid quantity are required.' 
       });
     }
 
-    const sku = await createUniqueSku(body.category, year);
+    const sku = await createUniqueSKU(supabase, body.category, year);
     
     // ✅ FIXED: Removed brand_id to prevent UUID error
     const productInput = {
       name: body.name,
       category: body.category,
       price: body.price,
-      cost: body.cost ?? null,
       supplier: body.supplier ?? null,
       description: body.description ?? null,
       // brand_id: 'JORIQUE',  // ❌ REMOVED - was causing UUID error
       images: body.images ?? [],
       tags: body.tags ?? null,
       sku,
+      quantity,
       discount_price: body.discount_price ?? null,
       year,
     };
@@ -128,10 +111,9 @@ router.post('/', authRequired, adminRequired, async (req, res) => {
       
     if (productError) throw productError;
 
-    const serialsInput = Array.from({ length: quantity }, (_, index) => ({
+    const serialsInput = generateSerials(sku, quantity).map((serial) => ({
       product_id: product.id,
-      serial_number: `${sku}-${String(index + 1).padStart(4, '0')}`,
-      status: 'available',
+      ...serial,
     }));
     
     const { data: serials, error: serialError } = serialsInput.length
@@ -177,11 +159,10 @@ router.put('/serial/:serialNumber/status', authRequired, adminRequired, async (r
 
 router.put('/:id', authRequired, adminRequired, async (req, res) => {
   try {
-    const allowed = ['name', 'category', 'price', 'cost', 'supplier', 'description', 'images', 'tags', 'discount_price', 'year'];
+    const allowed = ['name', 'category', 'price', 'supplier', 'description', 'images', 'tags', 'discount_price', 'year'];
     const updates = Object.fromEntries(
       Object.entries(req.body || {}).filter(([key]) => allowed.includes(key))
     );
-    updates.updated_at = new Date().toISOString();
     
     const { data, error } = await supabase
       .from('products')
