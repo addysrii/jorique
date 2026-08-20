@@ -57,11 +57,11 @@ export default function ProductCard({ product, index = 0 }: ProductCardProps) {
           )}
 
           {/* Out of Stock */}
-          {(product.stock_quantity === 0 || product.stock_quantity === undefined) && (
+          {/* {(product.stock_quantity === 0 || product.stock_quantity === undefined) && (
             <div className="absolute top-3 left-3 bg-red-500 text-white text-[9px] font-medium tracking-widest uppercase px-2.5 py-1 rounded-full">
               Out of Stock
             </div>
-          )}
+          )} */}
 
           {/* Wishlist Button */}
           <button
