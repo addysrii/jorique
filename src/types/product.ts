@@ -17,12 +17,15 @@ export interface ProductFormValues {
   name: string;
   category: string;
   price: number;
+  discount_price?: number;
+  cost?: number;
+  quantity: number;
   supplier?: string;
   description?: string;
-  // brand_id?: string;
   images?: string[];
   tags?: string;
-  discount_price?: number;
+  brand_id?: string;
   year?: number;
-  quantity: number;
+  sku?: string;
+  badge?: string;
 }

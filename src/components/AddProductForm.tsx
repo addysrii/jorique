@@ -158,6 +158,7 @@ export default function AddProductForm() {
         tags: tagsArray,
         discount_price: data.discount_price || null,
         year: data.year || new Date().getFullYear(),
+        badge: data.badge || null,
       };
 
       const result = await createProductRequest(productData, token);
@@ -315,6 +316,22 @@ export default function AddProductForm() {
               />
               {errors.quantity && <p className="mt-1 text-sm text-red-600">{errors.quantity.message}</p>}
             </div>
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700">Badge</label>
+            <select
+              {...register('badge')}
+              className="mt-1 w-full rounded-md border border-gray-300 px-3 py-2 focus:border-blue-500 focus:outline-none"
+            >
+              <option value="">No Badge</option>
+              <option value="NEW">New</option>
+              <option value="SALE">Sale</option>
+              <option value="BEST SELLER">Best Seller</option>
+              <option value="LIMITED">Limited Edition</option>
+              <option value="EXCLUSIVE">Exclusive</option>
+            </select>
+            <p className="mt-1 text-xs text-gray-500">Select a badge to display on the product card</p>
           </div>
 
           <div className="rounded-md border border-gray-200 bg-gray-50 p-4">
