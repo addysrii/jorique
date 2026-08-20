@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
-import { ArrowLeft, Save, Upload, X, Image as ImageIcon } from 'lucide-react';
+import { ArrowLeft, Save, Upload, X } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { supabase } from '../lib/supabase';
 import type { ProductFormValues } from '../types/product';
@@ -10,13 +10,12 @@ export default function AddProductForm() {
   const [uploading, setUploading] = useState(false);
   const [uploadError, setUploadError] = useState('');
 
-  const { 
-    register, 
-    handleSubmit, 
-    formState: { errors, isSubmitting }, 
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isSubmitting },
     reset,
-    setValue,
-    watch 
+    setValue
   } = useForm<ProductFormValues>();
 
   const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -30,31 +29,26 @@ export default function AddProductForm() {
       const uploadedUrls: string[] = [];
 
       for (const file of Array.from(files)) {
-        // Validate file size (max 5MB)
         if (file.size > 5 * 1024 * 1024) {
           setUploadError('Image size must be less than 5MB');
           continue;
         }
 
-        // Validate file type
         if (!file.type.startsWith('image/')) {
           setUploadError('Only image files are allowed');
           continue;
         }
 
-        // Generate unique file name
         const fileExt = file.name.split('.').pop();
         const fileName = `${Date.now()}-${Math.random().toString(36).substring(2)}.${fileExt}`;
         const filePath = `products/${fileName}`;
 
-        // Upload to Supabase Storage
-        const { error: uploadError, data } = await supabase.storage
+        const { error: uploadError } = await supabase.storage
           .from('product-images')
           .upload(filePath, file);
 
         if (uploadError) throw uploadError;
 
-        // Get public URL
         const { data: { publicUrl } } = supabase.storage
           .from('product-images')
           .getPublicUrl(filePath);
@@ -62,17 +56,15 @@ export default function AddProductForm() {
         uploadedUrls.push(publicUrl);
       }
 
-      // Update images state and form value
       const updatedImages = [...images, ...uploadedUrls];
       setImages(updatedImages);
       setValue('images', updatedImages);
-      
+
     } catch (error) {
       console.error('Upload error:', error);
       setUploadError('Failed to upload images. Please try again.');
     } finally {
       setUploading(false);
-      // Reset file input
       e.target.value = '';
     }
   };
@@ -85,7 +77,11 @@ export default function AddProductForm() {
 
   const onSubmit = async (data: ProductFormValues) => {
     try {
-      // Ensure images are included
+      // ✅ FIXED: Convert comma-separated tags to array
+      const tagsArray = data.tags
+        ? data.tags.split(',').map(tag => tag.trim()).filter(tag => tag.length > 0)
+        : [];
+
       const productData = {
         name: data.name,
         category: data.category,
@@ -93,11 +89,9 @@ export default function AddProductForm() {
         cost: Number.isFinite(data.cost) ? data.cost : null,
         supplier: data.supplier || null,
         description: data.description || null,
-        brand_id: data.brand_id || 'JORIQUE',
         images: images,
-        tags: data.tags || null,
+        tags: tagsArray,  // ✅ Now it's an array like ['cotton', 'premium']
         sku: data.sku || null,
-        quantity: data.quantity || 0,
         discount_price: data.discount_price || null,
         year: data.year || new Date().getFullYear(),
       };
@@ -110,6 +104,7 @@ export default function AddProductForm() {
       reset();
       setImages([]);
       setValue('images', []);
+      setValue('tags', '');  // Reset tags field
     } catch (error) {
       alert('Error saving product: ' + (error as Error).message);
     }
@@ -118,7 +113,6 @@ export default function AddProductForm() {
   return (
     <main className="min-h-screen bg-gray-50 px-6 pb-20 pt-28 lg:px-12">
       <div className="mx-auto max-w-4xl">
-        {/* Header */}
         <header className="mb-10">
           <Link to="/admin/products" className="inline-flex items-center gap-2 text-sm text-gray-600 hover:text-gray-900">
             <ArrowLeft size={16} /> Back to products
@@ -126,7 +120,6 @@ export default function AddProductForm() {
           <h1 className="mt-4 text-3xl font-light text-gray-900">Add New Product</h1>
         </header>
 
-        {/* Form */}
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-6 bg-white p-6 shadow-sm rounded-lg">
           
           {/* Image Upload Section */}
@@ -135,7 +128,6 @@ export default function AddProductForm() {
               Product Images
             </label>
             
-            {/* Upload Area */}
             <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center hover:border-gray-400 transition-colors">
               <input
                 type="file"
@@ -161,7 +153,6 @@ export default function AddProductForm() {
               <p className="mt-2 text-sm text-red-600">{uploadError}</p>
             )}
 
-            {/* Image Preview Grid */}
             {images.length > 0 && (
               <div className="mt-4 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
                 {images.map((url, index) => (
@@ -215,26 +206,15 @@ export default function AddProductForm() {
             {errors.category && <p className="mt-1 text-sm text-red-600">{errors.category.message}</p>}
           </div>
 
-          {/* SKU & Quantity */}
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <label className="block text-sm font-medium text-gray-700">SKU</label>
-              <input
-                type="text"
-                {...register('sku')}
-                placeholder="JR-BS-2026-001"
-                className="mt-1 w-full rounded-md border border-gray-300 px-3 py-2 focus:border-blue-500 focus:outline-none"
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700">Quantity *</label>
-              <input
-                type="number"
-                {...register('quantity', { required: 'Quantity is required', min: 1, valueAsNumber: true })}
-                className="mt-1 w-full rounded-md border border-gray-300 px-3 py-2 focus:border-blue-500 focus:outline-none"
-              />
-              {errors.quantity && <p className="mt-1 text-sm text-red-600">{errors.quantity.message}</p>}
-            </div>
+          {/* SKU */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700">SKU</label>
+            <input
+              type="text"
+              {...register('sku')}
+              placeholder="JR-BS-2026-001"
+              className="mt-1 w-full rounded-md border border-gray-300 px-3 py-2 focus:border-blue-500 focus:outline-none"
+            />
           </div>
 
           {/* Price, Discount & Cost */}
@@ -290,7 +270,7 @@ export default function AddProductForm() {
             </div>
           </div>
 
-          {/* Tags */}
+          {/* Tags - User enters comma-separated values */}
           <div>
             <label className="block text-sm font-medium text-gray-700">Tags (comma separated)</label>
             <input
@@ -299,6 +279,7 @@ export default function AddProductForm() {
               placeholder="cotton, premium, soft"
               className="mt-1 w-full rounded-md border border-gray-300 px-3 py-2 focus:border-blue-500 focus:outline-none"
             />
+            <p className="mt-1 text-xs text-gray-500">Separate tags with commas: e.g., cotton, premium, soft</p>
           </div>
 
           {/* Description */}
@@ -308,17 +289,6 @@ export default function AddProductForm() {
               rows={4}
               {...register('description')}
               placeholder="Detailed product description..."
-              className="mt-1 w-full rounded-md border border-gray-300 px-3 py-2 focus:border-blue-500 focus:outline-none"
-            />
-          </div>
-
-          {/* Brand ID */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700">Brand</label>
-            <input
-              type="text"
-              {...register('brand_id')}
-              defaultValue="JORIQUE"
               className="mt-1 w-full rounded-md border border-gray-300 px-3 py-2 focus:border-blue-500 focus:outline-none"
             />
           </div>
@@ -339,6 +309,7 @@ export default function AddProductForm() {
                 reset();
                 setImages([]);
                 setValue('images', []);
+                setValue('tags', '');
               }}
               className="rounded-md border border-gray-300 px-6 py-2 text-sm text-gray-700 hover:bg-gray-50"
             >

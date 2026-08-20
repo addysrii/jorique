@@ -94,11 +94,17 @@ router.post('/', authRequired, adminRequired, async (req, res) => {
     const body = req.body || {};
     const quantity = Number(body.quantity ?? 0);
     const year = Number(body.year || new Date().getFullYear());
+    
     if (!body.name || !body.category || !Number.isInteger(quantity) || quantity < 0 || quantity > 100000) {
-      return res.status(400).json({ success: false, message: 'name, category, and a valid quantity are required.' });
+      return res.status(400).json({ 
+        success: false, 
+        message: 'name, category, and a valid quantity are required.' 
+      });
     }
 
     const sku = await createUniqueSku(body.category, year);
+    
+    // ✅ FIXED: Removed brand_id to prevent UUID error
     const productInput = {
       name: body.name,
       category: body.category,
@@ -106,16 +112,20 @@ router.post('/', authRequired, adminRequired, async (req, res) => {
       cost: body.cost ?? null,
       supplier: body.supplier ?? null,
       description: body.description ?? null,
-      brand_id: body.brand_id ?? 'JORIQUE',
+      // brand_id: 'JORIQUE',  // ❌ REMOVED - was causing UUID error
       images: body.images ?? [],
       tags: body.tags ?? null,
       sku,
-      quantity,
       discount_price: body.discount_price ?? null,
       year,
     };
 
-    const { data: product, error: productError } = await supabase.from('products').insert(productInput).select('*').single();
+    const { data: product, error: productError } = await supabase
+      .from('products')
+      .insert(productInput)
+      .select('*')
+      .single();
+      
     if (productError) throw productError;
 
     const serialsInput = Array.from({ length: quantity }, (_, index) => ({
@@ -123,14 +133,20 @@ router.post('/', authRequired, adminRequired, async (req, res) => {
       serial_number: `${sku}-${String(index + 1).padStart(4, '0')}`,
       status: 'available',
     }));
+    
     const { data: serials, error: serialError } = serialsInput.length
       ? await supabase.from('product_serials').insert(serialsInput).select('*')
       : { data: [], error: null };
+      
     if (serialError) {
       await supabase.from('products').delete().eq('id', product.id);
       throw serialError;
     }
-    res.status(201).json({ success: true, data: { product, serials: serials || [] } });
+    
+    res.status(201).json({ 
+      success: true, 
+      data: { product, serials: serials || [] } 
+    });
   } catch (error) {
     res.status(400).json({ success: false, message: errorMessage(error) });
   }
@@ -139,10 +155,20 @@ router.post('/', authRequired, adminRequired, async (req, res) => {
 router.put('/serial/:serialNumber/status', authRequired, adminRequired, async (req, res) => {
   try {
     const { status } = req.body || {};
-    if (!SERIAL_STATUSES.includes(status)) return res.status(400).json({ success: false, message: 'Invalid serial status.' });
-    const { data, error } = await supabase.from('product_serials').update({ status, updated_at: new Date().toISOString() }).eq('serial_number', req.params.serialNumber).select('*').maybeSingle();
+    if (!SERIAL_STATUSES.includes(status)) {
+      return res.status(400).json({ success: false, message: 'Invalid serial status.' });
+    }
+    
+    const { data, error } = await supabase
+      .from('product_serials')
+      .update({ status, updated_at: new Date().toISOString() })
+      .eq('serial_number', req.params.serialNumber)
+      .select('*')
+      .maybeSingle();
+      
     if (error) throw error;
     if (!data) return res.status(404).json({ success: false, message: 'Serial not found.' });
+    
     res.json({ success: true, data });
   } catch (error) {
     res.status(400).json({ success: false, message: errorMessage(error) });
@@ -151,12 +177,22 @@ router.put('/serial/:serialNumber/status', authRequired, adminRequired, async (r
 
 router.put('/:id', authRequired, adminRequired, async (req, res) => {
   try {
-    const allowed = ['name', 'category', 'price', 'cost', 'supplier', 'description', 'brand_id', 'images', 'tags', 'quantity', 'discount_price', 'year'];
-    const updates = Object.fromEntries(Object.entries(req.body || {}).filter(([key]) => allowed.includes(key)));
+    const allowed = ['name', 'category', 'price', 'cost', 'supplier', 'description', 'images', 'tags', 'discount_price', 'year'];
+    const updates = Object.fromEntries(
+      Object.entries(req.body || {}).filter(([key]) => allowed.includes(key))
+    );
     updates.updated_at = new Date().toISOString();
-    const { data, error } = await supabase.from('products').update(updates).eq('id', req.params.id).select('*').maybeSingle();
+    
+    const { data, error } = await supabase
+      .from('products')
+      .update(updates)
+      .eq('id', req.params.id)
+      .select('*')
+      .maybeSingle();
+      
     if (error) throw error;
     if (!data) return res.status(404).json({ success: false, message: 'Product not found.' });
+    
     res.json({ success: true, data });
   } catch (error) {
     res.status(400).json({ success: false, message: errorMessage(error) });
@@ -165,9 +201,16 @@ router.put('/:id', authRequired, adminRequired, async (req, res) => {
 
 router.delete('/:id', authRequired, adminRequired, async (req, res) => {
   try {
-    const { data, error } = await supabase.from('products').delete().eq('id', req.params.id).select('id').maybeSingle();
+    const { data, error } = await supabase
+      .from('products')
+      .delete()
+      .eq('id', req.params.id)
+      .select('id')
+      .maybeSingle();
+      
     if (error) throw error;
     if (!data) return res.status(404).json({ success: false, message: 'Product not found.' });
+    
     res.json({ success: true, data: { id: data.id } });
   } catch (error) {
     res.status(400).json({ success: false, message: errorMessage(error) });

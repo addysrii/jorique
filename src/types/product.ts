@@ -5,5 +5,10 @@ export interface ProductFormValues {
   cost?: number;
   supplier?: string;
   description?: string;
-  brand_id?: string;
+  // brand_id?: string;
+  images?: string[];
+  tags?: string;
+  sku?: string;
+  discount_price?: number;
+  year?: number;
 }
