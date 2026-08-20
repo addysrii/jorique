@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
-import { Loader2, PackageCheck, Users, WalletCards } from 'lucide-react';
+import { Link } from 'react-router-dom';
+import { Loader2, PackageCheck, Users, WalletCards, Plus } from 'lucide-react';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import { useAuth } from '../context/AuthContext';
@@ -30,13 +31,25 @@ export default function AdminDashboard() {
       <Navbar />
       <main className="pt-28 pb-20 px-6 lg:px-12">
         <div className="max-w-7xl mx-auto">
-          <div className="mb-10">
-            <p className="text-xs font-medium tracking-[0.3em] uppercase text-secondary mb-4">
-              Admin Dashboard
-            </p>
-            <h1 className="text-3xl lg:text-4xl font-light text-primary tracking-wide">
-              Store Overview
-            </h1>
+          {/* Header with Add Product Button */}
+          <div className="mb-10 flex items-start justify-between">
+            <div>
+              <p className="text-xs font-medium tracking-[0.3em] uppercase text-secondary mb-4">
+                Admin Dashboard
+              </p>
+              <h1 className="text-3xl lg:text-4xl font-light text-primary tracking-wide">
+                Store Overview
+              </h1>
+            </div>
+            
+            {/* Add Product Button */}
+            <Link
+              to="/admin/products/new"
+              className="inline-flex items-center gap-2 bg-primary text-white px-5 py-2.5 rounded-lg hover:bg-primary/90 transition-colors text-sm font-medium shadow-sm"
+            >
+              <Plus size={18} />
+              Add Product
+            </Link>
           </div>
 
           {error && <p className="mb-6 text-sm text-red-600">{error}</p>}
