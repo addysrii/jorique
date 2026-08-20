@@ -12,6 +12,25 @@ interface ProductCardProps {
 export default function ProductCard({ product, index = 0 }: ProductCardProps) {
   const [wishlisted, setWishlisted] = useState(false);
 
+  // Handle different image formats
+  const getProductImage = () => {
+    if (Array.isArray(product.images) && product.images.length > 0) {
+      return product.images[0];
+    }
+    if (product.image_url) {
+      return product.image_url;
+    }
+    return '/placeholder-image.jpg';
+  };
+
+  const getDisplayPrice = () => {
+    return product.discount_price || product.price;
+  };
+
+  const hasDiscount = () => {
+    return product.discount_price && product.discount_price < product.price;
+  };
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 30 }}
@@ -23,18 +42,28 @@ export default function ProductCard({ product, index = 0 }: ProductCardProps) {
         {/* Image */}
         <div className="relative overflow-hidden rounded-xl bg-cream aspect-[4/5]">
           <motion.img
-            src={product.images[0]}
+            src={getProductImage()}
             alt={product.name}
             className="w-full h-full object-cover"
             whileHover={{ scale: 1.06 }}
             transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
           />
+          
+          {/* Badge */}
           {product.badge && (
             <div className="absolute top-3 left-3 bg-primary text-white text-[9px] font-medium tracking-widest uppercase px-2.5 py-1 rounded-full">
               {product.badge}
             </div>
           )}
-          {/* Wishlist */}
+
+          {/* Out of Stock */}
+          {(product.stock_quantity === 0 || product.stock_quantity === undefined) && (
+            <div className="absolute top-3 left-3 bg-red-500 text-white text-[9px] font-medium tracking-widest uppercase px-2.5 py-1 rounded-full">
+              Out of Stock
+            </div>
+          )}
+
+          {/* Wishlist Button */}
           <button
             onClick={(e) => {
               e.preventDefault();
@@ -50,7 +79,8 @@ export default function ProductCard({ product, index = 0 }: ProductCardProps) {
               className={wishlisted ? 'fill-primary text-primary' : 'text-secondary'}
             />
           </button>
-          {/* Quick view overlay */}
+
+          {/* Quick View Overlay */}
           <div className="absolute inset-x-0 bottom-0 p-4 bg-gradient-to-t from-black/30 to-transparent opacity-0 group-hover:opacity-100 transition-all duration-300 translate-y-2 group-hover:translate-y-0">
             <p className="text-white text-xs font-medium tracking-widest uppercase text-center">
               View Details
@@ -58,14 +88,30 @@ export default function ProductCard({ product, index = 0 }: ProductCardProps) {
           </div>
         </div>
 
-        {/* Info */}
+        {/* Product Info */}
         <div className="mt-3.5 px-0.5">
           <h3 className="text-sm font-medium text-text leading-snug group-hover:text-primary transition-colors duration-200">
             {product.name}
           </h3>
-          <p className="mt-1 text-sm text-secondary font-medium">
-            ₹ {product.price.toLocaleString('en-IN')}
-          </p>
+          
+          {/* Price */}
+          <div className="mt-1 flex items-center gap-2">
+            <p className="text-sm text-secondary font-medium">
+              ₹ {getDisplayPrice().toLocaleString('en-IN')}
+            </p>
+            {hasDiscount() && (
+              <p className="text-xs text-secondary/60 line-through">
+                ₹ {product.price.toLocaleString('en-IN')}
+              </p>
+            )}
+          </div>
+
+          {/* Category */}
+          {product.category && (
+            <p className="mt-1 text-xs text-secondary/60">
+              {product.category}
+            </p>
+          )}
         </div>
       </Link>
     </motion.div>
