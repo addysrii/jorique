@@ -1,7 +1,8 @@
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
-import { ArrowLeft, Save, Upload, X } from 'lucide-react';
+import { ArrowLeft, Save, Upload, X, Download, ChevronDown, ChevronUp } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { QRCodeSVG } from 'qrcode.react';
 import { supabase } from '../lib/supabase';
 import { createProductRequest } from '../lib/api';
 import { generateSKU, generateSerials } from '../lib/utils/product';
@@ -13,12 +14,16 @@ export default function AddProductForm() {
   const [uploading, setUploading] = useState(false);
   const [uploadError, setUploadError] = useState('');
   const [showAllSerials, setShowAllSerials] = useState(false);
+  const [showQRModal, setShowQRModal] = useState(false);
+  const [generatedSerials, setGeneratedSerials] = useState<string[]>([]);
+  const [productName, setProductName] = useState('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const { token } = useAuth();
 
   const {
     register,
     handleSubmit,
-    formState: { errors, isSubmitting },
+    formState: { errors, isSubmitting: formSubmitting },
     reset,
     setValue,
     watch
@@ -89,11 +94,42 @@ export default function AddProductForm() {
     setValue('images', updatedImages);
   };
 
+  const downloadQR = (serial: string) => {
+    const svg = document.getElementById(`qr-${serial}`);
+    if (!svg) return;
+
+    const canvas = document.createElement('canvas');
+    const ctx = canvas.getContext('2d');
+    const svgData = new XMLSerializer().serializeToString(svg);
+    const img = new Image();
+    
+    img.onload = () => {
+      canvas.width = 200;
+      canvas.height = 200;
+      ctx?.drawImage(img, 0, 0, 200, 200);
+      
+      const link = document.createElement('a');
+      link.download = `${serial}-qr.png`;
+      link.href = canvas.toDataURL('image/png');
+      link.click();
+      URL.revokeObjectURL(img.src);
+    };
+    
+    img.src = URL.createObjectURL(new Blob([svgData], { type: 'image/svg+xml' }));
+  };
+
+  const downloadAllQRs = () => {
+    generatedSerials.forEach((serial, index) => {
+      setTimeout(() => downloadQR(serial), index * 300);
+    });
+  };
+
   const onSubmit = async (data: ProductFormValues) => {
     try {
+      setIsSubmitting(true);
+      
       if (!token) throw new Error('You must be signed in as an admin to create a product.');
 
-      // ✅ FIXED: Convert comma-separated tags to array
       const tagsArray = data.tags
         ? data.tags.split(',').map(tag => tag.trim()).filter(tag => tag.length > 0)
         : [];
@@ -106,21 +142,35 @@ export default function AddProductForm() {
         supplier: data.supplier || null,
         description: data.description || null,
         images: images,
-        tags: tagsArray,  // ✅ Now it's an array like ['cotton', 'premium']
+        tags: tagsArray,
         discount_price: data.discount_price || null,
         year: data.year || new Date().getFullYear(),
       };
 
-      await createProductRequest(productData, token);
+      const result = await createProductRequest(productData, token);
 
-      alert('Product saved successfully!');
+      // Store generated serials for QR display
+      const serials = result.data.serials.map((serial) => serial.serial_number);
+      setGeneratedSerials(serials);
+      setProductName(data.name);
+      
+      // Show QR modal with all serials
+      if (serials.length > 0) {
+        setShowQRModal(true);
+      }
+
+      // Reset form
       reset();
       setImages([]);
       setValue('images', []);
-      setValue('tags', '');  // Reset tags field
+      setValue('tags', '');
+      setValue('quantity', 1);
       setShowAllSerials(false);
+
     } catch (error) {
       alert('Error saving product: ' + (error as Error).message);
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -259,21 +309,28 @@ export default function AddProductForm() {
             </div>
           </div>
 
+          {/* Serial Preview */}
           <div className="rounded-md border border-gray-200 bg-gray-50 p-4">
-            <p className="text-sm font-medium text-gray-700">Serial preview</p>
+            <div className="flex items-center justify-between">
+              <p className="text-sm font-medium text-gray-700">Serial Preview</p>
+              <span className="text-xs text-gray-500">Total: {previewSerials.length}</span>
+            </div>
             <p className="mt-1 text-xs text-gray-500">SKU will be generated automatically. Preview: {previewSku}</p>
             <div className="mt-2 grid gap-1 text-sm text-gray-700 sm:grid-cols-2">
               {(showAllSerials ? previewSerials : previewSerials.slice(0, 5)).map((serial) => (
-                <span key={serial}>{serial}</span>
+                <span key={serial} className="font-mono text-xs bg-white px-2 py-1 rounded border border-gray-200">
+                  {serial}
+                </span>
               ))}
             </div>
             {previewSerials.length > 5 && (
               <button
                 type="button"
                 onClick={() => setShowAllSerials((value) => !value)}
-                className="mt-3 text-sm font-medium text-blue-700 hover:underline"
+                className="mt-3 text-sm font-medium text-blue-700 hover:underline inline-flex items-center gap-1"
               >
-                {showAllSerials ? 'Show Less' : 'Show All'}
+                {showAllSerials ? 'Show Less' : `Show All (${previewSerials.length})`}
+                {showAllSerials ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
               </button>
             )}
           </div>
@@ -299,7 +356,7 @@ export default function AddProductForm() {
             </div>
           </div>
 
-          {/* Tags - User enters comma-separated values */}
+          {/* Tags */}
           <div>
             <label className="block text-sm font-medium text-gray-700">Tags (comma separated)</label>
             <input
@@ -326,11 +383,11 @@ export default function AddProductForm() {
           <div className="flex gap-3 pt-4 border-t">
             <button
               type="submit"
-              disabled={isSubmitting || uploading}
+              disabled={isSubmitting || uploading || formSubmitting}
               className="inline-flex items-center gap-2 rounded-md bg-black px-6 py-2 text-sm text-white hover:bg-blue-700 disabled:opacity-50"
             >
               <Save size={16} />
-              {isSubmitting ? 'Saving...' : 'Save Product'}
+              {isSubmitting ? 'Creating Product...' : 'Save Product'}
             </button>
             <button
               type="button"
@@ -349,6 +406,72 @@ export default function AddProductForm() {
           </div>
         </form>
       </div>
+
+      {/* QR Code Modal */}
+      {showQRModal && generatedSerials.length > 0 && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-lg max-w-4xl w-full max-h-[90vh] overflow-hidden">
+            <div className="flex items-center justify-between p-4 border-b">
+              <div>
+                <h2 className="text-xl font-semibold text-gray-900">
+                  QR Codes Generated
+                </h2>
+                <p className="text-sm text-gray-600">
+                  {productName} - {generatedSerials.length} serials
+                </p>
+              </div>
+              <button
+                onClick={() => setShowQRModal(false)}
+                className="p-2 hover:bg-gray-100 rounded-full transition-colors"
+              >
+                <X size={20} />
+              </button>
+            </div>
+
+            <div className="p-4 overflow-y-auto max-h-[60vh]">
+              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
+                {generatedSerials.map((serial) => (
+                  <div key={serial} className="border rounded-lg p-3 text-center hover:shadow-md transition-shadow">
+                    <div className="bg-white p-2 rounded">
+                      <QRCodeSVG
+                        id={`qr-${serial}`}
+                        value={`https://joriqie.in/p/${serial}`}
+                        size={120}
+                        level="H"
+                        includeMargin
+                      />
+                    </div>
+                    <p className="text-xs font-mono mt-2 truncate text-gray-600">{serial}</p>
+                    <button
+                      onClick={() => downloadQR(serial)}
+                      className="mt-2 inline-flex items-center gap-1 text-xs text-blue-600 hover:text-blue-800"
+                    >
+                      <Download size={12} />
+                      Download
+                    </button>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <div className="flex gap-3 p-4 border-t bg-gray-50">
+              <button
+                onClick={downloadAllQRs}
+                className="flex-1 inline-flex items-center justify-center gap-2 bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition-colors"
+              >
+                <Download size={16} />
+                Download All QR Codes
+              </button>
+              <button
+                onClick={() => setShowQRModal(false)}
+                className="px-6 py-2 border border-gray-300 rounded hover:bg-gray-100 transition-colors"
+              >
+                Close
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </main>
   );
 }
