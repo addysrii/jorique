@@ -272,7 +272,7 @@ export const productService = {
 };
 
 // ============================================
-// SERIAL VALIDATION ✅ FULLY FIXED
+// SERIAL VALIDATION ✅ FINAL FIX
 // ============================================
 
 export interface SerialValidationResult {
@@ -286,8 +286,8 @@ export interface SerialValidationResult {
 
 export async function validateSerial(serialNumber: string): Promise<SerialValidationResult> {
   try {
-    // 1. Validate Format
-    const serialRegex = /^[A-Z]{2}-[A-Z]{2}-\d{4}-\d{3}-\d{4}$/;
+    // ✅ FIXED REGEX: Allows 2 to 4 Uppercase letters (e.g., "JR-PIL")
+    const serialRegex = /^[A-Z]{2,4}-[A-Z]{2,4}-\d{4}-\d{3}-\d{4}$/;
     if (!serialRegex.test(serialNumber)) {
       return {
         valid: false,
