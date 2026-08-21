@@ -145,7 +145,7 @@ const onScanSuccessCallback = (decodedText: string) => {
   const serialNumber = serialMatch ? serialMatch[1] : decodedText;
   
   // Show the alert so you can see the result on your phone
-  alert("Bug fix attempt 3"+"Raw text: " + decodedText + "\n\nExtracted: " + serialNumber);
+  alert("Bug fix attempt 4"+"Raw text: " + decodedText + "\n\nExtracted: " + serialNumber);
   
   onScanSuccess(serialNumber);
 };
