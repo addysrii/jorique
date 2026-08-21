@@ -140,7 +140,12 @@ export default function QRScanner({ onScanSuccess, onScanError, onClose }: QRSca
     const serialMatch = decodedText.match(/\/p\/([A-Z]{2}-[A-Z]{2}-\d{4}-\d{3}-\d{4})/);
     const serialNumber = serialMatch ? serialMatch[1] : decodedText;
     
-    onScanSuccess(serialNumber);
+    // CHANGE THIS LINE: Instead of sending to backend, show it on screen
+    // (Assuming onScanSuccess currently tries to send to backend)
+    alert("Raw text: " + decodedText + "\n\nExtracted: " + serialNumber);
+    
+    // If you want to still call the original function after seeing the alert:
+    // onScanSuccess(serialNumber); 
   };
 
   const onScanErrorCallback = (errorMessage: string) => {
