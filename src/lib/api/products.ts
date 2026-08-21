@@ -45,28 +45,18 @@ async function fetchAllProducts(): Promise<Product[]> {
 // ============================================
 
 export const productService = {
-  /**
-   * Get all products
-   */
   async getProducts(): Promise<Product[]> {
     return fetchAllProducts();
   },
 
-  /**
-   * Get featured products for home page
-   * Shows products with 'Featured' badge first, then falls back to newest
-   * @param limit - Number of products to return (default: 3)
-   */
   async getFeaturedProducts(limit: number = 3): Promise<Product[]> {
     try {
       const products = await fetchAllProducts();
       
-      // First try to get products with 'Featured' badge
       const featured = products.filter(
         (product) => product.badge && product.badge.toLowerCase() === 'featured'
       );
       
-      // If featured products exist, return them, otherwise return newest products
       const result = featured.length > 0 ? featured : products;
       return result.slice(0, limit);
     } catch (error) {
@@ -75,10 +65,6 @@ export const productService = {
     }
   },
 
-  /**
-   * Get new arrivals (latest products)
-   * @param limit - Number of products to return (default: 6)
-   */
   async getNewArrivals(limit: number = 6): Promise<Product[]> {
     try {
       const products = await fetchAllProducts();
@@ -89,10 +75,6 @@ export const productService = {
     }
   },
 
-  /**
-   * Get products by category
-   * @param category - Category name to filter by
-   */
   async getProductsByCategory(category: string): Promise<Product[]> {
     try {
       const products = await fetchAllProducts();
@@ -105,10 +87,6 @@ export const productService = {
     }
   },
 
-  /**
-   * Get single product by ID
-   * @param id - Product UUID
-   */
   async getProductById(id: string): Promise<Product> {
     try {
       const { data, error } = await supabase
@@ -127,10 +105,6 @@ export const productService = {
     }
   },
 
-  /**
-   * Get product by SKU
-   * @param sku - Product SKU
-   */
   async getProductBySku(sku: string): Promise<Product | null> {
     try {
       const { data, error } = await supabase
@@ -149,12 +123,6 @@ export const productService = {
     }
   },
 
-  /**
-   * Get related products (same category, exclude current)
-   * @param category - Category name
-   * @param excludeId - Product ID to exclude
-   * @param limit - Number of products to return (default: 4)
-   */
   async getRelatedProducts(
     category: string,
     excludeId: string,
@@ -175,10 +143,6 @@ export const productService = {
     }
   },
 
-  /**
-   * Search products by name, category, or description
-   * @param query - Search query string
-   */
   async searchProducts(query: string): Promise<Product[]> {
     try {
       if (!query || query.trim().length === 0) {
@@ -205,15 +169,11 @@ export const productService = {
     }
   },
 
-  /**
-   * Get products by brand
-   * @param brandId - Brand identifier (default: 'JORIQUE')
-   */
   async getProductsByBrand(brandId: string = 'JORIQUE'): Promise<Product[]> {
     try {
       const products = await fetchAllProducts();
       return products.filter(
-        (product) => product.brand_id.toLowerCase() === brandId.toLowerCase()
+        (product) => (product.brand_id || 'JORIQUE').toLowerCase() === brandId.toLowerCase()
       );
     } catch (error) {
       console.error('Error fetching products by brand:', error);
@@ -221,10 +181,6 @@ export const productService = {
     }
   },
 
-  /**
-   * Get products with discount
-   * Products where discount_price is set and less than price
-   */
   async getDiscountedProducts(): Promise<Product[]> {
     try {
       const products = await fetchAllProducts();
@@ -240,10 +196,6 @@ export const productService = {
     }
   },
 
-  /**
-   * Get products with badge
-   * @param badge - Badge type (e.g., 'NEW', 'SALE', 'BEST SELLER')
-   */
   async getProductsByBadge(badge: string): Promise<Product[]> {
     try {
       const products = await fetchAllProducts();
@@ -257,9 +209,6 @@ export const productService = {
     }
   },
 
-  /**
-   * Get product count
-   */
   async getProductCount(): Promise<number> {
     try {
       const { count, error } = await supabase
@@ -274,9 +223,6 @@ export const productService = {
     }
   },
 
-  /**
-   * Get all categories with product counts
-   */
   async getCategoriesWithCounts(): Promise<Array<{ category: string; count: number }>> {
     try {
       const products = await fetchAllProducts();
@@ -296,11 +242,6 @@ export const productService = {
     }
   },
 
-  /**
-   * Get products with pagination
-   * @param page - Page number (starting from 1)
-   * @param limit - Items per page
-   */
   async getProductsPaginated(page: number = 1, limit: number = 12): Promise<{
     products: Product[];
     total: number;
@@ -329,5 +270,300 @@ export const productService = {
     }
   },
 };
+
+// ============================================
+// SERIAL VALIDATION
+// ============================================
+
+export interface SerialValidationResult {
+  valid: boolean;
+  gift_claimed: boolean;
+  serial_number: string;
+  product_name?: string;
+  product_id?: string;
+  message?: string;
+}
+
+export async function validateSerial(serialNumber: string): Promise<SerialValidationResult> {
+  try {
+    const serialRegex = /^[A-Z]{2}-[A-Z]{2}-\d{4}-\d{3}-\d{4}$/;
+    if (!serialRegex.test(serialNumber)) {
+      return {
+        valid: false,
+        gift_claimed: false,
+        serial_number: serialNumber,
+        message: 'Invalid serial number format',
+      };
+    }
+
+    const { data, error } = await supabase
+      .from('product_serials')
+      .select(`
+        serial_number,
+        gift_claimed,
+        reviewed,
+        product_id,
+        scanned_count,
+        products (
+          id,
+          name,
+          sku
+        )
+      `)
+      .eq('serial_number', serialNumber)
+      .single();
+
+    if (error || !data) {
+      return {
+        valid: false,
+        gift_claimed: false,
+        serial_number: serialNumber,
+        message: 'Serial number not found',
+      };
+    }
+
+    const currentScanned = data.scanned_count || 0;
+    await supabase
+      .from('product_serials')
+      .update({
+        scanned_count: currentScanned + 1,
+        last_scanned_at: new Date().toISOString(),
+      })
+      .eq('serial_number', serialNumber);
+
+    const relatedProduct = ((data as any).products && Array.isArray((data as any).products)
+      ? (data as any).products[0]
+      : (data as any).products) as { id?: string; name?: string; sku?: string } | null;
+
+    return {
+      valid: true,
+      gift_claimed: data.gift_claimed || false,
+      serial_number: data.serial_number,
+      product_name: relatedProduct?.name,
+      product_id: relatedProduct?.id,
+    };
+  } catch (error) {
+    console.error('Error validating serial:', error);
+    return {
+      valid: false,
+      gift_claimed: false,
+      serial_number: serialNumber,
+      message: 'Error validating serial',
+    };
+  }
+}
+
+// ============================================
+// REVIEW FUNCTIONS
+// ============================================
+
+export interface ReviewData {
+  serial_number: string;
+  rating: number;
+  comment: string;
+  customer_name?: string;
+  customer_email?: string;
+}
+
+export async function submitReview(reviewData: ReviewData): Promise<{ success: boolean; message: string }> {
+  try {
+    const { serial_number, rating, comment, customer_name, customer_email } = reviewData;
+
+    // Validate serial exists and gift is not claimed
+    const { data: serial, error: serialError } = await supabase
+      .from('product_serials')
+      .select('id, product_id, gift_claimed')
+      .eq('serial_number', serial_number)
+      .single();
+
+    if (serialError || !serial) {
+      return {
+        success: false,
+        message: 'Invalid serial number',
+      };
+    }
+
+    if (serial.gift_claimed) {
+      return {
+        success: false,
+        message: 'Gift already claimed for this product',
+      };
+    }
+
+    // Insert review
+    const { error: reviewError } = await supabase
+      .from('reviews')
+      .insert({
+        product_id: serial.product_id,
+        serial_id: serial.id,
+        rating: rating,
+        comment: comment,
+        customer_name: customer_name || null,
+        customer_email: customer_email || null,
+        status: 'pending',
+      })
+      .select()
+      .single();
+
+    if (reviewError) throw reviewError;
+
+    // Mark serial as reviewed and gift claimed
+    await supabase
+      .from('product_serials')
+      .update({
+        reviewed: true,
+        gift_claimed: true,
+        updated_at: new Date().toISOString(),
+      })
+      .eq('serial_number', serial_number);
+
+    return {
+      success: true,
+      message: 'Review submitted and gift claimed successfully!',
+    };
+  } catch (error) {
+    console.error('Error submitting review:', error);
+    return {
+      success: false,
+      message: 'Failed to submit review',
+    };
+  }
+}
+
+// ============================================
+// GIFT FUNCTIONS
+// ============================================
+
+export interface GiftData {
+  serial_number: string;
+  reward_code?: string;
+  reward_type?: string;
+}
+
+export async function claimGift(serialNumber: string): Promise<{ success: boolean; message: string; data?: any }> {
+  try {
+    const { data: serial, error: serialError } = await supabase
+      .from('product_serials')
+      .select('id, product_id, gift_claimed, reviewed')
+      .eq('serial_number', serialNumber)
+      .single();
+
+    if (serialError || !serial) {
+      return {
+        success: false,
+        message: 'Invalid serial number',
+      };
+    }
+
+    if (serial.gift_claimed) {
+      return {
+        success: false,
+        message: 'Gift already claimed',
+      };
+    }
+
+    if (!serial.reviewed) {
+      return {
+        success: false,
+        message: 'Please submit a review first',
+      };
+    }
+
+    // Generate reward code
+    const rewardCode = `JORIQUE-${Date.now().toString().slice(-6)}-${Math.random().toString(36).substring(2, 6).toUpperCase()}`;
+
+    const { error: giftError } = await supabase
+      .from('gift_redemption')
+      .insert({
+        serial_id: serial.id,
+        product_id: serial.product_id,
+        reward_code: rewardCode,
+        reward_type: 'discount',
+        reward_value: 20,
+        redeemed_at: new Date().toISOString(),
+      })
+      .select()
+      .single();
+
+    if (giftError) throw giftError;
+
+    // Mark serial as gift claimed
+    await supabase
+      .from('product_serials')
+      .update({
+        gift_claimed: true,
+        updated_at: new Date().toISOString(),
+      })
+      .eq('serial_number', serialNumber);
+
+    return {
+      success: true,
+      message: 'Gift claimed successfully!',
+      data: {
+        reward_code: rewardCode,
+        reward_type: 'discount',
+        reward_value: 20,
+      },
+    };
+  } catch (error) {
+    console.error('Error claiming gift:', error);
+    return {
+      success: false,
+      message: 'Failed to claim gift',
+    };
+  }
+}
+
+// ============================================
+// GET FUNCTIONS
+// ============================================
+
+export async function getReviewBySerial(serialNumber: string): Promise<any | null> {
+  try {
+    const { data: serial, error: serialError } = await supabase
+      .from('product_serials')
+      .select('id, product_id, gift_claimed, reviewed')
+      .eq('serial_number', serialNumber)
+      .single();
+
+    if (serialError || !serial) return null;
+
+    const { data: review, error: reviewError } = await supabase
+      .from('reviews')
+      .select('*')
+      .eq('serial_id', serial.id)
+      .maybeSingle();
+
+    if (reviewError) throw reviewError;
+    return review;
+  } catch (error) {
+    console.error('Error fetching review:', error);
+    return null;
+  }
+}
+
+export async function getGiftBySerial(serialNumber: string): Promise<any | null> {
+  try {
+    const { data: serial, error: serialError } = await supabase
+      .from('product_serials')
+      .select('id')
+      .eq('serial_number', serialNumber)
+      .single();
+
+    if (serialError || !serial) return null;
+
+    const { data: gift, error: giftError } = await supabase
+      .from('gift_redemption')
+      .select('*')
+      .eq('serial_id', serial.id)
+      .maybeSingle();
+
+    if (giftError) throw giftError;
+    return gift;
+  } catch (error) {
+    console.error('Error fetching gift:', error);
+    return null;
+  }
+}
 
 export default productService;

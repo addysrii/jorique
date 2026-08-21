@@ -17,9 +17,6 @@ export default function ProductCard({ product, index = 0 }: ProductCardProps) {
     if (Array.isArray(product.images) && product.images.length > 0) {
       return product.images[0];
     }
-    if (product.image_url) {
-      return product.image_url;
-    }
     return '/placeholder-image.jpg';
   };
 

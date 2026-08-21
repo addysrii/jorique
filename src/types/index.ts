@@ -1,41 +1,47 @@
 export interface Product {
   id: string;
-  sku: string;
+  sku?: string;
   name: string;
   category: string;
   price: number;
+  originalPrice?: number;
   discount_price?: number;
   cost?: number;
-  quantity: number;
+  quantity?: number;
   supplier?: string;
   description?: string;
   images: string[];
-  tags: string[];
+  tags?: string[];
   badge?: string;
-  brand_id: string;
-  year: number;
-  created_at: string;
-  updated_at: string;
+  brand_id?: string;
+  year?: number;
+  features?: string[];
+  inStock?: boolean;
+  created_at?: string;
+  updated_at?: string;
 }
 
 export interface ProductResponse {
   id: string;
-  sku: string;
+  sku?: string;
   name: string;
   category: string;
   price: number;
+  originalPrice?: number;
   discount_price?: number;
   cost?: number;
-  quantity: number;
+  quantity?: number;
   supplier?: string;
   description?: string;
   images?: string[];
   tags?: string[];
   badge?: string;
-  brand_id: string;
-  year: number;
-  created_at: string;
-  updated_at: string;
+  brand_id?: string;
+  year?: number;
+  features?: string[];
+  inStock?: boolean;
+  created_at?: string;
+  updated_at?: string;
 }
 
 export interface ProductFormValues {

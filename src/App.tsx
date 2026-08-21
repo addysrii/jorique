@@ -22,6 +22,8 @@ import UserDashboard from './pages/UserDashboard';
 import AdminDashboard from './pages/AdminDashboard';
 import ProtectedRoute from './components/ProtectedRoute';
 import AddNewProducts from './pages/AddNewProducts';
+import ScanPage from './pages/Scan';
+import ReviewPage from './pages/Review';
 
 
 function ScrollToTop() {
@@ -166,6 +168,26 @@ function AnimatedRoutes() {
             <PageTransition>
               <ProtectedRoute role="user">
                 <UserDashboard />
+              </ProtectedRoute>
+            </PageTransition>
+          }
+        />
+        <Route
+          path="/scan"
+          element={
+            <PageTransition>
+              <ProtectedRoute role="user">
+                <ScanPage />
+              </ProtectedRoute>
+            </PageTransition>
+          }
+        />
+        <Route
+          path="/review/:serial"
+          element={
+            <PageTransition>
+              <ProtectedRoute role="user">
+                <ReviewPage />
               </ProtectedRoute>
             </PageTransition>
           }

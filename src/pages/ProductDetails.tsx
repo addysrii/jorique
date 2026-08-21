@@ -157,7 +157,7 @@ export default function ProductDetails() {
 
               {/* Features */}
               <ul className="space-y-2.5 mb-8">
-                {product.features.map((feature) => (
+                {(product.features ?? []).map((feature) => (
                   <li key={feature} className="flex items-center gap-2.5 text-sm text-secondary">
                     <span className="w-4 h-4 rounded-full bg-cream flex items-center justify-center flex-shrink-0">
                       <Check size={10} strokeWidth={2.5} className="text-primary" />
