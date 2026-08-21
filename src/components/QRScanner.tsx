@@ -140,8 +140,12 @@ export default function QRScanner({ onScanSuccess, onScanError, onClose }: QRSca
     const serialMatch = decodedText.match(/\/p\/([A-Z]{2,4}-[A-Z]{2,4}-\d{4}-\d{3}-\d{4})/);
     const serialNumber = serialMatch ? serialMatch[1] : decodedText;
 
+    alert("Raw text: " + decodedText + "\n\nExtracted: " + serialNumber);
+
     onScanSuccess(serialNumber);
   };
+    
+
 
   const onScanErrorCallback = (errorMessage: string) => {
     if (onScanError && !errorMessage.includes('No MultiFormat Readers')) {
