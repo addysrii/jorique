@@ -131,19 +131,24 @@ export default function QRScanner({ onScanSuccess, onScanError, onClose }: QRSca
     }
   };
 
-  const onScanSuccessCallback = (decodedText: string) => {
-    if (isStoppingRef.current) return;
-    isStoppingRef.current = true;
+const onScanSuccessCallback = (decodedText: string) => {
+  if (isStoppingRef.current) return;
+  isStoppingRef.current = true;
 
-    stopScanner();
-    
-    const serialMatch = decodedText.match(/\/p\/([A-Z]{2,4}-[A-Z]{2,4}-\d{4}-\d{3}-\d{4})/);
-    const serialNumber = serialMatch ? serialMatch[1] : decodedText;
-
-    alert("Raw text: " + decodedText + "\n\nExtracted: " + serialNumber);
-
-    onScanSuccess(serialNumber);
-  };
+  stopScanner();
+  
+  // UPDATED REGEX:
+  // This doesn't look for /p/ anymore. 
+  // It simply looks for: 2-4 Uppercase letters, dash, 2-4 Uppercase letters, dash, 4 digits, dash, 3 digits, dash, 4 digits.
+  const serialMatch = decodedText.match(/([A-Z]{2,4}-[A-Z]{2,4}-\d{4}-\d{3}-\d{4})/);
+  
+  const serialNumber = serialMatch ? serialMatch[1] : decodedText;
+  
+  // Show the alert so you can see the result on your phone
+  alert("Raw text: " + decodedText + "\n\nExtracted: " + serialNumber);
+  
+  onScanSuccess(serialNumber);
+};
     
 
 
