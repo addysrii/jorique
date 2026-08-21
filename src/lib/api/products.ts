@@ -272,7 +272,7 @@ export const productService = {
 };
 
 // ============================================
-// SERIAL VALIDATION
+// SERIAL VALIDATION ✅ FULLY FIXED
 // ============================================
 
 export interface SerialValidationResult {
@@ -286,6 +286,7 @@ export interface SerialValidationResult {
 
 export async function validateSerial(serialNumber: string): Promise<SerialValidationResult> {
   try {
+    // 1. Validate Format
     const serialRegex = /^[A-Z]{2}-[A-Z]{2}-\d{4}-\d{3}-\d{4}$/;
     if (!serialRegex.test(serialNumber)) {
       return {
@@ -296,6 +297,7 @@ export async function validateSerial(serialNumber: string): Promise<SerialValida
       };
     }
 
+    // 2. Query product_serials table using maybeSingle() to prevent crashing
     const { data, error } = await supabase
       .from('product_serials')
       .select(`
@@ -311,9 +313,21 @@ export async function validateSerial(serialNumber: string): Promise<SerialValida
         )
       `)
       .eq('serial_number', serialNumber)
-      .single();
+      .maybeSingle();
 
-    if (error || !data) {
+    // 3. Handle specific Supabase errors
+    if (error) {
+      console.error('Supabase Query Error:', error);
+      return {
+        valid: false,
+        gift_claimed: false,
+        serial_number: serialNumber,
+        message: `Database error: ${error.message || 'Unknown error'}`,
+      };
+    }
+
+    // 4. Handle missing data (Serial not in table yet)
+    if (!data) {
       return {
         valid: false,
         gift_claimed: false,
@@ -322,6 +336,7 @@ export async function validateSerial(serialNumber: string): Promise<SerialValida
       };
     }
 
+    // 5. Increment scanned count
     const currentScanned = data.scanned_count || 0;
     await supabase
       .from('product_serials')
@@ -331,24 +346,27 @@ export async function validateSerial(serialNumber: string): Promise<SerialValida
       })
       .eq('serial_number', serialNumber);
 
-    const relatedProduct = ((data as any).products && Array.isArray((data as any).products)
-      ? (data as any).products[0]
-      : (data as any).products) as { id?: string; name?: string; sku?: string } | null;
+    // 6. Safely extract related product data from the joined products relation.
+    const productData: { id?: string; name?: string; sku?: string } | null = Array.isArray(data.products)
+      ? (data.products[0] ?? null)
+      : (data.products ?? null);
 
+    // 7. Return success
     return {
       valid: true,
       gift_claimed: data.gift_claimed || false,
       serial_number: data.serial_number,
-      product_name: relatedProduct?.name,
-      product_id: relatedProduct?.id,
+      product_name: productData?.name || 'Unknown Product',
+      product_id: productData?.id || data.product_id,
     };
-  } catch (error) {
-    console.error('Error validating serial:', error);
+
+  } catch (error: any) {
+    console.error('Unexpected error validating serial:', error);
     return {
       valid: false,
       gift_claimed: false,
       serial_number: serialNumber,
-      message: 'Error validating serial',
+      message: `System error: ${error?.message || 'Please try again'}`,
     };
   }
 }
@@ -369,10 +387,10 @@ export async function submitReview(reviewData: ReviewData): Promise<{ success: b
   try {
     const { serial_number, rating, comment, customer_name, customer_email } = reviewData;
 
-    // Validate serial exists and gift is not claimed
+    // Validate serial exists and the product has not already been reviewed/claimed
     const { data: serial, error: serialError } = await supabase
       .from('product_serials')
-      .select('id, product_id, gift_claimed')
+      .select('id, product_id, gift_claimed, reviewed')
       .eq('serial_number', serial_number)
       .single();
 
@@ -387,6 +405,13 @@ export async function submitReview(reviewData: ReviewData): Promise<{ success: b
       return {
         success: false,
         message: 'Gift already claimed for this product',
+      };
+    }
+
+    if (serial.reviewed) {
+      return {
+        success: false,
+        message: 'This product has already been reviewed',
       };
     }
 
@@ -407,19 +432,18 @@ export async function submitReview(reviewData: ReviewData): Promise<{ success: b
 
     if (reviewError) throw reviewError;
 
-    // Mark serial as reviewed and gift claimed
+    // Mark serial as reviewed, but leave gift_claimed false until the gift is explicitly redeemed.
     await supabase
       .from('product_serials')
       .update({
         reviewed: true,
-        gift_claimed: true,
         updated_at: new Date().toISOString(),
       })
       .eq('serial_number', serial_number);
 
     return {
       success: true,
-      message: 'Review submitted and gift claimed successfully!',
+      message: 'Review submitted successfully! You can now claim your gift.',
     };
   } catch (error) {
     console.error('Error submitting review:', error);
