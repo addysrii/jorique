@@ -297,7 +297,6 @@ export async function validateSerial(serialNumber: string): Promise<SerialValida
       };
     }
 
-    // 2. Query product_serials table using maybeSingle() to prevent crashing
     const { data, error } = await supabase
       .from('product_serials')
       .select(`
@@ -315,7 +314,6 @@ export async function validateSerial(serialNumber: string): Promise<SerialValida
       .eq('serial_number', serialNumber)
       .maybeSingle();
 
-    // 3. Handle specific Supabase errors
     if (error) {
       console.error('Supabase Query Error:', error);
       return {
@@ -326,7 +324,6 @@ export async function validateSerial(serialNumber: string): Promise<SerialValida
       };
     }
 
-    // 4. Handle missing data (Serial not in table yet)
     if (!data) {
       return {
         valid: false,
@@ -336,7 +333,6 @@ export async function validateSerial(serialNumber: string): Promise<SerialValida
       };
     }
 
-    // 5. Increment scanned count
     const currentScanned = data.scanned_count || 0;
     await supabase
       .from('product_serials')
@@ -346,12 +342,10 @@ export async function validateSerial(serialNumber: string): Promise<SerialValida
       })
       .eq('serial_number', serialNumber);
 
-    // 6. Safely extract related product data from the joined products relation.
     const productData: { id?: string; name?: string; sku?: string } | null = Array.isArray(data.products)
       ? (data.products[0] ?? null)
       : (data.products ?? null);
 
-    // 7. Return success
     return {
       valid: true,
       gift_claimed: data.gift_claimed || false,
@@ -372,7 +366,7 @@ export async function validateSerial(serialNumber: string): Promise<SerialValida
 }
 
 // ============================================
-// REVIEW FUNCTIONS
+// REVIEW FUNCTIONS ✅ FULLY FIXED FOR YOUR SCHEMA
 // ============================================
 
 export interface ReviewData {
@@ -385,9 +379,9 @@ export interface ReviewData {
 
 export async function submitReview(reviewData: ReviewData): Promise<{ success: boolean; message: string }> {
   try {
-    const { serial_number, rating, comment, customer_name, customer_email } = reviewData;
+    const { serial_number, rating, comment } = reviewData;
 
-    // 1. Validate serial exists safely (use maybeSingle instead of single)
+    // 1. Validate serial exists safely
     const { data: serial, error: serialError } = await supabase
       .from('product_serials')
       .select('id, product_id, gift_claimed')
@@ -408,16 +402,15 @@ export async function submitReview(reviewData: ReviewData): Promise<{ success: b
       };
     }
 
-    // 2. Insert review safely (use maybeSingle and handle DB errors properly)
+    // 2. Insert review - MATCHING YOUR EXACT SCHEMA
+    // We only insert product_id, customer_id (null), rating, and comment.
     const { error: reviewError } = await supabase
       .from('reviews')
       .insert({
         product_id: serial.product_id,
-        serial_id: serial.id,
+        customer_id: null, // No logged-in customer yet, so we set this to null.
         rating: rating,
         comment: comment,
-        customer_name: customer_name || null,
-        customer_email: customer_email || null,
         status: 'pending',
       })
       .select()
@@ -427,7 +420,7 @@ export async function submitReview(reviewData: ReviewData): Promise<{ success: b
       console.error('Supabase Review Insert Error:', reviewError);
       return {
         success: false,
-        // This tells you EXACTLY which column failed!
+        // Tells you exactly what went wrong!
         message: `Failed to submit review: ${reviewError.message || 'Database constraint error'}`,
       };
     }
@@ -455,14 +448,8 @@ export async function submitReview(reviewData: ReviewData): Promise<{ success: b
 }
 
 // ============================================
-// GIFT FUNCTIONS
+// GIFT FUNCTIONS ✅ FULLY FIXED
 // ============================================
-
-export interface GiftData {
-  serial_number: string;
-  reward_code?: string;
-  reward_type?: string;
-}
 
 export async function claimGift(serialNumber: string): Promise<{ success: boolean; message: string; data?: any }> {
   try {
@@ -470,7 +457,7 @@ export async function claimGift(serialNumber: string): Promise<{ success: boolea
       .from('product_serials')
       .select('id, product_id, gift_claimed, reviewed')
       .eq('serial_number', serialNumber)
-      .single();
+      .maybeSingle();
 
     if (serialError || !serial) {
       return {
@@ -507,11 +494,10 @@ export async function claimGift(serialNumber: string): Promise<{ success: boolea
         redeemed_at: new Date().toISOString(),
       })
       .select()
-      .single();
+      .maybeSingle();
 
     if (giftError) throw giftError;
 
-    // Mark serial as gift claimed
     await supabase
       .from('product_serials')
       .update({
@@ -539,23 +525,25 @@ export async function claimGift(serialNumber: string): Promise<{ success: boolea
 }
 
 // ============================================
-// GET FUNCTIONS
+// GET FUNCTIONS ✅ FIXED FOR YOUR SCHEMA
 // ============================================
 
 export async function getReviewBySerial(serialNumber: string): Promise<any | null> {
   try {
+    // 1. First, find the serial to get the product_id
     const { data: serial, error: serialError } = await supabase
       .from('product_serials')
-      .select('id, product_id, gift_claimed, reviewed')
+      .select('product_id')
       .eq('serial_number', serialNumber)
-      .single();
+      .maybeSingle();
 
     if (serialError || !serial) return null;
 
+    // 2. Then, get the review based on product_id (since reviews table has no serial_id)
     const { data: review, error: reviewError } = await supabase
       .from('reviews')
       .select('*')
-      .eq('serial_id', serial.id)
+      .eq('product_id', serial.product_id)
       .maybeSingle();
 
     if (reviewError) throw reviewError;
@@ -572,7 +560,7 @@ export async function getGiftBySerial(serialNumber: string): Promise<any | null>
       .from('product_serials')
       .select('id')
       .eq('serial_number', serialNumber)
-      .single();
+      .maybeSingle();
 
     if (serialError || !serial) return null;
 
