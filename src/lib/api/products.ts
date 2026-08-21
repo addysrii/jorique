@@ -387,12 +387,12 @@ export async function submitReview(reviewData: ReviewData): Promise<{ success: b
   try {
     const { serial_number, rating, comment, customer_name, customer_email } = reviewData;
 
-    // Validate serial exists and the product has not already been reviewed/claimed
+    // 1. Validate serial exists safely (use maybeSingle instead of single)
     const { data: serial, error: serialError } = await supabase
       .from('product_serials')
-      .select('id, product_id, gift_claimed, reviewed')
+      .select('id, product_id, gift_claimed')
       .eq('serial_number', serial_number)
-      .single();
+      .maybeSingle();
 
     if (serialError || !serial) {
       return {
@@ -408,14 +408,7 @@ export async function submitReview(reviewData: ReviewData): Promise<{ success: b
       };
     }
 
-    if (serial.reviewed) {
-      return {
-        success: false,
-        message: 'This product has already been reviewed',
-      };
-    }
-
-    // Insert review
+    // 2. Insert review safely (use maybeSingle and handle DB errors properly)
     const { error: reviewError } = await supabase
       .from('reviews')
       .insert({
@@ -428,11 +421,18 @@ export async function submitReview(reviewData: ReviewData): Promise<{ success: b
         status: 'pending',
       })
       .select()
-      .single();
+      .maybeSingle();
 
-    if (reviewError) throw reviewError;
+    if (reviewError) {
+      console.error('Supabase Review Insert Error:', reviewError);
+      return {
+        success: false,
+        // This tells you EXACTLY which column failed!
+        message: `Failed to submit review: ${reviewError.message || 'Database constraint error'}`,
+      };
+    }
 
-    // Mark serial as reviewed, but leave gift_claimed false until the gift is explicitly redeemed.
+    // 3. Mark serial as reviewed
     await supabase
       .from('product_serials')
       .update({
@@ -445,11 +445,11 @@ export async function submitReview(reviewData: ReviewData): Promise<{ success: b
       success: true,
       message: 'Review submitted successfully! You can now claim your gift.',
     };
-  } catch (error) {
+  } catch (error: any) {
     console.error('Error submitting review:', error);
     return {
       success: false,
-      message: 'Failed to submit review',
+      message: `Failed to submit review: ${error?.message || 'Please try again'}`,
     };
   }
 }
