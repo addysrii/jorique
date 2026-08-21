@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { Heart, User, ShoppingBag, Menu, X, LogOut, ChevronDown, LayoutDashboard } from 'lucide-react';
+import { Heart, User, ShoppingBag, Menu, X, LogOut, ChevronDown, LayoutDashboard, Scan } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useAuth } from '../context/AuthContext';
 
@@ -138,6 +138,17 @@ export default function Navbar({ cartCount = 0, wishlistCount = 0 }: NavbarProps
 
             {/* Icons */}
             <div className="flex items-center gap-4 lg:gap-5">
+              {/* QR Scan Button */}
+              <Link
+                to="/scan"
+                aria-label="Scan QR Code"
+                className={`relative p-1.5 transition-colors duration-200 ${
+                  transparent ? 'text-white/90 hover:text-white' : 'text-secondary hover:text-primary'
+                }`}
+              >
+                <Scan size={18} strokeWidth={1.5} />
+              </Link>
+
               <button
                 aria-label="Wishlist"
                 className={`relative p-1.5 transition-colors duration-200 ${
@@ -295,6 +306,7 @@ export default function Navbar({ cartCount = 0, wishlistCount = 0 }: NavbarProps
               )}
 
               <nav className="flex flex-col px-6 py-8 gap-1">
+                {/* Mobile nav links */}
                 {navLinks.map((link, i) => (
                   <motion.div
                     key={link.href}
@@ -312,6 +324,21 @@ export default function Navbar({ cartCount = 0, wishlistCount = 0 }: NavbarProps
                     </Link>
                   </motion.div>
                 ))}
+
+                {/* Mobile QR Scan link */}
+                <motion.div
+                  initial={{ opacity: 0, x: 20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: 0.5 }}
+                >
+                  <Link
+                    to="/scan"
+                    className="flex items-center gap-3 py-3 text-sm font-medium tracking-widest uppercase border-b border-border/50 text-secondary hover:text-primary transition-colors"
+                  >
+                    <Scan size={16} strokeWidth={1.5} />
+                    Scan QR Code
+                  </Link>
+                </motion.div>
               </nav>
 
               <div className="mt-auto px-6 py-8 border-t border-border">

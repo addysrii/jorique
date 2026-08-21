@@ -3,14 +3,18 @@ export interface Product {
   name: string;
   category: string;
   price: number;
-  quantity: number;
+  originalPrice?: number;
+  quantity?: number;
   supplier?: string;
   description?: string;
   images: string[];
   tags?: string[];
-  sku: string;
+  sku?: string;
   discount_price?: number;
-  year: number;
+  year?: number;
+  features?: string[];
+  inStock?: boolean;
+  badge?: string;
 }
 
 export interface ProductFormValues {
