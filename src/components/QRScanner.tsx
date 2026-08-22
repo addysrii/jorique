@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { Html5Qrcode } from 'html5-qrcode';
-import { Loader2, X, AlertCircle } from 'lucide-react';
+import { Camera, Loader2, X, AlertCircle } from 'lucide-react';
 
 interface QRScannerProps {
   onScanSuccess: (decodedText: string) => void;
@@ -12,24 +12,19 @@ export default function QRScanner({ onScanSuccess, onScanError, onClose }: QRSca
   const [isScanning, setIsScanning] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [cameraPermission, setCameraPermission] = useState<boolean | null>(null);
-  const [isInitializing, setIsInitializing] = useState(true);
-  
   const scannerRef = useRef<Html5Qrcode | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const scannerIdRef = useRef(`qr-reader-${Math.random().toString(36).slice(2, 11)}`);
   const mountedRef = useRef(true);
-  const isStoppingRef = useRef(false);
 
   useEffect(() => {
     mountedRef.current = true;
-    setIsInitializing(true);
 
     const startScanner = async () => {
       if (!('mediaDevices' in navigator) || !navigator.mediaDevices?.getUserMedia) {
         if (mountedRef.current) {
           setCameraPermission(false);
           setError('This browser does not support camera scanning. Please use a modern browser.');
-          setIsInitializing(false);
         }
         return;
       }
@@ -37,10 +32,10 @@ export default function QRScanner({ onScanSuccess, onScanError, onClose }: QRSca
       try {
         if ('permissions' in navigator && navigator.permissions?.query) {
           const permissionStatus = await navigator.permissions.query({ name: 'camera' as PermissionName });
+
           if (permissionStatus.state === 'denied' && mountedRef.current) {
             setCameraPermission(false);
             setError('Camera access is denied. Please allow camera access in your browser settings.');
-            setIsInitializing(false);
             return;
           }
         }
@@ -54,7 +49,6 @@ export default function QRScanner({ onScanSuccess, onScanError, onClose }: QRSca
         if (mountedRef.current) {
           setCameraPermission(false);
           setError('Unable to access camera. Please ensure your camera is connected and permissions are granted.');
-          setIsInitializing(false);
         }
       }
     };
@@ -68,34 +62,15 @@ export default function QRScanner({ onScanSuccess, onScanError, onClose }: QRSca
   }, []);
 
   const initializeScanner = async () => {
-    // CRITICAL FIX: Wait for the container DOM to exist
-    await new Promise(resolve => setTimeout(resolve, 200));
-
-    if (!containerRef.current || !containerRef.current.isConnected || !mountedRef.current) {
-      setIsInitializing(false);
-      return;
-    }
+    if (!containerRef.current || !containerRef.current.isConnected) return;
 
     try {
-      // CRITICAL FIX: MANUALLY CREATE the scanner div.
-      // This prevents React from interfering and creating duplicate DOM nodes.
-      const scannerElement = document.createElement('div');
-      scannerElement.id = scannerIdRef.current;
-      scannerElement.style.width = '100%';
-      scannerElement.style.height = '100%';
-      scannerElement.style.position = 'absolute';
-      scannerElement.style.inset = '0';
-      
-      // Clear the container and append our manual element
-      containerRef.current.innerHTML = '';
-      containerRef.current.appendChild(scannerElement);
-
-      // Clean up previous scanner instance
-      if (scannerRef.current) {
+      const existing = scannerRef.current;
+      if (existing) {
         try {
-          await scannerRef.current.stop();
+          await existing.stop();
         } catch {
-          // ignore
+          // ignore stale stop errors
         }
         scannerRef.current = null;
       }
@@ -104,7 +79,7 @@ export default function QRScanner({ onScanSuccess, onScanError, onClose }: QRSca
       scannerRef.current = scanner;
 
       const config = {
-        fps: 15,
+        fps: 10,
         qrbox: { width: 250, height: 250 },
         aspectRatio: 1.0,
       };
@@ -118,7 +93,6 @@ export default function QRScanner({ onScanSuccess, onScanError, onClose }: QRSca
 
       if (mountedRef.current) {
         setIsScanning(true);
-        setIsInitializing(false);
         setError(null);
       }
     } catch (err) {
@@ -126,33 +100,24 @@ export default function QRScanner({ onScanSuccess, onScanError, onClose }: QRSca
       if (mountedRef.current) {
         setError('Failed to start camera. Please try again or use a different browser.');
         setIsScanning(false);
-        setIsInitializing(false);
       }
     }
   };
 
-const onScanSuccessCallback = (decodedText: string) => {
-  if (isStoppingRef.current) return;
-  isStoppingRef.current = true;
-
-  stopScanner();
-  
-  // UPDATED REGEX:
-  // This doesn't look for /p/ anymore. 
-  // It simply looks for: 2-4 Uppercase letters, dash, 2-4 Uppercase letters, dash, 4 digits, dash, 3 digits, dash, 4 digits.
-  const serialMatch = decodedText.match(/([A-Z]{2,4}-[A-Z]{2,4}-\d{4}-\d{3}-\d{4})/);
-  
-  const serialNumber = serialMatch ? serialMatch[1] : decodedText;
-  
-  // // Show the alert so you can see the result on your phone
-  // alert("Bug fix attempt 5  : "+"Raw text: " + decodedText + "\n\nExtracted: " + serialNumber);
-  
-  onScanSuccess(serialNumber);
-};
+  const onScanSuccessCallback = (decodedText: string) => {
+    // Stop scanning after successful scan
+    stopScanner();
     
-
+    // Extract serial number from QR URL
+    // Format: https://joriqie.in/p/JR-BS-2026-001-0001
+    const serialMatch = decodedText.match(/\/p\/([A-Z]{2}-[A-Z]{2}-\d{4}-\d{3}-\d{4})/);
+    const serialNumber = serialMatch ? serialMatch[1] : decodedText;
+    
+    onScanSuccess(serialNumber);
+  };
 
   const onScanErrorCallback = (errorMessage: string) => {
+    // Ignore scan errors (they happen frequently during scanning)
     if (onScanError && !errorMessage.includes('No MultiFormat Readers')) {
       onScanError(errorMessage);
     }
@@ -162,76 +127,62 @@ const onScanSuccessCallback = (decodedText: string) => {
     const scanner = scannerRef.current;
     if (!scanner) {
       if (mountedRef.current) setIsScanning(false);
-      isStoppingRef.current = false;
       return;
     }
 
     try {
-      await scanner.stop();
-      await scanner.clear();
+      const state = scanner.getState && scanner.getState();
+      if (state && state !== 2) {
+        await scanner.stop().catch(() => undefined);
+      }
+      if (containerRef.current?.isConnected) {
+        await scanner.clear().catch(() => undefined);
+      }
     } catch (err) {
-      console.warn('Scanner cleanup warning:', err);
+      console.warn('Scanner cleanup skipped:', err);
     } finally {
       scannerRef.current = null;
       if (mountedRef.current) setIsScanning(false);
-      isStoppingRef.current = false;
     }
   };
 
   const handleRetry = () => {
     setError(null);
-    setIsInitializing(true);
-    isStoppingRef.current = false;
-    setTimeout(() => {
-      if (mountedRef.current) {
-        void initializeScanner();
-      }
-    }, 500);
-  };
-
-  const handleClose = () => {
-    void stopScanner();
-    if (onClose) onClose();
+    void initializeScanner();
   };
 
   return (
-    <div className="relative w-full max-w-md mx-auto">
-      {/* 
-         THE ULTIMATE FIX:
-         The library attaches to the ID we manually create in the useEffect.
-         This outer div is just a styling wrapper.
-      */}
-      <div 
+    <div className="relative">
+      <div
         ref={containerRef}
-        className="w-full bg-black rounded-xl overflow-hidden relative"
+        id={scannerIdRef.current}
+        className="w-full max-w-md mx-auto bg-black rounded-xl overflow-hidden"
         style={{ minHeight: '350px' }}
       />
 
-      {/* Loading Overlay */}
-      {isInitializing && !error && (
-        <div className="absolute inset-0 z-10 flex flex-col items-center justify-center rounded-xl bg-gray-900/90 pointer-events-none">
-          <Loader2 className="w-12 h-12 text-white animate-spin" />
-          <p className="mt-4 text-gray-300 text-sm">Starting camera...</p>
-        </div>
-      )}
-
-      {/* Scanning Indicator */}
-      {isScanning && !error && !isInitializing && (
-        <div className="mt-3 flex items-center justify-center gap-2 text-sm text-gray-600">
-          <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse" />
-          <span>Scanning for QR code...</span>
+      {!isScanning && !error && (
+        <div className="absolute inset-0 z-10 flex flex-col items-center justify-center pointer-events-none rounded-xl bg-gray-900/90">
+          <Camera className="w-16 h-16 text-gray-600 animate-pulse" />
+          <p className="mt-4 text-gray-400 text-sm">Initializing camera...</p>
         </div>
       )}
 
       {/* Close Button */}
       {onClose && (
         <button
-          onClick={handleClose}
-          className="absolute top-3 right-3 p-2 bg-black/70 text-white rounded-full hover:bg-black/90 transition-colors z-20"
-          aria-label="Close scanner"
+          onClick={onClose}
+          className="absolute top-2 right-2 p-2 bg-black/70 text-white rounded-full hover:bg-black/90 transition-colors z-10"
         >
           <X size={20} />
         </button>
+      )}
+
+      {/* Status Overlay */}
+      {isScanning && (
+        <div className="mt-4 flex items-center justify-center gap-2 text-sm text-gray-600">
+          <Loader2 size={16} className="animate-spin" />
+          <span>Scanning for QR code...</span>
+        </div>
       )}
 
       {/* Error State */}
@@ -241,7 +192,7 @@ const onScanSuccessCallback = (decodedText: string) => {
             <AlertCircle className="w-5 h-5 text-red-500 flex-shrink-0 mt-0.5" />
             <div className="flex-1">
               <p className="text-sm text-red-700">{error}</p>
-              {cameraPermission === false && (
+              {!cameraPermission && (
                 <p className="mt-2 text-xs text-red-600">
                   Please allow camera access in your browser settings and refresh the page.
                 </p>
@@ -250,7 +201,7 @@ const onScanSuccessCallback = (decodedText: string) => {
           </div>
           <button
             onClick={handleRetry}
-            className="mt-3 px-4 py-2 bg-red-600 text-white text-sm rounded-lg hover:bg-red-700 transition-colors"
+            className="mt-3 px-4 py-2 bg-red-600 text-white text-sm rounded hover:bg-red-700 transition-colors"
           >
             Try Again
           </button>

@@ -1,12 +1,10 @@
 import { useState, useEffect } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ArrowLeft, Heart, Check, Truck, RefreshCw, Shield, ChevronLeft, ChevronRight } from 'lucide-react';
+import { ArrowLeft, Heart, Truck, RefreshCw, Shield, ChevronLeft, ChevronRight, Check } from 'lucide-react';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import ProductCard from '../components/ProductCard';
-import QuantitySelector from '../components/QuantitySelector';
-import Button from '../components/Button';
 import { productService } from '../lib/api/products'; 
 import { Product } from '../types';
 
@@ -26,9 +24,7 @@ export default function ProductDetails() {
   const [error, setError] = useState<string | null>(null);
 
   const [activeImage, setActiveImage] = useState(0);
-  const [quantity, setQuantity] = useState(1);
   const [wishlisted, setWishlisted] = useState(false);
-  const [added, setAdded] = useState(false);
 
   // Fetch product details dynamically
   useEffect(() => {
@@ -42,7 +38,6 @@ export default function ProductDetails() {
           return;
         }
         
-        // ✅ DYNAMIC CHANGE: Fetch by SKU
         const data = await productService.getProductBySku(id);
         
         if (!data) {
@@ -90,13 +85,11 @@ export default function ProductDetails() {
     );
   }
 
-  const handleAddToCart = () => {
-    setAdded(true);
-    setTimeout(() => setAdded(false), 2000);
-  };
-
   const prevImage = () => setActiveImage((v) => (v - 1 + product.images.length) % product.images.length);
   const nextImage = () => setActiveImage((v) => (v + 1) % product.images.length);
+
+  // Calculate discount percentage if there's a discount
+  const discountPercentage = product.discount_price ? Math.round(((product.price - product.discount_price) / product.price) * 100) : 0;
 
   return (
     <div className="min-h-screen bg-background">
@@ -148,6 +141,20 @@ export default function ProductDetails() {
                   />
                 </AnimatePresence>
 
+                {/* Badge */}
+                {product.badge && (
+                  <div className="absolute top-3 left-3 bg-primary text-white text-[9px] font-medium tracking-widest uppercase px-2.5 py-1 rounded-full">
+                    {product.badge}
+                  </div>
+                )}
+
+                {/* Discount Badge */}
+                {discountPercentage > 0 && (
+                  <div className="absolute top-3 right-3 bg-red-500 text-white text-[9px] font-medium tracking-widest uppercase px-2.5 py-1 rounded-full">
+                    {discountPercentage}% OFF
+                  </div>
+                )}
+
                 {product.images.length > 1 && (
                   <>
                     <button
@@ -197,41 +204,67 @@ export default function ProductDetails() {
               <h1 className="text-2xl lg:text-3xl font-light text-primary leading-tight mb-4">
                 {product.name}
               </h1>
-              <p className="text-2xl font-medium text-text mb-6">
-                ₹ {product.price.toLocaleString('en-IN')}
-              </p>
+              
+              {/* Price Display */}
+              <div className="flex items-center gap-3 mb-6">
+                {product.discount_price ? (
+                  <>
+                    <p className="text-2xl font-medium text-primary">
+                      ₹ {product.discount_price.toLocaleString('en-IN')}
+                    </p>
+                    <p className="text-lg text-secondary/60 line-through">
+                      ₹ {product.price.toLocaleString('en-IN')}
+                    </p>
+                  </>
+                ) : (
+                  <p className="text-2xl font-medium text-text">
+                    ₹ {product.price.toLocaleString('en-IN')}
+                  </p>
+                )}
+              </div>
+
+              {/* Stock Availability */}
+              <div className="mb-6">
+                {Number(product.quantity) > 0 ? (
+                  <span className="inline-flex items-center gap-2 text-xs font-medium text-green-600 bg-green-50 px-3 py-1.5 rounded-full">
+                    <Check size={12} strokeWidth={2} /> In Stock
+                  </span>
+                ) : (
+                  <span className="inline-flex items-center gap-2 text-xs font-medium text-red-600 bg-red-50 px-3 py-1.5 rounded-full">
+                    <Check size={12} strokeWidth={2} /> Out of Stock
+                  </span>
+                )}
+              </div>
 
               <p className="text-sm text-secondary leading-relaxed mb-6 max-w-md">
                 {product.description}
               </p>
 
-              {/* Features */}
-              <ul className="space-y-2.5 mb-8">
-                {(product.tags ?? []).map((feature) => (
-                  <li key={feature} className="flex items-center gap-2.5 text-sm text-secondary">
-                    <span className="w-4 h-4 rounded-full bg-cream flex items-center justify-center flex-shrink-0">
-                      <Check size={10} strokeWidth={2.5} className="text-primary" />
-                    </span>
-                    {feature}
-                  </li>
-                ))}
-              </ul>
-
-              {/* Quantity + Add to Cart */}
-              <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 mb-8">
-                <QuantitySelector value={quantity} onChange={setQuantity} />
-                <div className="flex-1 w-full sm:w-auto">
-                  <Button onClick={handleAddToCart} fullWidth size="lg">
-                    {added ? (
-                      <span className="flex items-center gap-2">
-                        <Check size={14} strokeWidth={2} />
-                        Added to Cart
+              {/* Tags & Features */}
+              {product.tags && product.tags.length > 0 && (
+                <ul className="space-y-2.5 mb-8">
+                  {(product.tags ?? []).map((feature) => (
+                    <li key={feature} className="flex items-center gap-2.5 text-sm text-secondary">
+                      <span className="w-4 h-4 rounded-full bg-cream flex items-center justify-center flex-shrink-0">
+                        <Check size={10} strokeWidth={2.5} className="text-primary" />
                       </span>
-                    ) : (
-                      'Add to Cart'
-                    )}
-                  </Button>
-                </div>
+                      {feature}
+                    </li>
+                  ))}
+                </ul>
+              )}
+
+              {/* Product Metadata */}
+              <div className="border-t border-border pt-6 mb-8 space-y-3">
+                <p className="text-sm text-secondary">
+                  <span className="font-medium text-primary">SKU:</span> {product.sku}
+                </p>
+                <p className="text-sm text-secondary">
+                  <span className="font-medium text-primary">Brand:</span> {product.brand_id || 'JORIQUE'}
+                </p>
+                <p className="text-sm text-secondary">
+                  <span className="font-medium text-primary">Year:</span> {product.year || 'N/A'}
+                </p>
               </div>
 
               {/* Shipping info */}
