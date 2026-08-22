@@ -286,7 +286,7 @@ export interface SerialValidationResult {
 
 export async function validateSerial(serialNumber: string): Promise<SerialValidationResult> {
   try {
-    // ✅ FIXED REGEX: Allows 2 to 4 Uppercase letters (e.g., "JR-PIL")
+    // 1. Validate Format
     const serialRegex = /^[A-Z]{2,4}-[A-Z]{2,4}-\d{4}-\d{3}-\d{4}$/;
     if (!serialRegex.test(serialNumber)) {
       return {
@@ -297,6 +297,7 @@ export async function validateSerial(serialNumber: string): Promise<SerialValida
       };
     }
 
+    // 2. Query the serial
     const { data, error } = await supabase
       .from('product_serials')
       .select(`
@@ -333,19 +334,35 @@ export async function validateSerial(serialNumber: string): Promise<SerialValida
       };
     }
 
-    const currentScanned = data.scanned_count || 0;
-    await supabase
+    // 🚨 NEW BUG FIX: Prevent multiple scans
+    if (data.scanned_count >= 1) {
+      return {
+        valid: false,
+        gift_claimed: false,
+        serial_number: serialNumber,
+        message: 'This QR code has already been used. Invalid QR!', // The exact message you requested
+      };
+    }
+
+    // 3. Update scanned_count to 1 (First and only scan)
+    const { error: updateError } = await supabase
       .from('product_serials')
       .update({
-        scanned_count: currentScanned + 1,
+        scanned_count: 1,
         last_scanned_at: new Date().toISOString(),
       })
       .eq('serial_number', serialNumber);
 
+    if (updateError) {
+      console.error('Error updating scan count:', updateError);
+    }
+
+    // 4. Safely extract related product data
     const productData: { id?: string; name?: string; sku?: string } | null = Array.isArray(data.products)
       ? (data.products[0] ?? null)
       : (data.products ?? null);
 
+    // 5. Return success
     return {
       valid: true,
       gift_claimed: data.gift_claimed || false,
