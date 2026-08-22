@@ -110,7 +110,7 @@ export default function QRScanner({ onScanSuccess, onScanError, onClose }: QRSca
     
     // Extract serial number from QR URL
     // Format: https://joriqie.in/p/JR-BS-2026-001-0001
-    const serialMatch = decodedText.match(/\/p\/([A-Z]{2}-[A-Z]{2}-\d{4}-\d{3}-\d{4})/);
+    const serialMatch = decodedText.match(/\/p\/([A-Z]{2,4}-[A-Z]{2,4}-\d{4}-\d{3}-\d{4})/);
     const serialNumber = serialMatch ? serialMatch[1] : decodedText;
     
     onScanSuccess(serialNumber);
