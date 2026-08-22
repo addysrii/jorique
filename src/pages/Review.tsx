@@ -64,7 +64,7 @@ export default function ReviewPage() {
       setSubmitting(false);
 
       setTimeout(() => {
-        navigate('/home');
+        navigate('/gift');
       }, 1800);
     } catch (error) {
       console.error('Review submission failed:', error);

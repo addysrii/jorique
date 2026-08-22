@@ -24,6 +24,7 @@ import ProtectedRoute from './components/ProtectedRoute';
 import AddNewProducts from './pages/AddNewProducts';
 import ScanPage from './pages/Scan';
 import ReviewPage from './pages/Review';
+import GiftPage from './pages/GiftPage';
 
 
 function ScrollToTop() {
@@ -85,6 +86,16 @@ function AnimatedRoutes() {
           element={
             <PageTransition>
               <Connection />
+            </PageTransition>
+          }
+        />
+
+        {/* Gift claim page opened from product QR codes */}
+        <Route
+          path="/gift"
+          element={
+            <PageTransition>
+              <GiftPage />
             </PageTransition>
           }
         />
