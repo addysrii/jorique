@@ -297,7 +297,7 @@ export async function validateSerial(serialNumber: string): Promise<SerialValida
       };
     }
 
-    // 2. Query the serial
+    // 2. Fetch the ENTIRE row from product_serials, including scanned_count
     const { data, error } = await supabase
       .from('product_serials')
       .select(`
@@ -334,17 +334,18 @@ export async function validateSerial(serialNumber: string): Promise<SerialValida
       };
     }
 
-    // 🚨 NEW BUG FIX: Prevent multiple scans
-    if (data.scanned_count >= 1) {
+    // 🚨 CRITICAL FIX: Check the scan count BEFORE returning valid
+    // If it's 1 or more, block it immediately
+    if ((data.scanned_count ?? 0) >= 1) {
       return {
         valid: false,
         gift_claimed: false,
         serial_number: serialNumber,
-        message: 'This QR code has already been used. Invalid QR!', // The exact message you requested
+        message: 'This QR code has already been used. Not a valid QR!',
       };
     }
 
-    // 3. Update scanned_count to 1 (First and only scan)
+    // 3. If scanned_count is 0, update it to 1
     const { error: updateError } = await supabase
       .from('product_serials')
       .update({
