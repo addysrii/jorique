@@ -76,7 +76,7 @@ export default function VerifyOtp() {
       </form>
 
       <p className="mt-6 text-center text-xs text-secondary">
-        Need a new code?{' '}
+        New user ?{' '}
         <Link to="/signup" className="text-primary font-medium underline underline-offset-2">
           Start signup again
         </Link>
