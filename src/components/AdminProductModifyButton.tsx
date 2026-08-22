@@ -1,6 +1,7 @@
-import { useState } from 'react';
-import { X, Save, Loader2, Pencil } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { X, Save, Loader2, Pencil, QrCode, Download, Copy } from 'lucide-react';
 import { productService } from '../lib/api/products';
+import { getProductWithSerialsRequest } from '../lib/api'; // ✅ IMPORT THIS
 import { Product } from '../types';
 
 interface AdminProductModifyButtonProps {
@@ -12,6 +13,8 @@ export default function AdminProductModifyButton({ product, onProductUpdated }: 
   const [isOpen, setIsOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const [serials, setSerials] = useState<any[]>([]);
+  const [serialsLoading, setSerialsLoading] = useState(false);
   
   // Form State initialized with product data
   const [formData, setFormData] = useState({
@@ -24,6 +27,27 @@ export default function AdminProductModifyButton({ product, onProductUpdated }: 
     description: product.description || '',
   });
 
+  // Fetch serials using your EXISTING API
+  useEffect(() => {
+    if (isOpen && product.id) {
+      const fetchSerials = async () => {
+        setSerialsLoading(true);
+        try {
+          const response = await getProductWithSerialsRequest(product.id);
+          if (response.success) {
+            setSerials(response.data.serials || []);
+          }
+        } catch (err) {
+          console.error('Error fetching serials:', err);
+          setSerials([]);
+        } finally {
+          setSerialsLoading(false);
+        }
+      };
+      fetchSerials();
+    }
+  }, [isOpen, product.id]);
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
@@ -35,7 +59,6 @@ export default function AdminProductModifyButton({ product, onProductUpdated }: 
     setError('');
 
     try {
-      // Prepare data to send to backend (convert numeric fields)
       const updateData = {
         ...formData,
         price: Number(formData.price),
@@ -43,7 +66,6 @@ export default function AdminProductModifyButton({ product, onProductUpdated }: 
         quantity: Number(formData.quantity),
       };
 
-      // Call your backend API or Supabase directly. Here we use productService.updateProduct
       const updated = await productService.updateProduct(product.id, updateData);
       
       onProductUpdated(updated);
@@ -53,6 +75,20 @@ export default function AdminProductModifyButton({ product, onProductUpdated }: 
     } finally {
       setLoading(false);
     }
+  };
+
+  // Generate QR URL for a specific serial
+  const generateQRCodeUrl = (serialNumber: string) => {
+    const url = `https://joriqie.in/p/${serialNumber}`;
+    return `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(url)}`;
+  };
+
+  const downloadQRCode = (serialNumber: string) => {
+    window.open(generateQRCodeUrl(serialNumber), '_blank');
+  };
+
+  const copyURL = (serialNumber: string) => {
+    navigator.clipboard.writeText(`https://joriqie.in/p/${serialNumber}`);
   };
 
   return (
@@ -69,7 +105,7 @@ export default function AdminProductModifyButton({ product, onProductUpdated }: 
       {/* Modal */}
       {isOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
-          <div className="bg-white rounded-xl shadow-xl w-full max-w-lg max-h-[90vh] overflow-y-auto">
+          <div className="bg-white rounded-xl shadow-xl w-full max-w-xl max-h-[90vh] overflow-y-auto">
             {/* Modal Header */}
             <div className="flex items-center justify-between p-6 border-b border-border">
               <h3 className="text-lg font-medium text-primary">Edit Product: {product.name}</h3>
@@ -165,6 +201,50 @@ export default function AdminProductModifyButton({ product, onProductUpdated }: 
                   rows={3}
                   className="w-full px-3 py-2 border border-border rounded-lg text-sm focus:outline-none focus:border-primary resize-none"
                 />
+              </div>
+
+              {/* QR Codes Section */}
+              <div className="border-t border-border pt-6">
+                <div className="flex items-center justify-between mb-4">
+                  <h4 className="text-sm font-medium text-primary">Generated QR Codes & Serial Numbers</h4>
+                  {serialsLoading && <Loader2 size={16} className="animate-spin text-primary" />}
+                </div>
+                
+                <div className="space-y-3">
+                  {serials.length === 0 && !serialsLoading && (
+                    <p className="text-sm text-secondary">No serials generated for this product yet.</p>
+                  )}
+                  
+                  {serials.map((serial) => (
+                    <div key={serial.id} className="flex items-center justify-between bg-gray-50 border border-border rounded-lg p-3">
+                      <div className="flex items-center gap-3">
+                        <QrCode size={20} className="text-primary" />
+                        <div>
+                          <p className="text-sm font-medium text-primary">{serial.serial_number}</p>
+                          <p className="text-xs text-secondary">Status: {serial.status || 'available'}</p>
+                        </div>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <button
+                          type="button"
+                          onClick={() => downloadQRCode(serial.serial_number)}
+                          className="p-1.5 text-primary hover:bg-primary/10 rounded-lg transition-colors"
+                          aria-label="Download QR"
+                        >
+                          <Download size={16} />
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => copyURL(serial.serial_number)}
+                          className="p-1.5 text-secondary hover:text-primary rounded-lg transition-colors"
+                          aria-label="Copy URL"
+                        >
+                          <Copy size={16} />
+                        </button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
               </div>
 
               {/* Modal Footer */}
