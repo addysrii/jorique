@@ -35,7 +35,8 @@ export default function ProductCard({ product, index = 0 }: ProductCardProps) {
       viewport={{ once: true, margin: '-50px' }}
       transition={{ duration: 0.5, delay: index * 0.1, ease: [0.22, 1, 0.36, 1] }}
     >
-      <Link to={`/product/${product.id}`} className="group block">
+      {/* ✅ DYNAMIC CHANGE: Link to /product/${product.sku} */}
+      <Link to={`/product/${product.sku}`} className="group block">
         {/* Image */}
         <div className="relative overflow-hidden rounded-xl bg-cream aspect-[4/5]">
           <motion.img
@@ -52,13 +53,6 @@ export default function ProductCard({ product, index = 0 }: ProductCardProps) {
               {product.badge}
             </div>
           )}
-
-          {/* Out of Stock */}
-          {/* {(product.stock_quantity === 0 || product.stock_quantity === undefined) && (
-            <div className="absolute top-3 left-3 bg-red-500 text-white text-[9px] font-medium tracking-widest uppercase px-2.5 py-1 rounded-full">
-              Out of Stock
-            </div>
-          )} */}
 
           {/* Wishlist Button */}
           <button

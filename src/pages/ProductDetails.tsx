@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ArrowLeft, Heart, Check, Truck, RefreshCw, Shield, ChevronLeft, ChevronRight } from 'lucide-react';
@@ -7,7 +7,8 @@ import Footer from '../components/Footer';
 import ProductCard from '../components/ProductCard';
 import QuantitySelector from '../components/QuantitySelector';
 import Button from '../components/Button';
-import { products } from '../data/products';
+import { productService } from '../lib/api/products'; 
+import { Product } from '../types';
 
 const shippingInfo = [
   { icon: <Truck size={14} strokeWidth={1.5} />, text: 'Free Shipping on orders above ₹1,999' },
@@ -16,29 +17,78 @@ const shippingInfo = [
 ];
 
 export default function ProductDetails() {
-  const { id } = useParams<{ id: string }>();
+  const { id } = useParams<{ id: string }>(); // This is now the SKU
   const navigate = useNavigate();
-  const product = products.find((p) => p.id === id);
+
+  const [product, setProduct] = useState<Product | null>(null);
+  const [relatedProducts, setRelatedProducts] = useState<Product[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   const [activeImage, setActiveImage] = useState(0);
   const [quantity, setQuantity] = useState(1);
   const [wishlisted, setWishlisted] = useState(false);
   const [added, setAdded] = useState(false);
 
-  if (!product) {
+  // Fetch product details dynamically
+  useEffect(() => {
+    const fetchProduct = async () => {
+      try {
+        setLoading(true);
+        setError(null);
+
+        if (!id) {
+          setError('Product not found');
+          return;
+        }
+        
+        // ✅ DYNAMIC CHANGE: Fetch by SKU
+        const data = await productService.getProductBySku(id);
+        
+        if (!data) {
+          setError('Product not found');
+          return;
+        }
+
+        setProduct(data);
+        setActiveImage(0);
+
+        // Fetch related products
+        const allProducts = await productService.getProducts();
+        const related = allProducts.filter((p) => p.id !== data.id && p.category === data.category).slice(0, 3);
+        const fallback = allProducts.filter((p) => p.id !== data.id).slice(0, 3);
+        setRelatedProducts(related.length >= 2 ? related : fallback);
+
+      } catch (err) {
+        console.error('Error fetching product:', err);
+        setError('Failed to load product');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchProduct();
+  }, [id]);
+
+  if (loading) {
     return (
       <div className="min-h-screen bg-background flex flex-col items-center justify-center gap-4">
-        <p className="text-secondary">Product not found.</p>
+        <div className="w-10 h-10 border-2 border-primary border-t-transparent rounded-full animate-spin"></div>
+        <p className="text-secondary">Loading product...</p>
+      </div>
+    );
+  }
+
+  if (error || !product) {
+    return (
+      <div className="min-h-screen bg-background flex flex-col items-center justify-center gap-4">
+        <p className="text-secondary">{error || 'Product not found.'}</p>
         <Link to="/shop" className="text-xs font-medium tracking-widest uppercase text-primary border-b border-primary pb-0.5">
           Back to Shop
         </Link>
       </div>
     );
   }
-
-  const related = products.filter((p) => p.id !== product.id && p.category === product.category).slice(0, 3);
-  const relatedFallback = products.filter((p) => p.id !== product.id).slice(0, 3);
-  const relatedProducts = related.length >= 2 ? related : relatedFallback;
 
   const handleAddToCart = () => {
     setAdded(true);
@@ -157,7 +207,7 @@ export default function ProductDetails() {
 
               {/* Features */}
               <ul className="space-y-2.5 mb-8">
-                {(product.features ?? []).map((feature) => (
+                {(product.tags ?? []).map((feature) => (
                   <li key={feature} className="flex items-center gap-2.5 text-sm text-secondary">
                     <span className="w-4 h-4 rounded-full bg-cream flex items-center justify-center flex-shrink-0">
                       <Check size={10} strokeWidth={2.5} className="text-primary" />
