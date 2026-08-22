@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Loader2, PackageCheck, Users, WalletCards, Plus, Boxes } from 'lucide-react';
+import { Loader2, PackageCheck, Users, WalletCards, Plus, Boxes, Trash2 } from 'lucide-react';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import { useAuth } from '../context/AuthContext';
@@ -47,6 +47,13 @@ export default function AdminDashboard() {
   const handleProductUpdated = (updatedProduct: Product) => {
     // Update the state immediately
     setProducts(prev => prev.map(p => p.id === updatedProduct.id ? updatedProduct : p));
+  };
+
+  const handleProductDeleted = async (id: string) => {
+    if (!window.confirm('Delete this product?')) return;
+    const result = await productService.deleteProduct(id);
+    if (result.success) setProducts(prev => prev.filter(p => p.id !== id));
+    else setError(result.message);
   };
 
   const icons = [WalletCards, PackageCheck, Users, PackageCheck];
@@ -166,7 +173,16 @@ export default function AdminDashboard() {
                       
                       {/* ✅ Admin Edit Button Below Product */}
                       <div className="px-3 pb-3 border-t border-border/50 mt-2 pt-2">
-                        <AdminProductModifyButton product={product} onProductUpdated={handleProductUpdated} />
+                        <div className="flex items-center justify-between">
+                          <AdminProductModifyButton product={product} onProductUpdated={handleProductUpdated} />
+                          <button
+                            onClick={() => handleProductDeleted(product.id)}
+                            className="flex items-center gap-1.5 text-xs font-medium text-red-600 hover:text-red-700"
+                          >
+                            <Trash2 size={12} />
+                            Delete
+                          </button>
+                        </div>
                       </div>
                     </div>
                   ))}
