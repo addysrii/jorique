@@ -269,6 +269,40 @@ export const productService = {
       throw error;
     }
   },
+
+  async updateProduct(id: string, updates: Partial<Product>): Promise<Product> {
+    try {
+      const { data, error } = await supabase
+        .from('products')
+        .update(updates)
+        .eq('id', id)
+        .select('*')
+        .single();
+
+      if (error) throw error;
+      if (!data) throw new Error('Product not found');
+
+      return toProduct(data);
+    } catch (error) {
+      console.error('Error updating product:', error);
+      throw error;
+    }
+  },
+
+  async deleteProduct(id: string): Promise<{ success: boolean; message: string }> {
+    try {
+      const { error } = await supabase
+        .from('products')
+        .delete()
+        .eq('id', id);
+
+      if (error) throw error;
+      return { success: true, message: 'Product deleted successfully' };
+    } catch (error) {
+      console.error('Error deleting product:', error);
+      return { success: false, message: 'Failed to delete product' };
+    }
+  },
 };
 
 // ============================================
