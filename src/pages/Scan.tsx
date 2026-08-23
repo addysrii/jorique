@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ArrowLeft, CheckCircle, AlertCircle, Loader2 } from 'lucide-react';
 import QRScanner from '../components/QRScanner';
@@ -14,13 +14,21 @@ export default function ScanPage() {
   const [serialNumber, setSerialNumber] = useState<string>('');
   const [errorMessage, setErrorMessage] = useState<string>('');
   const [productName, setProductName] = useState<string>('');
+  const activeRequestIdRef = useRef(0);
+  const scanLockedRef = useRef(false);
 
   const handleScanSuccess = async (serial: string) => {
+    if (scanLockedRef.current) return;
+
+    scanLockedRef.current = true;
+    const requestId = ++activeRequestIdRef.current;
     setSerialNumber(serial);
     setStatus('validating');
     
     try {
       const result = await validateSerial(serial);
+
+      if (requestId !== activeRequestIdRef.current) return;
       
       if (!result.valid) {
         setStatus('error');
@@ -49,6 +57,7 @@ export default function ScanPage() {
       }, 1500);
       
     } catch (error) {
+      if (requestId !== activeRequestIdRef.current) return;
       setStatus('error');
       setErrorMessage(error instanceof Error ? error.message : 'Failed to validate serial');
     }
@@ -64,6 +73,8 @@ export default function ScanPage() {
   };
 
   const handleRetry = () => {
+    activeRequestIdRef.current += 1;
+    scanLockedRef.current = false;
     setStatus('idle');
     setErrorMessage('');
     setSerialNumber('');

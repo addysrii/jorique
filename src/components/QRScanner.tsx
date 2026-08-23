@@ -16,6 +16,8 @@ export default function QRScanner({ onScanSuccess, onScanError, onClose }: QRSca
   const containerRef = useRef<HTMLDivElement>(null);
   const scannerIdRef = useRef(`qr-reader-${Math.random().toString(36).slice(2, 11)}`);
   const mountedRef = useRef(true);
+  const isProcessingScanRef = useRef(false);
+  const lastScanRef = useRef<{ value: string; timestamp: number } | null>(null);
 
   useEffect(() => {
     mountedRef.current = true;
@@ -65,6 +67,7 @@ export default function QRScanner({ onScanSuccess, onScanError, onClose }: QRSca
     if (!containerRef.current || !containerRef.current.isConnected) return;
 
     try {
+      isProcessingScanRef.current = false;
       const existing = scannerRef.current;
       if (existing) {
         try {
@@ -104,16 +107,36 @@ export default function QRScanner({ onScanSuccess, onScanError, onClose }: QRSca
     }
   };
 
-  const onScanSuccessCallback = (decodedText: string) => {
-    // Stop scanning after successful scan
-    stopScanner();
-    
-    // Extract serial number from QR URL
-    // Format: https://joriqie.in/p/JR-BS-2026-001-0001
-    const serialMatch = decodedText.match(/\/p\/([A-Z]{2,4}-[A-Z]{2,4}-\d{4}-\d{3}-\d{4})/);
-    const serialNumber = serialMatch ? serialMatch[1] : decodedText;
-    
-    onScanSuccess(serialNumber);
+  const extractSerialNumber = (decodedText: string): string => {
+    const normalized = decodedText.trim();
+    const serialRegex = /([A-Z]{2,4}-[A-Z]{2,4}-\d{4}-\d{3}-\d{4})/i;
+    const serialMatch = normalized.match(serialRegex);
+
+    if (!serialMatch) {
+      return normalized;
+    }
+
+    return serialMatch[1].toUpperCase();
+  };
+
+  const onScanSuccessCallback = async (decodedText: string) => {
+    const normalized = decodedText.trim();
+    const now = Date.now();
+    const lastScan = lastScanRef.current;
+
+    if (lastScan && lastScan.value === normalized && now - lastScan.timestamp < 1500) {
+      return;
+    }
+
+    if (isProcessingScanRef.current) {
+      return;
+    }
+
+    isProcessingScanRef.current = true;
+    lastScanRef.current = { value: normalized, timestamp: now };
+
+    await stopScanner();
+    onScanSuccess(extractSerialNumber(normalized));
   };
 
   const onScanErrorCallback = (errorMessage: string) => {
@@ -136,7 +159,7 @@ export default function QRScanner({ onScanSuccess, onScanError, onClose }: QRSca
         await scanner.stop().catch(() => undefined);
       }
       if (containerRef.current?.isConnected) {
-        await scanner.clear().catch(() => undefined);
+        scanner.clear();
       }
     } catch (err) {
       console.warn('Scanner cleanup skipped:', err);
@@ -148,6 +171,7 @@ export default function QRScanner({ onScanSuccess, onScanError, onClose }: QRSca
 
   const handleRetry = () => {
     setError(null);
+    isProcessingScanRef.current = false;
     void initializeScanner();
   };
 
