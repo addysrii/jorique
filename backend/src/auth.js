@@ -91,11 +91,13 @@ async function queueOtp(email) {
     await sendOtpEmail(email, otp);
   } catch (mailError) {
     console.error('SMTP Error: Failed to send verification email. Details:', mailError.message);
-    console.log('\n----------------------------------------');
-    console.log(`[DEVELOPMENT OTP FALLBACK]`);
-    console.log(`Email: ${email}`);
-    console.log(`OTP Code: ${otp}`);
-    console.log('----------------------------------------\n');
+    if (process.env.NODE_ENV !== 'production') {
+      console.log('\n----------------------------------------');
+      console.log(`[DEVELOPMENT OTP FALLBACK]`);
+      console.log(`Email: ${email}`);
+      console.log(`OTP Code: ${otp}`);
+      console.log('----------------------------------------\n');
+    }
   }
 }
 

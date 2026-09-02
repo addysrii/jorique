@@ -17,11 +17,22 @@
     font-family: 'DM Sans', 'Inter', system-ui, sans-serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+    transition: background-color 0.3s ease, color 0.3s ease;
+  }
+
+  html.dark body {
+    background-color: #100E0D;
+    color: #F5F2EB;
   }
 
   ::selection {
     background-color: #3F3A36;
     color: #fff;
+  }
+
+  html.dark ::selection {
+    background-color: #D4AF37;
+    color: #100E0D;
   }
 }
 
@@ -29,4 +40,43 @@
   .text-balance {
     text-wrap: balance;
   }
+  .perspective-800 {
+    perspective: 800px;
+  }
+  .perspective-1000 {
+    perspective: 1000px;
+  }
+  .perspective-1500 {
+    perspective: 1500px;
+  }
+  .perspective-2000 {
+    perspective: 2000px;
+  }
+  .transform-style-3d {
+    transform-style: preserve-3d;
+  }
+  .backface-hidden {
+    backface-visibility: hidden;
+  }
 }
+
+@media print {
+  body {
+    background: white !important;
+    color: black !important;
+  }
+  nav, footer, .no-print {
+    display: none !important;
+  }
+  .print-only-labels {
+    position: absolute !important;
+    left: 0 !important;
+    top: 0 !important;
+    width: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    background: white !important;
+    z-index: 999999 !important;
+  }
+}
+

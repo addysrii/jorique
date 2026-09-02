@@ -1,8 +1,9 @@
 import { useState, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Star, Check, X, Filter, MessageSquare, ArrowUpDown } from 'lucide-react';
+import { Star, Check, X, Filter, MessageSquare, ArrowUpDown, Sparkles } from 'lucide-react';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
+import Parallax3DCard from '../components/Parallax3DCard';
 import { products } from '../data/products';
 
 type SortOption = 'recent' | 'highest' | 'lowest';
@@ -95,95 +96,70 @@ const INITIAL_REVIEWS: Review[] = [
     verified: true,
     helpfulCount: 15,
   },
-  {
-    id: '7',
-    name: 'Arthur P.',
-    avatarColor: 'bg-[#8D867F] text-white',
-    rating: 3,
-    date: '2026-04-30',
-    title: 'Good quality, but shipping took time',
-    body: 'The product itself is lovely and feels premium. However, it took almost 10 days to arrive. I hope they improve their courier service because the textiles are definitely worth it.',
-    productName: 'Organic Linen Duvet Cover Set',
-    verified: false,
-    helpfulCount: 4,
-  }
 ];
 
 export default function Reviews() {
   const [reviews, setReviews] = useState<Review[]>(INITIAL_REVIEWS);
   const [filterRating, setFilterRating] = useState<number | 'all'>('all');
   const [sortBy, setSortBy] = useState<SortOption>('recent');
-  const [isModalOpen, setIsModalOpen] = useState(false);
   const [helpfulClicked, setHelpfulClicked] = useState<Record<string, boolean>>({});
 
-  // Review Form States
+  // Modal Form State
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const [formName, setFormName] = useState('');
   const [formRating, setFormRating] = useState(5);
   const [formTitle, setFormTitle] = useState('');
   const [formBody, setFormBody] = useState('');
-  const [formProductName, setFormProductName] = useState('Organic Linen Duvet Cover Set');
+  const [formProductName, setFormProductName] = useState(products[0]?.name || '');
   const [formSuccess, setFormSuccess] = useState(false);
 
-  // Stats Calculations
+  // Statistics Calculation
   const stats = useMemo(() => {
     const total = reviews.length;
-    if (total === 0) return { average: 0, counts: [0, 0, 0, 0, 0], percentages: [0, 0, 0, 0, 0] };
-    
-    let sum = 0;
-    const counts = [0, 0, 0, 0, 0]; // 5, 4, 3, 2, 1 stars
-    
-    reviews.forEach((r) => {
-      sum += r.rating;
-      if (r.rating >= 1 && r.rating <= 5) {
-        counts[5 - r.rating]++;
-      }
-    });
+    if (total === 0) return { average: '0.0', counts: [0, 0, 0, 0, 0], percentages: [0, 0, 0, 0, 0], total: 0 };
 
-    const average = Math.round((sum / total) * 10) / 10;
+    const sum = reviews.reduce((acc, curr) => acc + curr.rating, 0);
+    const average = (sum / total).toFixed(1);
+
+    const counts = [5, 4, 3, 2, 1].map((r) => reviews.filter((rev) => rev.rating === r).length);
     const percentages = counts.map((count) => Math.round((count / total) * 100));
 
-    return { total, average, counts, percentages };
+    return { average, counts, percentages, total };
   }, [reviews]);
-
-  // Handle helpful click
-  const handleHelpful = (id: string) => {
-    if (helpfulClicked[id]) return;
-    setHelpfulClicked((prev) => ({ ...prev, [id]: true }));
-    setReviews((prev) =>
-      prev.map((r) => (r.id === id ? { ...r, helpfulCount: r.helpfulCount + 1 } : r))
-    );
-  };
 
   // Filtered and Sorted Reviews
   const processedReviews = useMemo(() => {
-    let result = [...reviews];
-    
-    // Filtering
-    if (filterRating !== 'all') {
-      result = result.filter((r) => r.rating === filterRating);
-    }
-
-    // Sorting
-    result.sort((a, b) => {
-      if (sortBy === 'recent') {
-        return new Date(b.date).getTime() - new Date(a.date).getTime();
-      }
-      if (sortBy === 'highest') {
-        return b.rating - a.rating;
-      }
-      if (sortBy === 'lowest') {
-        return a.rating - b.rating;
-      }
-      return 0;
-    });
-
-    return result;
+    return reviews
+      .filter((review) => {
+        if (filterRating === 'all') return true;
+        return review.rating === filterRating;
+      })
+      .sort((a, b) => {
+        if (sortBy === 'recent') {
+          return new Date(b.date).getTime() - new Date(a.date).getTime();
+        }
+        if (sortBy === 'highest') {
+          return b.rating - a.rating;
+        }
+        if (sortBy === 'lowest') {
+          return a.rating - b.rating;
+        }
+        return 0;
+      });
   }, [reviews, filterRating, sortBy]);
 
-  // Handle Review Submission
+  const handleHelpful = (id: string) => {
+    if (helpfulClicked[id]) return;
+
+    setReviews((prev) =>
+      prev.map((r) => (r.id === id ? { ...r, helpfulCount: r.helpfulCount + 1 } : r))
+    );
+    setHelpfulClicked((prev) => ({ ...prev, [id]: true }));
+  };
+
   const handleSubmitReview = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!formName || !formTitle || !formBody) return;
+    if (!formName.trim() || !formTitle.trim() || !formBody.trim()) return;
 
     const colors = [
       'bg-[#3F3A36] text-white',
@@ -222,7 +198,7 @@ export default function Reviews() {
   };
 
   return (
-    <div className="min-h-screen bg-background text-text">
+    <div className="min-h-screen bg-background dark:bg-[#100E0D] text-primary dark:text-[#F5F2EB] transition-colors duration-300">
       <Navbar />
 
       {/* Header Section */}
@@ -232,13 +208,14 @@ export default function Reviews() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
         >
-          <p className="text-xs font-medium tracking-[0.3em] uppercase text-secondary mb-4">
-            Customer Feedback
-          </p>
-          <h1 className="text-3xl lg:text-5xl font-light text-primary tracking-wide mb-6">
-            Reviews
+          <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-cream dark:bg-white/5 border border-border dark:border-[#2E2925] text-secondary dark:text-[#D4AF37] text-[11px] font-semibold tracking-[0.3em] uppercase mb-4">
+            <Sparkles size={12} className="text-[#D4AF37]" />
+            Verified Customer Impressions
+          </div>
+          <h1 className="text-3xl lg:text-5xl font-light text-primary dark:text-white tracking-wide mb-6">
+            Reviews & Testimonials
           </h1>
-          <p className="text-secondary text-base lg:text-lg font-light max-w-xl mx-auto leading-relaxed">
+          <p className="text-secondary dark:text-white/70 text-base lg:text-lg font-light max-w-xl mx-auto leading-relaxed">
             Read what our community has to say about their experience with JORIQUE luxury textiles.
           </p>
         </motion.div>
@@ -246,30 +223,30 @@ export default function Reviews() {
 
       {/* Stats and Dashboard Section */}
       <section className="px-6 pb-12">
-        <div className="max-w-5xl mx-auto bg-white rounded-2xl border border-border p-6 lg:p-10 shadow-sm">
+        <div className="max-w-5xl mx-auto bg-white dark:bg-[#1A1816] rounded-3xl border border-border dark:border-[#2E2925] p-6 lg:p-10 shadow-sm">
           <div className="grid grid-cols-1 md:grid-cols-12 gap-8 items-center">
             
             {/* Average Rating Big Display */}
-            <div className="md:col-span-4 text-center md:border-r md:border-border md:pr-8">
-              <p className="text-xs font-medium tracking-widest uppercase text-secondary mb-2">Overall Rating</p>
-              <div className="text-6xl font-light text-primary tracking-tight mb-3">
+            <div className="md:col-span-4 text-center md:border-r md:border-border dark:md:border-[#2E2925] md:pr-8">
+              <p className="text-xs font-semibold tracking-[0.25em] uppercase text-secondary dark:text-white/60 mb-2">Overall Rating</p>
+              <div className="text-6xl font-light text-primary dark:text-[#D4AF37] tracking-tight mb-3">
                 {stats.average}
               </div>
-              <div className="flex justify-center gap-1 mb-2 text-primary">
+              <div className="flex justify-center gap-1 mb-2 text-[#D4AF37]">
                 {[1, 2, 3, 4, 5].map((star) => (
                   <Star
                     key={star}
                     size={20}
-                    fill={star <= Math.round(stats.average) ? 'currentColor' : 'none'}
+                    fill={star <= Math.round(Number(stats.average)) ? 'currentColor' : 'none'}
                     strokeWidth={1.5}
                   />
                 ))}
               </div>
-              <p className="text-xs text-secondary mt-1">Based on {stats.total} reviews</p>
+              <p className="text-xs text-secondary dark:text-white/60 font-light mt-1">Based on {stats.total} verified reviews</p>
             </div>
 
             {/* Progress Bars */}
-            <div className="md:col-span-5 flex flex-col gap-2">
+            <div className="md:col-span-5 flex flex-col gap-2.5">
               {[5, 4, 3, 2, 1].map((rating, index) => {
                 const count = stats.counts[index];
                 const percentage = stats.percentages[index];
@@ -277,14 +254,14 @@ export default function Reviews() {
                   <button
                     key={rating}
                     onClick={() => setFilterRating(rating === filterRating ? 'all' : rating)}
-                    className={`flex items-center gap-3 w-full text-left text-xs group hover:text-primary transition-colors ${
-                      filterRating === rating ? 'font-semibold text-primary' : 'text-secondary'
+                    className={`flex items-center gap-3 w-full text-left text-xs group hover:text-primary dark:hover:text-[#D4AF37] transition-colors ${
+                      filterRating === rating ? 'font-semibold text-primary dark:text-[#D4AF37]' : 'text-secondary dark:text-white/60'
                     }`}
                   >
-                    <span className="w-10 whitespace-nowrap">{rating} Stars</span>
-                    <div className="flex-1 h-2 bg-cream rounded-full overflow-hidden">
+                    <span className="w-12 whitespace-nowrap font-medium tracking-wide">{rating} Stars</span>
+                    <div className="flex-1 h-2 bg-cream dark:bg-white/10 rounded-full overflow-hidden">
                       <motion.div
-                        className="h-full bg-primary"
+                        className="h-full bg-primary dark:bg-[#D4AF37]"
                         initial={{ width: 0 }}
                         animate={{ width: `${percentage}%` }}
                         transition={{ duration: 0.8, delay: 0.2 }}
@@ -299,14 +276,14 @@ export default function Reviews() {
 
             {/* CTA Button */}
             <div className="md:col-span-3 text-center md:pl-8 flex flex-col items-center justify-center">
-              <p className="text-xs text-secondary mb-4 leading-relaxed max-w-xs md:max-w-none">
+              <p className="text-xs text-secondary dark:text-white/60 font-light mb-4 leading-relaxed max-w-xs md:max-w-none">
                 Have you purchased JORIQUE products? Share your feedback with the community.
               </p>
               <motion.button
-                whileHover={{ scale: 1.015 }}
-                whileTap={{ scale: 0.97 }}
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
                 onClick={() => setIsModalOpen(true)}
-                className="inline-flex items-center gap-2 bg-primary text-white text-xs font-medium tracking-widest uppercase px-6 py-3.5 hover:bg-[#2a2623] transition-colors duration-200"
+                className="inline-flex items-center gap-2 bg-primary dark:bg-[#D4AF37] text-white dark:text-black text-xs font-bold tracking-[0.25em] uppercase px-6 py-3.5 rounded-xl hover:bg-primary/90 dark:hover:bg-[#E5C158] transition-all shadow-md"
               >
                 <MessageSquare size={14} />
                 Write a Review
@@ -318,23 +295,23 @@ export default function Reviews() {
       </section>
 
       {/* Filter and Sort Toolbar */}
-      <section className="px-6 py-6 border-y border-border bg-white sticky top-[64px] lg:top-[80px] z-40 shadow-sm">
+      <section className="px-6 py-6 border-y border-border dark:border-[#2E2925] bg-white/95 dark:bg-[#151311]/95 backdrop-blur-md sticky top-[64px] lg:top-[80px] z-40 shadow-sm transition-colors duration-300">
         <div className="max-w-5xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
           
           {/* Active Filter Indicators */}
           <div className="flex items-center gap-3 self-start sm:self-center">
-            <Filter size={14} className="text-secondary" />
-            <span className="text-xs font-semibold text-secondary uppercase tracking-widest">Filter:</span>
+            <Filter size={14} className="text-secondary dark:text-white/60" />
+            <span className="text-xs font-semibold text-secondary dark:text-white/60 uppercase tracking-[0.2em]">Filter:</span>
             <div className="flex flex-wrap gap-2">
               <button
                 onClick={() => setFilterRating('all')}
-                className={`px-3 py-1.5 rounded-full text-xs font-medium transition-all ${
+                className={`px-3 py-1.5 rounded-full text-xs font-medium tracking-wide transition-all ${
                   filterRating === 'all'
-                    ? 'bg-primary text-white'
-                    : 'bg-cream text-secondary hover:text-primary'
+                    ? 'bg-primary dark:bg-[#D4AF37] text-white dark:text-black shadow-sm'
+                    : 'bg-cream dark:bg-white/10 text-secondary dark:text-white/70 hover:text-primary dark:hover:text-white'
                 }`}
               >
-                All Reviews ({reviews.length})
+                All ({reviews.length})
               </button>
               {[5, 4, 3, 2, 1].map((rating) => {
                 const count = reviews.filter((r) => r.rating === rating).length;
@@ -342,13 +319,13 @@ export default function Reviews() {
                   <button
                     key={rating}
                     onClick={() => setFilterRating(rating)}
-                    className={`px-3 py-1.5 rounded-full text-xs font-medium transition-all flex items-center gap-1 ${
+                    className={`px-3 py-1.5 rounded-full text-xs font-medium tracking-wide transition-all flex items-center gap-1 ${
                       filterRating === rating
-                        ? 'bg-primary text-white'
-                        : 'bg-cream text-secondary hover:text-primary'
+                        ? 'bg-primary dark:bg-[#D4AF37] text-white dark:text-black shadow-sm'
+                        : 'bg-cream dark:bg-white/10 text-secondary dark:text-white/70 hover:text-primary dark:hover:text-white'
                     }`}
                   >
-                    {rating} <Star size={10} fill={filterRating === rating ? 'white' : 'none'} className="inline" /> ({count})
+                    {rating} <Star size={10} fill={filterRating === rating ? 'currentColor' : 'none'} className="inline" /> ({count})
                   </button>
                 );
               })}
@@ -357,16 +334,16 @@ export default function Reviews() {
 
           {/* Sort Controls */}
           <div className="flex items-center gap-2 self-end sm:self-center">
-            <ArrowUpDown size={14} className="text-secondary" />
-            <span className="text-xs font-semibold text-secondary uppercase tracking-widest">Sort by:</span>
+            <ArrowUpDown size={14} className="text-secondary dark:text-white/60" />
+            <span className="text-xs font-semibold text-secondary dark:text-white/60 uppercase tracking-[0.2em]">Sort:</span>
             <select
               value={sortBy}
               onChange={(e) => setSortBy(e.target.value as SortOption)}
-              className="text-xs font-medium text-primary bg-transparent border-b border-border py-1 focus:outline-none focus:border-primary cursor-pointer tracking-wider"
+              className="text-xs font-semibold uppercase tracking-wider text-primary dark:text-[#D4AF37] bg-transparent border-b border-border dark:border-[#2E2925] py-1 focus:outline-none focus:border-primary cursor-pointer"
             >
-              <option value="recent">Most Recent</option>
-              <option value="highest">Highest Rating</option>
-              <option value="lowest">Lowest Rating</option>
+              <option value="recent" className="dark:bg-[#1A1816] text-black dark:text-white">Most Recent</option>
+              <option value="highest" className="dark:bg-[#1A1816] text-black dark:text-white">Highest Rating</option>
+              <option value="lowest" className="dark:bg-[#1A1816] text-black dark:text-white">Lowest Rating</option>
             </select>
           </div>
 
@@ -377,11 +354,11 @@ export default function Reviews() {
       <section className="px-6 py-12 lg:py-16">
         <div className="max-w-5xl mx-auto">
           {processedReviews.length === 0 ? (
-            <div className="text-center py-20 bg-white rounded-2xl border border-border">
-              <p className="text-secondary font-light text-base mb-4">No reviews found matching that rating filter.</p>
+            <div className="text-center py-20 bg-white dark:bg-[#1A1816] rounded-3xl border border-border dark:border-[#2E2925]">
+              <p className="text-secondary dark:text-white/60 font-light text-base mb-4">No reviews found matching that rating filter.</p>
               <button
                 onClick={() => setFilterRating('all')}
-                className="text-xs font-medium tracking-widest uppercase text-primary border-b border-primary/30 pb-0.5 hover:border-primary transition-all"
+                className="text-xs font-semibold tracking-[0.2em] uppercase text-primary dark:text-[#D4AF37] border-b border-primary dark:border-[#D4AF37] pb-0.5"
               >
                 Reset Rating Filter
               </button>
@@ -397,71 +374,86 @@ export default function Reviews() {
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, y: -12 }}
                     transition={{ duration: 0.35 }}
-                    className="p-6 lg:p-8 bg-white rounded-2xl border border-border flex flex-col md:flex-row gap-6 items-start"
                   >
-                    {/* Reviewer Meta Column */}
-                    <div className="md:w-1/4 flex-shrink-0 flex items-center md:items-start gap-4 md:flex-col">
-                      <div className={`w-12 h-12 rounded-full flex items-center justify-center text-sm font-semibold tracking-wider ${review.avatarColor}`}>
-                        {review.name.split(' ').map((n) => n[0]).join('').slice(0, 2)}
-                      </div>
-                      <div>
-                        <h4 className="text-sm font-semibold tracking-wide text-primary">{review.name}</h4>
-                        <p className="text-[11px] text-secondary mt-0.5">{new Date(review.date).toLocaleDateString('en-US', {
-                          year: 'numeric',
-                          month: 'long',
-                          day: 'numeric'
-                        })}</p>
-                        {review.verified && (
-                          <div className="flex items-center gap-1 text-[10px] text-primary/70 font-semibold tracking-wider uppercase mt-2 bg-cream/50 px-2 py-0.5 rounded-full w-fit">
-                            <Check size={10} strokeWidth={3} className="text-primary/70" />
-                            Verified Buyer
-                          </div>
-                        )}
-                      </div>
-                    </div>
-
-                    {/* Review Detail Column */}
-                    <div className="flex-1 flex flex-col">
-                      {/* Rating Stars */}
-                      <div className="flex items-center gap-1 text-primary mb-3">
-                        {[1, 2, 3, 4, 5].map((star) => (
-                          <Star
-                            key={star}
-                            size={14}
-                            fill={star <= review.rating ? 'currentColor' : 'none'}
-                            strokeWidth={1.5}
-                          />
-                        ))}
-                      </div>
-
-                      {/* Title and Body */}
-                      <h3 className="text-base font-medium tracking-wide text-primary mb-2.5">
-                        {review.title}
-                      </h3>
-                      <p className="text-sm text-secondary leading-relaxed font-light mb-4">
-                        {review.body}
-                      </p>
-
-                      {/* Product tags & helpful actions */}
-                      <div className="mt-auto pt-4 border-t border-border/60 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-                        <div className="text-[11px] text-secondary tracking-wide">
-                          Purchased: <span className="font-semibold text-primary">{review.productName}</span>
-                        </div>
-                        <button
-                          onClick={() => handleHelpful(review.id)}
-                          className={`text-xs flex items-center gap-1.5 transition-colors ${
-                            helpfulClicked[review.id]
-                              ? 'text-primary font-medium pointer-events-none'
-                              : 'text-secondary hover:text-primary'
-                          }`}
+                    <Parallax3DCard
+                      maxRotation={6}
+                      perspective={1200}
+                      glareEffect={true}
+                      scaleOnHover={1.01}
+                      className="rounded-3xl shadow-sm hover:shadow-xl transition-shadow"
+                    >
+                      <div className="p-6 lg:p-8 bg-white dark:bg-[#1A1816] rounded-3xl border border-border dark:border-[#2E2925] flex flex-col md:flex-row gap-6 items-start transform-style-3d">
+                        {/* Reviewer Meta Column */}
+                        <div
+                          className="md:w-1/4 flex-shrink-0 flex items-center md:items-start gap-4 md:flex-col transform-style-3d"
+                          style={{ transform: 'translateZ(25px)' }}
                         >
-                          <span>Was this review helpful?</span>
-                          <span className="px-2 py-0.5 bg-cream/40 rounded-md font-semibold text-[11px]">
-                            {review.helpfulCount}
-                          </span>
-                        </button>
+                          <div className={`w-12 h-12 rounded-2xl flex items-center justify-center text-sm font-semibold tracking-wider shadow-inner ${review.avatarColor}`}>
+                            {review.name.split(' ').map((n) => n[0]).join('').slice(0, 2)}
+                          </div>
+                          <div>
+                            <h4 className="text-sm font-semibold tracking-wide text-primary dark:text-white">{review.name}</h4>
+                            <p className="text-[11px] text-secondary dark:text-white/50 font-light tracking-wide mt-0.5">{new Date(review.date).toLocaleDateString('en-US', {
+                              year: 'numeric',
+                              month: 'long',
+                              day: 'numeric'
+                            })}</p>
+                            {review.verified && (
+                              <div className="flex items-center gap-1 text-[10px] text-emerald-800 dark:text-emerald-300 font-semibold tracking-[0.15em] uppercase mt-2 bg-emerald-50 dark:bg-emerald-950/50 border border-emerald-200 dark:border-emerald-800 px-2.5 py-0.5 rounded-full w-fit">
+                                <Check size={10} strokeWidth={3} className="text-emerald-700 dark:text-emerald-400" />
+                                Verified Buyer
+                              </div>
+                            )}
+                          </div>
+                        </div>
+
+                        {/* Review Detail Column */}
+                        <div
+                          className="flex-1 flex flex-col transform-style-3d"
+                          style={{ transform: 'translateZ(15px)' }}
+                        >
+                          {/* Rating Stars */}
+                          <div className="flex items-center gap-1 text-[#D4AF37] mb-3">
+                            {[1, 2, 3, 4, 5].map((star) => (
+                              <Star
+                                key={star}
+                                size={14}
+                                fill={star <= review.rating ? 'currentColor' : 'none'}
+                                strokeWidth={1.5}
+                              />
+                            ))}
+                          </div>
+
+                          {/* Title and Body */}
+                          <h3 className="text-base font-medium tracking-wide text-primary dark:text-white mb-2.5">
+                            {review.title}
+                          </h3>
+                          <p className="text-sm text-secondary dark:text-white/70 leading-relaxed font-light mb-4">
+                            {review.body}
+                          </p>
+
+                          {/* Product tags & helpful actions */}
+                          <div className="mt-auto pt-4 border-t border-border/60 dark:border-[#2E2925] flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                            <div className="text-[11px] text-secondary dark:text-white/50 tracking-wide font-light">
+                              Purchased: <span className="font-semibold text-primary dark:text-white">{review.productName}</span>
+                            </div>
+                            <button
+                              onClick={() => handleHelpful(review.id)}
+                              className={`text-xs flex items-center gap-1.5 font-light tracking-wide transition-colors ${
+                                helpfulClicked[review.id]
+                                  ? 'text-primary dark:text-[#D4AF37] font-medium pointer-events-none'
+                                  : 'text-secondary dark:text-white/60 hover:text-primary dark:hover:text-white'
+                              }`}
+                            >
+                              <span>Was this review helpful?</span>
+                              <span className="px-2 py-0.5 bg-cream dark:bg-white/10 rounded-md font-semibold text-[11px]">
+                                {review.helpfulCount}
+                              </span>
+                            </button>
+                          </div>
+                        </div>
                       </div>
-                    </div>
+                    </Parallax3DCard>
                   </motion.div>
                 ))}
               </AnimatePresence>
@@ -480,7 +472,7 @@ export default function Reviews() {
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               onClick={() => setIsModalOpen(false)}
-              className="fixed inset-0 bg-black/45 backdrop-blur-sm z-50"
+              className="fixed inset-0 bg-black/65 backdrop-blur-sm z-50"
             />
 
             {/* Modal Wrapper Container */}
@@ -491,14 +483,14 @@ export default function Reviews() {
                 animate={{ opacity: 1, scale: 1, y: 0 }}
                 exit={{ opacity: 0, scale: 0.95, y: 16 }}
                 transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
-                className="relative w-full max-w-lg bg-white rounded-2xl border border-border shadow-xl overflow-hidden max-h-[85vh] flex flex-col pointer-events-auto"
+                className="relative w-full max-w-lg bg-white dark:bg-[#1A1816] rounded-3xl border border-border dark:border-[#2E2925] shadow-2xl overflow-hidden max-h-[85vh] flex flex-col pointer-events-auto"
               >
                 {/* Header */}
-                <div className="flex items-center justify-between px-6 py-5 border-b border-border flex-shrink-0">
-                  <h3 className="text-sm font-semibold tracking-[0.2em] uppercase text-primary">Write a Review</h3>
+                <div className="flex items-center justify-between px-6 py-5 border-b border-border dark:border-[#2E2925] flex-shrink-0">
+                  <h3 className="text-sm font-semibold tracking-[0.25em] uppercase text-primary dark:text-white">Write a Review</h3>
                   <button
                     onClick={() => setIsModalOpen(false)}
-                    className="p-1.5 text-secondary hover:text-primary transition-colors"
+                    className="p-1.5 text-secondary dark:text-white/60 hover:text-primary dark:hover:text-white transition-colors"
                   >
                     <X size={18} strokeWidth={1.5} />
                   </button>
@@ -507,11 +499,11 @@ export default function Reviews() {
                 {/* Success Screen */}
                 {formSuccess ? (
                   <div className="flex flex-col items-center justify-center p-12 text-center flex-1">
-                    <div className="w-12 h-12 bg-cream text-primary rounded-full flex items-center justify-center mb-4">
+                    <div className="w-12 h-12 bg-cream dark:bg-white/10 text-primary dark:text-[#D4AF37] rounded-full flex items-center justify-center mb-4">
                       <Check size={24} strokeWidth={1.5} />
                     </div>
-                    <h4 className="text-lg font-light text-primary mb-2">Thank you!</h4>
-                    <p className="text-sm text-secondary leading-relaxed font-light">
+                    <h4 className="text-xl font-light text-primary dark:text-white tracking-wide mb-2">Thank you!</h4>
+                    <p className="text-sm text-secondary dark:text-white/70 leading-relaxed font-light">
                       Your review has been successfully submitted and posted.
                     </p>
                   </div>
@@ -520,10 +512,10 @@ export default function Reviews() {
                   <form onSubmit={handleSubmitReview} className="p-6 overflow-y-auto flex-1 space-y-5">
                     {/* Rating Selector */}
                     <div>
-                      <label className="block text-xs font-semibold tracking-wider text-secondary uppercase mb-2">
+                      <label className="block text-xs font-semibold tracking-[0.2em] text-secondary dark:text-white/70 uppercase mb-2">
                         Your Rating *
                       </label>
-                      <div className="flex gap-1.5 text-primary">
+                      <div className="flex gap-1.5 text-[#D4AF37]">
                         {[1, 2, 3, 4, 5].map((star) => (
                           <button
                             key={star}
@@ -543,7 +535,7 @@ export default function Reviews() {
 
                     {/* Name Input */}
                     <div>
-                      <label className="block text-xs font-semibold tracking-wider text-secondary uppercase mb-2">
+                      <label className="block text-xs font-semibold tracking-[0.2em] text-secondary dark:text-white/70 uppercase mb-2">
                         Your Name *
                       </label>
                       <input
@@ -552,22 +544,22 @@ export default function Reviews() {
                         placeholder="e.g. Liam S."
                         value={formName}
                         onChange={(e) => setFormName(e.target.value)}
-                        className="w-full border border-border px-4 py-3 text-sm text-text placeholder:text-secondary/40 bg-warm-white focus:outline-none focus:border-primary transition-colors duration-200"
+                        className="w-full border border-border dark:border-[#2E2925] px-4 py-3 rounded-xl text-sm text-primary dark:text-white placeholder:text-secondary/40 placeholder:font-light dark:placeholder:text-white/30 bg-warm-white dark:bg-[#100E0D] focus:outline-none focus:border-primary dark:focus:border-[#D4AF37] transition-colors duration-200 font-normal"
                       />
                     </div>
 
                     {/* Product Selector */}
                     <div>
-                      <label className="block text-xs font-semibold tracking-wider text-secondary uppercase mb-2">
+                      <label className="block text-xs font-semibold tracking-[0.2em] text-secondary dark:text-white/70 uppercase mb-2">
                         Product Purchased *
                       </label>
                       <select
                         value={formProductName}
                         onChange={(e) => setFormProductName(e.target.value)}
-                        className="w-full border border-border px-4 py-3 text-sm text-text bg-warm-white focus:outline-none focus:border-primary transition-colors duration-200"
+                        className="w-full border border-border dark:border-[#2E2925] px-4 py-3 rounded-xl text-sm text-primary dark:text-white bg-warm-white dark:bg-[#100E0D] focus:outline-none focus:border-primary dark:focus:border-[#D4AF37] transition-colors duration-200"
                       >
                         {products.map((p) => (
-                          <option key={p.id} value={p.name}>
+                          <option key={p.id} value={p.name} className="dark:bg-[#100E0D]">
                             {p.name}
                           </option>
                         ))}
@@ -576,7 +568,7 @@ export default function Reviews() {
 
                     {/* Review Title Input */}
                     <div>
-                      <label className="block text-xs font-semibold tracking-wider text-secondary uppercase mb-2">
+                      <label className="block text-xs font-semibold tracking-[0.2em] text-secondary dark:text-white/70 uppercase mb-2">
                         Review Title *
                       </label>
                       <input
@@ -585,13 +577,13 @@ export default function Reviews() {
                         placeholder="Summarize your experience"
                         value={formTitle}
                         onChange={(e) => setFormTitle(e.target.value)}
-                        className="w-full border border-border px-4 py-3 text-sm text-text placeholder:text-secondary/40 bg-warm-white focus:outline-none focus:border-primary transition-colors duration-200"
+                        className="w-full border border-border dark:border-[#2E2925] px-4 py-3 rounded-xl text-sm text-primary dark:text-white placeholder:text-secondary/40 placeholder:font-light dark:placeholder:text-white/30 bg-warm-white dark:bg-[#100E0D] focus:outline-none focus:border-primary dark:focus:border-[#D4AF37] transition-colors duration-200 font-normal"
                       />
                     </div>
 
                     {/* Review Body Input */}
                     <div>
-                      <label className="block text-xs font-semibold tracking-wider text-secondary uppercase mb-2">
+                      <label className="block text-xs font-semibold tracking-[0.2em] text-secondary dark:text-white/70 uppercase mb-2">
                         Review *
                       </label>
                       <textarea
@@ -600,7 +592,7 @@ export default function Reviews() {
                         placeholder="Write your review comments here..."
                         value={formBody}
                         onChange={(e) => setFormBody(e.target.value)}
-                        className="w-full border border-border px-4 py-3 text-sm text-text placeholder:text-secondary/40 bg-warm-white focus:outline-none focus:border-primary transition-colors duration-200 resize-none"
+                        className="w-full border border-border dark:border-[#2E2925] px-4 py-3 rounded-xl text-sm text-primary dark:text-white placeholder:text-secondary/40 placeholder:font-light dark:placeholder:text-white/30 bg-warm-white dark:bg-[#100E0D] focus:outline-none focus:border-primary dark:focus:border-[#D4AF37] transition-colors duration-200 resize-none font-normal leading-relaxed"
                       />
                     </div>
 
@@ -608,7 +600,7 @@ export default function Reviews() {
                     <div className="pt-2">
                       <button
                         type="submit"
-                        className="w-full bg-primary text-white text-xs font-medium tracking-widest uppercase py-4 hover:bg-[#2a2623] transition-colors duration-200"
+                        className="w-full bg-primary dark:bg-[#D4AF37] text-white dark:text-black rounded-xl text-xs font-bold tracking-[0.25em] uppercase py-4 hover:bg-primary/90 dark:hover:bg-[#E5C158] transition-colors duration-200 shadow-md"
                       >
                         Submit Review
                       </button>

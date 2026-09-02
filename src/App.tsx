@@ -1,31 +1,39 @@
-import { useEffect } from 'react';
+import { useEffect, lazy, Suspense } from 'react';
 import { BrowserRouter, Routes, Route, useLocation, Navigate } from 'react-router-dom';
 import { AnimatePresence, motion } from 'framer-motion';
 import { AuthProvider } from './context/AuthContext';
-import ComingSoon from './pages/ComingSoon';
-import Connection from './pages/Connection';
-
- 
-// ========================================================================
-// PAGE IMPORTS (Temporarily commented out for Launch Phase)
-// Uncomment these imports when ready to restore full website functionality:
-// ========================================================================
-import Home from './pages/Home';
-import Shop from './pages/Shop';
-import ProductDetails from './pages/ProductDetails';
-import About from './pages/About';
-import Reviews from './pages/Reviews';
-import Login from './pages/Login';
-import Signup from './pages/Signup';
-import VerifyOtp from './pages/VerifyOtp';
-import UserDashboard from './pages/UserDashboard';
-import AdminDashboard from './pages/AdminDashboard';
+import { ThemeProvider } from './context/ThemeContext';
+import ErrorBoundary from './components/ErrorBoundary';
 import ProtectedRoute from './components/ProtectedRoute';
-import AddNewProducts from './pages/AddNewProducts';
-import ScanPage from './pages/Scan';
-import ReviewPage from './pages/Review';
-import GiftPage from './pages/GiftPage';
 
+// Lazy-loaded routes for performance & code splitting
+const Home = lazy(() => import('./pages/Home'));
+const Shop = lazy(() => import('./pages/Shop'));
+const ProductDetails = lazy(() => import('./pages/ProductDetails'));
+const About = lazy(() => import('./pages/About'));
+const Reviews = lazy(() => import('./pages/Reviews'));
+const Connection = lazy(() => import('./pages/Connection'));
+const ComingSoon = lazy(() => import('./pages/ComingSoon'));
+const Login = lazy(() => import('./pages/Login'));
+const Signup = lazy(() => import('./pages/Signup'));
+const VerifyOtp = lazy(() => import('./pages/VerifyOtp'));
+const UserDashboard = lazy(() => import('./pages/UserDashboard'));
+const AdminDashboard = lazy(() => import('./pages/AdminDashboard'));
+const AddNewProducts = lazy(() => import('./pages/AddNewProducts'));
+const ScanPage = lazy(() => import('./pages/Scan'));
+const ReviewPage = lazy(() => import('./pages/Review'));
+const GiftPage = lazy(() => import('./pages/GiftPage'));
+
+function PageLoader() {
+  return (
+    <div className="min-h-screen bg-background dark:bg-[#100E0D] flex flex-col items-center justify-center transition-colors duration-300">
+      <div className="w-10 h-10 border-2 border-[#3F3A36] dark:border-[#D4AF37] border-t-transparent rounded-full animate-spin mb-4" />
+      <p className="text-[10px] uppercase font-semibold tracking-[0.3em] text-[#8D867F] dark:text-[#D4AF37]">
+        JORIQUE
+      </p>
+    </div>
+  );
+}
 
 function ScrollToTop() {
   const { pathname } = useLocation();
@@ -53,7 +61,7 @@ function PageTransition({ children }: { children: React.ReactNode }) {
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
-      transition={{ duration: 0.3, ease: 'easeInOut' }}
+      transition={{ duration: 0.2, ease: 'easeInOut' }}
     >
       {children}
     </motion.div>
@@ -64,178 +72,189 @@ function AnimatedRoutes() {
   const location = useLocation();
 
   return (
-    <AnimatePresence mode="wait">
-      <Routes location={location} key={location.pathname}>
-        {/* ========================================================================
-            ACTIVE LAUNCH PHASE ROUTES
-            ======================================================================== */}
-        
-        {/* Main Website -> Coming Soon landing page */}
-        <Route
-          path="/"
-          element={
-            <PageTransition>
-              <ComingSoon />
-            </PageTransition>
-          }
-        />
+    <Suspense fallback={<PageLoader />}>
+      <AnimatePresence mode="wait">
+        <Routes location={location} key={location.pathname}>
+          {/* Main Storefront Routes */}
+          <Route
+            path="/"
+            element={
+              <PageTransition>
+                <Home />
+              </PageTransition>
+            }
+          />
+          <Route
+            path="/home"
+            element={
+              <PageTransition>
+                <Home />
+              </PageTransition>
+            }
+          />
+          <Route
+            path="/shop"
+            element={
+              <PageTransition>
+                <Shop />
+              </PageTransition>
+            }
+          />
+          <Route
+            path="/product/:id"
+            element={
+              <PageTransition>
+                <ProductDetails />
+              </PageTransition>
+            }
+          />
+          <Route
+            path="/about"
+            element={
+              <PageTransition>
+                <About />
+              </PageTransition>
+            }
+          />
+          <Route
+            path="/reviews"
+            element={
+              <PageTransition>
+                <Reviews />
+              </PageTransition>
+            }
+          />
+          <Route
+            path="/connect"
+            element={
+              <PageTransition>
+                <Connection />
+              </PageTransition>
+            }
+          />
+          <Route
+            path="/coming-soon"
+            element={
+              <PageTransition>
+                <ComingSoon />
+              </PageTransition>
+            }
+          />
 
-        {/* Connect Page -> Digital Business Card (Live & Functional) */}
-        <Route
-          path="/connect"
-          element={
-            <PageTransition>
-              <Connection />
-            </PageTransition>
-          }
-        />
+          {/* Authentication Routes */}
+          <Route
+            path="/login"
+            element={
+              <PageTransition>
+                <Login />
+              </PageTransition>
+            }
+          />
+          <Route
+            path="/signup"
+            element={
+              <PageTransition>
+                <Signup />
+              </PageTransition>
+            }
+          />
+          <Route
+            path="/verify-otp"
+            element={
+              <PageTransition>
+                <VerifyOtp />
+              </PageTransition>
+            }
+          />
 
-        {/* Gift claim page opened from product QR codes */}
-        <Route
-          path="/gift"
-          element={
-            <PageTransition>
-              <GiftPage />
-            </PageTransition>
-          }
-        />
-
-        {/* Catch-all route: Redirect all other URLs to Coming Soon page during launch phase */}
-        <Route path="*" element={<Navigate to="/" replace />} />
-
-        
-        {/* ========================================================================
-        FULL WEBSITE ROUTES (Temporarily commented out for launch phase)
-        Uncomment the routes below (and the imports at top) when full website goes live:
-        ======================================================================== */}
-
-        <Route
-          path="/home"
-          element={
-            <PageTransition>
-              <Home />
-            </PageTransition>
-          }
-        />
-        <Route
-          path="/shop"
-          element={
-            <PageTransition>
-              <Shop />
-            </PageTransition>
-          }
-        />
-        <Route
-          path="/product/:id"
-          element={
-            <PageTransition>
-              <ProductDetails />
-            </PageTransition>
-          }
-        />
-        <Route
-          path="/about"
-          element={
-            <PageTransition>
-              <About />
-            </PageTransition>
-          }
-        />
-        <Route
-          path="/reviews"
-          element={
-            <PageTransition>
-              <Reviews />
-            </PageTransition>
-          }
-        />
-        <Route
-          path="/login"
-          element={
-            <PageTransition>
-              <Login />
-            </PageTransition>
-          }
-        />
-        <Route
-          path="/signup"
-          element={
-            <PageTransition>
-              <Signup />
-            </PageTransition>
-          }
-        />
-        <Route
-          path="/verify-otp"
-          element={
-            <PageTransition>
-              <VerifyOtp />
-            </PageTransition>
-          }
-        />
-        <Route
-          path="/dashboard"
-          element={
-            <PageTransition>
-              <ProtectedRoute role="user">
-                <UserDashboard />
-              </ProtectedRoute>
-            </PageTransition>
-          }
-        />
-        <Route
-          path="/scan"
-          element={
-            <PageTransition>
-              <ProtectedRoute role="user">
+          {/* Customer Experience & QR Flows */}
+          <Route
+            path="/dashboard"
+            element={
+              <PageTransition>
+                <ProtectedRoute role="user">
+                  <UserDashboard />
+                </ProtectedRoute>
+              </PageTransition>
+            }
+          />
+          <Route
+            path="/scan"
+            element={
+              <PageTransition>
                 <ScanPage />
-              </ProtectedRoute>
-            </PageTransition>
-          }
-        />
-        <Route
-          path="/review/:serial"
-          element={
-            <PageTransition>
-              <ProtectedRoute role="user">
+              </PageTransition>
+            }
+          />
+          <Route
+            path="/review/:serial"
+            element={
+              <PageTransition>
                 <ReviewPage />
-              </ProtectedRoute>
-            </PageTransition>
-          }
-        />
-        <Route
-          path="/admin"
-          element={
-            <PageTransition>
-              <ProtectedRoute role="admin">
-                <AdminDashboard />
-              </ProtectedRoute>
-            </PageTransition>
-          }
-        />
-        <Route
-          path="/admin/products/new"
-          element={
-            <PageTransition>
-              <ProtectedRoute role="admin">
-                <AddNewProducts/>
-              </ProtectedRoute>
-            </PageTransition>
-          }
-        />
-        
-      </Routes>
-    </AnimatePresence>
+              </PageTransition>
+            }
+          />
+          <Route
+            path="/gift"
+            element={
+              <PageTransition>
+                <GiftPage />
+              </PageTransition>
+            }
+          />
+
+          {/* Admin JORIQUE OS Suite */}
+          <Route
+            path="/admin"
+            element={
+              <PageTransition>
+                <ProtectedRoute role="admin">
+                  <AdminDashboard />
+                </ProtectedRoute>
+              </PageTransition>
+            }
+          />
+          <Route
+            path="/admin/products"
+            element={
+              <PageTransition>
+                <ProtectedRoute role="admin">
+                  <AdminDashboard />
+                </ProtectedRoute>
+              </PageTransition>
+            }
+          />
+          <Route
+            path="/admin/products/new"
+            element={
+              <PageTransition>
+                <ProtectedRoute role="admin">
+                  <AddNewProducts />
+                </ProtectedRoute>
+              </PageTransition>
+            }
+          />
+
+          {/* Catch-all Wildcard Route (Must be last) */}
+          <Route path="*" element={<Navigate to="/" replace />} />
+        </Routes>
+      </AnimatePresence>
+    </Suspense>
   );
 }
 
 export default function App() {
   return (
-    <AuthProvider>
-      <BrowserRouter>
-        <ScrollToTop />
-        <AnimatedRoutes />
-      </BrowserRouter>
-    </AuthProvider>
+    <ErrorBoundary>
+      <ThemeProvider>
+        <AuthProvider>
+          <BrowserRouter>
+            <ScrollToTop />
+            <AnimatedRoutes />
+          </BrowserRouter>
+        </AuthProvider>
+      </ThemeProvider>
+    </ErrorBoundary>
   );
 }
+

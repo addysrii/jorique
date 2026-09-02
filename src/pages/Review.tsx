@@ -1,8 +1,9 @@
 import { useState } from 'react';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
-import { ArrowLeft, Loader2, Star, CheckCircle, AlertCircle } from 'lucide-react';
+import { ArrowLeft, Loader2, Star, CheckCircle, AlertCircle, Sparkles } from 'lucide-react';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
+import Parallax3DCard from '../components/Parallax3DCard';
 import { submitReview } from '../lib/api/products';
 
 interface ReviewLocationState {
@@ -64,7 +65,7 @@ export default function ReviewPage() {
       setSubmitting(false);
 
       setTimeout(() => {
-        navigate('/gift');
+        navigate(`/gift?serial=${encodeURIComponent(serialNumber)}`);
       }, 1800);
     } catch (error) {
       console.error('Review submission failed:', error);
@@ -74,124 +75,156 @@ export default function ReviewPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-background dark:bg-[#100E0D] text-primary dark:text-[#F5F2EB] transition-colors duration-300 overflow-hidden">
       <Navbar />
 
       <main className="max-w-xl mx-auto px-4 py-8 pt-28">
         <div className="flex items-center gap-3 mb-6">
           <button
             onClick={() => navigate('/scan')}
-            className="p-2 hover:bg-gray-100 rounded-full transition-colors"
+            className="p-2 hover:bg-cream dark:hover:bg-white/10 rounded-full transition-colors"
             aria-label="Go back"
           >
             <ArrowLeft size={20} />
           </button>
-          <h1 className="text-xl font-light text-gray-900">Leave a Review</h1>
-        </div>
-
-        <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
-          <div className="mb-6">
-            <p className="text-xs uppercase tracking-[0.2em] text-primary">Verified product</p>
-            <h2 className="mt-2 text-xl font-medium text-gray-900">{productName}</h2>
-            <p className="mt-1 text-xs text-gray-500 font-mono">{serialNumber}</p>
-          </div>
-
-          {success ? (
-            <div className="flex flex-col items-center justify-center py-8 text-center">
-              <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center">
-                <CheckCircle className="w-8 h-8 text-green-600" />
-              </div>
-              <h3 className="mt-4 text-lg font-medium text-gray-900">Review submitted</h3>
-              <p className="mt-2 text-sm text-gray-600">{message || 'Thank you for sharing your feedback.'}</p>
+          <div>
+            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-cream dark:bg-white/5 border border-border dark:border-[#2E2925] text-secondary dark:text-[#D4AF37] text-[10px] font-semibold tracking-[0.25em] uppercase mb-1">
+              <Sparkles size={11} className="text-[#D4AF37]" />
+              JORIQUE Authentication
             </div>
-          ) : (
-            <form onSubmit={handleSubmit} className="space-y-5">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Your rating</label>
-                <div className="flex items-center gap-1">
-                  {[1, 2, 3, 4, 5].map((star) => (
-                    <button
-                      key={star}
-                      type="button"
-                      onClick={() => setRating(star)}
-                      onMouseEnter={() => setHoverRating(star)}
-                      onMouseLeave={() => setHoverRating(0)}
-                      className="p-1 transition-transform hover:scale-110"
-                      aria-label={`Rate ${star} star${star > 1 ? 's' : ''}`}
-                    >
-                      <Star
-                        className={`w-6 h-6 ${
-                          star <= (hoverRating || rating)
-                            ? 'fill-yellow-400 text-yellow-400'
-                            : 'text-gray-300'
-                        }`}
-                      />
-                    </button>
-                  ))}
-                </div>
-              </div>
-
-              <div>
-                <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-2">Name (optional)</label>
-                <input
-                  id="name"
-                  type="text"
-                  value={customerName}
-                  onChange={(e) => setCustomerName(e.target.value)}
-                  placeholder="Your name"
-                  className="w-full rounded-xl border border-gray-200 bg-gray-50 px-3 py-2.5 text-sm outline-none focus:border-primary focus:bg-white"
-                />
-              </div>
-
-              <div>
-                <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">Email (optional)</label>
-                <input
-                  id="email"
-                  type="email"
-                  value={customerEmail}
-                  onChange={(e) => setCustomerEmail(e.target.value)}
-                  placeholder="you@example.com"
-                  className="w-full rounded-xl border border-gray-200 bg-gray-50 px-3 py-2.5 text-sm outline-none focus:border-primary focus:bg-white"
-                />
-              </div>
-
-              <div>
-                <label htmlFor="comment" className="block text-sm font-medium text-gray-700 mb-2">Your review</label>
-                <textarea
-                  id="comment"
-                  rows={5}
-                  value={comment}
-                  onChange={(e) => setComment(e.target.value)}
-                  placeholder="Tell us what you loved about your JORIQUE product..."
-                  className="w-full rounded-xl border border-gray-200 bg-gray-50 px-3 py-3 text-sm outline-none focus:border-primary focus:bg-white resize-none"
-                  required
-                />
-              </div>
-
-              {message && (
-                <div className="flex items-start gap-2 rounded-xl border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700">
-                  <AlertCircle className="mt-0.5 h-4 w-4 flex-shrink-0" />
-                  <span>{message}</span>
-                </div>
-              )}
-
-              <button
-                type="submit"
-                disabled={submitting}
-                className="w-full rounded-xl bg-primary px-4 py-3 text-sm font-medium text-white transition-opacity hover:opacity-95 disabled:cursor-not-allowed disabled:opacity-70"
-              >
-                {submitting ? (
-                  <span className="inline-flex items-center justify-center gap-2">
-                    <Loader2 className="h-4 w-4 animate-spin" />
-                    Submitting...
-                  </span>
-                ) : (
-                  'Submit review'
-                )}
-              </button>
-            </form>
-          )}
+            <h1 className="text-2xl sm:text-3xl font-light text-primary dark:text-white tracking-wide">Review Studio</h1>
+            <p className="text-xs sm:text-sm text-secondary dark:text-white/60 font-light mt-0.5">Share your tactile experience & claim your complimentary gift</p>
+          </div>
         </div>
+
+        <Parallax3DCard
+          maxRotation={6}
+          perspective={1200}
+          glareEffect={true}
+          scaleOnHover={1.01}
+          className="rounded-3xl shadow-xl border border-border dark:border-[#2E2925] overflow-hidden"
+        >
+          <div className="bg-white dark:bg-[#1A1816] rounded-3xl p-6 sm:p-8 transform-style-3d">
+            <div className="mb-6 p-4 rounded-2xl bg-cream/40 dark:bg-white/5 border border-border dark:border-[#2E2925] flex items-center justify-between gap-4">
+              <div>
+                <p className="text-xs font-semibold uppercase tracking-[0.2em] text-primary dark:text-white">{productName}</p>
+                <p className="text-[11px] font-mono tracking-wider text-secondary dark:text-white/50 mt-0.5">SERIAL: {serialNumber}</p>
+              </div>
+              <span className="inline-flex items-center gap-1 text-[10px] uppercase font-bold tracking-wider text-emerald-800 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/50 border border-emerald-200 dark:border-emerald-800 px-2.5 py-0.5 rounded-full shrink-0">
+                <CheckCircle size={10} /> Verified
+              </span>
+            </div>
+
+            {success ? (
+              <div className="py-12 text-center transform-style-3d">
+                <div className="w-16 h-16 bg-emerald-100 dark:bg-emerald-950/50 text-emerald-600 dark:text-emerald-400 rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-md">
+                  <CheckCircle size={32} />
+                </div>
+                <h2 className="text-2xl font-light tracking-wide text-primary dark:text-white mb-2">Review Submitted!</h2>
+                <p className="text-xs sm:text-sm text-secondary dark:text-white/70 font-light leading-relaxed mb-6">
+                  {message || 'Generating your exclusive complimentary gift...'}
+                </p>
+                <div className="flex items-center justify-center gap-2 text-xs text-secondary dark:text-white/60 font-light tracking-wide">
+                  <Loader2 size={14} className="animate-spin text-primary dark:text-[#D4AF37]" />
+                  <span>Redirecting to Gift Voucher Studio...</span>
+                </div>
+              </div>
+            ) : (
+              <form onSubmit={handleSubmit} className="space-y-5 transform-style-3d">
+                {message && (
+                  <div className="p-3.5 rounded-xl bg-rose-50 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-800 text-xs text-rose-700 dark:text-rose-300 flex items-center gap-2 font-light">
+                    <AlertCircle size={15} />
+                    <span>{message}</span>
+                  </div>
+                )}
+
+                {/* Rating Selector */}
+                <div>
+                  <label className="block text-xs font-semibold uppercase tracking-[0.2em] text-secondary dark:text-white/70 mb-2">
+                    Overall Satisfaction *
+                  </label>
+                  <div className="flex gap-2 text-[#D4AF37]">
+                    {[1, 2, 3, 4, 5].map((star) => (
+                      <button
+                        key={star}
+                        type="button"
+                        onClick={() => setRating(star)}
+                        onMouseEnter={() => setHoverRating(star)}
+                        onMouseLeave={() => setHoverRating(0)}
+                        className="p-1 hover:scale-110 transition-transform"
+                      >
+                        <Star
+                          size={26}
+                          fill={(hoverRating || rating) >= star ? 'currentColor' : 'none'}
+                          strokeWidth={1.5}
+                        />
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-xs font-semibold uppercase tracking-[0.2em] text-secondary dark:text-white/70 mb-1.5">
+                      Your Name
+                    </label>
+                    <input
+                      type="text"
+                      placeholder="e.g. David L."
+                      value={customerName}
+                      onChange={(e) => setCustomerName(e.target.value)}
+                      className="w-full px-4 py-3 rounded-xl bg-cream/30 dark:bg-[#100E0D] border border-border dark:border-[#2E2925] text-sm text-primary dark:text-white placeholder:text-secondary/50 placeholder:font-light dark:placeholder:text-white/30 focus:outline-none focus:border-primary dark:focus:border-[#D4AF37] transition-colors"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-xs font-semibold uppercase tracking-[0.2em] text-secondary dark:text-white/70 mb-1.5">
+                      Email Address
+                    </label>
+                    <input
+                      type="email"
+                      placeholder="david@example.com"
+                      value={customerEmail}
+                      onChange={(e) => setCustomerEmail(e.target.value)}
+                      className="w-full px-4 py-3 rounded-xl bg-cream/30 dark:bg-[#100E0D] border border-border dark:border-[#2E2925] text-sm text-primary dark:text-white placeholder:text-secondary/50 placeholder:font-light dark:placeholder:text-white/30 focus:outline-none focus:border-primary dark:focus:border-[#D4AF37] transition-colors"
+                    />
+                  </div>
+                </div>
+
+                <div>
+                  <label className="block text-xs font-semibold uppercase tracking-[0.2em] text-secondary dark:text-white/70 mb-1.5">
+                    Your Review & Notes *
+                  </label>
+                  <textarea
+                    rows={4}
+                    required
+                    placeholder="Describe the fabric feel, drape, breathability, and packaging..."
+                    value={comment}
+                    onChange={(e) => setComment(e.target.value)}
+                    className="w-full px-4 py-3 rounded-xl bg-cream/30 dark:bg-[#100E0D] border border-border dark:border-[#2E2925] text-sm text-primary dark:text-white placeholder:text-secondary/50 placeholder:font-light dark:placeholder:text-white/30 focus:outline-none focus:border-primary dark:focus:border-[#D4AF37] transition-colors resize-none leading-relaxed"
+                  />
+                </div>
+
+                <button
+                  type="submit"
+                  disabled={submitting}
+                  className="w-full py-4 rounded-xl bg-primary dark:bg-[#D4AF37] text-white dark:text-black text-xs font-bold uppercase tracking-[0.25em] hover:bg-primary/90 dark:hover:bg-[#E5C158] transition-all shadow-md flex items-center justify-center gap-2 disabled:opacity-50"
+                >
+                  {submitting ? (
+                    <>
+                      <Loader2 size={16} className="animate-spin" />
+                      <span>Submitting...</span>
+                    </>
+                  ) : (
+                    <>
+                      <Sparkles size={14} />
+                      <span>Submit Review & Claim Gift</span>
+                    </>
+                  )}
+                </button>
+              </form>
+            )}
+          </div>
+        </Parallax3DCard>
       </main>
 
       <Footer />

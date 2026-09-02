@@ -203,21 +203,21 @@ export default function QRScanner({ onScanSuccess, onScanError, onClose }: QRSca
 
       {/* Status Overlay */}
       {isScanning && (
-        <div className="mt-4 flex items-center justify-center gap-2 text-sm text-gray-600">
-          <Loader2 size={16} className="animate-spin" />
+        <div className="mt-4 flex items-center justify-center gap-2 text-sm text-secondary dark:text-white/70">
+          <Loader2 size={16} className="animate-spin text-primary dark:text-[#D4AF37]" />
           <span>Scanning for QR code...</span>
         </div>
       )}
 
       {/* Error State */}
       {error && (
-        <div className="mt-4 p-4 bg-red-50 border border-red-200 rounded-lg">
+        <div className="mt-4 p-4 bg-red-50 dark:bg-red-950/40 border border-red-200 dark:border-red-900 rounded-2xl">
           <div className="flex items-start gap-3">
             <AlertCircle className="w-5 h-5 text-red-500 flex-shrink-0 mt-0.5" />
             <div className="flex-1">
-              <p className="text-sm text-red-700">{error}</p>
+              <p className="text-sm text-red-700 dark:text-red-300">{error}</p>
               {!cameraPermission && (
-                <p className="mt-2 text-xs text-red-600">
+                <p className="mt-2 text-xs text-red-600 dark:text-red-400">
                   Please allow camera access in your browser settings and refresh the page.
                 </p>
               )}
@@ -225,7 +225,7 @@ export default function QRScanner({ onScanSuccess, onScanError, onClose }: QRSca
           </div>
           <button
             onClick={handleRetry}
-            className="mt-3 px-4 py-2 bg-red-600 text-white text-sm rounded hover:bg-red-700 transition-colors"
+            className="mt-3 px-4 py-2 bg-red-600 text-white text-xs font-semibold uppercase tracking-wider rounded-xl hover:bg-red-700 transition-colors shadow-sm"
           >
             Try Again
           </button>

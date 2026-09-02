@@ -9,23 +9,23 @@ interface QuantitySelectorProps {
 
 export default function QuantitySelector({ value, onChange, min = 1, max = 99 }: QuantitySelectorProps) {
   return (
-    <div className="flex items-center border border-border rounded-lg overflow-hidden w-fit">
+    <div className="flex items-center border border-border dark:border-[#2E2925] rounded-xl overflow-hidden w-fit bg-white dark:bg-[#1A1816]">
       <button
         onClick={() => onChange(Math.max(min, value - 1))}
         disabled={value <= min}
         aria-label="Decrease quantity"
-        className="w-10 h-10 flex items-center justify-center text-secondary hover:text-primary hover:bg-cream disabled:opacity-30 disabled:cursor-not-allowed transition-colors duration-150"
+        className="w-10 h-10 flex items-center justify-center text-secondary dark:text-white/60 hover:text-primary dark:hover:text-white hover:bg-cream dark:hover:bg-white/10 disabled:opacity-30 disabled:cursor-not-allowed transition-colors duration-150"
       >
         <Minus size={14} strokeWidth={1.5} />
       </button>
-      <span className="w-12 h-10 flex items-center justify-center text-sm font-medium text-text border-x border-border select-none">
+      <span className="w-12 h-10 flex items-center justify-center text-sm font-semibold text-primary dark:text-white border-x border-border dark:border-[#2E2925] select-none">
         {value}
       </span>
       <button
         onClick={() => onChange(Math.min(max, value + 1))}
         disabled={value >= max}
         aria-label="Increase quantity"
-        className="w-10 h-10 flex items-center justify-center text-secondary hover:text-primary hover:bg-cream disabled:opacity-30 disabled:cursor-not-allowed transition-colors duration-150"
+        className="w-10 h-10 flex items-center justify-center text-secondary dark:text-white/60 hover:text-primary dark:hover:text-white hover:bg-cream dark:hover:bg-white/10 disabled:opacity-30 disabled:cursor-not-allowed transition-colors duration-150"
       >
         <Plus size={14} strokeWidth={1.5} />
       </button>

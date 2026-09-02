@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="100%" height="100%">
+  <defs>
+    <linearGradient id="goldGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#E5C158" />
+      <stop offset="50%" stop-color="#D4AF37" />
+      <stop offset="100%" stop-color="#AA820A" />
+    </linearGradient>
+    <radialGradient id="bgGrad" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#1A1816" />
+      <stop offset="100%" stop-color="#0E0D0C" />
+    </radialGradient>
+  </defs>
+  <!-- Background Rounded Shield -->
+  <rect width="512" height="512" rx="128" fill="url(#bgGrad)" />
+  <rect width="500" height="500" x="6" y="6" rx="122" fill="none" stroke="url(#goldGrad)" stroke-width="4" stroke-opacity="0.3" />
+  
+  <!-- JORIQUE "J" Monogram -->
+  <path 
+    d="M296 140 H344 V296 C344 356 304 392 240 392 C184 392 148 358 144 316 L192 306 C194 330 214 348 240 348 C276 348 296 328 296 292 V140 Z" 
+    fill="url(#goldGrad)" 
+  />
+  
+  <!-- Accent Diamond Sparkle -->
+  <path 
+    d="M344 116 L350 128 L362 134 L350 140 L344 152 L338 140 L326 134 L338 128 Z" 
+    fill="#F5E6C8" 
+  />
+</svg>

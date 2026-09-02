@@ -119,10 +119,10 @@ export default function GoogleAuthButton({
       type="button"
       onClick={handleClick}
       disabled={loading}
-      className="w-full flex items-center justify-center gap-3 bg-white hover:bg-neutral-50 text-primary border border-border rounded-lg py-3.5 px-4 text-xs font-medium tracking-widest uppercase transition-all shadow-sm hover:shadow hover:border-gray-300 disabled:opacity-60"
+      className="w-full flex items-center justify-center gap-3 bg-white dark:bg-[#1A1816] hover:bg-neutral-50 dark:hover:bg-[#221F1C] text-primary dark:text-white border border-border dark:border-[#2E2925] rounded-xl py-3.5 px-4 text-xs font-semibold tracking-widest uppercase transition-all shadow-sm hover:shadow hover:border-gray-300 dark:hover:border-[#D4AF37]/50 disabled:opacity-60"
     >
       {loading ? (
-        <Loader2 size={16} className="animate-spin text-primary" />
+        <Loader2 size={16} className="animate-spin text-primary dark:text-[#D4AF37]" />
       ) : (
         <svg className="w-4 h-4" viewBox="0 0 24 24">
           <path

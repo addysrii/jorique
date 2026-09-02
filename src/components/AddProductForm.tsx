@@ -1,8 +1,10 @@
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
-import { ArrowLeft, Save, Upload, X, Download, ChevronDown, ChevronUp } from 'lucide-react';
+import { ArrowLeft, Save, Upload, X, Download, ChevronDown, ChevronUp, Printer, Sparkles, QrCode, Barcode as BarcodeIcon } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { QRCodeSVG } from 'qrcode.react';
+import Barcode128 from './Barcode128';
+import ProductPackagingLabel from './ProductPackagingLabel';
 import { supabase } from '../lib/supabase';
 import { createProductRequest } from '../lib/api';
 import { generateSKU, generateSerials } from '../lib/utils/product';
@@ -15,8 +17,11 @@ export default function AddProductForm() {
   const [uploadError, setUploadError] = useState('');
   const [showAllSerials, setShowAllSerials] = useState(false);
   const [showQRModal, setShowQRModal] = useState(false);
+  const [labelShowChannels, setLabelShowChannels] = useState(true);
+  const [labelShowQR, setLabelShowQR] = useState(true);
   const [generatedSerials, setGeneratedSerials] = useState<string[]>([]);
   const [productName, setProductName] = useState('');
+  const [createdProductDetails, setCreatedProductDetails] = useState<{ price?: number; cost?: number; category?: string; sku?: string }>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
   const { token } = useAuth();
@@ -79,13 +84,10 @@ export default function AddProductForm() {
       const updatedImages = [...images, ...uploadedUrls];
       setImages(updatedImages);
       setValue('images', updatedImages);
-
     } catch (error) {
-      console.error('Upload error:', error);
-      setUploadError('Failed to upload images. Please try again.');
+      setUploadError(error instanceof Error ? error.message : 'Error uploading image');
     } finally {
       setUploading(false);
-      e.target.value = '';
     }
   };
 
@@ -99,30 +101,28 @@ export default function AddProductForm() {
     const svg = document.getElementById(`qr-${serial}`);
     if (!svg) return;
 
+    const svgData = new XMLSerializer().serializeToString(svg);
     const canvas = document.createElement('canvas');
     const ctx = canvas.getContext('2d');
-    const svgData = new XMLSerializer().serializeToString(svg);
     const img = new Image();
-    
+
     img.onload = () => {
-      canvas.width = 200;
-      canvas.height = 200;
-      ctx?.drawImage(img, 0, 0, 200, 200);
-      
-      const link = document.createElement('a');
-      link.download = `${serial}-qr.png`;
-      link.href = canvas.toDataURL('image/png');
-      link.click();
-      URL.revokeObjectURL(img.src);
+      canvas.width = img.width;
+      canvas.height = img.height;
+      ctx?.drawImage(img, 0, 0);
+      const pngFile = canvas.toDataURL('image/png');
+
+      const downloadLink = document.createElement('a');
+      downloadLink.download = `QR-${serial}.png`;
+      downloadLink.href = pngFile;
+      downloadLink.click();
     };
-    
-    img.src = URL.createObjectURL(new Blob([svgData], { type: 'image/svg+xml' }));
+
+    img.src = 'data:image/svg+xml;base64,' + btoa(svgData);
   };
 
-  const downloadAllQRs = () => {
-    generatedSerials.forEach((serial, index) => {
-      setTimeout(() => downloadQR(serial), index * 300);
-    });
+  const handlePrintLabels = () => {
+    window.print();
   };
 
   const handleReset = () => {
@@ -166,6 +166,14 @@ export default function AddProductForm() {
       const serials = result.data.serials.map((serial) => serial.serial_number);
       setGeneratedSerials(serials);
       setProductName(data.name);
+      setCreatedProductDetails({
+        price: data.price,
+        discount_price: data.discount_price,
+        badge: data.badge,
+        cost: data.cost,
+        category: data.category,
+        sku: result.data.product.sku,
+      });
       setIsSuccess(true);
       
       if (serials.length > 0) {
@@ -188,23 +196,32 @@ export default function AddProductForm() {
   };
 
   return (
-    <main className="min-h-screen bg-gray-50 px-6 pb-20 pt-28 lg:px-12">
+    <main className="min-h-screen bg-[#F8F7F5] dark:bg-[#100E0D] text-primary dark:text-[#F5F2EB] px-6 pb-20 pt-28 lg:px-12 transition-colors duration-300">
       <div className="mx-auto max-w-4xl">
-        <header className="mb-10">
-          <Link to="/admin/products" className="inline-flex items-center gap-2 text-sm text-gray-600 hover:text-gray-900">
-            <ArrowLeft size={16} /> Back to products
+        <header className="mb-8">
+          <Link to="/admin" className="inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-secondary dark:text-white/60 hover:text-primary dark:hover:text-white transition-colors">
+            <ArrowLeft size={16} /> Back to JORIQUE OS Dashboard
           </Link>
-          <h1 className="mt-4 text-3xl font-light text-gray-900">Add New Product</h1>
+          <div className="flex items-center justify-between mt-3">
+            <div>
+              <h1 className="text-3xl font-light text-primary dark:text-white tracking-wide">Register New Product & Batch</h1>
+              <p className="text-xs text-secondary dark:text-white/60 mt-1">Auto-generates SKU, Code128 physical barcodes, and serial QR codes</p>
+            </div>
+            <span className="px-3 py-1 bg-cream dark:bg-white/5 rounded-full text-[11px] font-semibold tracking-widest uppercase text-primary dark:text-[#D4AF37] border border-border dark:border-[#2E2925]">
+              MVP v1 Spec
+            </span>
+          </div>
         </header>
 
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-6 bg-white p-6 shadow-sm rounded-lg">
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-6 bg-white dark:bg-[#1A1816] p-8 shadow-sm rounded-3xl border border-border dark:border-[#2E2925]">
           
+          {/* Images upload */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label className="block text-xs font-semibold uppercase tracking-wider text-secondary dark:text-white/70 mb-2">
               Product Images
             </label>
             
-            <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center hover:border-gray-400 transition-colors">
+            <div className="border-2 border-dashed border-border dark:border-[#2E2925] rounded-2xl p-6 text-center hover:border-primary/40 dark:hover:border-white/40 transition-colors bg-cream/20 dark:bg-white/5">
               <input
                 type="file"
                 accept="image/*"
@@ -215,35 +232,35 @@ export default function AddProductForm() {
                 id="image-upload"
               />
               <label htmlFor="image-upload" className="cursor-pointer block">
-                <Upload className="mx-auto h-12 w-12 text-gray-400" />
-                <p className="mt-2 text-sm text-gray-600">
-                  {uploading ? 'Uploading...' : 'Click to upload images'}
+                <Upload className="mx-auto h-10 w-10 text-secondary dark:text-white/50" />
+                <p className="mt-2 text-xs font-medium text-primary dark:text-white">
+                  {uploading ? 'Uploading assets...' : 'Click to select high-resolution images'}
                 </p>
-                <p className="text-xs text-gray-500">
+                <p className="text-[11px] text-secondary dark:text-white/50 mt-1">
                   PNG, JPG, WEBP (Max 5MB each)
                 </p>
               </label>
             </div>
 
             {uploadError && (
-              <p className="mt-2 text-sm text-red-600">{uploadError}</p>
+              <p className="mt-2 text-xs text-red-600 dark:text-red-400">{uploadError}</p>
             )}
 
             {images.length > 0 && (
               <div className="mt-4 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
                 {images.map((url, index) => (
-                  <div key={index} className="relative group">
+                  <div key={index} className="relative group rounded-xl overflow-hidden border border-border dark:border-[#2E2925] aspect-square">
                     <img
                       src={url}
                       alt={`Product ${index + 1}`}
-                      className="w-full h-32 object-cover rounded-lg border border-gray-200"
+                      className="w-full h-full object-cover"
                     />
                     <button
                       type="button"
                       onClick={() => removeImage(index)}
-                      className="absolute top-2 right-2 bg-red-500 text-white rounded-full p-1 hover:bg-red-600 transition-colors opacity-0 group-hover:opacity-100"
+                      className="absolute top-2 right-2 bg-red-500 text-white rounded-full p-1 hover:bg-red-600 transition-colors opacity-0 group-hover:opacity-100 shadow-md"
                     >
-                      <X size={14} />
+                      <X size={13} />
                     </button>
                   </div>
                 ))}
@@ -251,57 +268,65 @@ export default function AddProductForm() {
             )}
           </div>
 
-          <div>
-            <label className="block text-sm font-medium text-gray-700">Product Name *</label>
-            <input
-              type="text"
-              {...register('name', { required: 'Name is required' })}
-              className="mt-1 w-full rounded-md border border-gray-300 px-3 py-2 focus:border-blue-500 focus:outline-none"
-            />
-            {errors.name && <p className="mt-1 text-sm text-red-600">{errors.name.message}</p>}
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-gray-700">Category *</label>
-            <select
-              {...register('category', { required: 'Category is required' })}
-              className="mt-1 w-full rounded-md border border-gray-300 px-3 py-2 focus:border-blue-500 focus:outline-none"
-            >
-              <option value="">Select category</option>
-              <option value="Bedsheet">Bedsheet</option>
-              <option value="Pillow">Pillow</option>
-              <option value="Blanket">Blanket</option>
-              <option value="Towel">Towel</option>
-              <option value="Mattress">Mattress</option>
-              <option value="Cover">Cover</option>
-              <option value="Comforter">Comforter</option>
-              <option value="Cushion">Cushion</option>
-            </select>
-            {errors.category && <p className="mt-1 text-sm text-red-600">{errors.category.message}</p>}
-          </div>
-
-          <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
+          <div className="grid sm:grid-cols-2 gap-5">
             <div>
-              <label className="block text-sm font-medium text-gray-700">Price (₹) *</label>
+              <label className="block text-xs font-semibold uppercase tracking-wider text-secondary dark:text-white/70 mb-1.5">Product Name *</label>
+              <input
+                type="text"
+                {...register('name', { required: 'Name is required' })}
+                placeholder="e.g. 800TC Egyptian Cotton Sateen Duvet"
+                className="w-full rounded-xl border border-border dark:border-[#2E2925] bg-cream/30 dark:bg-[#100E0D] px-4 py-3 text-sm text-primary dark:text-white outline-none focus:border-primary dark:focus:border-[#D4AF37] transition-colors"
+              />
+              {errors.name && <p className="mt-1 text-xs text-red-600 dark:text-red-400">{errors.name.message}</p>}
+            </div>
+
+            <div>
+              <label className="block text-xs font-semibold uppercase tracking-wider text-secondary dark:text-white/70 mb-1.5">Category *</label>
+              <select
+                {...register('category', { required: 'Category is required' })}
+                className="w-full rounded-xl border border-border dark:border-[#2E2925] bg-cream/30 dark:bg-[#100E0D] px-4 py-3 text-sm text-primary dark:text-white outline-none focus:border-primary dark:focus:border-[#D4AF37] transition-colors"
+              >
+                <option value="" className="dark:bg-[#1A1816]">Select Category</option>
+                <option value="Bedsheets" className="dark:bg-[#1A1816]">Bedsheets (BS)</option>
+                <option value="Home Decor" className="dark:bg-[#1A1816]">Home Decor (HD)</option>
+                <option value="Bath" className="dark:bg-[#1A1816]">Bath (BT)</option>
+                <option value="Kitchen" className="dark:bg-[#1A1816]">Kitchen (KT)</option>
+                <option value="Accessories" className="dark:bg-[#1A1816]">Accessories (AC)</option>
+              </select>
+              {errors.category && <p className="mt-1 text-xs text-red-600 dark:text-red-400">{errors.category.message}</p>}
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-5">
+            <div>
+              <label className="block text-xs font-semibold uppercase tracking-wider text-secondary dark:text-white/70 mb-1.5">Retail Price (₹) *</label>
               <input
                 type="number"
                 step="0.01"
-                {...register('price', { required: 'Price is required', min: 0, valueAsNumber: true })}
-                className="mt-1 w-full rounded-md border border-gray-300 px-3 py-2 focus:border-blue-500 focus:outline-none"
+                {...register('price', {
+                  required: 'Price is required',
+                  min: { value: 0, message: 'Must be positive' },
+                  valueAsNumber: true,
+                })}
+                placeholder="4999"
+                className="w-full rounded-xl border border-border dark:border-[#2E2925] bg-cream/30 dark:bg-[#100E0D] px-4 py-3 text-sm text-primary dark:text-white outline-none focus:border-primary dark:focus:border-[#D4AF37] transition-colors"
               />
-              {errors.price && <p className="mt-1 text-sm text-red-600">{errors.price.message}</p>}
+              {errors.price && <p className="mt-1 text-xs text-red-600 dark:text-red-400">{errors.price.message}</p>}
             </div>
+
             <div>
-              <label className="block text-sm font-medium text-gray-700">Discount Price</label>
+              <label className="block text-xs font-semibold uppercase tracking-wider text-secondary dark:text-white/70 mb-1.5">Discount Price (₹)</label>
               <input
                 type="number"
                 step="0.01"
-                {...register('discount_price', { min: 0, valueAsNumber: true })}
-                className="mt-1 w-full rounded-md border border-gray-300 px-3 py-2 focus:border-blue-500 focus:outline-none"
+                {...register('discount_price', { valueAsNumber: true })}
+                placeholder="3999"
+                className="w-full rounded-xl border border-border dark:border-[#2E2925] bg-cream/30 dark:bg-[#100E0D] px-4 py-3 text-sm text-primary dark:text-white outline-none focus:border-primary dark:focus:border-[#D4AF37] transition-colors"
               />
             </div>
+
             <div>
-              <label className="block text-sm font-medium text-gray-700">Quantity *</label>
+              <label className="block text-xs font-semibold uppercase tracking-wider text-secondary dark:text-white/70 mb-1.5">Initial Units / Quantity *</label>
               <input
                 type="number"
                 min={1}
@@ -309,194 +334,247 @@ export default function AddProductForm() {
                 {...register('quantity', {
                   required: 'Quantity is required',
                   min: { value: 1, message: 'Quantity must be at least 1' },
-                  max: { value: 100000, message: 'Quantity cannot exceed 100000' },
+                  max: { value: 100000, message: 'Max 100,000' },
                   valueAsNumber: true,
                 })}
-                className="mt-1 w-full rounded-md border border-gray-300 px-3 py-2 focus:border-blue-500 focus:outline-none"
+                className="w-full rounded-xl border border-border dark:border-[#2E2925] bg-cream/30 dark:bg-[#100E0D] px-4 py-3 text-sm text-primary dark:text-white outline-none focus:border-primary dark:focus:border-[#D4AF37] transition-colors"
               />
-              {errors.quantity && <p className="mt-1 text-sm text-red-600">{errors.quantity.message}</p>}
+              {errors.quantity && <p className="mt-1 text-xs text-red-600 dark:text-red-400">{errors.quantity.message}</p>}
             </div>
           </div>
 
-          <div>
-            <label className="block text-sm font-medium text-gray-700">Badge</label>
-            <select
-              {...register('badge')}
-              className="mt-1 w-full rounded-md border border-gray-300 px-3 py-2 focus:border-blue-500 focus:outline-none"
-            >
-              <option value="">No Badge</option>
-              <option value="NEW">New</option>
-              <option value="SALE">Sale</option>
-              <option value="BEST SELLER">Best Seller</option>
-              <option value="LIMITED">Limited Edition</option>
-              <option value="EXCLUSIVE">Exclusive</option>
-            </select>
-            <p className="mt-1 text-xs text-gray-500">Select a badge to display on the product card</p>
-          </div>
-
-          <div className="rounded-md border border-gray-200 bg-gray-50 p-4">
-            <div className="flex items-center justify-between">
-              <p className="text-sm font-medium text-gray-700">Serial Preview</p>
-              <span className="text-xs text-gray-500">Total: {previewSerials.length}</span>
-            </div>
-            <p className="mt-1 text-xs text-gray-500">SKU will be generated automatically. Preview: {previewSku}</p>
-            <div className="mt-2 grid gap-1 text-sm text-gray-700 sm:grid-cols-2">
-              {(showAllSerials ? previewSerials : previewSerials.slice(0, 5)).map((serial) => (
-                <span key={serial} className="font-mono text-xs bg-white px-2 py-1 rounded border border-gray-200">
-                  {serial}
-                </span>
-              ))}
-            </div>
-            {previewSerials.length > 5 && (
-              <button
-                type="button"
-                onClick={() => setShowAllSerials((value) => !value)}
-                className="mt-3 text-sm font-medium text-blue-700 hover:underline inline-flex items-center gap-1"
-              >
-                {showAllSerials ? 'Show Less' : `Show All (${previewSerials.length})`}
-                {showAllSerials ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
-              </button>
-            )}
-          </div>
-
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-5">
             <div>
-              <label className="block text-sm font-medium text-gray-700">Supplier</label>
+              <label className="block text-xs font-semibold uppercase tracking-wider text-secondary dark:text-white/70 mb-1.5">Supplier / Mill</label>
               <input
                 type="text"
                 {...register('supplier')}
-                className="mt-1 w-full rounded-md border border-gray-300 px-3 py-2 focus:border-blue-500 focus:outline-none"
+                placeholder="e.g. Guimarães Weaving Mill"
+                className="w-full rounded-xl border border-border dark:border-[#2E2925] bg-cream/30 dark:bg-[#100E0D] px-4 py-3 text-sm text-primary dark:text-white outline-none focus:border-primary dark:focus:border-[#D4AF37] transition-colors"
               />
             </div>
+
             <div>
-              <label className="block text-sm font-medium text-gray-700">Year</label>
+              <label className="block text-xs font-semibold uppercase tracking-wider text-secondary dark:text-white/70 mb-1.5">Collection Year</label>
               <input
                 type="number"
                 {...register('year', { valueAsNumber: true })}
                 defaultValue={new Date().getFullYear()}
-                className="mt-1 w-full rounded-md border border-gray-300 px-3 py-2 focus:border-blue-500 focus:outline-none"
+                className="w-full rounded-xl border border-border dark:border-[#2E2925] bg-cream/30 dark:bg-[#100E0D] px-4 py-3 text-sm text-primary dark:text-white outline-none focus:border-primary dark:focus:border-[#D4AF37] transition-colors"
               />
+            </div>
+
+            <div>
+              <label className="block text-xs font-semibold uppercase tracking-wider text-secondary dark:text-white/70 mb-1.5">Storefront Badge</label>
+              <select
+                {...register('badge')}
+                className="w-full rounded-xl border border-border dark:border-[#2E2925] bg-cream/30 dark:bg-[#100E0D] px-4 py-3 text-sm text-primary dark:text-white outline-none focus:border-primary dark:focus:border-[#D4AF37] transition-colors"
+              >
+                <option value="" className="dark:bg-[#1A1816]">No Badge</option>
+                <option value="NEW" className="dark:bg-[#1A1816]">New</option>
+                <option value="FEATURED" className="dark:bg-[#1A1816]">Featured</option>
+                <option value="BEST SELLER" className="dark:bg-[#1A1816]">Best Seller</option>
+                <option value="LIMITED" className="dark:bg-[#1A1816]">Limited Edition</option>
+              </select>
             </div>
           </div>
 
+          {/* Real-time SKU & Serial Preview */}
+          <div className="rounded-2xl border border-border dark:border-[#2E2925] bg-cream/40 dark:bg-white/5 p-5">
+            <div className="flex items-center justify-between mb-2">
+              <div className="flex items-center gap-2">
+                <Sparkles size={14} className="text-[#D4AF37]" />
+                <span className="text-xs font-bold uppercase tracking-wider text-primary dark:text-white">Generated SKU & Serial Structure</span>
+              </div>
+              <span className="text-xs font-mono font-medium text-secondary dark:text-white/60">Units: {previewSerials.length}</span>
+            </div>
+            <p className="text-xs text-secondary dark:text-white/70 mb-3">
+              SKU: <span className="font-mono font-bold text-primary dark:text-[#D4AF37]">{previewSku}</span> • Sequential physical IDs:
+            </p>
+            
+            <div className="grid gap-2 text-xs text-primary sm:grid-cols-2">
+              {(showAllSerials ? previewSerials : previewSerials.slice(0, 4)).map((serial) => (
+                <div key={serial} className="flex items-center justify-between bg-white dark:bg-[#100E0D] px-3 py-2 rounded-xl border border-border dark:border-[#2E2925] font-mono text-[11px] shadow-sm text-primary dark:text-white">
+                  <span>{serial}</span>
+                  <span className="text-[9px] text-emerald-700 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/40 px-2 py-0.5 rounded-full font-sans font-semibold">Available</span>
+                </div>
+              ))}
+            </div>
+
+            {previewSerials.length > 4 && (
+              <button
+                type="button"
+                onClick={() => setShowAllSerials((value) => !value)}
+                className="mt-3 text-xs font-semibold text-primary dark:text-[#D4AF37] hover:underline inline-flex items-center gap-1"
+              >
+                {showAllSerials ? 'Show Less' : `Show All (${previewSerials.length} Serials)`}
+                {showAllSerials ? <ChevronUp size={13} /> : <ChevronDown size={13} />}
+              </button>
+            )}
+          </div>
+
           <div>
-            <label className="block text-sm font-medium text-gray-700">Tags (comma separated)</label>
+            <label className="block text-xs font-semibold uppercase tracking-wider text-secondary dark:text-white/70 mb-1.5">Tags (comma separated)</label>
             <input
               type="text"
               {...register('tags')}
-              placeholder="cotton, premium, soft"
-              className="mt-1 w-full rounded-md border border-gray-300 px-3 py-2 focus:border-blue-500 focus:outline-none"
+              placeholder="Egyptian Cotton, 800TC, Sateen, OEKO-TEX"
+              className="w-full rounded-xl border border-border dark:border-[#2E2925] bg-cream/30 dark:bg-[#100E0D] px-4 py-3 text-sm text-primary dark:text-white outline-none focus:border-primary dark:focus:border-[#D4AF37] transition-colors"
             />
-            <p className="mt-1 text-xs text-gray-500">Separate tags with commas: e.g., cotton, premium, soft</p>
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700">Description</label>
+            <label className="block text-xs font-semibold uppercase tracking-wider text-secondary dark:text-white/70 mb-1.5">Description</label>
             <textarea
-              rows={4}
+              rows={3}
               {...register('description')}
-              placeholder="Detailed product description..."
-              className="mt-1 w-full rounded-md border border-gray-300 px-3 py-2 focus:border-blue-500 focus:outline-none"
+              placeholder="Detailed product specifications, weave origin, and tactile notes..."
+              className="w-full rounded-xl border border-border dark:border-[#2E2925] bg-cream/30 dark:bg-[#100E0D] px-4 py-3 text-sm text-primary dark:text-white outline-none focus:border-primary dark:focus:border-[#D4AF37] resize-none transition-colors"
             />
           </div>
 
-          <div className="flex gap-3 pt-4 border-t">
+          <div className="flex items-center gap-3 pt-4 border-t border-border dark:border-[#2E2925]">
             <button
               type="submit"
               disabled={isSubmitting || uploading || formSubmitting}
-              className="inline-flex items-center gap-2 rounded-md bg-black px-6 py-2 text-sm text-white hover:bg-blue-700 disabled:opacity-50"
+              className="inline-flex items-center gap-2 rounded-xl bg-primary dark:bg-[#D4AF37] px-8 py-3.5 text-xs font-bold uppercase tracking-widest text-white dark:text-black hover:bg-primary/90 dark:hover:bg-[#E5C158] transition-all shadow-md disabled:opacity-50"
             >
-              <Save size={16} />
-              {isSubmitting ? 'Creating Product...' : 'Save Product'}
+              <Save size={15} />
+              {isSubmitting ? 'Creating & Generating Batch...' : 'Save Product & Auto-Generate Serials'}
             </button>
             <button
               type="button"
               onClick={handleReset}
-              className="rounded-md border border-gray-300 px-6 py-2 text-sm text-gray-700 hover:bg-gray-50"
+              className="rounded-xl border border-border dark:border-[#2E2925] px-6 py-3.5 text-xs font-semibold uppercase tracking-widest text-secondary dark:text-white/70 hover:bg-cream dark:hover:bg-white/10 transition-colors"
             >
               Clear
             </button>
           </div>
         </form>
 
+        {/* Success Notice Bar */}
         {isSuccess && generatedSerials.length > 0 && (
-          <div className="mt-6 bg-green-50 border border-green-200 rounded-lg p-4 flex items-center justify-between">
+          <div className="mt-6 bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800 rounded-2xl p-5 flex flex-col sm:flex-row items-center justify-between gap-4">
             <div>
-              <p className="text-sm font-medium text-green-800">
-                Product created successfully! {generatedSerials.length} serials generated.
+              <p className="text-sm font-semibold text-emerald-900 dark:text-emerald-300">
+                Product Created! Generated {generatedSerials.length} Unique Physical Unit Serials.
               </p>
-              <p className="text-xs text-green-600">{productName}</p>
+              <p className="text-xs text-emerald-700 dark:text-emerald-400 mt-0.5">{productName}</p>
             </div>
-            <button
-              onClick={() => setShowQRModal(true)}
-              className="inline-flex items-center gap-2 bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 transition-colors text-sm"
-            >
-              <Download size={16} />
-              Download QR Codes
-            </button>
+            <div className="flex gap-2">
+              <button
+                onClick={() => setShowQRModal(true)}
+                className="inline-flex items-center gap-2 bg-emerald-700 dark:bg-emerald-600 text-white px-5 py-2.5 rounded-xl hover:bg-emerald-800 transition-colors text-xs font-bold uppercase tracking-wider shadow-sm"
+              >
+                <Printer size={14} />
+                View & Print Labels
+              </button>
+            </div>
           </div>
         )}
 
+        {/* Modal: Physical Packaging Barcode Labels */}
         {showQRModal && generatedSerials.length > 0 && (
-          <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-            <div className="bg-white rounded-lg max-w-4xl w-full max-h-[90vh] overflow-hidden">
-              <div className="flex items-center justify-between p-4 border-b">
+          <div className="fixed inset-0 bg-black/75 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+            <div className="bg-white dark:bg-[#1A1816] rounded-3xl max-w-5xl w-full max-h-[92vh] flex flex-col overflow-hidden shadow-2xl border border-border dark:border-[#2E2925]">
+              {/* Modal Header */}
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between p-6 border-b border-border dark:border-[#2E2925] bg-warm-white dark:bg-[#151311] gap-4">
                 <div>
-                  <h2 className="text-xl font-semibold text-gray-900">
-                    QR Codes Generated
+                  <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-cream dark:bg-white/5 border border-border dark:border-[#2E2925] text-[10px] font-bold uppercase tracking-[0.2em] text-[#D4AF37] mb-1">
+                    Batch Ready for Packaging
+                  </div>
+                  <h2 className="text-xl font-light text-primary dark:text-white">
+                    Retail Packaging Barcode Stickers
                   </h2>
-                  <p className="text-sm text-gray-600">
-                    {productName} - {generatedSerials.length} serials
+                  <p className="text-xs text-secondary dark:text-white/60 mt-0.5">
+                    {productName} • {generatedSerials.length} Units Generated
                   </p>
                 </div>
-                <button
-                  onClick={() => setShowQRModal(false)}
-                  className="p-2 hover:bg-gray-100 rounded-full transition-colors"
-                >
-                  <X size={20} />
-                </button>
+
+                {/* Customization Options Bar */}
+                <div className="flex flex-wrap items-center gap-3">
+                  {/* Badge input / preset */}
+                  <div className="flex items-center gap-1.5 bg-cream/50 dark:bg-white/5 px-3 py-1 rounded-xl border border-border dark:border-[#2E2925]">
+                    <span className="text-[11px] font-bold uppercase tracking-wider text-secondary dark:text-white/60">Badge:</span>
+                    <input
+                      type="text"
+                      placeholder="e.g. Bestseller"
+                      value={createdProductDetails.badge || ''}
+                      onChange={(e) => setCreatedProductDetails(prev => ({ ...prev, badge: e.target.value }))}
+                      className="bg-white dark:bg-[#1A1816] text-primary dark:text-white text-xs px-2 py-1 rounded border border-border dark:border-[#2E2925] w-32 outline-none font-semibold"
+                    />
+                  </div>
+
+                  <label className="inline-flex items-center gap-2 text-xs font-semibold text-secondary dark:text-white/70 cursor-pointer bg-cream/50 dark:bg-white/5 px-3 py-1.5 rounded-xl border border-border dark:border-[#2E2925]">
+                    <input
+                      type="checkbox"
+                      checked={labelShowChannels}
+                      onChange={(e) => setLabelShowChannels(e.target.checked)}
+                      className="accent-[#3F3A36] dark:accent-[#D4AF37] rounded"
+                    />
+                    <span>Marketplace Badges</span>
+                  </label>
+
+                  <label className="inline-flex items-center gap-2 text-xs font-semibold text-secondary dark:text-white/70 cursor-pointer bg-cream/50 dark:bg-white/5 px-3 py-1.5 rounded-xl border border-border dark:border-[#2E2925]">
+                    <input
+                      type="checkbox"
+                      checked={labelShowQR}
+                      onChange={(e) => setLabelShowQR(e.target.checked)}
+                      className="accent-[#3F3A36] dark:accent-[#D4AF37] rounded"
+                    />
+                    <span>Include QR Code</span>
+                  </label>
+
+                  <button
+                    onClick={() => setShowQRModal(false)}
+                    className="p-2 hover:bg-cream dark:hover:bg-white/10 rounded-full transition-colors text-secondary dark:text-white/60 ml-auto"
+                  >
+                    <X size={20} />
+                  </button>
+                </div>
               </div>
 
-              <div className="p-4 overflow-y-auto max-h-[60vh]">
-                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
+              {/* Printable Grid of Labels */}
+              <div className="p-6 overflow-y-auto flex-1 bg-gray-100 dark:bg-[#100E0D]">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-6 max-w-4xl mx-auto">
                   {generatedSerials.map((serial) => (
-                    <div key={serial} className="border rounded-lg p-3 text-center hover:shadow-md transition-shadow">
-                      <div className="bg-white p-2 rounded">
-                        <QRCodeSVG
-                          id={`qr-${serial}`}
-                          value={`https://joriqie.in/p/${serial}`}
-                          size={120}
-                          level="H"
-                          includeMargin
-                        />
-                      </div>
-                      <p className="text-xs font-mono mt-2 truncate text-gray-600">{serial}</p>
-                      <button
-                        onClick={() => downloadQR(serial)}
-                        className="mt-2 inline-flex items-center gap-1 text-xs text-blue-600 hover:text-blue-800"
-                      >
-                        <Download size={12} />
-                        Download
-                      </button>
-                    </div>
+                    <ProductPackagingLabel
+                      key={serial}
+                      productName={productName}
+                      sku={createdProductDetails.sku || previewSku}
+                      serialNumber={serial}
+                      price={createdProductDetails.price || watch('price') || 1882}
+                      discountPrice={createdProductDetails.discount_price || watch('discount_price')}
+                      badge={createdProductDetails.badge || watch('badge')}
+                      cost={createdProductDetails.cost}
+                      category={createdProductDetails.category || watch('category') || 'BED SHEET (DOUBLE BED)'}
+                      showChannels={labelShowChannels}
+                      showQR={labelShowQR}
+                      className="shadow-md hover:shadow-lg transition-shadow"
+                    />
                   ))}
                 </div>
               </div>
 
-              <div className="flex gap-3 p-4 border-t bg-gray-50">
-                <button
-                  onClick={downloadAllQRs}
-                  className="flex-1 inline-flex items-center justify-center gap-2 bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition-colors"
-                >
-                  <Download size={16} />
-                  Download All QR Codes
-                </button>
-                <button
-                  onClick={() => setShowQRModal(false)}
-                  className="px-6 py-2 border border-gray-300 rounded hover:bg-gray-100 transition-colors"
-                >
-                  Close
-                </button>
+              {/* Action Buttons Footer */}
+              <div className="flex flex-col sm:flex-row items-center justify-between p-5 border-t border-border dark:border-[#2E2925] bg-white dark:bg-[#1A1816] gap-3">
+                <p className="text-xs text-secondary dark:text-white/60">
+                  Ready for thermal packaging label printers & retail box application
+                </p>
+                <div className="flex gap-3 w-full sm:w-auto">
+                  <button
+                    onClick={handlePrintLabels}
+                    className="flex-1 sm:flex-initial inline-flex items-center justify-center gap-2 bg-primary dark:bg-[#D4AF37] text-white dark:text-black px-6 py-2.5 rounded-xl text-xs font-bold uppercase tracking-[0.2em] shadow-md hover:bg-primary/90 dark:hover:bg-[#E5C158] transition-all"
+                  >
+                    <Printer size={14} /> Print Sticker Sheet
+                  </button>
+                  <button
+                    onClick={() => setShowQRModal(false)}
+                    className="px-6 py-2.5 border border-border dark:border-[#2E2925] rounded-xl text-xs font-bold uppercase tracking-[0.2em] text-secondary dark:text-white/70 hover:bg-cream dark:hover:bg-white/10 transition-colors"
+                  >
+                    Close
+                  </button>
+                </div>
               </div>
             </div>
           </div>

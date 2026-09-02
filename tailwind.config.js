@@ -1,5 +1,6 @@
 /** @type {import('tailwindcss').Config} */
 export default {
+  darkMode: 'class',
   content: ['./index.html', './src/**/*.{js,ts,jsx,tsx}'],
   theme: {
     extend: {
@@ -11,6 +12,14 @@ export default {
         text: '#2E2E2E',
         cream: '#F0EDE8',
         'warm-white': '#FAFAF8',
+        // Dark Mode Luxury Obsidian Palette
+        'dark-bg': '#100E0D',
+        'dark-surface': '#191615',
+        'dark-card': '#221F1C',
+        'dark-border': '#2E2925',
+        'dark-text': '#F5F2EB',
+        'dark-muted': '#9C948D',
+        'dark-gold': '#D4AF37',
       },
       fontFamily: {
         sans: ['DM Sans', 'Inter', 'system-ui', 'sans-serif'],

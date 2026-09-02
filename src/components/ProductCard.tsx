@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { Heart } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { Product } from '../types';
+import Parallax3DCard from './Parallax3DCard';
 
 interface ProductCardProps {
   product: Product;
@@ -33,77 +34,101 @@ export default function ProductCard({ product, index = 0 }: ProductCardProps) {
       initial={{ opacity: 0, y: 30 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: '-50px' }}
-      transition={{ duration: 0.5, delay: index * 0.1, ease: [0.22, 1, 0.36, 1] }}
+      transition={{ duration: 0.5, delay: index * 0.08, ease: [0.22, 1, 0.36, 1] }}
     >
-      {/* ✅ DYNAMIC CHANGE: Link to /product/${product.sku} */}
-      <Link to={`/product/${product.sku}`} className="group block">
-        {/* Image */}
-        <div className="relative overflow-hidden rounded-xl bg-cream aspect-[4/5]">
-          <motion.img
-            src={getProductImage()}
-            alt={product.name}
-            className="w-full h-full object-cover"
-            whileHover={{ scale: 1.06 }}
-            transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
-          />
-          
-          {/* Badge */}
-          {product.badge && (
-            <div className="absolute top-3 left-3 bg-primary text-white text-[9px] font-medium tracking-widest uppercase px-2.5 py-1 rounded-full">
-              {product.badge}
-            </div>
-          )}
-
-          {/* Wishlist Button */}
-          <button
-            onClick={(e) => {
-              e.preventDefault();
-              e.stopPropagation();
-              setWishlisted((v) => !v);
-            }}
-            aria-label="Add to wishlist"
-            className="absolute top-3 right-3 p-2 bg-white/90 backdrop-blur-sm rounded-full shadow-sm opacity-0 group-hover:opacity-100 transition-all duration-300 hover:bg-white"
-          >
-            <Heart
-              size={14}
-              strokeWidth={1.5}
-              className={wishlisted ? 'fill-primary text-primary' : 'text-secondary'}
+      <Link to={`/product/${product.sku}`} className="group block focus:outline-none">
+        <Parallax3DCard
+          maxRotation={9}
+          perspective={1100}
+          glareEffect={true}
+          scaleOnHover={1.025}
+          className="rounded-2xl transition-shadow duration-300 group-hover:shadow-xl group-hover:shadow-black/10"
+        >
+          {/* Image Container with 3D Depth */}
+          <div className="relative overflow-hidden rounded-2xl bg-cream dark:bg-[#1C1A18] aspect-[4/5] transform-style-3d border border-border/60 dark:border-[#2E2925]">
+            <motion.img
+              src={getProductImage()}
+              alt={product.name}
+              className="w-full h-full object-cover will-change-transform brightness-[0.97] dark:brightness-[0.88]"
+              whileHover={{ scale: 1.05 }}
+              transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+              style={{ transform: 'translateZ(0px)' }}
             />
-          </button>
+            
+            {/* 3D Floating Badge */}
+            {product.badge && (
+              <div
+                className="absolute top-3.5 left-3.5 bg-primary/95 dark:bg-[#D4AF37] dark:text-black backdrop-blur-md text-white text-[9px] font-bold tracking-widest uppercase px-3 py-1 rounded-full shadow-md z-20 pointer-events-none"
+                style={{ transform: 'translateZ(30px)' }}
+              >
+                {product.badge}
+              </div>
+            )}
 
-          {/* Quick View Overlay */}
-          <div className="absolute inset-x-0 bottom-0 p-4 bg-gradient-to-t from-black/30 to-transparent opacity-0 group-hover:opacity-100 transition-all duration-300 translate-y-2 group-hover:translate-y-0">
-            <p className="text-white text-xs font-medium tracking-widest uppercase text-center">
-              View Details
-            </p>
+            {/* 3D Floating Wishlist Button */}
+            <button
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                setWishlisted((v) => !v);
+              }}
+              aria-label="Add to wishlist"
+              className="absolute top-3.5 right-3.5 p-2 bg-white/95 dark:bg-black/80 backdrop-blur-md rounded-full shadow-lg opacity-0 group-hover:opacity-100 transition-all duration-300 hover:bg-white dark:hover:bg-black hover:scale-110 z-30"
+              style={{ transform: 'translateZ(35px)' }}
+            >
+              <Heart
+                size={14}
+                strokeWidth={1.5}
+                className={wishlisted ? 'fill-primary dark:fill-[#D4AF37] text-primary dark:text-[#D4AF37]' : 'text-secondary dark:text-white/70'}
+              />
+            </button>
+
+            {/* 3D Quick View Overlay */}
+            <div
+              className="absolute inset-x-0 bottom-0 p-4 bg-gradient-to-t from-black/60 via-black/25 to-transparent opacity-0 group-hover:opacity-100 transition-all duration-300 translate-y-2 group-hover:translate-y-0 z-20 pointer-events-none"
+              style={{ transform: 'translateZ(25px)' }}
+            >
+              <p className="text-white text-[11px] font-semibold tracking-widest uppercase text-center drop-shadow-sm">
+                View Details
+              </p>
+            </div>
           </div>
-        </div>
 
-        {/* Product Info */}
-        <div className="mt-3.5 px-0.5">
-          <h3 className="text-sm font-medium text-text leading-snug group-hover:text-primary transition-colors duration-200">
-            {product.name}
-          </h3>
-          
-          {/* Price */}
-          <div className="mt-1 flex items-center gap-2">
-            <p className="text-sm text-secondary font-medium">
-              ₹ {getDisplayPrice().toLocaleString('en-IN')}
-            </p>
-            {hasDiscount() && (
-              <p className="text-xs text-secondary/60 line-through">
-                ₹ {product.price.toLocaleString('en-IN')}
+          {/* Product Info with Depth */}
+          <div className="mt-3.5 px-1 transform-style-3d">
+            <h3
+              className="text-sm font-medium text-text dark:text-[#F5F2EB] leading-snug group-hover:text-primary dark:group-hover:text-[#D4AF37] transition-colors duration-200"
+              style={{ transform: 'translateZ(10px)' }}
+            >
+              {product.name}
+            </h3>
+            
+            {/* Price */}
+            <div
+              className="mt-1 flex items-center gap-2"
+              style={{ transform: 'translateZ(15px)' }}
+            >
+              <p className="text-sm text-primary dark:text-[#D4AF37] font-semibold">
+                ₹ {getDisplayPrice().toLocaleString('en-IN')}
+              </p>
+              {hasDiscount() && (
+                <p className="text-xs text-secondary/60 dark:text-white/40 line-through">
+                  ₹ {product.price.toLocaleString('en-IN')}
+                </p>
+              )}
+            </div>
+
+            {/* Category */}
+            {product.category && (
+              <p
+                className="mt-0.5 text-xs text-secondary/70 dark:text-white/50 tracking-wide"
+                style={{ transform: 'translateZ(8px)' }}
+              >
+                {product.category}
               </p>
             )}
           </div>
-
-          {/* Category */}
-          {product.category && (
-            <p className="mt-1 text-xs text-secondary/60">
-              {product.category}
-            </p>
-          )}
-        </div>
+        </Parallax3DCard>
       </Link>
     </motion.div>
   );
