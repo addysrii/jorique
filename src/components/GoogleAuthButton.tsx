@@ -41,7 +41,9 @@ export default function GoogleAuthButton({
   const [loading, setLoading] = useState(false);
   const [gsiLoaded, setGsiLoaded] = useState(false);
 
-  const googleClientId = import.meta.env.VITE_GOOGLE_CLIENT_ID;
+  const googleClientId =
+    import.meta.env.GOOGLE_CLIENT_ID ||
+    import.meta.env.VITE_GOOGLE_CLIENT_ID;
 
   useEffect(() => {
     if (!googleClientId || googleClientId === 'YOUR_GOOGLE_CLIENT_ID') return;

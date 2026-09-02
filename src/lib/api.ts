@@ -1,6 +1,6 @@
 import type { AppUser } from '../types';
 
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'https://jorique.onrender.com';
+const API_BASE_URL = import.meta.env.API_BASE_URL || import.meta.env.VITE_API_BASE_URL || 'https://jorique.onrender.com';
 
 interface ApiOptions extends RequestInit {
   token?: string | null;
