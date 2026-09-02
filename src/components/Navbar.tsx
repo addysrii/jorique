@@ -1,9 +1,10 @@
 import { useState, useEffect, useRef } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { Heart, User, Menu, X, LogOut, ChevronDown, LayoutDashboard, Scan, Sun, Moon } from 'lucide-react';
+import { Heart, User, Menu, X, LogOut, ChevronDown, LayoutDashboard, Scan, Sun, Moon, ShoppingBag } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useAuth } from '../context/AuthContext';
 import { useTheme } from '../context/ThemeContext';
+import { useCart } from '../context/CartContext';
 
 const navLinks = [
   { label: 'Home', href: '/' },
@@ -28,6 +29,7 @@ export default function Navbar({ wishlistCount = 0 }: NavbarProps) {
   const isHome = location.pathname === '/';
   const { user, signOut, loading } = useAuth();
   const { theme, toggleTheme } = useTheme();
+  const { cartCount, setIsCartOpen } = useCart();
 
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 40);
@@ -177,6 +179,22 @@ export default function Navbar({ wishlistCount = 0 }: NavbarProps) {
               >
                 <Scan size={18} strokeWidth={1.5} />
               </Link>
+
+              {/* Shopping Bag / Cart Button */}
+              <button
+                onClick={() => setIsCartOpen(true)}
+                aria-label="Shopping Bag"
+                className={`relative p-2 rounded-xl transition-colors duration-200 ${
+                  transparent ? 'text-white/90 hover:text-white' : 'text-secondary dark:text-white/80 hover:text-primary dark:hover:text-[#D4AF37]'
+                }`}
+              >
+                <ShoppingBag size={18} strokeWidth={1.5} />
+                {cartCount > 0 && (
+                  <span className="absolute -top-0.5 -right-0.5 w-4.5 h-4.5 bg-[#25D366] text-white text-[9.5px] rounded-full flex items-center justify-center font-bold shadow-sm animate-pulse">
+                    {cartCount}
+                  </span>
+                )}
+              </button>
 
               <button
                 aria-label="Wishlist"

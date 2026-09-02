@@ -630,4 +630,19 @@ export async function getGiftBySerial(serialNumber: string): Promise<any | null>
   }
 }
 
+export async function getAllReviews(): Promise<any[]> {
+  try {
+    const { data, error } = await supabase
+      .from('reviews')
+      .select('*, product:products(name)')
+      .order('created_at', { ascending: false });
+
+    if (error) throw error;
+    return data || [];
+  } catch (error) {
+    console.error('Error fetching all reviews:', error);
+    return [];
+  }
+}
+
 export default productService;

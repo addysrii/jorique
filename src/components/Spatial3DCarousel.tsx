@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { ChevronLeft, ChevronRight, Sparkles, ArrowRight, Eye } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import Parallax3DCard from './Parallax3DCard';
+import { productService } from '../lib/api/products';
 
 interface CarouselItem {
   id: string;
@@ -16,68 +17,37 @@ interface CarouselItem {
   metric: string;
 }
 
-const CAROUSEL_ITEMS: CarouselItem[] = [
-  {
-    id: 'c1',
-    sku: 'JR-BS-2026-001',
-    title: 'The Egyptian Sateen Duvet',
-    category: 'Signature Bedding',
-    badge: 'Flagship 2026',
-    price: '₹5,499',
-    image: '/Products/1.jpg',
-    tagline: '800TC Long-Staple Giza Cotton with liquid drape finish.',
-    metric: '800 Thread Count',
-  },
-  {
-    id: 'c2',
-    sku: 'JR-BS-2026-002',
-    title: 'Belgian Stonewashed Flax',
-    category: 'Pure Linen',
-    badge: 'Eco-Certified',
-    price: '₹6,299',
-    image: '/Products/2.jpg',
-    tagline: 'Pre-washed with volcanic pumice for buttery vintage softness.',
-    metric: '100% French Flax',
-  },
-  {
-    id: 'c3',
-    sku: 'JR-BS-2026-003',
-    title: 'Mulberry Silk Sovereign Pillowcases',
-    category: 'Mulberry Silk',
-    badge: 'Sensory Luxe',
-    price: '₹3,899',
-    image: '/Products/3.jpg',
-    tagline: '22-Momme pure Grade 6A mulberry silk to prevent hair & skin friction.',
-    metric: '22 Momme Silk',
-  },
-  {
-    id: 'c4',
-    sku: 'JR-BS-2026-004',
-    title: 'Classic Waffle Thermal Blanket',
-    category: 'Home Decor',
-    badge: 'Master Weaver',
-    price: '₹4,199',
-    image: '/Products/4.jpg',
-    tagline: 'Deep honeycomb matrix weave for buoyant thermal micro-pockets.',
-    metric: '450 GSM Weight',
-  },
-  {
-    id: 'c5',
-    sku: 'JR-BS-2026-005',
-    title: 'Guimarães Artisanal Throw',
-    category: 'Heritage Craft',
-    badge: 'Limited Edition',
-    price: '₹4,799',
-    image: '/Products/5.jpg',
-    tagline: 'Hand-finished in Portugal with brushed cashmere-touch organic cotton.',
-    metric: 'Artisanal Portuguese Weave',
-  },
-];
-
 export default function Spatial3DCarousel() {
+  const [items, setItems] = useState<CarouselItem[]>([]);
   const [activeIndex, setActiveIndex] = useState(0);
   const [isMobile, setIsMobile] = useState(false);
   const touchStartX = useRef<number | null>(null);
+
+  useEffect(() => {
+    async function loadCatalog() {
+      try {
+        const prods = await productService.getProducts();
+        if (prods && prods.length > 0) {
+          const mapped: CarouselItem[] = prods.map((p) => ({
+            id: p.id,
+            sku: p.sku || 'JRQ-2026',
+            title: p.name,
+            category: p.category || 'Luxury Bedding',
+            badge: p.badge || 'Artisanal Edition',
+            price: `₹${(p.discount_price || p.price).toLocaleString('en-IN')}`,
+            image: p.images[0] || '/Products/1.jpg',
+            tagline: p.description || 'Meticulously woven with extra-long staple certified organic fibers.',
+            metric: p.tags && p.tags.length > 0 ? p.tags[0] : 'Heirloom Quality',
+          }));
+          setItems(mapped);
+        }
+      } catch (err) {
+        console.error('Spatial3DCarousel API load error:', err);
+      }
+    }
+
+    loadCatalog();
+  }, []);
 
   useEffect(() => {
     const handleResize = () => setIsMobile(window.innerWidth < 640);
@@ -86,8 +56,11 @@ export default function Spatial3DCarousel() {
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
-  const prev = () => setActiveIndex((curr) => (curr - 1 + CAROUSEL_ITEMS.length) % CAROUSEL_ITEMS.length);
-  const next = () => setActiveIndex((curr) => (curr + 1) % CAROUSEL_ITEMS.length);
+  const totalItems = items.length;
+  if (totalItems === 0) return null;
+
+  const prev = () => setActiveIndex((curr) => (curr - 1 + totalItems) % totalItems);
+  const next = () => setActiveIndex((curr) => (curr + 1) % totalItems);
 
   const handleTouchStart = (e: React.TouchEvent) => {
     touchStartX.current = e.touches[0].clientX;
@@ -150,9 +123,9 @@ export default function Spatial3DCarousel() {
           className="relative min-h-[420px] sm:min-h-[520px] flex items-center justify-center overflow-visible"
         >
           <div className="w-full h-full relative flex items-center justify-center transform-style-3d">
-            {CAROUSEL_ITEMS.map((item, index) => {
+            {items.map((item, index) => {
               // Calculate relative offset from active index (-2, -1, 0, 1, 2)
-              const count = CAROUSEL_ITEMS.length;
+              const count = items.length;
               let offset = (index - activeIndex + count) % count;
               if (offset > count / 2) offset -= count;
 
@@ -267,7 +240,7 @@ export default function Spatial3DCarousel() {
 
         {/* Carousel Pagination Indicator */}
         <div className="flex items-center justify-center gap-2 mt-12">
-          {CAROUSEL_ITEMS.map((_, i) => (
+          {items.map((_, i) => (
             <button
               key={i}
               onClick={() => setActiveIndex(i)}

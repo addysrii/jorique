@@ -1,9 +1,10 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Heart } from 'lucide-react';
+import { Heart, ShoppingBag, MessageCircle } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { Product } from '../types';
 import Parallax3DCard from './Parallax3DCard';
+import { useCart } from '../context/CartContext';
 
 interface ProductCardProps {
   product: Product;
@@ -12,6 +13,7 @@ interface ProductCardProps {
 
 export default function ProductCard({ product, index = 0 }: ProductCardProps) {
   const [wishlisted, setWishlisted] = useState(false);
+  const { addToCart, buyNow } = useCart();
 
   // Handle different image formats
   const getProductImage = () => {
@@ -83,14 +85,33 @@ export default function ProductCard({ product, index = 0 }: ProductCardProps) {
               />
             </button>
 
-            {/* 3D Quick View Overlay */}
+            {/* 3D Quick Action Overlay */}
             <div
-              className="absolute inset-x-0 bottom-0 p-4 bg-gradient-to-t from-black/60 via-black/25 to-transparent opacity-0 group-hover:opacity-100 transition-all duration-300 translate-y-2 group-hover:translate-y-0 z-20 pointer-events-none"
+              className="absolute inset-x-0 bottom-0 p-3 bg-gradient-to-t from-black/85 via-black/40 to-transparent opacity-0 group-hover:opacity-100 transition-all duration-300 translate-y-2 group-hover:translate-y-0 z-30 flex items-center gap-2"
               style={{ transform: 'translateZ(25px)' }}
             >
-              <p className="text-white text-[11px] font-semibold tracking-widest uppercase text-center drop-shadow-sm">
-                View Details
-              </p>
+              <button
+                onClick={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  addToCart(product, 1);
+                }}
+                className="flex-1 py-2 rounded-xl bg-white/20 backdrop-blur-md text-white text-[10px] font-bold uppercase tracking-wider hover:bg-white hover:text-black transition-all flex items-center justify-center gap-1 shadow-md"
+              >
+                <ShoppingBag size={12} />
+                <span>+ Bag</span>
+              </button>
+              <button
+                onClick={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  buyNow(product, 1);
+                }}
+                className="flex-1 py-2 rounded-xl bg-[#25D366] text-white text-[10px] font-bold uppercase tracking-wider hover:bg-[#20bd5a] transition-all flex items-center justify-center gap-1 shadow-md"
+              >
+                <MessageCircle size={12} />
+                <span>Buy Now</span>
+              </button>
             </div>
           </div>
 

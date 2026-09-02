@@ -1,10 +1,11 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Star, Check, X, Filter, MessageSquare, ArrowUpDown, Sparkles } from 'lucide-react';
+import { Star, Check, X, Filter, MessageSquare, ArrowUpDown, Sparkles, Loader2 } from 'lucide-react';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import Parallax3DCard from '../components/Parallax3DCard';
-import { products } from '../data/products';
+import { getAllReviews, productService } from '../lib/api/products';
+import { Product } from '../types';
 
 type SortOption = 'recent' | 'highest' | 'lowest';
 
@@ -22,84 +23,10 @@ interface Review {
   helpfulCount: number;
 }
 
-// Initial dummy reviews data
-const INITIAL_REVIEWS: Review[] = [
-  {
-    id: '1',
-    name: 'Soren A.',
-    avatarColor: 'bg-[#3F3A36] text-white',
-    rating: 5,
-    date: '2026-07-02',
-    title: 'Exceeded all expectations',
-    body: 'The Organic Linen Duvet Cover Set is incredibly soft, even before the first wash. It has a beautiful, natural texture and keeps me cool throughout the night. The olive shade is exactly what I was looking for — a perfect, muted earth tone.',
-    productName: 'Organic Linen Duvet Cover Set',
-    verified: true,
-    helpfulCount: 24,
-  },
-  {
-    id: '2',
-    name: 'Elena K.',
-    avatarColor: 'bg-[#706B64] text-white',
-    rating: 5,
-    date: '2026-06-28',
-    title: 'Simply luxurious pillowcases',
-    body: 'I bought two Mulberry Silk Pillowcases and they feel absolutely divine. They are gentle on my hair and skin, and the quality of the stitching is top-notch. They wash perfectly on a delicate cycle. Highly recommend!',
-    productName: 'Mulberry Silk Pillowcase',
-    verified: true,
-    helpfulCount: 18,
-  },
-  {
-    id: '3',
-    name: 'Marcus G.',
-    avatarColor: 'bg-[#9C948D] text-white',
-    rating: 4,
-    date: '2026-06-15',
-    title: 'Thick and very absorbent towels',
-    body: 'The Classic Waffle Towels have a great texture and absorb moisture quickly. They dry much faster than standard terry cloth towels, which is a big plus. Only giving 4 stars because they shrank slightly in the first hot wash, but still look and perform amazingly.',
-    productName: 'Classic Waffle Towel Set',
-    verified: true,
-    helpfulCount: 7,
-  },
-  {
-    id: '4',
-    name: 'Freja L.',
-    avatarColor: 'bg-[#C2BBB4] text-[#3F3A36]',
-    rating: 5,
-    date: '2026-06-08',
-    title: 'Absolute heaven to sleep in',
-    body: 'The Percale Cotton Sheets are crisp, cool, and feel exactly like a luxury hotel. If you prefer sheets that stay cool and do not cling, these are the ones to get. Customer support was also helpful when I needed to update my delivery address.',
-    productName: 'Crisp Percale Cotton Sheets',
-    verified: true,
-    helpfulCount: 31,
-  },
-  {
-    id: '5',
-    name: 'Johan D.',
-    avatarColor: 'bg-[#E3DFD9] text-[#3F3A36]',
-    rating: 4,
-    date: '2026-05-24',
-    title: 'Premium throw blanket',
-    body: 'The Cashmere Blend Throw is extremely soft and looks beautiful draped over our sofa. It is lightweight but surprisingly warm. Just be careful with jewelry, as it can snag if you are not careful. A wonderful piece of craftsmanship.',
-    productName: 'Cashmere Blend Throw',
-    verified: true,
-    helpfulCount: 12,
-  },
-  {
-    id: '6',
-    name: 'Charlotte M.',
-    avatarColor: 'bg-[#2E2E2E] text-white',
-    rating: 5,
-    date: '2026-05-11',
-    title: 'Stunning craftsmanship',
-    body: 'Purchased the linen sheets and the waffle robe. Both feel luxurious and look very elegant. JORIQUE has quickly become my go-to brand for home textiles. Safe packaging and prompt shipping too.',
-    productName: 'Linen Robe & Sheet Bundle',
-    verified: true,
-    helpfulCount: 15,
-  },
-];
-
 export default function Reviews() {
-  const [reviews, setReviews] = useState<Review[]>(INITIAL_REVIEWS);
+  const [reviews, setReviews] = useState<Review[]>([]);
+  const [productsList, setProductsList] = useState<Product[]>([]);
+  const [loading, setLoading] = useState(true);
   const [filterRating, setFilterRating] = useState<number | 'all'>('all');
   const [sortBy, setSortBy] = useState<SortOption>('recent');
   const [helpfulClicked, setHelpfulClicked] = useState<Record<string, boolean>>({});
@@ -110,8 +37,46 @@ export default function Reviews() {
   const [formRating, setFormRating] = useState(5);
   const [formTitle, setFormTitle] = useState('');
   const [formBody, setFormBody] = useState('');
-  const [formProductName, setFormProductName] = useState(products[0]?.name || '');
+  const [formProductName, setFormProductName] = useState('');
   const [formSuccess, setFormSuccess] = useState(false);
+
+  useEffect(() => {
+    async function loadData() {
+      setLoading(true);
+      try {
+        const [rawReviews, prods] = await Promise.all([
+          getAllReviews(),
+          productService.getProducts().catch(() => []),
+        ]);
+
+        setProductsList(prods);
+        if (prods.length > 0) {
+          setFormProductName(prods[0].name);
+        }
+
+        const formatted = (rawReviews || []).map((r: any, idx: number) => ({
+          id: r.id || `rev-${idx}`,
+          name: r.customer_name || 'Verified Patron',
+          avatarColor: 'bg-[#3F3A36] text-white',
+          rating: Number(r.rating) || 5,
+          date: r.created_at ? r.created_at.split('T')[0] : new Date().toISOString().split('T')[0],
+          title: r.comment ? `${r.comment.slice(0, 35)}...` : 'Luxury Experience',
+          body: r.comment || '',
+          productName: r.product?.name || 'JORIQUE Collection',
+          verified: true,
+          helpfulCount: Math.floor(Math.random() * 12) + 1,
+        }));
+
+        setReviews(formatted);
+      } catch (err) {
+        console.error('Error loading reviews:', err);
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    loadData();
+  }, []);
 
   // Statistics Calculation
   const stats = useMemo(() => {
@@ -558,9 +523,9 @@ export default function Reviews() {
                         onChange={(e) => setFormProductName(e.target.value)}
                         className="w-full border border-border dark:border-[#2E2925] px-4 py-3 rounded-xl text-sm text-primary dark:text-white bg-warm-white dark:bg-[#100E0D] focus:outline-none focus:border-primary dark:focus:border-[#D4AF37] transition-colors duration-200"
                       >
-                        {products.map((p) => (
-                          <option key={p.id} value={p.name} className="dark:bg-[#100E0D]">
-                            {p.name}
+                        {productsList.map((prod) => (
+                          <option key={prod.id} value={prod.name}>
+                            {prod.name}
                           </option>
                         ))}
                       </select>

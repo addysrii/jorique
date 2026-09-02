@@ -1,13 +1,14 @@
 import { useState, useEffect } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ArrowLeft, Heart, Truck, RefreshCw, Shield, ChevronLeft, ChevronRight, Check, Sparkles, Compass } from 'lucide-react';
+import { ArrowLeft, Heart, Truck, RefreshCw, Shield, ChevronLeft, ChevronRight, Check, Sparkles, Compass, ShoppingBag, MessageCircle, Plus, Minus } from 'lucide-react';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import ProductCard from '../components/ProductCard';
 import Parallax3DCard from '../components/Parallax3DCard';
 import { productService } from '../lib/api/products'; 
 import { Product } from '../types';
+import { useCart } from '../context/CartContext';
 
 const shippingInfo = [
   { icon: <Truck size={15} strokeWidth={1.5} />, text: 'Free Express Shipping on orders above ₹1,999' },
@@ -26,6 +27,8 @@ export default function ProductDetails() {
 
   const [activeImage, setActiveImage] = useState(0);
   const [wishlisted, setWishlisted] = useState(false);
+  const [selectedQty, setSelectedQty] = useState(1);
+  const { addToCart, buyNow } = useCart();
 
   useEffect(() => {
     const fetchProduct = async () => {
@@ -297,6 +300,50 @@ export default function ProductDetails() {
                     <Check size={13} strokeWidth={2.5} /> Made to Order / Out of Stock
                   </span>
                 )}
+              </div>
+
+              {/* 🛒 QUANTITY SELECTOR & WHATSAPP CHECKOUT CTAs */}
+              <div className="mb-8 p-4 rounded-2xl bg-cream/40 dark:bg-white/5 border border-border dark:border-[#2E2925] space-y-4">
+                <div className="flex items-center justify-between">
+                  <span className="text-xs font-semibold uppercase tracking-wider text-secondary dark:text-white/70">
+                    Select Quantity:
+                  </span>
+                  <div className="flex items-center border border-border dark:border-[#2E2925] rounded-xl bg-white dark:bg-[#100E0D]">
+                    <button
+                      onClick={() => setSelectedQty((q) => Math.max(1, q - 1))}
+                      className="px-3 py-1.5 hover:bg-cream dark:hover:bg-white/10 text-secondary dark:text-white/70 transition-colors"
+                    >
+                      <Minus size={14} />
+                    </button>
+                    <span className="px-4 text-xs font-bold text-primary dark:text-white font-mono">
+                      {selectedQty}
+                    </span>
+                    <button
+                      onClick={() => setSelectedQty((q) => q + 1)}
+                      className="px-3 py-1.5 hover:bg-cream dark:hover:bg-white/10 text-secondary dark:text-white/70 transition-colors"
+                    >
+                      <Plus size={14} />
+                    </button>
+                  </div>
+                </div>
+
+                <div className="flex flex-col sm:flex-row items-center gap-3">
+                  <button
+                    onClick={() => addToCart(product, selectedQty)}
+                    className="w-full sm:w-1/2 py-3.5 rounded-xl bg-primary dark:bg-white text-white dark:text-black text-xs font-bold uppercase tracking-wider hover:opacity-90 transition-all flex items-center justify-center gap-2 shadow-md"
+                  >
+                    <ShoppingBag size={16} />
+                    <span>Add to Bag</span>
+                  </button>
+
+                  <button
+                    onClick={() => buyNow(product, selectedQty)}
+                    className="w-full sm:w-1/2 py-3.5 rounded-xl bg-[#25D366] hover:bg-[#20bd5a] text-white text-xs font-bold uppercase tracking-wider transition-all flex items-center justify-center gap-2 shadow-lg"
+                  >
+                    <MessageCircle size={18} />
+                    <span>Buy Now via WhatsApp</span>
+                  </button>
+                </div>
               </div>
 
               <p className="text-sm text-secondary dark:text-white/70 leading-relaxed mb-6">

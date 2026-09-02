@@ -1,8 +1,9 @@
-import { useState, useRef } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence, useScroll, useTransform } from 'framer-motion';
 import { Sparkles, Compass, Eye, ChevronRight, CheckCircle2 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import Parallax3DCard from './Parallax3DCard';
+import { productService } from '../lib/api/products';
 
 interface Hotspot {
   id: string;
@@ -29,124 +30,59 @@ interface LookbookScene {
   hotspots: Hotspot[];
 }
 
-const LOOKBOOK_SCENES: LookbookScene[] = [
-  {
-    id: 'sateen-sanctuary',
-    title: 'The Sovereign Master Suite',
-    subtitle: '800TC Egyptian Cotton Sateen',
-    roomName: 'Master Bedroom',
-    material: '100% Giza Extra-Long Staple Cotton',
-    feel: 'Silky, cool-to-touch, cascading drape',
-    price: '₹5,499',
-    image: '/Products/1.jpg',
-    swatchImage: '/Products/1.jpg',
-    tagline: 'Engineered for optimal sleep thermoregulation with a brilliant four-over-one sateen weave.',
-    hotspots: [
-      {
-        id: 'h1',
-        x: 48,
-        y: 42,
-        title: '800-Count Sateen Weave',
-        subtitle: 'Micro-Structure',
-        description: 'Single-ply Giza threads woven at peak density for a liquid silk sheen that softens with every wash.',
-        metric: '800 Thread Count',
-        depthZ: 45,
-      },
-      {
-        id: 'h2',
-        x: 72,
-        y: 65,
-        title: 'Calendered Luster Finish',
-        subtitle: 'Tactile Engineering',
-        description: 'Heated mechanical rollers align fibers to maximize skin glide and hypoallergenic smoothness.',
-        metric: 'OEKO-TEX Certified',
-        depthZ: 60,
-      },
-      {
-        id: 'h3',
-        x: 24,
-        y: 35,
-        title: 'Hidden Envelope Enclosure',
-        subtitle: 'Tailored Finish',
-        description: 'Precision hand-finished French seams ensure the duvet insert stays anchored without bunching.',
-        metric: 'Artisanal Portuguese Stitch',
-        depthZ: 30,
-      },
-    ],
-  },
-  {
-    id: 'flax-haven',
-    title: 'The Nordic Stonewashed Retreat',
-    subtitle: '100% French Flax Linen',
-    roomName: 'Guest Sanctuary',
-    material: 'Normandy Grown Organic Flax',
-    feel: 'Textured, airy, naturally temperature adaptive',
-    price: '₹6,299',
-    image: '/Products/2.jpg',
-    swatchImage: '/Products/2.jpg',
-    tagline: 'Pre-washed with volcanic pumice stones for that lived-in vintage softness from day one.',
-    hotspots: [
-      {
-        id: 'h4',
-        x: 52,
-        y: 48,
-        title: 'Stonewashed French Flax',
-        subtitle: 'Pumice Softened',
-        description: 'High-pectin flax fibers naturally repel allergens and maintain breathability during hot nights.',
-        metric: '185 GSM Density',
-        depthZ: 50,
-      },
-      {
-        id: 'h5',
-        x: 30,
-        y: 60,
-        title: 'Breathable Honeycomb Pores',
-        subtitle: 'Air Circulation',
-        description: 'Absorbs up to 20% of its weight in moisture before feeling damp, keeping body heat balanced.',
-        metric: 'Natural Wicking Core',
-        depthZ: 35,
-      },
-    ],
-  },
-  {
-    id: 'silk-horizon',
-    title: 'The Royal Mulberry Pavilion',
-    subtitle: 'Grade 6A Mulberry Silk',
-    roomName: 'Luxe Penthouse Suite',
-    material: '22-Momme 100% Mulberry Silk',
-    feel: 'Zero-friction velvet glide, moisture-locking',
-    price: '₹3,899',
-    image: '/Products/3.jpg',
-    swatchImage: '/Products/3.jpg',
-    tagline: 'Infused with natural sericin amino acids that nourish skin and hair throughout deep REM sleep.',
-    hotspots: [
-      {
-        id: 'h6',
-        x: 44,
-        y: 38,
-        title: '22-Momme Pure Silk',
-        subtitle: 'Grade 6A Raw Silk',
-        description: 'Contains 18 essential amino acids that preserve skin hydration and prevent sleep creases.',
-        metric: 'Grade 6A Luxury',
-        depthZ: 55,
-      },
-      {
-        id: 'h7',
-        x: 68,
-        y: 55,
-        title: 'Frictionless Surface',
-        subtitle: 'Hair & Skin Shield',
-        description: '43% less hair friction than conventional cotton to eliminate frizz and morning bedhead.',
-        metric: 'Anti-Bedhead Core',
-        depthZ: 40,
-      },
-    ],
-  },
-];
-
 export default function Parallax3DShowcase() {
+  const [scenes, setScenes] = useState<LookbookScene[]>([]);
   const [activeSceneIndex, setActiveSceneIndex] = useState(0);
   const [activeHotspot, setActiveHotspot] = useState<Hotspot | null>(null);
+
+  useEffect(() => {
+    async function loadScenes() {
+      try {
+        const prods = await productService.getProducts();
+        if (prods && prods.length > 0) {
+          const generated: LookbookScene[] = prods.slice(0, 4).map((p, idx) => ({
+            id: p.id,
+            title: p.name,
+            subtitle: `${p.category || 'Artisanal'} • ${p.sku || 'JRQ'}`,
+            roomName: p.category || `Collection 0${idx + 1}`,
+            material: p.tags && p.tags.length > 0 ? p.tags.join(', ') : '100% Certified Long-Staple Organic Cotton',
+            feel: 'Silky, breathable, luxury tactile drape',
+            price: `₹${(p.discount_price || p.price).toLocaleString('en-IN')}`,
+            image: p.images[0] || '/Products/1.jpg',
+            swatchImage: p.images[0] || '/Products/1.jpg',
+            tagline: p.description || 'Engineered for optimal sleep thermoregulation and heirloom quality durability.',
+            hotspots: [
+              {
+                id: `hs-${idx}-1`,
+                x: 48,
+                y: 42,
+                title: 'High-Density Weave',
+                subtitle: 'Micro-Structure',
+                description: 'Single-ply combed yarns woven at peak density for a liquid silk sheen that softens with every wash.',
+                metric: 'Certified Organic',
+                depthZ: 45,
+              },
+              {
+                id: `hs-${idx}-2`,
+                x: 72,
+                y: 65,
+                title: 'Calendered Luster Finish',
+                subtitle: 'Tactile Engineering',
+                description: 'Heated mechanical rollers align fibers to maximize skin glide and hypoallergenic smoothness.',
+                metric: 'OEKO-TEX Standard 100',
+                depthZ: 60,
+              },
+            ],
+          }));
+          setScenes(generated);
+        }
+      } catch (err) {
+        console.error('Parallax3DShowcase API load error:', err);
+      }
+    }
+
+    loadScenes();
+  }, []);
 
   const containerRef = useRef<HTMLDivElement>(null);
   const { scrollYProgress } = useScroll({
@@ -157,7 +93,8 @@ export default function Parallax3DShowcase() {
   const backgroundOrbY1 = useTransform(scrollYProgress, [0, 1], [-80, 80]);
   const backgroundOrbY2 = useTransform(scrollYProgress, [0, 1], [60, -60]);
 
-  const scene = LOOKBOOK_SCENES[activeSceneIndex];
+  if (scenes.length === 0) return null;
+  const scene = scenes[activeSceneIndex] || scenes[0];
 
   return (
     <section
@@ -216,7 +153,7 @@ export default function Parallax3DShowcase() {
 
           {/* Lookbook Scene Tabs */}
           <div className="flex flex-wrap gap-2 sm:gap-3 bg-cream/60 dark:bg-white/5 p-1.5 rounded-2xl border border-border dark:border-white/10 backdrop-blur-md">
-            {LOOKBOOK_SCENES.map((s, idx) => {
+            {scenes.map((s, idx) => {
               const isActive = idx === activeSceneIndex;
               return (
                 <button

@@ -3,6 +3,9 @@ import { BrowserRouter, Routes, Route, useLocation, Navigate } from 'react-route
 import { AnimatePresence, motion } from 'framer-motion';
 import { AuthProvider } from './context/AuthContext';
 import { ThemeProvider } from './context/ThemeContext';
+import { CartProvider } from './context/CartContext';
+import CartDrawer from './components/CartDrawer';
+import WhatsAppCheckoutModal from './components/WhatsAppCheckoutModal';
 import ErrorBoundary from './components/ErrorBoundary';
 import ProtectedRoute from './components/ProtectedRoute';
 
@@ -248,10 +251,14 @@ export default function App() {
     <ErrorBoundary>
       <ThemeProvider>
         <AuthProvider>
-          <BrowserRouter>
-            <ScrollToTop />
-            <AnimatedRoutes />
-          </BrowserRouter>
+          <CartProvider>
+            <BrowserRouter>
+              <ScrollToTop />
+              <AnimatedRoutes />
+              <CartDrawer />
+              <WhatsAppCheckoutModal />
+            </BrowserRouter>
+          </CartProvider>
         </AuthProvider>
       </ThemeProvider>
     </ErrorBoundary>
