@@ -62,10 +62,9 @@ export default function ProductPackagingLabel({
 
   return (
     <div
-      className={`bg-white text-black font-sans border-2 border-black/80 rounded-xl p-4 sm:p-5 flex flex-col justify-between select-none shadow-sm relative overflow-hidden max-w-[380px] w-full mx-auto print:border-black print:shadow-none print:m-0 print:break-inside-avoid ${className}`}
+      className={`bg-white text-black font-sans border-2 border-black/80 rounded-xl p-3.5 sm:p-5 flex flex-col justify-between select-none shadow-sm relative overflow-hidden max-w-[380px] w-full mx-auto print:border-black print:shadow-none print:m-0 print:break-inside-avoid ${className}`}
       style={{
-        aspectRatio: '1.05 / 1',
-        minHeight: '320px',
+        minHeight: '300px',
       }}
     >
       {/* 🏷️ OPTIONAL TOP-RIGHT BADGE PILL */}
@@ -80,15 +79,25 @@ export default function ProductPackagingLabel({
 
       {/* 🌿 TOP BRAND HEADER */}
       <div className="flex flex-col items-center justify-center text-center pb-1.5">
-        {/* Brand Clover / Luxury Emblem SVG */}
+        {/* Brand J Monogram Shield Crest */}
         <div className="w-10 h-10 mb-1 flex items-center justify-center">
-          <svg viewBox="0 0 100 100" className="w-9 h-9 fill-[#1B5E20] dark:fill-[#1B5E20]">
-            {/* Elegant 4-Leaf Clover / Architectural Crest */}
-            <path d="M50 15 C42 0, 25 0, 25 15 C25 28, 45 42, 50 48 C55 42, 75 28, 75 15 Z" />
-            <path d="M15 50 C0 42, 0 25, 15 25 C28 25, 42 45, 48 50 C42 55, 28 75, 15 75 C0 75, 0 58, 15 50 Z" />
-            <path d="M50 85 C42 100, 25 100, 25 85 C25 72, 45 58, 50 52 C55 58, 75 72, 75 85 C75 100, 58 100, 50 85 Z" />
-            <path d="M85 50 C100 42, 100 25, 85 25 C72 25, 58 45, 52 50 C58 55, 72 75, 85 75 C100 75, 100 58, 85 50 Z" />
-            <rect x="46" y="46" width="8" height="8" rx="2" fill="#FFFFFF" />
+          <svg viewBox="0 0 512 512" className="w-9 h-9">
+            <defs>
+              <linearGradient id="stickerGold" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stopColor="#C59B27" />
+                <stop offset="100%" stopColor="#8C6D1F" />
+              </linearGradient>
+            </defs>
+            <rect width="512" height="512" rx="128" fill="#181615" />
+            <rect width="496" height="496" x="8" y="8" rx="120" fill="none" stroke="url(#stickerGold)" strokeWidth="14" strokeOpacity="0.8" />
+            <path
+              d="M296 140 H344 V296 C344 356 304 392 240 392 C184 392 148 358 144 316 L192 306 C194 330 214 348 240 348 C276 348 296 328 296 292 V140 Z"
+              fill="url(#stickerGold)"
+            />
+            <path
+              d="M344 116 L350 128 L362 134 L350 140 L344 152 L338 140 L326 134 L338 128 Z"
+              fill="#F5E6C8"
+            />
           </svg>
         </div>
 

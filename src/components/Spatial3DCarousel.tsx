@@ -1,4 +1,4 @@
-import { useState, useRef } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ChevronLeft, ChevronRight, Sparkles, ArrowRight, Eye } from 'lucide-react';
 import { Link } from 'react-router-dom';
@@ -76,20 +76,41 @@ const CAROUSEL_ITEMS: CarouselItem[] = [
 
 export default function Spatial3DCarousel() {
   const [activeIndex, setActiveIndex] = useState(0);
+  const [isMobile, setIsMobile] = useState(false);
+  const touchStartX = useRef<number | null>(null);
+
+  useEffect(() => {
+    const handleResize = () => setIsMobile(window.innerWidth < 640);
+    handleResize();
+    window.addEventListener('resize', handleResize, { passive: true });
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   const prev = () => setActiveIndex((curr) => (curr - 1 + CAROUSEL_ITEMS.length) % CAROUSEL_ITEMS.length);
   const next = () => setActiveIndex((curr) => (curr + 1) % CAROUSEL_ITEMS.length);
 
-  return (
-    <section className="py-28 lg:py-40 bg-gradient-to-b from-[#FAF8F5] via-[#F3EFE9] to-[#FAF8F5] dark:from-[#181615] dark:via-[#1F1C1A] dark:to-[#181615] text-primary dark:text-white overflow-hidden relative select-none border-b border-border/80 dark:border-[#2E2925] transition-colors duration-300">
-      {/* Ambient background lights */}
-      <div className="absolute top-1/2 left-1/4 -translate-y-1/2 w-96 h-96 bg-[#D4AF37]/10 dark:bg-[#D4AF37]/15 rounded-full blur-[140px] pointer-events-none" />
-      <div className="absolute top-1/2 right-1/4 -translate-y-1/2 w-96 h-96 bg-[#C4A482]/10 dark:bg-[#C4A482]/15 rounded-full blur-[140px] pointer-events-none" />
+  const handleTouchStart = (e: React.TouchEvent) => {
+    touchStartX.current = e.touches[0].clientX;
+  };
 
-      <div className="max-w-7xl mx-auto px-6 lg:px-12 relative z-10">
+  const handleTouchEnd = (e: React.TouchEvent) => {
+    if (touchStartX.current === null) return;
+    const diff = touchStartX.current - e.changedTouches[0].clientX;
+    if (diff > 50) next();
+    else if (diff < -50) prev();
+    touchStartX.current = null;
+  };
+
+  return (
+    <section className="py-20 sm:py-28 lg:py-40 bg-gradient-to-b from-[#FAF8F5] via-[#F3EFE9] to-[#FAF8F5] dark:from-[#181615] dark:via-[#1F1C1A] dark:to-[#181615] text-primary dark:text-white overflow-hidden relative select-none border-b border-border/80 dark:border-[#2E2925] transition-colors duration-300">
+      {/* Ambient background lights */}
+      <div className="absolute top-1/2 left-1/4 -translate-y-1/2 w-72 sm:w-96 h-72 sm:h-96 bg-[#D4AF37]/10 dark:bg-[#D4AF37]/15 rounded-full blur-[100px] sm:blur-[140px] pointer-events-none" />
+      <div className="absolute top-1/2 right-1/4 -translate-y-1/2 w-72 sm:w-96 h-72 sm:h-96 bg-[#C4A482]/10 dark:bg-[#C4A482]/15 rounded-full blur-[100px] sm:blur-[140px] pointer-events-none" />
+
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-12 relative z-10">
         
         {/* Header */}
-        <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-6 mb-16">
+        <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-6 mb-10 sm:mb-16">
           <div>
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-cream dark:bg-white/10 border border-border dark:border-white/15 backdrop-blur-md mb-3 shadow-sm">
               <Sparkles size={13} className="text-[#D4AF37]" />
@@ -97,7 +118,7 @@ export default function Spatial3DCarousel() {
                 Spatial 3D Showcase
               </span>
             </div>
-            <h2 className="text-3xl sm:text-5xl font-light text-primary dark:text-white tracking-wide">
+            <h2 className="text-2xl sm:text-4xl lg:text-5xl font-light text-primary dark:text-white tracking-wide">
               Curated Masterpieces
             </h2>
           </div>
@@ -107,24 +128,26 @@ export default function Spatial3DCarousel() {
             <button
               onClick={prev}
               aria-label="Previous masterpiece"
-              className="w-12 h-12 rounded-2xl bg-white dark:bg-white/5 border border-border dark:border-white/15 flex items-center justify-center text-primary dark:text-white hover:bg-primary hover:text-white dark:hover:bg-white dark:hover:text-black transition-all duration-300 shadow-md"
+              className="w-10 sm:w-12 h-10 sm:h-12 rounded-2xl bg-white dark:bg-white/5 border border-border dark:border-white/15 flex items-center justify-center text-primary dark:text-white hover:bg-primary hover:text-white dark:hover:bg-white dark:hover:text-black transition-all duration-300 shadow-md"
             >
-              <ChevronLeft size={20} />
+              <ChevronLeft size={18} />
             </button>
             <button
               onClick={next}
               aria-label="Next masterpiece"
-              className="w-12 h-12 rounded-2xl bg-white dark:bg-white/5 border border-border dark:border-white/15 flex items-center justify-center text-primary dark:text-white hover:bg-primary hover:text-white dark:hover:bg-white dark:hover:text-black transition-all duration-300 shadow-md"
+              className="w-10 sm:w-12 h-10 sm:h-12 rounded-2xl bg-white dark:bg-white/5 border border-border dark:border-white/15 flex items-center justify-center text-primary dark:text-white hover:bg-primary hover:text-white dark:hover:bg-white dark:hover:text-black transition-all duration-300 shadow-md"
             >
-              <ChevronRight size={20} />
+              <ChevronRight size={18} />
             </button>
           </div>
         </div>
 
         {/* 3D Spatial Carousel Stage */}
         <div
-          style={{ perspective: '1800px' }}
-          className="relative min-h-[460px] sm:min-h-[520px] flex items-center justify-center overflow-visible"
+          style={{ perspective: isMobile ? '1200px' : '1800px' }}
+          onTouchStart={handleTouchStart}
+          onTouchEnd={handleTouchEnd}
+          className="relative min-h-[420px] sm:min-h-[520px] flex items-center justify-center overflow-visible"
         >
           <div className="w-full h-full relative flex items-center justify-center transform-style-3d">
             {CAROUSEL_ITEMS.map((item, index) => {
@@ -134,15 +157,15 @@ export default function Spatial3DCarousel() {
               if (offset > count / 2) offset -= count;
 
               const isCenter = offset === 0;
-              const isVisible = Math.abs(offset) <= 2;
+              const isVisible = Math.abs(offset) <= (isMobile ? 1 : 2);
 
               if (!isVisible) return null;
 
-              const xTranslate = offset * 280; // px spacing
-              const zTranslate = isCenter ? 80 : -Math.abs(offset) * 140; // depth
-              const rotateY = offset * -25; // 3D curve angle
-              const scale = isCenter ? 1.05 : 1 - Math.abs(offset) * 0.15;
-              const opacity = isCenter ? 1 : Math.max(0.35, 1 - Math.abs(offset) * 0.4);
+              const xTranslate = offset * (isMobile ? 130 : 280); // responsive px spacing
+              const zTranslate = isCenter ? (isMobile ? 50 : 80) : -Math.abs(offset) * (isMobile ? 80 : 140); // depth
+              const rotateY = offset * (isMobile ? -18 : -25); // 3D curve angle
+              const scale = isCenter ? 1.02 : 1 - Math.abs(offset) * (isMobile ? 0.12 : 0.15);
+              const opacity = isCenter ? 1 : Math.max(0.4, 1 - Math.abs(offset) * 0.45);
 
               return (
                 <motion.div
@@ -164,7 +187,7 @@ export default function Spatial3DCarousel() {
                   style={{
                     transformStyle: 'preserve-3d',
                   }}
-                  className={`absolute w-72 sm:w-84 aspect-[4/5] rounded-3xl cursor-pointer will-change-transform shadow-2xl ${
+                  className={`absolute w-[260px] sm:w-80 md:w-84 aspect-[4/5] rounded-3xl cursor-pointer will-change-transform shadow-2xl ${
                     isCenter ? 'z-30' : 'z-10 pointer-events-auto'
                   }`}
                 >

@@ -228,7 +228,7 @@ export default function Home() {
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.3, ease: [0.22, 1, 0.36, 1] }}
-            className="text-white text-5xl sm:text-7xl lg:text-8xl xl:text-9xl font-light tracking-[0.2em] uppercase mb-6 drop-shadow-[0_20px_50px_rgba(0,0,0,0.9)]"
+            className="text-white text-4xl sm:text-6xl md:text-7xl lg:text-8xl xl:text-9xl font-light tracking-[0.15em] sm:tracking-[0.2em] uppercase mb-4 sm:mb-6 drop-shadow-[0_20px_50px_rgba(0,0,0,0.9)]"
           >
             JORIQUE
           </motion.h1>
@@ -237,7 +237,7 @@ export default function Home() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.7, delay: 0.45, ease: [0.22, 1, 0.36, 1] }}
-            className="text-white/95 text-lg sm:text-2xl font-light tracking-wide mb-3 max-w-xl drop-shadow-lg"
+            className="text-white/95 text-base sm:text-xl md:text-2xl font-light tracking-wide mb-2 sm:mb-3 max-w-xl drop-shadow-lg px-2"
           >
             Where Tactile Comfort Meets Architecture
           </motion.p>
@@ -246,7 +246,7 @@ export default function Home() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.7, delay: 0.6, ease: [0.22, 1, 0.36, 1] }}
-            className="text-white/70 text-sm sm:text-base font-light max-w-md mb-10 leading-relaxed drop-shadow"
+            className="text-white/70 text-xs sm:text-sm md:text-base font-light max-w-md mb-8 sm:mb-10 leading-relaxed drop-shadow px-2"
           >
             Meticulously engineered home textiles crafted to transform your everyday living sanctuary.
           </motion.p>
@@ -255,15 +255,15 @@ export default function Home() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.7, delay: 0.75, ease: [0.22, 1, 0.36, 1] }}
-            className="flex flex-col sm:flex-row items-center gap-4"
+            className="flex flex-col sm:flex-row items-center gap-3 sm:gap-4 w-full sm:w-auto px-4 sm:px-0 max-w-xs sm:max-w-none"
           >
-            <Link to="/shop">
-              <Button size="lg" className="shadow-2xl hover:shadow-white/30 transition-all font-semibold uppercase tracking-widest text-xs px-9 py-4">
+            <Link to="/shop" className="w-full sm:w-auto">
+              <Button size="lg" className="w-full sm:w-auto shadow-2xl hover:shadow-white/30 transition-all font-semibold uppercase tracking-widest text-xs px-8 sm:px-9 py-3.5 sm:py-4">
                 Explore Collection
               </Button>
             </Link>
-            <Link to="/about">
-              <button className="px-8 py-4 rounded-xl border border-white/25 bg-black/30 backdrop-blur-md text-white hover:bg-white hover:text-black transition-all duration-300 text-xs font-semibold uppercase tracking-widest">
+            <Link to="/about" className="w-full sm:w-auto">
+              <button className="w-full sm:w-auto px-7 sm:px-8 py-3.5 sm:py-4 rounded-xl border border-white/25 bg-black/30 backdrop-blur-md text-white hover:bg-white hover:text-black transition-all duration-300 text-xs font-semibold uppercase tracking-widest">
                 Our Weave Philosophy
               </button>
             </Link>
