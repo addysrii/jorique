@@ -16,8 +16,9 @@ import { productService } from '../lib/api/products';
 import { supabase } from '../lib/supabase';
 import { Product } from '../types';
 import AdminProductModifyButton from '../components/AdminProductModifyButton';
+import CategoryManager from '../components/CategoryManager';
 
-type AdminTab = 'overview' | 'products' | 'inventory' | 'orders' | 'gifts' | 'reviews' | 'suppliers' | 'barcodes';
+type AdminTab = 'overview' | 'products' | 'inventory' | 'orders' | 'gifts' | 'reviews' | 'suppliers' | 'barcodes' | 'categories';
 
 interface ProductSerialRow {
   id: string;
@@ -245,6 +246,7 @@ export default function AdminDashboard() {
               { id: 'reviews', label: `Reviews (${reviews.length})`, icon: <Star size={14} /> },
               { id: 'suppliers', label: 'Suppliers & Costs', icon: <Truck size={14} /> },
               { id: 'barcodes', label: 'Packaging Labels', icon: <BarcodeIcon size={14} /> },
+              { id: 'categories', label: 'Categories', icon: <Layers size={14} /> },
             ].map(tab => (
               <button
                 key={tab.id}
@@ -729,6 +731,16 @@ export default function AdminDashboard() {
                         </div>
                       ))}
                     </div>
+                  </div>
+                </div>
+              )}
+              {/* TAB 9: CATEGORY MANAGER */}
+              {activeTab === 'categories' && (
+                <div className="space-y-6">
+                  <div>
+                    <h3 className="text-sm font-semibold text-primary dark:text-white mb-1">Category & Subcategory Manager</h3>
+                    <p className="text-xs text-secondary dark:text-white/60 mb-6">Create, rename, and delete product categories and their subcategories.</p>
+                    <CategoryManager />
                   </div>
                 </div>
               )}

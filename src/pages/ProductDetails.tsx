@@ -1,11 +1,12 @@
 import { useState, useEffect } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ArrowLeft, Heart, Truck, RefreshCw, Shield, ChevronLeft, ChevronRight, Check, Sparkles, Compass, ShoppingBag, MessageCircle, Plus, Minus } from 'lucide-react';
+import { ArrowLeft, Heart, Truck, RefreshCw, Shield, ChevronLeft, ChevronRight, Check, Sparkles, Compass, ShoppingBag, MessageCircle, Plus, Minus, Camera } from 'lucide-react';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import ProductCard from '../components/ProductCard';
 import Parallax3DCard from '../components/Parallax3DCard';
+import ViewInYourRoomModal from '../components/ViewInYourRoomModal';
 import { productService } from '../lib/api/products'; 
 import { Product } from '../types';
 import { useCart } from '../context/CartContext';
@@ -28,6 +29,7 @@ export default function ProductDetails() {
   const [activeImage, setActiveImage] = useState(0);
   const [wishlisted, setWishlisted] = useState(false);
   const [selectedQty, setSelectedQty] = useState(1);
+  const [isArOpen, setIsArOpen] = useState(false);
   const { addToCart, buyNow } = useCart();
 
   useEffect(() => {
@@ -137,15 +139,20 @@ export default function ProductDetails() {
             
             {/* Left Column: 3D Perspective Visualizer Stage (lg:col-span-7) */}
             <div className="lg:col-span-7">
-              {/* Interactive hint */}
-              <div className="flex items-center justify-between text-xs text-secondary/70 dark:text-white/50 mb-3 px-1">
+              {/* Interactive hint & AR trigger button */}
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 text-xs text-secondary/70 dark:text-white/50 mb-3 px-1">
                 <span className="inline-flex items-center gap-1.5">
                   <Compass size={13} className="text-primary dark:text-[#D4AF37]" />
                   Interactive 3D Stage • Tilt & hover to inspect weave
                 </span>
-                <span className="text-[11px] font-mono">
-                  {activeImage + 1} / {product.images.length}
-                </span>
+
+                <button
+                  onClick={() => setIsArOpen(true)}
+                  className="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full bg-cream dark:bg-white/10 text-[#D4AF37] border border-[#D4AF37]/40 text-[11px] font-bold uppercase tracking-wider hover:bg-[#D4AF37] hover:text-black transition-all shadow-sm self-start sm:self-auto"
+                >
+                  <Camera size={13} />
+                  <span>View in Your Room (AR)</span>
+                </button>
               </div>
 
               {/* 3D Visualizer Card */}
@@ -428,6 +435,7 @@ export default function ProductDetails() {
         )}
       </div>
 
+      <ViewInYourRoomModal product={product} isOpen={isArOpen} onClose={() => setIsArOpen(false)} />
       <Footer />
     </div>
   );

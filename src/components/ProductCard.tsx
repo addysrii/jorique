@@ -1,9 +1,10 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Heart, ShoppingBag, MessageCircle } from 'lucide-react';
+import { Heart, ShoppingBag, MessageCircle, Camera } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { Product } from '../types';
 import Parallax3DCard from './Parallax3DCard';
+import ViewInYourRoomModal from './ViewInYourRoomModal';
 import { useCart } from '../context/CartContext';
 
 interface ProductCardProps {
@@ -13,6 +14,7 @@ interface ProductCardProps {
 
 export default function ProductCard({ product, index = 0 }: ProductCardProps) {
   const [wishlisted, setWishlisted] = useState(false);
+  const [isArOpen, setIsArOpen] = useState(false);
   const { addToCart, buyNow } = useCart();
 
   // Handle different image formats
@@ -67,23 +69,38 @@ export default function ProductCard({ product, index = 0 }: ProductCardProps) {
               </div>
             )}
 
-            {/* 3D Floating Wishlist Button */}
-            <button
-              onClick={(e) => {
-                e.preventDefault();
-                e.stopPropagation();
-                setWishlisted((v) => !v);
-              }}
-              aria-label="Add to wishlist"
-              className="absolute top-3.5 right-3.5 p-2 bg-white/95 dark:bg-black/80 backdrop-blur-md rounded-full shadow-lg opacity-0 group-hover:opacity-100 transition-all duration-300 hover:bg-white dark:hover:bg-black hover:scale-110 z-30"
-              style={{ transform: 'translateZ(35px)' }}
-            >
-              <Heart
-                size={14}
-                strokeWidth={1.5}
-                className={wishlisted ? 'fill-primary dark:fill-[#D4AF37] text-primary dark:text-[#D4AF37]' : 'text-secondary dark:text-white/70'}
-              />
-            </button>
+            {/* 3D Floating AR Studio & Wishlist Buttons */}
+            <div className="absolute top-3.5 right-3.5 flex items-center gap-1.5 z-30 opacity-0 group-hover:opacity-100 transition-all duration-300">
+              <button
+                onClick={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  setIsArOpen(true);
+                }}
+                title="View in Your Room (AR)"
+                className="p-2 bg-[#100E0D]/90 text-[#D4AF37] border border-[#D4AF37]/40 backdrop-blur-md rounded-full shadow-lg hover:bg-[#D4AF37] hover:text-black transition-all duration-300 hover:scale-110"
+                style={{ transform: 'translateZ(35px)' }}
+              >
+                <Camera size={14} strokeWidth={2} />
+              </button>
+
+              <button
+                onClick={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  setWishlisted((v) => !v);
+                }}
+                aria-label="Add to wishlist"
+                className="p-2 bg-white/95 dark:bg-black/80 backdrop-blur-md rounded-full shadow-lg transition-all duration-300 hover:bg-white dark:hover:bg-black hover:scale-110"
+                style={{ transform: 'translateZ(35px)' }}
+              >
+                <Heart
+                  size={14}
+                  strokeWidth={1.5}
+                  className={wishlisted ? 'fill-primary dark:fill-[#D4AF37] text-primary dark:text-[#D4AF37]' : 'text-secondary dark:text-white/70'}
+                />
+              </button>
+            </div>
 
             {/* 3D Quick Action Overlay */}
             <div
@@ -151,6 +168,8 @@ export default function ProductCard({ product, index = 0 }: ProductCardProps) {
           </div>
         </Parallax3DCard>
       </Link>
+
+      <ViewInYourRoomModal product={product} isOpen={isArOpen} onClose={() => setIsArOpen(false)} />
     </motion.div>
   );
 }

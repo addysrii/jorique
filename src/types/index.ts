@@ -3,6 +3,7 @@ export interface Product {
   sku?: string;
   name: string;
   category: string;
+  subcategory?: string;
   price: number;
   originalPrice?: number;
   discount_price?: number;
@@ -47,6 +48,7 @@ export interface ProductResponse {
 export interface ProductFormValues {
   name: string;
   category: string;
+  subcategory?: string;
   price: number;
   discount_price?: number;
   cost?: number;

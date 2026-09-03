@@ -20,6 +20,7 @@ export interface Product {
 export interface ProductFormValues {
   name: string;
   category: string;
+  subcategory?: string;
   price: number;
   discount_price?: number;
   cost?: number;

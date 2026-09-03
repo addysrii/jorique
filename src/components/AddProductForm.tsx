@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { ArrowLeft, Save, Upload, X, ChevronDown, ChevronUp, Printer, Sparkles } from 'lucide-react';
 import { Link } from 'react-router-dom';
@@ -29,6 +29,31 @@ export default function AddProductForm() {
   }>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
+
+  // Dynamic categories & subcategories from Supabase
+  const [dbCategories, setDbCategories] = useState<{ id: string; name: string; slug: string }[]>([]);
+  const [dbSubcategories, setDbSubcategories] = useState<{ id: string; category_id: string; name: string; slug: string }[]>([]);
+  const [loadingCats, setLoadingCats] = useState(true);
+
+  useEffect(() => {
+    const loadCats = async () => {
+      setLoadingCats(true);
+      try {
+        const [{ data: cats }, { data: subs }] = await Promise.all([
+          supabase.from('categories').select('id, name, slug').order('name'),
+          supabase.from('subcategories').select('id, category_id, name, slug').order('name'),
+        ]);
+        if (cats) setDbCategories(cats as { id: string; name: string; slug: string }[]);
+        if (subs) setDbSubcategories(subs as { id: string; category_id: string; name: string; slug: string }[]);
+      } catch {
+        // silently fallback
+      } finally {
+        setLoadingCats(false);
+      }
+    };
+    loadCats();
+  }, []);
+
   const { token } = useAuth();
 
   const {
@@ -45,6 +70,12 @@ export default function AddProductForm() {
   const category = watch('category');
   const year = watch('year');
   const quantity = watch('quantity');
+
+  // Filter subcategories based on selected category name
+  const selectedDbCategory = dbCategories.find(c => c.name === category);
+  const filteredSubs = selectedDbCategory
+    ? dbSubcategories.filter(s => s.category_id === selectedDbCategory.id)
+    : [];
   const previewSku = generateSKU(category || 'GEN', year || new Date().getFullYear(), 1);
   const previewSerials = generateSerials(previewSku, Number.isInteger(quantity) ? quantity : 0);
 
@@ -131,6 +162,7 @@ export default function AddProductForm() {
       const productData = {
         name: data.name,
         category: data.category,
+        subcategory: data.subcategory || null,
         price: data.price,
         quantity: data.quantity,
         supplier: data.supplier || null,
@@ -265,17 +297,57 @@ export default function AddProductForm() {
               <label className="block text-xs font-semibold uppercase tracking-wider text-secondary dark:text-white/70 mb-1.5">Category *</label>
               <select
                 {...register('category', { required: 'Category is required' })}
+                onChange={e => {
+                  register('category').onChange(e);
+                  setValue('subcategory', ''); // reset subcategory when category changes
+                }}
                 className="w-full rounded-xl border border-border dark:border-[#2E2925] bg-cream/30 dark:bg-[#100E0D] px-4 py-3 text-sm text-primary dark:text-white outline-none focus:border-primary dark:focus:border-[#D4AF37] transition-colors"
+                disabled={loadingCats}
               >
-                <option value="" className="dark:bg-[#1A1816]">Select Category</option>
-                <option value="Bedsheets" className="dark:bg-[#1A1816]">Bedsheets (BS)</option>
-                <option value="Home Decor" className="dark:bg-[#1A1816]">Home Decor (HD)</option>
-                <option value="Bath" className="dark:bg-[#1A1816]">Bath (BT)</option>
-                <option value="Kitchen" className="dark:bg-[#1A1816]">Kitchen (KT)</option>
-                <option value="Accessories" className="dark:bg-[#1A1816]">Accessories (AC)</option>
+                <option value="" className="dark:bg-[#1A1816]">
+                  {loadingCats ? 'Loading categories...' : 'Select Category'}
+                </option>
+                {dbCategories.length > 0
+                  ? dbCategories.map(cat => (
+                      <option key={cat.id} value={cat.name} className="dark:bg-[#1A1816]">{cat.name}</option>
+                    ))
+                  : (
+                    <>
+                      <option value="Bedsheets" className="dark:bg-[#1A1816]">Bedsheets</option>
+                      <option value="Home Decor" className="dark:bg-[#1A1816]">Home Decor</option>
+                      <option value="Bath" className="dark:bg-[#1A1816]">Bath</option>
+                      <option value="Kitchen" className="dark:bg-[#1A1816]">Kitchen</option>
+                      <option value="Accessories" className="dark:bg-[#1A1816]">Accessories</option>
+                    </>
+                  )
+                }
               </select>
               {errors.category && <p className="mt-1 text-xs text-red-600 dark:text-red-400">{errors.category.message}</p>}
             </div>
+
+            {/* Subcategory — shown only when category is selected and has subs */}
+            {category && (
+              <div>
+                <label className="block text-xs font-semibold uppercase tracking-wider text-secondary dark:text-white/70 mb-1.5">
+                  Subcategory
+                  {filteredSubs.length === 0 && category && !loadingCats && (
+                    <span className="ml-2 normal-case font-normal text-secondary dark:text-white/40">(none defined — add via Categories tab)</span>
+                  )}
+                </label>
+                <select
+                  {...register('subcategory')}
+                  disabled={filteredSubs.length === 0 || loadingCats}
+                  className={`w-full rounded-xl border border-border dark:border-[#2E2925] bg-cream/30 dark:bg-[#100E0D] px-4 py-3 text-sm text-primary dark:text-white outline-none focus:border-primary dark:focus:border-[#D4AF37] transition-colors ${filteredSubs.length === 0 ? 'opacity-50 cursor-not-allowed' : ''}`}
+                >
+                  <option value="" className="dark:bg-[#1A1816]">
+                    {filteredSubs.length === 0 ? 'No subcategories for this category' : 'Select Subcategory (optional)'}
+                  </option>
+                  {filteredSubs.map(sub => (
+                    <option key={sub.id} value={sub.name} className="dark:bg-[#1A1816]">{sub.name}</option>
+                  ))}
+                </select>
+              </div>
+            )}
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-5">
