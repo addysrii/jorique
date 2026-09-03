@@ -378,10 +378,7 @@ export default function ProductDetails() {
 
               {/* Specifications Card */}
               <div className="border-t border-border dark:border-[#2E2925] pt-6 mb-8 grid grid-cols-3 gap-3">
-                <div className="p-3 rounded-xl bg-cream/30 dark:bg-[#1A1816] border border-border/60 dark:border-[#2E2925] text-center">
-                  <span className="text-[10px] text-secondary dark:text-white/50 uppercase tracking-widest block mb-0.5">SKU</span>
-                  <span className="text-xs font-semibold text-primary dark:text-white font-mono">{product.sku}</span>
-                </div>
+
                 <div className="p-3 rounded-xl bg-cream/30 dark:bg-[#1A1816] border border-border/60 dark:border-[#2E2925] text-center">
                   <span className="text-[10px] text-secondary dark:text-white/50 uppercase tracking-widest block mb-0.5">Origin</span>
                   <span className="text-xs font-semibold text-primary dark:text-white">{product.brand_id || 'Portugal'}</span>

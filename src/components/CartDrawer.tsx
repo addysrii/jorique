@@ -106,9 +106,7 @@ export default function CartDrawer() {
                         </button>
                       </div>
 
-                      <p className="text-[10px] text-secondary/70 dark:text-white/50 font-mono mt-0.5">
-                        SKU: {item.product.sku || 'N/A'}
-                      </p>
+
 
                       <div className="flex items-center justify-between mt-3">
                         <div className="flex items-center border border-border dark:border-[#2E2925] rounded-lg bg-white dark:bg-[#100E0D] overflow-hidden">

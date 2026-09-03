@@ -64,7 +64,7 @@ export default function WhatsAppCheckoutModal() {
       .map((item, idx) => {
         const itemPrice = item.product.discount_price || item.product.price;
         const lineTotal = itemPrice * item.quantity;
-        return `${idx + 1}. *${item.product.name}*\n   • SKU: ${item.product.sku || 'N/A'}\n   • Qty: ${item.quantity} × ₹${itemPrice.toLocaleString('en-IN')} = ₹${lineTotal.toLocaleString('en-IN')}`;
+        return `${idx + 1}. *${item.product.name}*\n   • Qty: ${item.quantity} × ₹${itemPrice.toLocaleString('en-IN')} = ₹${lineTotal.toLocaleString('en-IN')}`;
       })
       .join('\n\n');
 

@@ -55,7 +55,7 @@ export default function ProductPackagingLabel({
   // Full product descriptor formatted like retail bedding packaging
   const formattedTitle = productName.toUpperCase().includes('BED')
     ? productName.toUpperCase()
-    : `${category.toUpperCase()} ${productName.toUpperCase()} - ${effectiveSku}`;
+    : `${category.toUpperCase()} ${productName.toUpperCase()}`;
 
   const formattedOriginalPrice = Number(price).toFixed(2);
   const formattedDiscountedPrice = Number(discountPrice || price).toFixed(2);
@@ -143,9 +143,7 @@ export default function ProductPackagingLabel({
             <p className="font-mono text-[9px] font-bold tracking-[0.16em] text-black -mt-0.5">
               *{barcodeValue}*
             </p>
-            <span className="text-[7px] font-sans font-bold uppercase tracking-wider text-neutral-600">
-              Inventory & Sale SKU
-            </span>
+
           </div>
 
           {/* 2. QR Code: Customer e-Review & Authenticity Reward */}

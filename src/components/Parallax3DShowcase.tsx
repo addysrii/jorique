@@ -43,7 +43,7 @@ export default function Parallax3DShowcase() {
           const generated: LookbookScene[] = prods.slice(0, 4).map((p, idx) => ({
             id: p.id,
             title: p.name,
-            subtitle: `${p.category || 'Artisanal'} • ${p.sku || 'JRQ'}`,
+            subtitle: `${p.category || 'Artisanal'}`,
             roomName: p.category || `Collection 0${idx + 1}`,
             material: p.tags && p.tags.length > 0 ? p.tags.join(', ') : '100% Certified Long-Staple Organic Cotton',
             feel: 'Silky, breathable, luxury tactile drape',
