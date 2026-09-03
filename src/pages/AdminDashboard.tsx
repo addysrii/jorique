@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { 
   Loader2, PackageCheck, Users, WalletCards, Plus, Boxes, Trash2, 
-  Layers, ShoppingCart, Gift, Star, Truck, Barcode as BarcodeIcon, 
+  Layers, ShoppingCart, Gift, Star, Truck, Barcode as BarcodeIcon, Tag,
   Printer, CheckCircle2, AlertCircle, RefreshCw, Eye, Search, Filter
 } from 'lucide-react';
 import { QRCodeSVG } from 'qrcode.react';
@@ -17,8 +17,9 @@ import { supabase } from '../lib/supabase';
 import { Product } from '../types';
 import AdminProductModifyButton from '../components/AdminProductModifyButton';
 import CategoryManager from '../components/CategoryManager';
+import BadgeManager from '../components/BadgeManager';
 
-type AdminTab = 'overview' | 'products' | 'inventory' | 'orders' | 'gifts' | 'reviews' | 'suppliers' | 'barcodes' | 'categories';
+type AdminTab = 'overview' | 'products' | 'inventory' | 'orders' | 'gifts' | 'reviews' | 'suppliers' | 'barcodes' | 'categories' | 'badges';
 
 interface ProductSerialRow {
   id: string;
@@ -247,6 +248,7 @@ export default function AdminDashboard() {
               { id: 'suppliers', label: 'Suppliers & Costs', icon: <Truck size={14} /> },
               { id: 'barcodes', label: 'Packaging Labels', icon: <BarcodeIcon size={14} /> },
               { id: 'categories', label: 'Categories', icon: <Layers size={14} /> },
+              { id: 'badges', label: 'Badges', icon: <Tag size={14} /> },
             ].map(tab => (
               <button
                 key={tab.id}
@@ -734,6 +736,17 @@ export default function AdminDashboard() {
                   </div>
                 </div>
               )}
+              {/* TAB 10: BADGE MANAGER */}
+              {activeTab === 'badges' && (
+                <div className="space-y-6">
+                  <div>
+                    <h3 className="text-sm font-semibold text-primary dark:text-white mb-1">Badge Manager</h3>
+                    <p className="text-xs text-secondary dark:text-white/60 mb-6">Create and manage product badges (e.g. New, Bestseller, Limited Edition) with custom colours.</p>
+                    <BadgeManager />
+                  </div>
+                </div>
+              )}
+
               {/* TAB 9: CATEGORY MANAGER */}
               {activeTab === 'categories' && (
                 <div className="space-y-6">

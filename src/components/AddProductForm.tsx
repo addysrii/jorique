@@ -35,16 +35,21 @@ export default function AddProductForm() {
   const [dbSubcategories, setDbSubcategories] = useState<{ id: string; category_id: string; name: string; slug: string }[]>([]);
   const [loadingCats, setLoadingCats] = useState(true);
 
+  // Dynamic badges from Supabase
+  const [dbBadges, setDbBadges] = useState<{ id: string; label: string; color: string; text_color: string }[]>([]);
+
   useEffect(() => {
     const loadCats = async () => {
       setLoadingCats(true);
       try {
-        const [{ data: cats }, { data: subs }] = await Promise.all([
+        const [{ data: cats }, { data: subs }, { data: bdgs }] = await Promise.all([
           supabase.from('categories').select('id, name, slug').order('name'),
           supabase.from('subcategories').select('id, category_id, name, slug').order('name'),
+          supabase.from('badges').select('id, label, color, text_color').order('label'),
         ]);
         if (cats) setDbCategories(cats as { id: string; name: string; slug: string }[]);
         if (subs) setDbSubcategories(subs as { id: string; category_id: string; name: string; slug: string }[]);
+        if (bdgs) setDbBadges(bdgs as { id: string; label: string; color: string; text_color: string }[]);
       } catch {
         // silently fallback
       } finally {
@@ -418,17 +423,43 @@ export default function AddProductForm() {
             </div>
 
             <div>
-              <label className="block text-xs font-semibold uppercase tracking-wider text-secondary dark:text-white/70 mb-1.5">Storefront Badge</label>
+              <label className="block text-xs font-semibold uppercase tracking-wider text-secondary dark:text-white/70 mb-1.5">
+                Storefront Badge
+              </label>
               <select
                 {...register('badge')}
                 className="w-full rounded-xl border border-border dark:border-[#2E2925] bg-cream/30 dark:bg-[#100E0D] px-4 py-3 text-sm text-primary dark:text-white outline-none focus:border-primary dark:focus:border-[#D4AF37] transition-colors"
               >
                 <option value="" className="dark:bg-[#1A1816]">No Badge</option>
-                <option value="NEW" className="dark:bg-[#1A1816]">New</option>
-                <option value="FEATURED" className="dark:bg-[#1A1816]">Featured</option>
-                <option value="BEST SELLER" className="dark:bg-[#1A1816]">Best Seller</option>
-                <option value="LIMITED" className="dark:bg-[#1A1816]">Limited Edition</option>
+                {dbBadges.length > 0
+                  ? dbBadges.map(b => (
+                      <option key={b.id} value={b.label} className="dark:bg-[#1A1816]">{b.label}</option>
+                    ))
+                  : (
+                    <>
+                      <option value="NEW" className="dark:bg-[#1A1816]">New</option>
+                      <option value="FEATURED" className="dark:bg-[#1A1816]">Featured</option>
+                      <option value="BEST SELLER" className="dark:bg-[#1A1816]">Best Seller</option>
+                      <option value="LIMITED" className="dark:bg-[#1A1816]">Limited Edition</option>
+                    </>
+                  )
+                }
               </select>
+              {/* Live badge colour preview */}
+              {watch('badge') && dbBadges.find(b => b.label === watch('badge')) && (
+                <div className="mt-2 flex items-center gap-2">
+                  <span className="text-[10px] text-secondary dark:text-white/40 uppercase tracking-wider">Preview:</span>
+                  <span
+                    className="px-2.5 py-0.5 rounded-full text-[11px] font-bold"
+                    style={{
+                      backgroundColor: dbBadges.find(b => b.label === watch('badge'))?.color,
+                      color: dbBadges.find(b => b.label === watch('badge'))?.text_color,
+                    }}
+                  >
+                    {watch('badge')}
+                  </span>
+                </div>
+              )}
             </div>
           </div>
 

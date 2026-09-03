@@ -3,6 +3,7 @@ import { X, Save, Loader2, Pencil, QrCode, Download, Copy } from 'lucide-react';
 import { productService } from '../lib/api/products';
 import { getProductWithSerialsRequest } from '../lib/api';
 import { Product } from '../types';
+import { supabase } from '../lib/supabase';
 
 interface AdminProductModifyButtonProps {
   product: Product;
@@ -17,6 +18,14 @@ export default function AdminProductModifyButton({ product, onProductUpdated }: 
   const [serialsLoading, setSerialsLoading] = useState(false);
   
   // Form State initialized with product data
+  // Dynamic badges from Supabase
+  const [dbBadges, setDbBadges] = useState<{ id: string; label: string; color: string; text_color: string }[]>([]);
+
+  useEffect(() => {
+    supabase.from('badges').select('id, label, color, text_color').order('label')
+      .then(({ data }) => { if (data) setDbBadges(data as { id: string; label: string; color: string; text_color: string }[]); });
+  }, []);
+
   const [formData, setFormData] = useState({
     name: product.name,
     category: product.category,
@@ -145,13 +154,42 @@ export default function AdminProductModifyButton({ product, onProductUpdated }: 
 
                 <div>
                   <label className="block text-xs font-semibold uppercase tracking-wider text-secondary dark:text-white/70 mb-1.5">Badge</label>
-                  <input
-                    type="text"
+                  <select
                     name="badge"
                     value={formData.badge}
                     onChange={handleChange}
                     className="w-full px-4 py-2.5 bg-cream/30 dark:bg-[#100E0D] border border-border dark:border-[#2E2925] rounded-xl text-sm text-primary dark:text-white focus:outline-none focus:border-primary dark:focus:border-[#D4AF37]"
-                  />
+                  >
+                    <option value="">No Badge</option>
+                    {dbBadges.length > 0
+                      ? dbBadges.map(b => (
+                          <option key={b.id} value={b.label}>{b.label}</option>
+                        ))
+                      : (
+                        <>
+                          <option value="NEW">New</option>
+                          <option value="FEATURED">Featured</option>
+                          <option value="BEST SELLER">Best Seller</option>
+                          <option value="LIMITED">Limited Edition</option>
+                        </>
+                      )
+                    }
+                  </select>
+                  {/* Live colour preview */}
+                  {formData.badge && dbBadges.find(b => b.label === formData.badge) && (
+                    <div className="mt-2 flex items-center gap-2">
+                      <span className="text-[10px] text-secondary dark:text-white/40 uppercase tracking-wider">Preview:</span>
+                      <span
+                        className="px-2.5 py-0.5 rounded-full text-[11px] font-bold"
+                        style={{
+                          backgroundColor: dbBadges.find(b => b.label === formData.badge)?.color,
+                          color: dbBadges.find(b => b.label === formData.badge)?.text_color,
+                        }}
+                      >
+                        {formData.badge}
+                      </span>
+                    </div>
+                  )}
                 </div>
 
                 <div>
