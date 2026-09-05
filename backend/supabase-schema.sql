@@ -175,3 +175,27 @@ drop policy if exists sku_series_public_read on public.sku_series;
 create policy sku_series_public_read on public.sku_series for select using (true);
 drop policy if exists sku_series_public_all on public.sku_series;
 create policy sku_series_public_all on public.sku_series for all using (true) with check (true);
+
+-- Coupons table for promotional discounts
+create table if not exists public.coupons (
+  id uuid primary key default gen_random_uuid(),
+  code text not null unique,
+  discount_type text not null default 'percentage' check (discount_type in ('percentage', 'fixed')),
+  discount_value decimal(10,2) not null default 0,
+  min_order_amount decimal(10,2) not null default 0,
+  max_discount_amount decimal(10,2),
+  usage_limit integer,
+  times_used integer not null default 0,
+  expiry_date date,
+  is_active boolean not null default true,
+  description text,
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now()
+);
+
+alter table public.coupons enable row level security;
+drop policy if exists coupons_public_read on public.coupons;
+create policy coupons_public_read on public.coupons for select using (true);
+drop policy if exists coupons_public_all on public.coupons;
+create policy coupons_public_all on public.coupons for all using (true) with check (true);
+

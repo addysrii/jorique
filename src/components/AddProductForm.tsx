@@ -11,6 +11,7 @@ import type { ProductFormValues } from '../types/product';
 import type { SkuSeries } from '../types/skuSeries';
 import { formatSeriesSku } from '../types/skuSeries';
 import { fetchSkuSeriesList, incrementSeriesCounter, checkSkuAvailable } from '../lib/utils/skuSeriesStorage';
+import { JORIQUE_COLLECTION_LIST } from '../lib/constants/collections';
 
 export default function AddProductForm() {
   const [images, setImages] = useState<string[]>([]);
@@ -40,6 +41,9 @@ export default function AddProductForm() {
 
   // Dynamic badges from Supabase
   const [dbBadges, setDbBadges] = useState<{ id: string; label: string; color: string; text_color: string }[]>([]);
+
+  // Collection theme for packaging labels
+  const [selectedLabelCollection, setSelectedLabelCollection] = useState<string>('essential');
 
   // SKU Series & manual series state
   const [searchParams] = useSearchParams();
@@ -809,6 +813,32 @@ export default function AddProductForm() {
                     />
                   </div>
 
+                  {/* Collection Palette Switcher */}
+                  <div className="flex items-center gap-1 bg-cream/50 dark:bg-white/5 p-1 rounded-xl border border-border dark:border-[#2E2925] overflow-x-auto">
+                    <span className="text-[10px] font-bold uppercase tracking-wider text-secondary dark:text-white/60 px-2">
+                      Collection:
+                    </span>
+                    {JORIQUE_COLLECTION_LIST.map((col) => (
+                      <button
+                        key={col.id}
+                        type="button"
+                        onClick={() => setSelectedLabelCollection(col.id)}
+                        className={`px-2.5 py-1 rounded-lg text-xs font-semibold whitespace-nowrap transition-all flex items-center gap-1.5 ${
+                          selectedLabelCollection === col.id
+                            ? 'shadow-xs font-bold ring-2 ring-[#D4AF37]'
+                            : 'opacity-70 hover:opacity-100'
+                        }`}
+                        style={{
+                          backgroundColor: col.background,
+                          color: col.primaryText,
+                        }}
+                      >
+                        <span className="w-2 h-2 rounded-full border border-black/20" style={{ backgroundColor: col.accentColor }} />
+                        {col.shortName}
+                      </button>
+                    ))}
+                  </div>
+
                   <label className="inline-flex items-center gap-2 text-xs font-semibold text-secondary dark:text-white/70 cursor-pointer bg-cream/50 dark:bg-white/5 px-3 py-1.5 rounded-xl border border-border dark:border-[#2E2925]">
                     <input
                       type="checkbox"
@@ -852,6 +882,7 @@ export default function AddProductForm() {
                       badge={createdProductDetails.badge || watch('badge')}
                       cost={createdProductDetails.cost}
                       category={createdProductDetails.category || watch('category') || 'BED SHEET (DOUBLE BED)'}
+                      collection={selectedLabelCollection}
                       showChannels={labelShowChannels}
                       showQR={labelShowQR}
                       className="shadow-md hover:shadow-lg transition-shadow"

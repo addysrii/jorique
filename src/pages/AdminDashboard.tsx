@@ -3,7 +3,8 @@ import { Link } from 'react-router-dom';
 import { 
   Loader2, PackageCheck, Users, WalletCards, Plus, Boxes, Trash2, 
   Layers, ShoppingCart, Gift, Star, Truck, Barcode as BarcodeIcon, Tag,
-  Printer, CheckCircle2, AlertCircle, RefreshCw, Eye, Search, Filter, Hash
+  Printer, CheckCircle2, AlertCircle, RefreshCw, Eye, Search, Filter, Hash,
+  Receipt, Ticket
 } from 'lucide-react';
 import { QRCodeSVG } from 'qrcode.react';
 import Navbar from '../components/Navbar';
@@ -19,8 +20,11 @@ import AdminProductModifyButton from '../components/AdminProductModifyButton';
 import CategoryManager from '../components/CategoryManager';
 import BadgeManager from '../components/BadgeManager';
 import SkuSeriesManager from '../components/SkuSeriesManager';
+import InStoreBillingPOS from '../components/InStoreBillingPOS';
+import CouponManager from '../components/CouponManager';
+import { JORIQUE_COLLECTION_LIST } from '../lib/constants/collections';
 
-type AdminTab = 'overview' | 'products' | 'inventory' | 'orders' | 'gifts' | 'reviews' | 'suppliers' | 'barcodes' | 'categories' | 'badges' | 'sku-series';
+type AdminTab = 'overview' | 'billing' | 'products' | 'inventory' | 'orders' | 'gifts' | 'reviews' | 'suppliers' | 'barcodes' | 'coupons' | 'sku-series' | 'categories' | 'badges';
 
 interface ProductSerialRow {
   id: string;
@@ -64,6 +68,8 @@ interface GiftClaimRow {
 export default function AdminDashboard() {
   const { token } = useAuth();
   const [activeTab, setActiveTab] = useState<AdminTab>('overview');
+  const [selectedPOSCoupon, setSelectedPOSCoupon] = useState<string>('');
+  const [selectedLabelCollection, setSelectedLabelCollection] = useState<string>('essential');
 
   const [products, setProducts] = useState<Product[]>([]);
   const [serials, setSerials] = useState<ProductSerialRow[]>([]);
@@ -221,6 +227,13 @@ export default function AdminDashboard() {
             </div>
 
             <div className="flex items-center gap-3">
+              <button
+                type="button"
+                onClick={() => setActiveTab('billing')}
+                className="inline-flex items-center gap-2 bg-[#D4AF37]/15 hover:bg-[#D4AF37]/25 text-primary dark:text-[#D4AF37] border border-[#D4AF37]/30 px-4 py-2.5 rounded-xl transition-all text-xs font-bold uppercase tracking-wider shadow-xs"
+              >
+                <Receipt size={15} /> ⚡ In-Store Bill
+              </button>
               <Link
                 to="/admin/products/new"
                 className="inline-flex items-center gap-2 bg-primary dark:bg-[#D4AF37] text-white dark:text-black px-5 py-2.5 rounded-xl hover:bg-primary/90 dark:hover:bg-[#E5C158] transition-all text-xs font-bold uppercase tracking-wider shadow-md"
@@ -241,9 +254,11 @@ export default function AdminDashboard() {
           <div className="flex items-center gap-1.5 overflow-x-auto pb-3 mb-8 border-b border-border/80 dark:border-[#2E2925] text-xs font-semibold uppercase tracking-wider">
             {[
               { id: 'overview', label: 'Dashboard', icon: <WalletCards size={14} /> },
+              { id: 'billing', label: 'In-Store Billing (POS)', icon: <Receipt size={14} /> },
               { id: 'products', label: `Products (${products.length})`, icon: <Boxes size={14} /> },
               { id: 'inventory', label: `Inventory Matrix (${serials.length})`, icon: <Layers size={14} /> },
               { id: 'orders', label: `Orders (${orders.length})`, icon: <ShoppingCart size={14} /> },
+              { id: 'coupons', label: 'Coupons', icon: <Ticket size={14} /> },
               { id: 'gifts', label: `Gift Redemptions (${giftClaims.length})`, icon: <Gift size={14} /> },
               { id: 'reviews', label: `Reviews (${reviews.length})`, icon: <Star size={14} /> },
               { id: 'suppliers', label: 'Suppliers & Costs', icon: <Truck size={14} /> },
@@ -766,6 +781,28 @@ export default function AdminDashboard() {
                   <SkuSeriesManager />
                 </div>
               )}
+
+              {/* TAB: IN-STORE BILLING (POS) */}
+              {activeTab === 'billing' && (
+                <div className="space-y-6">
+                  <InStoreBillingPOS
+                    products={products}
+                    initialCouponCode={selectedPOSCoupon}
+                  />
+                </div>
+              )}
+
+              {/* TAB: COUPON MANAGER */}
+              {activeTab === 'coupons' && (
+                <div className="space-y-6">
+                  <CouponManager
+                    onSelectCouponForPOS={(code) => {
+                      setSelectedPOSCoupon(code);
+                      setActiveTab('billing');
+                    }}
+                  />
+                </div>
+              )}
             </>
           )}
 
@@ -792,6 +829,32 @@ export default function AdminDashboard() {
 
               {/* Customization Options Bar */}
               <div className="flex flex-wrap items-center gap-3">
+                {/* Collection Palette Switcher */}
+                <div className="flex items-center gap-1 bg-cream/50 dark:bg-white/5 p-1 rounded-xl border border-border dark:border-[#2E2925] overflow-x-auto">
+                  <span className="text-[10px] font-bold uppercase tracking-wider text-secondary dark:text-white/60 px-2">
+                    Collection:
+                  </span>
+                  {JORIQUE_COLLECTION_LIST.map((col) => (
+                    <button
+                      key={col.id}
+                      type="button"
+                      onClick={() => setSelectedLabelCollection(col.id)}
+                      className={`px-2.5 py-1 rounded-lg text-xs font-semibold whitespace-nowrap transition-all flex items-center gap-1.5 ${
+                        selectedLabelCollection === col.id
+                          ? 'shadow-xs font-bold ring-2 ring-[#D4AF37]'
+                          : 'opacity-70 hover:opacity-100'
+                      }`}
+                      style={{
+                        backgroundColor: col.background,
+                        color: col.primaryText,
+                      }}
+                    >
+                      <span className="w-2 h-2 rounded-full border border-black/20" style={{ backgroundColor: col.accentColor }} />
+                      {col.shortName}
+                    </button>
+                  ))}
+                </div>
+
                 {/* Badge input / preset */}
                 <div className="flex items-center gap-1.5 bg-cream/50 dark:bg-white/5 px-3 py-1 rounded-xl border border-border dark:border-[#2E2925]">
                   <span className="text-[11px] font-bold uppercase tracking-wider text-secondary dark:text-white/60">Badge:</span>
@@ -857,6 +920,7 @@ export default function AdminDashboard() {
                       badge={labelCustomBadge}
                       cost={selectedProductForLabels.cost}
                       category={selectedProductForLabels.category}
+                      collection={selectedLabelCollection}
                       showChannels={labelShowChannels}
                       showQR={labelShowQR}
                       className="shadow-md hover:shadow-lg transition-shadow"

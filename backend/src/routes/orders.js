@@ -25,12 +25,35 @@ router.get('/:id', authRequired, async (req, res) => {
   } catch (error) { res.status(500).json({ success: false, message: message(error) }); }
 });
 
+router.get('/customer-phone/:phone', authRequired, adminRequired, async (req, res) => {
+  try {
+    const cleanPhone = String(req.params.phone || '').replace(/\D/g, '');
+    const { data, error } = await supabase
+      .from('orders')
+      .select('*')
+      .order('created_at', { ascending: false });
+
+    if (error) throw error;
+    const filtered = (data || []).filter(o => {
+      const p = o.items?.customer_phone || '';
+      return p.includes(cleanPhone);
+    });
+    res.json({ success: true, data: filtered });
+  } catch (error) {
+    res.status(500).json({ success: false, message: message(error) });
+  }
+});
+
 router.post('/', authRequired, async (req, res) => {
   try {
-    const { items, total, customer_id: requestedCustomerId } = req.body || {};
-    if (!Array.isArray(items) || items.length === 0) return res.status(400).json({ success: false, message: 'Order items are required.' });
-    const customerId = req.user.role === 'admin' && requestedCustomerId ? requestedCustomerId : req.user.id;
-    const order = { order_number: `JRQ-${Date.now()}-${Math.floor(Math.random() * 1000)}`, customer_id: customerId, status: 'pending', total: total ?? 0, items };
+    const { items, total, customer_id: requestedCustomerId, invoice_number, source } = req.body || {};
+    if (!items || (Array.isArray(items) && items.length === 0)) {
+      return res.status(400).json({ success: false, message: 'Order items are required.' });
+    }
+    const customerId = req.user.role === 'admin' && requestedCustomerId ? requestedCustomerId : (source === 'in_store_pos' ? null : req.user.id);
+    const orderNumber = invoice_number || `JRQ-${Date.now()}-${Math.floor(Math.random() * 1000)}`;
+    const status = source === 'in_store_pos' ? 'delivered' : 'pending';
+    const order = { order_number: orderNumber, customer_id: customerId, status, total: total ?? 0, items };
     const { data, error } = await supabase.from('orders').insert(order).select('*').single();
     if (error) throw error;
     res.status(201).json({ success: true, data });
