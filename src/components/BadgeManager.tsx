@@ -27,16 +27,16 @@ export interface BadgeItem {
 // ─── Preset colour swatches for quick pick ────────────────────────────────────
 
 const COLOR_PRESETS = [
-  { bg: '#FEF3C7', text: '#92400E', name: 'Amber' },
-  { bg: '#DCFCE7', text: '#166534', name: 'Green' },
-  { bg: '#DBEAFE', text: '#1E40AF', name: 'Blue' },
-  { bg: '#F3E8FF', text: '#6B21A8', name: 'Purple' },
-  { bg: '#FFE4E6', text: '#9F1239', name: 'Rose' },
-  { bg: '#E0F2FE', text: '#075985', name: 'Sky' },
-  { bg: '#FFF7ED', text: '#9A3412', name: 'Orange' },
-  { bg: '#F1F5F9', text: '#334155', name: 'Slate' },
+  { bg: '#7A8B72', text: '#F5EDE3', name: 'Sage (Essential)' },
+  { bg: '#243B64', text: '#F5EDE3', name: 'Royal Blue (Signature)' },
+  { bg: '#641F2D', text: '#F5EDE3', name: 'Burgundy (Luxe)' },
+  { bg: '#B9787D', text: '#1A1A1A', name: 'Dusty Rose (Souvenir)' },
+  { bg: '#4B5563', text: '#FFFFFF', name: 'Slate (Hospitality)' },
   { bg: '#D4AF37', text: '#1A1208', name: 'Gold' },
   { bg: '#1A1816', text: '#D4AF37', name: 'Dark Gold' },
+  { bg: '#FEF3C7', text: '#92400E', name: 'Amber' },
+  { bg: '#DCFCE7', text: '#166534', name: 'Green' },
+  { bg: '#E0F2FE', text: '#075985', name: 'Sky' },
 ];
 
 // ─── Component ────────────────────────────────────────────────────────────────

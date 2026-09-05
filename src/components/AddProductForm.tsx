@@ -27,7 +27,7 @@ import type { ProductFormValues } from '../types/product';
 import type { SkuSeries } from '../types/skuSeries';
 import { formatSeriesSku } from '../types/skuSeries';
 import { fetchSkuSeriesList, incrementSeriesCounter, checkSkuAvailable } from '../lib/utils/skuSeriesStorage';
-import { JORIQUE_COLLECTION_LIST } from '../lib/constants/collections';
+import { JORIQUE_COLLECTION_LIST, getBadgeColors } from '../lib/constants/collections';
 
 export interface ColorVariantItem {
   id: string;
@@ -48,6 +48,7 @@ export interface CreatedBatchProduct {
   price?: number;
   discount_price?: number;
   badge?: string;
+  cost?: number;
   category?: string;
   serials: string[];
 }
@@ -717,38 +718,53 @@ export default function AddProductForm() {
                 className={`w-full rounded-xl border ${errors.badge ? 'border-red-500 dark:border-red-500' : 'border-border dark:border-[#2E2925]'} bg-cream/30 dark:bg-[#100E0D] px-4 py-3 text-sm text-primary dark:text-white outline-none focus:border-primary dark:focus:border-[#D4AF37] transition-colors`}
               >
                 <option value="" className="dark:bg-[#1A1816]">Select a Required Badge...</option>
-                {dbBadges.length > 0
-                  ? dbBadges.map(b => (
+                {/* 1. Official Brand Collections */}
+                <optgroup label="Official Brand Collections" className="dark:bg-[#1A1816]">
+                  <option value="JORIQUE Essential" className="dark:bg-[#1A1816]">JORIQUE Essential (Sage #7A8B72)</option>
+                  <option value="JORIQUE Signature" className="dark:bg-[#1A1816]">JORIQUE Signature (Royal Blue #243B64)</option>
+                  <option value="JORIQUE Luxe" className="dark:bg-[#1A1816]">JORIQUE Luxe (Burgundy #641F2D)</option>
+                  <option value="JORIQUE Souvenir" className="dark:bg-[#1A1816]">JORIQUE Souvenir (Dusty Rose #B9787D)</option>
+                  <option value="JORIQUE Hospitality" className="dark:bg-[#1A1816]">JORIQUE Hospitality (Slate #4B5563)</option>
+                </optgroup>
+                {/* 2. Standard Storefront Badges */}
+                <optgroup label="Storefront Status Badges" className="dark:bg-[#1A1816]">
+                  <option value="NEW" className="dark:bg-[#1A1816]">New (Sage)</option>
+                  <option value="FEATURED" className="dark:bg-[#1A1816]">Featured (Royal Blue)</option>
+                  <option value="BEST SELLER" className="dark:bg-[#1A1816]">Best Seller (Burgundy)</option>
+                  <option value="LIMITED" className="dark:bg-[#1A1816]">Limited Edition (Dusty Rose)</option>
+                </optgroup>
+                {/* 3. Custom Database Badges if any */}
+                {dbBadges.length > 0 && (
+                  <optgroup label="Custom Badges" className="dark:bg-[#1A1816]">
+                    {dbBadges.map(b => (
                       <option key={b.id} value={b.label} className="dark:bg-[#1A1816]">{b.label}</option>
-                    ))
-                  : (
-                    <>
-                      <option value="NEW" className="dark:bg-[#1A1816]">New</option>
-                      <option value="FEATURED" className="dark:bg-[#1A1816]">Featured</option>
-                      <option value="BEST SELLER" className="dark:bg-[#1A1816]">Best Seller</option>
-                      <option value="LIMITED" className="dark:bg-[#1A1816]">Limited Edition</option>
-                    </>
-                  )
-                }
+                    ))}
+                  </optgroup>
+                )}
               </select>
               {errors.badge && (
                 <p className="mt-1 text-xs text-red-600 dark:text-red-400 font-medium">{errors.badge.message}</p>
               )}
               {/* Live badge colour preview */}
-              {watch('badge') && (
-                <div className="mt-2 flex items-center gap-2">
-                  <span className="text-[10px] text-secondary dark:text-white/40 uppercase tracking-wider">Preview:</span>
-                  <span
-                    className="px-2.5 py-0.5 rounded-full text-[11px] font-bold"
-                    style={{
-                      backgroundColor: dbBadges.find(b => b.label === watch('badge'))?.color || '#D4AF37',
-                      color: dbBadges.find(b => b.label === watch('badge'))?.text_color || '#FFFFFF',
-                    }}
-                  >
-                    {watch('badge')}
-                  </span>
-                </div>
-              )}
+              {watch('badge') && (() => {
+                const dbMatch = dbBadges.find(b => b.label === watch('badge'));
+                const bCol = dbMatch ? { bg: dbMatch.color, text: dbMatch.text_color, border: 'rgba(0,0,0,0.1)' } : getBadgeColors(watch('badge'));
+                return (
+                  <div className="mt-2 flex items-center gap-2">
+                    <span className="text-[10px] text-secondary dark:text-white/40 uppercase tracking-wider">Preview:</span>
+                    <span
+                      className="px-2.5 py-0.5 rounded-full text-[11px] font-bold border shadow-xs"
+                      style={{
+                        backgroundColor: bCol.bg,
+                        color: bCol.text,
+                        borderColor: bCol.border || 'rgba(0,0,0,0.1)',
+                      }}
+                    >
+                      ★ {watch('badge')}
+                    </span>
+                  </div>
+                );
+              })()}
             </div>
           </div>
 

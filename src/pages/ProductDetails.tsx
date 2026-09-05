@@ -10,6 +10,7 @@ import ViewInYourRoomModal from '../components/ViewInYourRoomModal';
 import { productService } from '../lib/api/products'; 
 import { Product } from '../types';
 import { useCart } from '../context/CartContext';
+import { getBadgeColors } from '../lib/constants/collections';
 
 const shippingInfo = [
   { icon: <Truck size={15} strokeWidth={1.5} />, text: 'Free Express Shipping on orders above ₹1,999' },
@@ -276,14 +277,22 @@ export default function ProductDetails() {
                   </AnimatePresence>
 
                   {/* 3D Floating Badge */}
-                  {product.badge && (
-                    <div
-                      className="absolute top-5 left-5 bg-primary/95 dark:bg-[#D4AF37] dark:text-black backdrop-blur-md text-white text-[10px] font-bold tracking-widest uppercase px-3.5 py-1.5 rounded-full shadow-lg z-20 pointer-events-none"
-                      style={{ transform: 'translateZ(40px)' }}
-                    >
-                      {product.badge}
-                    </div>
-                  )}
+                  {product.badge && (() => {
+                    const bCol = getBadgeColors(product.badge);
+                    return (
+                      <div
+                        className="absolute top-5 left-5 backdrop-blur-md text-[10px] font-bold tracking-widest uppercase px-3.5 py-1.5 rounded-full shadow-lg z-20 pointer-events-none border"
+                        style={{
+                          backgroundColor: bCol.bg,
+                          color: bCol.text,
+                          borderColor: bCol.border || 'rgba(255,255,255,0.25)',
+                          transform: 'translateZ(40px)',
+                        }}
+                      >
+                        {product.badge}
+                      </div>
+                    );
+                  })()}
 
                   {/* 3D Discount Badge */}
                   {discountPercentage > 0 && (

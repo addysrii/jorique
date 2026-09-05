@@ -4,6 +4,7 @@ import { productService } from '../lib/api/products';
 import { getProductWithSerialsRequest } from '../lib/api';
 import { Product } from '../types';
 import { supabase } from '../lib/supabase';
+import { getBadgeColors } from '../lib/constants/collections';
 
 interface AdminProductModifyButtonProps {
   product: Product;
@@ -57,13 +58,18 @@ export default function AdminProductModifyButton({ product, onProductUpdated }: 
     }
   }, [isOpen, product.id]);
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!formData.badge || !formData.badge.trim()) {
+      setError('Storefront badge is compulsory.');
+      return;
+    }
+
     setLoading(true);
     setError('');
 
@@ -153,43 +159,58 @@ export default function AdminProductModifyButton({ product, onProductUpdated }: 
                 </div>
 
                 <div>
-                  <label className="block text-xs font-semibold uppercase tracking-wider text-secondary dark:text-white/70 mb-1.5">Badge</label>
+                  <label className="block text-xs font-semibold uppercase tracking-wider text-secondary dark:text-white/70 mb-1.5">
+                    Storefront Badge <span className="text-red-500 font-bold">*</span>
+                  </label>
                   <select
                     name="badge"
                     value={formData.badge}
                     onChange={handleChange}
+                    required
                     className="w-full px-4 py-2.5 bg-cream/30 dark:bg-[#100E0D] border border-border dark:border-[#2E2925] rounded-xl text-sm text-primary dark:text-white focus:outline-none focus:border-primary dark:focus:border-[#D4AF37]"
                   >
-                    <option value="">No Badge</option>
-                    {dbBadges.length > 0
-                      ? dbBadges.map(b => (
+                    <option value="">Select a Required Badge...</option>
+                    <optgroup label="Brand Collections">
+                      <option value="JORIQUE Essential">JORIQUE Essential (Sage #7A8B72)</option>
+                      <option value="JORIQUE Signature">JORIQUE Signature (Royal Blue #243B64)</option>
+                      <option value="JORIQUE Luxe">JORIQUE Luxe (Burgundy #641F2D)</option>
+                      <option value="JORIQUE Souvenir">JORIQUE Souvenir (Dusty Rose #B9787D)</option>
+                      <option value="JORIQUE Hospitality">JORIQUE Hospitality (Slate #4B5563)</option>
+                    </optgroup>
+                    <optgroup label="Storefront Badges">
+                      <option value="NEW">New (Sage)</option>
+                      <option value="FEATURED">Featured (Royal Blue)</option>
+                      <option value="BEST SELLER">Best Seller (Burgundy)</option>
+                      <option value="LIMITED">Limited Edition (Dusty Rose)</option>
+                    </optgroup>
+                    {dbBadges.length > 0 && (
+                      <optgroup label="Custom Badges">
+                        {dbBadges.map(b => (
                           <option key={b.id} value={b.label}>{b.label}</option>
-                        ))
-                      : (
-                        <>
-                          <option value="NEW">New</option>
-                          <option value="FEATURED">Featured</option>
-                          <option value="BEST SELLER">Best Seller</option>
-                          <option value="LIMITED">Limited Edition</option>
-                        </>
-                      )
-                    }
+                        ))}
+                      </optgroup>
+                    )}
                   </select>
                   {/* Live colour preview */}
-                  {formData.badge && dbBadges.find(b => b.label === formData.badge) && (
-                    <div className="mt-2 flex items-center gap-2">
-                      <span className="text-[10px] text-secondary dark:text-white/40 uppercase tracking-wider">Preview:</span>
-                      <span
-                        className="px-2.5 py-0.5 rounded-full text-[11px] font-bold"
-                        style={{
-                          backgroundColor: dbBadges.find(b => b.label === formData.badge)?.color,
-                          color: dbBadges.find(b => b.label === formData.badge)?.text_color,
-                        }}
-                      >
-                        {formData.badge}
-                      </span>
-                    </div>
-                  )}
+                  {formData.badge && (() => {
+                    const dbMatch = dbBadges.find(b => b.label === formData.badge);
+                    const bCol = dbMatch ? { bg: dbMatch.color, text: dbMatch.text_color } : getBadgeColors(formData.badge);
+                    return (
+                      <div className="mt-2 flex items-center gap-2">
+                        <span className="text-[10px] text-secondary dark:text-white/40 uppercase tracking-wider">Preview:</span>
+                        <span
+                          className="px-2.5 py-0.5 rounded-full text-[11px] font-bold border shadow-xs"
+                          style={{
+                            backgroundColor: bCol.bg,
+                            color: bCol.text,
+                            borderColor: 'rgba(0,0,0,0.1)',
+                          }}
+                        >
+                          ★ {formData.badge}
+                        </span>
+                      </div>
+                    );
+                  })()}
                 </div>
 
                 <div>

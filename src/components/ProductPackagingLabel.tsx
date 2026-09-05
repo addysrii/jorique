@@ -1,6 +1,6 @@
 import React from 'react';
 import Barcode128 from './Barcode128';
-import { getCollectionTheme } from '../lib/constants/collections';
+import { getCollectionTheme, getBadgeColors } from '../lib/constants/collections';
 
 export interface ProductPackagingLabelProps {
   productName: string;
@@ -368,20 +368,23 @@ export default function ProductPackagingLabel({
               </div>
 
               {/* 4. Storefront Badge if supplied */}
-              {badge && (
-                <div className="mt-1 pt-1">
-                  <span
-                    className="inline-block px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider border shadow-xs"
-                    style={{
-                      backgroundColor: theme ? theme.badgeBg : '#D4AF37',
-                      color: theme ? theme.badgeText : '#1A1816',
-                      borderColor: borderCol,
-                    }}
-                  >
-                    ★ {badge}
-                  </span>
-                </div>
-              )}
+              {badge && (() => {
+                const bCol = getBadgeColors(badge);
+                return (
+                  <div className="mt-1 pt-1">
+                    <span
+                      className="inline-block px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider border shadow-xs"
+                      style={{
+                        backgroundColor: bCol.bg,
+                        color: bCol.text,
+                        borderColor: bCol.border || borderCol,
+                      }}
+                    >
+                      ★ {badge}
+                    </span>
+                  </div>
+                );
+              })()}
 
             </div>
 

@@ -26,8 +26,8 @@ export const JORIQUE_COLLECTIONS: Record<string, JoriqueCollection> = {
     borderColor: 'rgba(245, 237, 227, 0.35)',
     innerBg: '#6F8067',
     cardBg: 'rgba(0, 0, 0, 0.12)',
-    badgeBg: 'rgba(245, 237, 227, 0.2)',
-    badgeText: '#F5EDE3',
+    badgeBg: '#7A8B72', // Sage
+    badgeText: '#F5EDE3', // Warm Ivory
     description: 'Organic everyday luxury with timeless sage serenity',
   },
   signature: {
@@ -41,8 +41,8 @@ export const JORIQUE_COLLECTIONS: Record<string, JoriqueCollection> = {
     borderColor: 'rgba(212, 175, 55, 0.45)',
     innerBg: '#1D3256',
     cardBg: 'rgba(0, 0, 0, 0.2)',
-    badgeBg: 'rgba(212, 175, 55, 0.25)',
-    badgeText: '#F5EDE3',
+    badgeBg: '#243B64', // Deep Royal Blue
+    badgeText: '#F5EDE3', // Warm Ivory
     description: 'Masterpiece jacquards and heritage deep royal weaves',
   },
   luxe: {
@@ -56,8 +56,8 @@ export const JORIQUE_COLLECTIONS: Record<string, JoriqueCollection> = {
     borderColor: 'rgba(229, 193, 88, 0.45)',
     innerBg: '#531824',
     cardBg: 'rgba(0, 0, 0, 0.22)',
-    badgeBg: 'rgba(229, 193, 88, 0.25)',
-    badgeText: '#F5EDE3',
+    badgeBg: '#641F2D', // Burgundy
+    badgeText: '#F5EDE3', // Warm Ivory
     description: 'Mulberry silks, rich velvet accents & ultra-high thread counts',
   },
   souvenir: {
@@ -71,8 +71,8 @@ export const JORIQUE_COLLECTIONS: Record<string, JoriqueCollection> = {
     borderColor: 'rgba(26, 26, 26, 0.25)',
     innerBg: '#AC6B70',
     cardBg: 'rgba(255, 255, 255, 0.22)',
-    badgeBg: 'rgba(26, 26, 26, 0.12)',
-    badgeText: '#1A1A1A',
+    badgeBg: '#B9787D', // Dusty Rose
+    badgeText: '#1A1A1A', // Black
     description: 'Artisanal gift editions and keepsake bespoke treasures',
   },
   hospitality: {
@@ -86,8 +86,8 @@ export const JORIQUE_COLLECTIONS: Record<string, JoriqueCollection> = {
     borderColor: 'rgba(255, 255, 255, 0.3)',
     innerBg: '#3E4753',
     cardBg: 'rgba(0, 0, 0, 0.18)',
-    badgeBg: 'rgba(255, 255, 255, 0.2)',
-    badgeText: '#FFFFFF',
+    badgeBg: '#4B5563', // Slate
+    badgeText: '#FFFFFF', // White
     description: 'Commercial-grade luxury suites & boutique hotel collections',
   },
 };
@@ -110,4 +110,50 @@ export function getCollectionTheme(keyOrName?: string): JoriqueCollection | null
   }
 
   return null;
+}
+
+/**
+ * Get background and primary text colours for badges according to brand guidelines:
+ * - JORIQUE Essential: Sage #7A8B72 | Warm Ivory #F5EDE3
+ * - JORIQUE Signature: Deep Royal Blue #243B64 | Warm Ivory #F5EDE3
+ * - JORIQUE Luxe: Burgundy #641F2D | Warm Ivory #F5EDE3
+ * - JORIQUE Souvenir: Dusty Rose #B9787D | Black #1A1A1A
+ * - JORIQUE Hospitality: Slate #4B5563 | White #FFFFFF
+ */
+export function getBadgeColors(badgeText?: string): { bg: string; text: string; border?: string } {
+  if (!badgeText) return { bg: '#7A8B72', text: '#F5EDE3', border: 'rgba(245, 237, 227, 0.3)' };
+  const clean = badgeText.toLowerCase().trim();
+
+  // 1. Match Collection Badges
+  if (clean.includes('essential')) {
+    return { bg: '#7A8B72', text: '#F5EDE3', border: 'rgba(245, 237, 227, 0.35)' };
+  }
+  if (clean.includes('signature')) {
+    return { bg: '#243B64', text: '#F5EDE3', border: 'rgba(245, 237, 227, 0.35)' };
+  }
+  if (clean.includes('luxe')) {
+    return { bg: '#641F2D', text: '#F5EDE3', border: 'rgba(245, 237, 227, 0.35)' };
+  }
+  if (clean.includes('souvenir')) {
+    return { bg: '#B9787D', text: '#1A1A1A', border: 'rgba(26, 26, 26, 0.25)' };
+  }
+  if (clean.includes('hospitality') || clean.includes('suite')) {
+    return { bg: '#4B5563', text: '#FFFFFF', border: 'rgba(255, 255, 255, 0.3)' };
+  }
+
+  // 2. Harmonious Mapping for Standard Badges
+  if (clean.includes('new')) {
+    return { bg: '#7A8B72', text: '#F5EDE3', border: 'rgba(245, 237, 227, 0.35)' }; // Sage
+  }
+  if (clean.includes('featured')) {
+    return { bg: '#243B64', text: '#F5EDE3', border: 'rgba(245, 237, 227, 0.35)' }; // Deep Royal Blue
+  }
+  if (clean.includes('best') || clean.includes('seller')) {
+    return { bg: '#641F2D', text: '#F5EDE3', border: 'rgba(245, 237, 227, 0.35)' }; // Burgundy
+  }
+  if (clean.includes('limited')) {
+    return { bg: '#B9787D', text: '#1A1A1A', border: 'rgba(26, 26, 26, 0.25)' }; // Dusty Rose
+  }
+
+  return { bg: '#7A8B72', text: '#F5EDE3', border: 'rgba(245, 237, 227, 0.35)' };
 }

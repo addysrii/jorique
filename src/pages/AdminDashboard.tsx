@@ -22,7 +22,7 @@ import BadgeManager from '../components/BadgeManager';
 import SkuSeriesManager from '../components/SkuSeriesManager';
 import InStoreBillingPOS from '../components/InStoreBillingPOS';
 import CouponManager from '../components/CouponManager';
-import { JORIQUE_COLLECTION_LIST } from '../lib/constants/collections';
+import { JORIQUE_COLLECTION_LIST, getBadgeColors } from '../lib/constants/collections';
 
 type AdminTab = 'overview' | 'billing' | 'products' | 'inventory' | 'orders' | 'gifts' | 'reviews' | 'suppliers' | 'barcodes' | 'coupons' | 'sku-series' | 'categories' | 'badges';
 
@@ -425,11 +425,21 @@ export default function AdminDashboard() {
                               />
                               <div>
                                 <span className="font-semibold text-primary dark:text-white block">{product.name}</span>
-                                {product.badge && (
-                                  <span className="text-[9px] bg-cream dark:bg-white/10 px-1.5 py-0.5 rounded text-secondary dark:text-white/70 uppercase font-semibold">
-                                    {product.badge}
-                                  </span>
-                                )}
+                                {product.badge && (() => {
+                                  const bCol = getBadgeColors(product.badge);
+                                  return (
+                                    <span
+                                      className="inline-block text-[9px] px-2 py-0.5 rounded-full font-bold uppercase tracking-wider border shadow-2xs mt-0.5"
+                                      style={{
+                                        backgroundColor: bCol.bg,
+                                        color: bCol.text,
+                                        borderColor: bCol.border || 'rgba(0,0,0,0.1)',
+                                      }}
+                                    >
+                                      {product.badge}
+                                    </span>
+                                  );
+                                })()}
                               </div>
                             </td>
                             <td className="p-4 font-mono font-semibold text-primary dark:text-[#D4AF37]">{product.sku}</td>

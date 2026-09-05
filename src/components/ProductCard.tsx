@@ -6,6 +6,7 @@ import { Product } from '../types';
 import Parallax3DCard from './Parallax3DCard';
 import ViewInYourRoomModal from './ViewInYourRoomModal';
 import { useCart } from '../context/CartContext';
+import { getBadgeColors } from '../lib/constants/collections';
 
 interface ProductCardProps {
   product: Product;
@@ -59,15 +60,23 @@ export default function ProductCard({ product, index = 0 }: ProductCardProps) {
               style={{ transform: 'translateZ(0px)' }}
             />
             
-            {/* 3D Floating Badge - 5% Deep Teal Standout Moment */}
-            {product.badge && (
-              <div
-                className="absolute top-3.5 left-3.5 bg-[#0B5F61] border border-[#C6A96B]/40 backdrop-blur-md text-[#F5EDE3] text-[9px] font-bold tracking-widest uppercase px-3 py-1 rounded-full shadow-md z-20 pointer-events-none"
-                style={{ transform: 'translateZ(30px)' }}
-              >
-                {product.badge}
-              </div>
-            )}
+            {/* 3D Floating Badge with Brand Collection Colors */}
+            {product.badge && (() => {
+              const bCol = getBadgeColors(product.badge);
+              return (
+                <div
+                  className="absolute top-3.5 left-3.5 border backdrop-blur-md text-[9px] font-bold tracking-widest uppercase px-3 py-1 rounded-full shadow-md z-20 pointer-events-none"
+                  style={{
+                    backgroundColor: bCol.bg,
+                    color: bCol.text,
+                    borderColor: bCol.border || 'rgba(255,255,255,0.25)',
+                    transform: 'translateZ(30px)',
+                  }}
+                >
+                  {product.badge}
+                </div>
+              );
+            })()}
 
             {/* 3D Floating AR Studio & Wishlist Buttons */}
             <div className="absolute top-3.5 right-3.5 flex items-center gap-1.5 z-30 opacity-0 group-hover:opacity-100 transition-all duration-300">
