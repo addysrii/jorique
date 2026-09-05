@@ -99,14 +99,17 @@ export default function Navbar({ wishlistCount = 0 }: NavbarProps) {
         <div className="max-w-7xl mx-auto px-6 lg:px-12">
           <div className="flex items-center justify-between h-16 lg:h-20">
             {/* Logo */}
-            <Link to="/" className="flex-shrink-0">
+            <Link to="/" className="flex-shrink-0 group flex flex-col items-center">
               <span
-                className={`text-lg font-semibold tracking-[0.25em] uppercase transition-colors duration-300 ${
-                  transparent ? 'text-white' : 'text-primary dark:text-[#F5F2EB]'
+                className={`font-serif text-2xl font-light tracking-[0.20em] uppercase transition-colors duration-300 ${
+                  transparent ? 'text-white' : 'text-primary dark:text-[#FCFAF7]'
                 }`}
               >
                 JORIQUE
               </span>
+              <span className={`h-[1px] w-full mt-[-1px] transition-all duration-300 ${
+                transparent ? 'bg-white/40' : 'bg-[#1A1A1A]/30 dark:bg-[#C6A96B]/50'
+              } scale-x-75 group-hover:scale-x-100`} />
             </Link>
 
             {/* Desktop Nav */}

@@ -59,10 +59,10 @@ export default function ProductCard({ product, index = 0 }: ProductCardProps) {
               style={{ transform: 'translateZ(0px)' }}
             />
             
-            {/* 3D Floating Badge */}
+            {/* 3D Floating Badge - 5% Deep Teal Standout Moment */}
             {product.badge && (
               <div
-                className="absolute top-3.5 left-3.5 bg-primary/95 dark:bg-[#D4AF37] dark:text-black backdrop-blur-md text-white text-[9px] font-bold tracking-widest uppercase px-3 py-1 rounded-full shadow-md z-20 pointer-events-none"
+                className="absolute top-3.5 left-3.5 bg-[#0B5F61] border border-[#C6A96B]/40 backdrop-blur-md text-[#F5EDE3] text-[9px] font-bold tracking-widest uppercase px-3 py-1 rounded-full shadow-md z-20 pointer-events-none"
                 style={{ transform: 'translateZ(30px)' }}
               >
                 {product.badge}
@@ -135,7 +135,7 @@ export default function ProductCard({ product, index = 0 }: ProductCardProps) {
           {/* Product Info with Depth */}
           <div className="mt-3.5 px-1 transform-style-3d">
             <h3
-              className="text-sm font-medium text-text dark:text-[#F5F2EB] leading-snug group-hover:text-primary dark:group-hover:text-[#D4AF37] transition-colors duration-200"
+              className="font-serif text-base font-semibold text-text dark:text-[#FCFAF7] leading-snug group-hover:text-[#C6A96B] transition-colors duration-200"
               style={{ transform: 'translateZ(10px)' }}
             >
               {product.name}
@@ -143,10 +143,10 @@ export default function ProductCard({ product, index = 0 }: ProductCardProps) {
             
             {/* Price */}
             <div
-              className="mt-1 flex items-center gap-2"
+              className="mt-1 flex items-center gap-2 font-sans"
               style={{ transform: 'translateZ(15px)' }}
             >
-              <p className="text-sm text-primary dark:text-[#D4AF37] font-semibold">
+              <p className="text-sm text-primary dark:text-[#C6A96B] font-semibold">
                 ₹ {getDisplayPrice().toLocaleString('en-IN')}
               </p>
               {hasDiscount() && (
@@ -159,7 +159,7 @@ export default function ProductCard({ product, index = 0 }: ProductCardProps) {
             {/* Category */}
             {product.category && (
               <p
-                className="mt-0.5 text-xs text-secondary/70 dark:text-white/50 tracking-wide"
+                className="mt-0.5 text-xs text-secondary/70 dark:text-white/50 tracking-wide font-sans"
                 style={{ transform: 'translateZ(8px)' }}
               >
                 {product.category}

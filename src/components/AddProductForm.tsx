@@ -1,13 +1,16 @@
 import { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
-import { ArrowLeft, Save, Upload, X, ChevronDown, ChevronUp, Printer, Sparkles } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { ArrowLeft, Save, Upload, X, ChevronDown, ChevronUp, Printer, Sparkles, CheckCircle2, AlertCircle, RefreshCw } from 'lucide-react';
+import { Link, useSearchParams } from 'react-router-dom';
 import ProductPackagingLabel from './ProductPackagingLabel';
 import { supabase } from '../lib/supabase';
 import { createProductRequest } from '../lib/api';
 import { generateSKU, generateSerials } from '../lib/utils/product';
 import { useAuth } from '../context/AuthContext';
 import type { ProductFormValues } from '../types/product';
+import type { SkuSeries } from '../types/skuSeries';
+import { formatSeriesSku } from '../types/skuSeries';
+import { fetchSkuSeriesList, incrementSeriesCounter, checkSkuAvailable } from '../lib/utils/skuSeriesStorage';
 
 export default function AddProductForm() {
   const [images, setImages] = useState<string[]>([]);
@@ -37,6 +40,16 @@ export default function AddProductForm() {
 
   // Dynamic badges from Supabase
   const [dbBadges, setDbBadges] = useState<{ id: string; label: string; color: string; text_color: string }[]>([]);
+
+  // SKU Series & manual series state
+  const [searchParams] = useSearchParams();
+  const urlSeriesId = searchParams.get('seriesId');
+  const [skuMode, setSkuMode] = useState<'auto' | 'series' | 'manual'>(urlSeriesId ? 'series' : 'auto');
+  const [availableSeries, setAvailableSeries] = useState<SkuSeries[]>([]);
+  const [selectedSeriesId, setSelectedSeriesId] = useState<string>(urlSeriesId || '');
+  const [manualSkuInput, setManualSkuInput] = useState<string>('');
+  const [skuChecking, setSkuChecking] = useState(false);
+  const [skuCheckResult, setSkuCheckResult] = useState<{ available: boolean; reason?: string } | null>(null);
 
   useEffect(() => {
     const loadCats = async () => {
@@ -81,8 +94,49 @@ export default function AddProductForm() {
   const filteredSubs = selectedDbCategory
     ? dbSubcategories.filter(s => s.category_id === selectedDbCategory.id)
     : [];
-  const previewSku = generateSKU(category || 'GEN', year || new Date().getFullYear(), 1);
-  const previewSerials = generateSerials(previewSku, Number.isInteger(quantity) ? quantity : 0);
+
+  // Load custom SKU series
+  useEffect(() => {
+    fetchSkuSeriesList().then((list) => {
+      setAvailableSeries(list);
+      if (urlSeriesId && list.some(s => s.id === urlSeriesId)) {
+        setSelectedSeriesId(urlSeriesId);
+        setSkuMode('series');
+      } else if (list.length > 0 && !selectedSeriesId) {
+        setSelectedSeriesId(list[0].id);
+      }
+    });
+  }, [urlSeriesId]);
+
+  // Compute effective SKU based on selected mode
+  const selectedSeries = availableSeries.find(s => s.id === selectedSeriesId);
+  let effectiveSku = '';
+  if (skuMode === 'auto') {
+    effectiveSku = generateSKU(category || 'GEN', year || new Date().getFullYear(), 1);
+  } else if (skuMode === 'series' && selectedSeries) {
+    effectiveSku = formatSeriesSku(selectedSeries, selectedSeries.currentCounter, year || new Date().getFullYear());
+  } else if (skuMode === 'manual') {
+    effectiveSku = manualSkuInput.trim().toUpperCase();
+  }
+
+  // Debounced check for SKU availability
+  useEffect(() => {
+    if (!effectiveSku || effectiveSku.length < 3) {
+      setSkuCheckResult(null);
+      return;
+    }
+
+    setSkuChecking(true);
+    const timer = setTimeout(async () => {
+      const res = await checkSkuAvailable(effectiveSku);
+      setSkuCheckResult(res);
+      setSkuChecking(false);
+    }, 300);
+
+    return () => clearTimeout(timer);
+  }, [effectiveSku]);
+
+  const previewSerials = generateSerials(effectiveSku || 'PENDING-SKU', Number.isInteger(quantity) ? quantity : 0);
 
   const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
@@ -177,9 +231,17 @@ export default function AddProductForm() {
         discount_price: data.discount_price || null,
         year: data.year || new Date().getFullYear(),
         badge: data.badge || null,
+        sku: effectiveSku || undefined,
       };
 
       const result = await createProductRequest(productData, token);
+
+      // If a series was used, increment counter for next batch
+      if (skuMode === 'series' && selectedSeriesId) {
+        await incrementSeriesCounter(selectedSeriesId);
+        const updated = await fetchSkuSeriesList();
+        setAvailableSeries(updated);
+      }
 
       const serials = result.data.serials.map((serial) => serial.serial_number);
       setGeneratedSerials(serials);
@@ -463,17 +525,175 @@ export default function AddProductForm() {
             </div>
           </div>
 
-          {/* Real-time SKU & Serial Preview */}
+          {/* SKU Architecture & Manual Series Selection */}
+          <div className="rounded-2xl border border-border dark:border-[#2E2925] bg-cream/30 dark:bg-white/[0.03] p-5 space-y-4">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+              <div>
+                <div className="flex items-center gap-2">
+                  <Sparkles size={14} className="text-[#D4AF37]" />
+                  <span className="text-xs font-bold uppercase tracking-wider text-primary dark:text-white">
+                    SKU Series & Code Architecture
+                  </span>
+                </div>
+                <p className="text-xs text-secondary dark:text-white/60 mt-0.5">
+                  Select a pre-configured manual SKU series or type a custom manual code.
+                </p>
+              </div>
+
+              {/* Mode Selector Tabs */}
+              <div className="flex items-center gap-1 bg-white dark:bg-[#100E0D] p-1 rounded-xl border border-border dark:border-[#2E2925] text-xs">
+                <button
+                  type="button"
+                  onClick={() => setSkuMode('auto')}
+                  className={`px-3 py-1.5 rounded-lg font-semibold transition-all ${
+                    skuMode === 'auto'
+                      ? 'bg-primary dark:bg-[#D4AF37] text-white dark:text-black shadow-xs'
+                      : 'text-secondary dark:text-white/60 hover:text-primary dark:hover:text-white'
+                  }`}
+                >
+                  Auto Standard
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setSkuMode('series')}
+                  className={`px-3 py-1.5 rounded-lg font-semibold transition-all ${
+                    skuMode === 'series'
+                      ? 'bg-primary dark:bg-[#D4AF37] text-white dark:text-black shadow-xs'
+                      : 'text-secondary dark:text-white/60 hover:text-primary dark:hover:text-white'
+                  }`}
+                >
+                  Manual Series
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setSkuMode('manual')}
+                  className={`px-3 py-1.5 rounded-lg font-semibold transition-all ${
+                    skuMode === 'manual'
+                      ? 'bg-primary dark:bg-[#D4AF37] text-white dark:text-black shadow-xs'
+                      : 'text-secondary dark:text-white/60 hover:text-primary dark:hover:text-white'
+                  }`}
+                >
+                  Direct Custom SKU
+                </button>
+              </div>
+            </div>
+
+            {/* Mode 1: Auto Standard info */}
+            {skuMode === 'auto' && (
+              <div className="text-xs text-secondary dark:text-white/70 bg-white/60 dark:bg-[#100E0D]/60 p-3.5 rounded-xl border border-border/70 dark:border-[#2E2925]/70 flex items-center justify-between">
+                <span>Standard JORIQUE formula: <code className="font-mono font-bold text-primary dark:text-[#D4AF37]">JR-[CATEGORY]-[YEAR]-[001]</code></span>
+                <span className="text-[10px] text-secondary dark:text-white/50">Auto-generated</span>
+              </div>
+            )}
+
+            {/* Mode 2: Manual SKU Series Selector */}
+            {skuMode === 'series' && (
+              <div className="space-y-3 bg-white/60 dark:bg-[#100E0D]/60 p-4 rounded-xl border border-border/70 dark:border-[#2E2925]/70">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                  <label className="text-xs font-semibold text-primary dark:text-white">
+                    Select Manual SKU Series:
+                  </label>
+                  <Link
+                    to="/admin?tab=sku-series"
+                    target="_blank"
+                    className="text-[11px] font-semibold text-[#D4AF37] hover:underline inline-flex items-center gap-1"
+                  >
+                    Manage Series Rules in Dashboard →
+                  </Link>
+                </div>
+
+                <div className="grid sm:grid-cols-2 gap-3">
+                  <select
+                    value={selectedSeriesId}
+                    onChange={(e) => setSelectedSeriesId(e.target.value)}
+                    className="w-full rounded-xl border border-border dark:border-[#2E2925] bg-white dark:bg-[#1A1816] px-3.5 py-2.5 text-xs font-medium text-primary dark:text-white outline-none focus:border-primary dark:focus:border-[#D4AF37]"
+                  >
+                    {availableSeries.map((s) => (
+                      <option key={s.id} value={s.id}>
+                        {s.name} ({s.prefix}{s.separator}...) • Next #{s.currentCounter}
+                      </option>
+                    ))}
+                  </select>
+
+                  {selectedSeries && (
+                    <div className="flex items-center justify-between px-3.5 py-2 rounded-xl bg-cream/40 dark:bg-white/5 border border-border dark:border-[#2E2925] text-xs">
+                      <span className="text-secondary dark:text-white/60 text-[11px]">Current Series Counter:</span>
+                      <span className="font-mono font-bold text-primary dark:text-[#D4AF37]">
+                        #{selectedSeries.currentCounter}
+                      </span>
+                    </div>
+                  )}
+                </div>
+
+                {selectedSeries?.description && (
+                  <p className="text-[11px] text-secondary dark:text-white/60 italic">
+                    "{selectedSeries.description}"
+                  </p>
+                )}
+              </div>
+            )}
+
+            {/* Mode 3: Direct Custom SKU Input */}
+            {skuMode === 'manual' && (
+              <div className="space-y-2 bg-white/60 dark:bg-[#100E0D]/60 p-4 rounded-xl border border-border/70 dark:border-[#2E2925]/70">
+                <div className="flex items-center justify-between">
+                  <label className="text-xs font-semibold text-primary dark:text-white">
+                    Enter Exact Custom SKU Code:
+                  </label>
+                  <span className="text-[10px] text-secondary dark:text-white/50 uppercase tracking-wider">
+                    Alphanumeric, dashes, underscores
+                  </span>
+                </div>
+                <input
+                  type="text"
+                  value={manualSkuInput}
+                  onChange={(e) => setManualSkuInput(e.target.value.toUpperCase())}
+                  placeholder="e.g. SILK-EMB-QUEEN-01, BED-LUX-2026-A"
+                  className="w-full font-mono uppercase font-bold rounded-xl border border-border dark:border-[#2E2925] bg-white dark:bg-[#1A1816] px-4 py-2.5 text-sm text-primary dark:text-white outline-none focus:border-primary dark:focus:border-[#D4AF37]"
+                />
+              </div>
+            )}
+
+            {/* Live SKU Status & Availability Badge */}
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pt-2 border-t border-border/50 dark:border-[#2E2925]/50 text-xs">
+              <div className="flex items-center gap-2">
+                <span className="text-secondary dark:text-white/60">Batch Master SKU:</span>
+                <span className="font-mono font-bold text-sm text-primary dark:text-[#D4AF37]">
+                  {effectiveSku || '—'}
+                </span>
+              </div>
+
+              <div>
+                {skuChecking ? (
+                  <span className="inline-flex items-center gap-1.5 text-secondary dark:text-white/60 text-xs">
+                    <RefreshCw size={12} className="animate-spin text-[#D4AF37]" /> Checking availability...
+                  </span>
+                ) : skuCheckResult ? (
+                  skuCheckResult.available ? (
+                    <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-400 font-semibold text-[11px] border border-emerald-200 dark:border-emerald-800/60">
+                      <CheckCircle2 size={12} /> SKU Available
+                    </span>
+                  ) : (
+                    <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-rose-50 dark:bg-rose-950/40 text-rose-700 dark:text-rose-400 font-semibold text-[11px] border border-rose-200 dark:border-rose-800/60">
+                      <AlertCircle size={12} /> {skuCheckResult.reason || 'SKU Already in Use'}
+                    </span>
+                  )
+                ) : null}
+              </div>
+            </div>
+          </div>
+
+          {/* Real-time Serial Preview */}
           <div className="rounded-2xl border border-border dark:border-[#2E2925] bg-cream/40 dark:bg-white/5 p-5">
             <div className="flex items-center justify-between mb-2">
               <div className="flex items-center gap-2">
                 <Sparkles size={14} className="text-[#D4AF37]" />
-                <span className="text-xs font-bold uppercase tracking-wider text-primary dark:text-white">Generated SKU & Serial Structure</span>
+                <span className="text-xs font-bold uppercase tracking-wider text-primary dark:text-white">Sequential Serial & Barcode Structure</span>
               </div>
               <span className="text-xs font-mono font-medium text-secondary dark:text-white/60">Units: {previewSerials.length}</span>
             </div>
             <p className="text-xs text-secondary dark:text-white/70 mb-3">
-              SKU: <span className="font-mono font-bold text-primary dark:text-[#D4AF37]">{previewSku}</span> • Sequential physical IDs:
+              Master SKU: <span className="font-mono font-bold text-primary dark:text-[#D4AF37]">{effectiveSku || 'PENDING'}</span> • Sequential physical unit serials:
             </p>
             
             <div className="grid gap-2 text-xs text-primary sm:grid-cols-2">
@@ -520,7 +740,7 @@ export default function AddProductForm() {
           <div className="flex items-center gap-3 pt-4 border-t border-border dark:border-[#2E2925]">
             <button
               type="submit"
-              disabled={isSubmitting || uploading || formSubmitting}
+              disabled={isSubmitting || uploading || formSubmitting || (skuCheckResult !== null && !skuCheckResult.available)}
               className="inline-flex items-center gap-2 rounded-xl bg-primary dark:bg-[#D4AF37] px-8 py-3.5 text-xs font-bold uppercase tracking-widest text-white dark:text-black hover:bg-primary/90 dark:hover:bg-[#E5C158] transition-all shadow-md disabled:opacity-50"
             >
               <Save size={15} />
@@ -625,7 +845,7 @@ export default function AddProductForm() {
                     <ProductPackagingLabel
                       key={serial}
                       productName={productName}
-                      sku={createdProductDetails.sku || previewSku}
+                      sku={createdProductDetails.sku || effectiveSku}
                       serialNumber={serial}
                       price={createdProductDetails.price || watch('price') || 1882}
                       discountPrice={createdProductDetails.discount_price || watch('discount_price')}

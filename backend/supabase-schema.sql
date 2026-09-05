@@ -152,3 +152,26 @@ drop policy if exists gifts_owner_insert on public.gift_redemption;
 create policy gifts_owner_insert on public.gift_redemption for insert with check (auth.uid() = customer_id);
 drop policy if exists customers_owner_read on public.customers;
 create policy customers_owner_read on public.customers for select using (auth.uid() = profile_id);
+
+-- SKU Series table for custom/manual sequence formats
+create table if not exists public.sku_series (
+  id uuid primary key default gen_random_uuid(),
+  name text not null,
+  prefix text not null,
+  separator text not null default '-',
+  include_year boolean not null default true,
+  padding integer not null default 3,
+  current_counter integer not null default 1,
+  suffix text,
+  category text,
+  description text,
+  is_active boolean not null default true,
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now()
+);
+
+alter table public.sku_series enable row level security;
+drop policy if exists sku_series_public_read on public.sku_series;
+create policy sku_series_public_read on public.sku_series for select using (true);
+drop policy if exists sku_series_public_all on public.sku_series;
+create policy sku_series_public_all on public.sku_series for all using (true) with check (true);

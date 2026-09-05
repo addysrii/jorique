@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { 
   Loader2, PackageCheck, Users, WalletCards, Plus, Boxes, Trash2, 
   Layers, ShoppingCart, Gift, Star, Truck, Barcode as BarcodeIcon, Tag,
-  Printer, CheckCircle2, AlertCircle, RefreshCw, Eye, Search, Filter
+  Printer, CheckCircle2, AlertCircle, RefreshCw, Eye, Search, Filter, Hash
 } from 'lucide-react';
 import { QRCodeSVG } from 'qrcode.react';
 import Navbar from '../components/Navbar';
@@ -18,8 +18,9 @@ import { Product } from '../types';
 import AdminProductModifyButton from '../components/AdminProductModifyButton';
 import CategoryManager from '../components/CategoryManager';
 import BadgeManager from '../components/BadgeManager';
+import SkuSeriesManager from '../components/SkuSeriesManager';
 
-type AdminTab = 'overview' | 'products' | 'inventory' | 'orders' | 'gifts' | 'reviews' | 'suppliers' | 'barcodes' | 'categories' | 'badges';
+type AdminTab = 'overview' | 'products' | 'inventory' | 'orders' | 'gifts' | 'reviews' | 'suppliers' | 'barcodes' | 'categories' | 'badges' | 'sku-series';
 
 interface ProductSerialRow {
   id: string;
@@ -247,6 +248,7 @@ export default function AdminDashboard() {
               { id: 'reviews', label: `Reviews (${reviews.length})`, icon: <Star size={14} /> },
               { id: 'suppliers', label: 'Suppliers & Costs', icon: <Truck size={14} /> },
               { id: 'barcodes', label: 'Packaging Labels', icon: <BarcodeIcon size={14} /> },
+              { id: 'sku-series', label: 'SKU Series', icon: <Hash size={14} /> },
               { id: 'categories', label: 'Categories', icon: <Layers size={14} /> },
               { id: 'badges', label: 'Badges', icon: <Tag size={14} /> },
             ].map(tab => (
@@ -755,6 +757,13 @@ export default function AdminDashboard() {
                     <p className="text-xs text-secondary dark:text-white/60 mb-6">Create, rename, and delete product categories and their subcategories.</p>
                     <CategoryManager />
                   </div>
+                </div>
+              )}
+
+              {/* TAB 11: SKU SERIES MANAGER */}
+              {activeTab === 'sku-series' && (
+                <div className="space-y-6">
+                  <SkuSeriesManager />
                 </div>
               )}
             </>

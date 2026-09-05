@@ -72,6 +72,23 @@ router.get('/:id', async (req, res) => {
   }
 });
 
+router.get('/validate-sku/:sku', async (req, res) => {
+  try {
+    const cleanSku = String(req.params.sku || '').trim().toUpperCase();
+    if (!cleanSku || cleanSku.length < 3) {
+      return res.json({ success: true, available: false, message: 'SKU must be at least 3 characters.' });
+    }
+    const { data, error } = await supabase.from('products').select('id, name, sku').eq('sku', cleanSku).maybeSingle();
+    if (error) throw error;
+    if (data) {
+      return res.json({ success: true, available: false, message: `SKU "${cleanSku}" is already registered to "${data.name}".` });
+    }
+    res.json({ success: true, available: true });
+  } catch (error) {
+    res.status(500).json({ success: false, message: errorMessage(error) });
+  }
+});
+
 router.post('/', authRequired, adminRequired, async (req, res) => {
   try {
     const body = req.body || {};
@@ -85,7 +102,25 @@ router.post('/', authRequired, adminRequired, async (req, res) => {
       });
     }
 
-    const sku = await createUniqueSKU(supabase, body.category, year);
+    let sku;
+    if (body.sku && typeof body.sku === 'string' && body.sku.trim().length >= 3) {
+      sku = body.sku.trim().toUpperCase();
+      const { data: existing, error: checkError } = await supabase
+        .from('products')
+        .select('id, name')
+        .eq('sku', sku)
+        .maybeSingle();
+
+      if (checkError) throw checkError;
+      if (existing) {
+        return res.status(400).json({
+          success: false,
+          message: `SKU "${sku}" is already in use by product "${existing.name}". Please provide a unique SKU.`,
+        });
+      }
+    } else {
+      sku = await createUniqueSKU(supabase, body.category, year);
+    }
     
     const productInput = {
       name: body.name,

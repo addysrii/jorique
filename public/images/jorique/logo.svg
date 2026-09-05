@@ -1,0 +1,68 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 240" width="100%" height="100%">
+  <defs>
+    <linearGradient id="joriqueGold" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#D4AF37" />
+      <stop offset="35%" stop-color="#F3E5AB" />
+      <stop offset="70%" stop-color="#AA7C11" />
+      <stop offset="100%" stop-color="#E6CA65" />
+    </linearGradient>
+    <linearGradient id="darkBg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0F0F11" />
+      <stop offset="100%" stop-color="#18181B" />
+    </linearGradient>
+    <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="3" result="blur" />
+      <feComposite in="SourceGraphic" in2="blur" operator="over" />
+    </filter>
+  </defs>
+
+  <style>
+    .brand-title {
+      font-family: 'Cinzel', 'Playfair Display', 'Didot', 'Bodoni MT', serif;
+      font-size: 52px;
+      font-weight: 500;
+      letter-spacing: 0.32em;
+      fill: url(#joriqueGold);
+    }
+    .brand-sub {
+      font-family: 'Montserrat', 'Helvetica Neue', sans-serif;
+      font-size: 13px;
+      font-weight: 300;
+      letter-spacing: 0.55em;
+      fill: #C5A880;
+      opacity: 0.85;
+      text-transform: uppercase;
+    }
+    .crest-line {
+      stroke: url(#joriqueGold);
+      stroke-width: 1.5;
+      fill: none;
+    }
+  </style>
+
+  <!-- Emblem / Monogram -->
+  <g transform="translate(400, 52)">
+    <!-- Outer Diamond & Crest Circles -->
+    <polygon points="0,-32 32,0 0,32 -32,0" class="crest-line" opacity="0.6"/>
+    <circle cx="0" cy="0" r="22" class="crest-line" stroke-dasharray="2 3" opacity="0.8"/>
+    <!-- Stylized 'J' Monogram in Center -->
+    <path d="M4 -14 L4 8 C4 14 -1 17 -6 17 C-10 17 -13 14 -13 11 C-13 8 -11 7 -8 7 C-6 7 -4 8.5 -4 10.5 C-4 12 -2.5 13 0 13 C3 13 4 10.5 4 7 L4 -14 Z" fill="url(#joriqueGold)" />
+    <!-- Flourish Accents -->
+    <circle cx="0" cy="-38" r="2" fill="url(#joriqueGold)"/>
+    <circle cx="0" cy="38" r="2" fill="url(#joriqueGold)"/>
+    <circle cx="-38" cy="0" r="2" fill="url(#joriqueGold)"/>
+    <circle cx="38" cy="0" r="2" fill="url(#joriqueGold)"/>
+  </g>
+
+  <!-- Brand Typography -->
+  <!-- Centered 'JORIQUE' text -->
+  <text x="408" y="152" text-anchor="middle" class="brand-title">JORIQUE</text>
+
+  <!-- Divider flourishes -->
+  <line x1="280" y1="174" x2="360" y2="174" stroke="url(#joriqueGold)" stroke-width="0.75" opacity="0.5"/>
+  <circle cx="400" cy="174" r="2.5" fill="url(#joriqueGold)" opacity="0.8"/>
+  <line x1="440" y1="174" x2="520" y2="174" stroke="url(#joriqueGold)" stroke-width="0.75" opacity="0.5"/>
+
+  <!-- Subtitle -->
+  <text x="404" y="202" text-anchor="middle" class="brand-sub">MAISON DE LUXE • HAUTE MAISON</text>
+</svg>
