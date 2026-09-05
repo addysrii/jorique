@@ -18,6 +18,9 @@ export default function Login() {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
 
+  const [emptyAttempt, setEmptyAttempt] = useState(false);
+  const [hoverTarget, setHoverTarget] = useState<'none' | 'forgot' | 'submit'>('none');
+
   const from = (location.state as { from?: string } | null)?.from;
 
   if (user) {
@@ -26,6 +29,11 @@ export default function Login() {
 
   async function handleSubmit(event: FormEvent) {
     event.preventDefault();
+    if (!email.trim() || !password.trim()) {
+      setEmptyAttempt(true);
+      setTimeout(() => setEmptyAttempt(false), 2800);
+      return;
+    }
     setLoading(true);
     setError('');
 
@@ -70,6 +78,11 @@ export default function Login() {
             focusedField={focusedField}
             showPassword={showPassword}
             emailLength={email.length}
+            passwordLength={password.length}
+            hasError={!!error}
+            emptyAttempt={emptyAttempt}
+            hoverTarget={hoverTarget}
+            isLoading={loading}
           />
           {/* Tagline */}
           <p className="text-xs text-[#8A847D] dark:text-[#8A847D] mt-4 tracking-wide font-serif italic">Crafted with care, worn with pride.</p>
@@ -100,7 +113,7 @@ export default function Login() {
 
             {/* Error Notification */}
             {error && (
-              <div className="mb-5 flex items-start gap-2.5 bg-red-50 dark:bg-red-950/40 border border-red-200 dark:border-red-900/60 rounded-2xl p-3 text-xs text-red-600 dark:text-red-300">
+              <div className="mb-5 flex items-start gap-2.5 bg-red-50 dark:bg-red-950/40 border border-red-200 dark:border-red-900/60 rounded-2xl p-3 text-xs text-red-600 dark:text-red-300 animate-shake">
                 <AlertCircle size={15} className="shrink-0 mt-0.5" />
                 <p className="leading-relaxed">{error}</p>
               </div>
@@ -116,7 +129,11 @@ export default function Login() {
                 <input
                   type="email"
                   value={email}
-                  onChange={(e) => setEmail(e.target.value)}
+                  onChange={(e) => {
+                    setEmail(e.target.value);
+                    if (error) setError('');
+                    if (emptyAttempt) setEmptyAttempt(false);
+                  }}
                   onFocus={() => setFocusedField('email')}
                   onBlur={() => setFocusedField('none')}
                   required
@@ -135,7 +152,11 @@ export default function Login() {
                   <input
                     type={showPassword ? 'text' : 'password'}
                     value={password}
-                    onChange={(e) => setPassword(e.target.value)}
+                    onChange={(e) => {
+                      setPassword(e.target.value);
+                      if (error) setError('');
+                      if (emptyAttempt) setEmptyAttempt(false);
+                    }}
                     onFocus={() => setFocusedField('password')}
                     onBlur={() => setFocusedField('none')}
                     required
@@ -168,6 +189,8 @@ export default function Login() {
 
                 <Link
                   to="/forgot-password"
+                  onMouseEnter={() => setHoverTarget('forgot')}
+                  onMouseLeave={() => setHoverTarget('none')}
                   className="font-semibold text-gray-700 dark:text-white/70 hover:text-black dark:hover:text-white hover:underline transition-colors"
                 >
                   Forgot password?
@@ -178,6 +201,8 @@ export default function Login() {
               <button
                 type="submit"
                 disabled={loading}
+                onMouseEnter={() => setHoverTarget('submit')}
+                onMouseLeave={() => setHoverTarget('none')}
                 className="w-full py-3.5 px-6 rounded-full bg-black hover:bg-gray-900 dark:bg-white dark:hover:bg-neutral-100 text-white dark:text-black text-sm font-semibold tracking-wide transition-all shadow-md active:scale-[0.99] flex items-center justify-center gap-2 disabled:opacity-60"
               >
                 {loading && <Loader2 size={16} className="animate-spin" />}
