@@ -1,6 +1,22 @@
 import { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
-import { ArrowLeft, Save, Upload, X, ChevronDown, ChevronUp, Printer, Sparkles, CheckCircle2, AlertCircle, RefreshCw } from 'lucide-react';
+import {
+  ArrowLeft,
+  Save,
+  Upload,
+  X,
+  ChevronDown,
+  ChevronUp,
+  Printer,
+  Sparkles,
+  CheckCircle2,
+  AlertCircle,
+  RefreshCw,
+  Palette,
+  Plus,
+  Trash2,
+  Layers,
+} from 'lucide-react';
 import { Link, useSearchParams } from 'react-router-dom';
 import ProductPackagingLabel from './ProductPackagingLabel';
 import { supabase } from '../lib/supabase';
@@ -12,6 +28,42 @@ import type { SkuSeries } from '../types/skuSeries';
 import { formatSeriesSku } from '../types/skuSeries';
 import { fetchSkuSeriesList, incrementSeriesCounter, checkSkuAvailable } from '../lib/utils/skuSeriesStorage';
 import { JORIQUE_COLLECTION_LIST } from '../lib/constants/collections';
+
+export interface ColorVariantItem {
+  id: string;
+  name: string;       // e.g. "Royal Ivory"
+  hex: string;        // e.g. "#F5EDE3"
+  quantity: number;   // e.g. 10
+  skuSuffix: string;  // e.g. "IVR"
+  images: string[];
+}
+
+export interface CreatedBatchProduct {
+  id: string;
+  name: string;
+  sku: string;
+  colorName?: string;
+  colorHex?: string;
+  quantity: number;
+  price?: number;
+  discount_price?: number;
+  badge?: string;
+  category?: string;
+  serials: string[];
+}
+
+const LUXURY_COLOR_PRESETS = [
+  { name: 'Royal Ivory', hex: '#F5EDE3', suffix: 'IVR' },
+  { name: 'Midnight Navy', hex: '#1B2A4A', suffix: 'NVY' },
+  { name: 'Emerald Green', hex: '#0B5F61', suffix: 'EMR' },
+  { name: 'Burgundy Wine', hex: '#641F2D', suffix: 'BUR' },
+  { name: 'Sage Green', hex: '#7A8B72', suffix: 'SGE' },
+  { name: 'Classic Charcoal', hex: '#2B2825', suffix: 'CHR' },
+  { name: 'Dusty Rose', hex: '#B9787D', suffix: 'RSE' },
+  { name: 'Heritage Gold', hex: '#C6A96B', suffix: 'GLD' },
+  { name: 'Pristine White', hex: '#FFFFFF', suffix: 'WHT' },
+  { name: 'Terracotta Rust', hex: '#D4956A', suffix: 'TER' },
+];
 
 export default function AddProductForm() {
   const [images, setImages] = useState<string[]>([]);
@@ -33,6 +85,13 @@ export default function AddProductForm() {
   }>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
+
+  // Multi-Color Variants State
+  const [enableColorVariants, setEnableColorVariants] = useState(false);
+  const [colorVariants, setColorVariants] = useState<ColorVariantItem[]>([]);
+  const [batchCreatedProducts, setBatchCreatedProducts] = useState<CreatedBatchProduct[]>([]);
+  const [selectedBatchVariantIndex, setSelectedBatchVariantIndex] = useState<number | 'all'>('all');
+  const [variantUploadLoading, setVariantUploadLoading] = useState<string | null>(null);
 
   // Dynamic categories & subcategories from Supabase
   const [dbCategories, setDbCategories] = useState<{ id: string; name: string; slug: string }[]>([]);
@@ -210,6 +269,73 @@ export default function AddProductForm() {
     setIsSuccess(false);
     setGeneratedSerials([]);
     setProductName('');
+    setColorVariants([]);
+    setEnableColorVariants(false);
+    setBatchCreatedProducts([]);
+    setSelectedBatchVariantIndex('all');
+  };
+
+  const handleAddBullet = () => {
+    const current = watch('description') || '';
+    const addition = current.length > 0 && !current.endsWith('\n') ? '\n• ' : '• ';
+    setValue('description', current + addition, { shouldValidate: true, shouldDirty: true });
+  };
+
+  const addColorPreset = (preset: typeof LUXURY_COLOR_PRESETS[0]) => {
+    const existing = colorVariants.find(v => v.name.toLowerCase() === preset.name.toLowerCase());
+    if (existing) return;
+    const newVariant: ColorVariantItem = {
+      id: `${Date.now()}-${Math.random().toString(36).substring(2, 7)}`,
+      name: preset.name,
+      hex: preset.hex,
+      quantity: watch('quantity') || 1,
+      skuSuffix: preset.suffix,
+      images: [],
+    };
+    setColorVariants(prev => [...prev, newVariant]);
+  };
+
+  const addCustomColor = () => {
+    const newVariant: ColorVariantItem = {
+      id: `${Date.now()}-${Math.random().toString(36).substring(2, 7)}`,
+      name: `Color ${colorVariants.length + 1}`,
+      hex: '#C6A96B',
+      quantity: watch('quantity') || 1,
+      skuSuffix: `C${colorVariants.length + 1}`,
+      images: [],
+    };
+    setColorVariants(prev => [...prev, newVariant]);
+  };
+
+  const updateVariant = (id: string, updates: Partial<ColorVariantItem>) => {
+    setColorVariants(prev => prev.map(v => v.id === id ? { ...v, ...updates } : v));
+  };
+
+  const removeVariant = (id: string) => {
+    setColorVariants(prev => prev.filter(v => v.id !== id));
+  };
+
+  const handleVariantImageUpload = async (variantId: string, files: FileList | null) => {
+    if (!files || files.length === 0) return;
+    setVariantUploadLoading(variantId);
+    try {
+      const urls: string[] = [];
+      for (const file of Array.from(files)) {
+        if (!file.type.startsWith('image/')) continue;
+        const fileExt = file.name.split('.').pop();
+        const fileName = `var-${Date.now()}-${Math.random().toString(36).substring(2)}.${fileExt}`;
+        const filePath = `products/${fileName}`;
+        const { error: uploadErr } = await supabase.storage.from('product-images').upload(filePath, file);
+        if (uploadErr) throw uploadErr;
+        const { data: { publicUrl } } = supabase.storage.from('product-images').getPublicUrl(filePath);
+        urls.push(publicUrl);
+      }
+      setColorVariants(prev => prev.map(v => v.id === variantId ? { ...v, images: [...v.images, ...urls] } : v));
+    } catch (err) {
+      alert('Error uploading variant image: ' + (err as Error).message);
+    } finally {
+      setVariantUploadLoading(null);
+    }
   };
 
   const onSubmit = async (data: ProductFormValues) => {
@@ -222,6 +348,99 @@ export default function AddProductForm() {
         ? data.tags.split(',').map(tag => tag.trim()).filter(tag => tag.length > 0)
         : [];
 
+      // ── BATCH MULTI-COLOR CREATION ──────────────────────────────────────────
+      if (enableColorVariants && colorVariants.length > 0) {
+        for (const v of colorVariants) {
+          if (!v.name.trim()) {
+            throw new Error('All color variants must have a name (e.g. "Royal Ivory").');
+          }
+          if (!v.quantity || v.quantity < 1) {
+            throw new Error(`Please specify a valid quantity (min 1) for color "${v.name}".`);
+          }
+        }
+
+        const createdItems: CreatedBatchProduct[] = [];
+        let allSerialsCollected: string[] = [];
+
+        for (let i = 0; i < colorVariants.length; i++) {
+          const variant = colorVariants[i];
+          const vSuffix = (variant.skuSuffix || variant.name.slice(0, 3)).trim().toUpperCase();
+
+          let variantSku = '';
+          if (skuMode === 'series' && selectedSeriesId) {
+            const seriesList = await fetchSkuSeriesList();
+            const currentSer = seriesList.find(s => s.id === selectedSeriesId) || selectedSeries;
+            if (currentSer) {
+              variantSku = formatSeriesSku(currentSer, currentSer.currentCounter, data.year || new Date().getFullYear());
+              await incrementSeriesCounter(selectedSeriesId);
+            }
+          } else if (skuMode === 'manual') {
+            variantSku = `${manualSkuInput.trim().toUpperCase()}-${vSuffix}`;
+          } else {
+            variantSku = `${effectiveSku}-${vSuffix}`;
+          }
+
+          const variantProductData = {
+            name: `${data.name.trim()} - ${variant.name.trim()}`,
+            category: data.category,
+            subcategory: data.subcategory || null,
+            price: data.price,
+            quantity: Number(variant.quantity) || 1,
+            supplier: data.supplier || null,
+            description: data.description || null,
+            images: variant.images.length > 0 ? variant.images : (images.length > 0 ? images : []),
+            tags: [...tagsArray, variant.name.trim(), 'Colorway', 'Variant'],
+            discount_price: data.discount_price || null,
+            year: data.year || new Date().getFullYear(),
+            badge: data.badge || null,
+            sku: variantSku,
+          };
+
+          const result = await createProductRequest(variantProductData, token);
+          const vSerials = (result.data.serials || []).map((s: { serial_number: string }) => s.serial_number);
+          allSerialsCollected = [...allSerialsCollected, ...vSerials];
+
+          createdItems.push({
+            id: result.data.product.id,
+            name: variantProductData.name,
+            sku: result.data.product.sku,
+            colorName: variant.name,
+            colorHex: variant.hex,
+            quantity: variant.quantity,
+            price: data.price,
+            discount_price: data.discount_price,
+            badge: data.badge,
+            cost: data.cost,
+            category: data.category,
+            serials: vSerials,
+          });
+        }
+
+        setBatchCreatedProducts(createdItems);
+        setGeneratedSerials(allSerialsCollected);
+        setProductName(`${data.name} (${colorVariants.length} Colorways Batch)`);
+        setCreatedProductDetails({
+          price: data.price,
+          discount_price: data.discount_price,
+          badge: data.badge,
+          cost: data.cost,
+          category: data.category,
+          sku: createdItems[0]?.sku,
+        });
+        setIsSuccess(true);
+        setShowQRModal(true);
+
+        reset();
+        setImages([]);
+        setValue('images', []);
+        setValue('tags', '');
+        setValue('quantity', 1);
+        setColorVariants([]);
+        setEnableColorVariants(false);
+        return;
+      }
+
+      // ── SINGLE PRODUCT CREATION ─────────────────────────────────────────────
       const productData = {
         name: data.name,
         category: data.category,
@@ -247,7 +466,7 @@ export default function AddProductForm() {
         setAvailableSeries(updated);
       }
 
-      const serials = result.data.serials.map((serial) => serial.serial_number);
+      const serials = result.data.serials.map((serial: { serial_number: string }) => serial.serial_number);
       setGeneratedSerials(serials);
       setProductName(data.name);
       setCreatedProductDetails({
@@ -258,6 +477,7 @@ export default function AddProductForm() {
         category: data.category,
         sku: result.data.product.sku,
       });
+      setBatchCreatedProducts([]);
       setIsSuccess(true);
       
       if (serials.length > 0) {
@@ -490,13 +710,13 @@ export default function AddProductForm() {
 
             <div>
               <label className="block text-xs font-semibold uppercase tracking-wider text-secondary dark:text-white/70 mb-1.5">
-                Storefront Badge
+                Storefront Badge <span className="text-red-500 font-bold">*</span>
               </label>
               <select
-                {...register('badge')}
-                className="w-full rounded-xl border border-border dark:border-[#2E2925] bg-cream/30 dark:bg-[#100E0D] px-4 py-3 text-sm text-primary dark:text-white outline-none focus:border-primary dark:focus:border-[#D4AF37] transition-colors"
+                {...register('badge', { required: 'Storefront badge is required' })}
+                className={`w-full rounded-xl border ${errors.badge ? 'border-red-500 dark:border-red-500' : 'border-border dark:border-[#2E2925]'} bg-cream/30 dark:bg-[#100E0D] px-4 py-3 text-sm text-primary dark:text-white outline-none focus:border-primary dark:focus:border-[#D4AF37] transition-colors`}
               >
-                <option value="" className="dark:bg-[#1A1816]">No Badge</option>
+                <option value="" className="dark:bg-[#1A1816]">Select a Required Badge...</option>
                 {dbBadges.length > 0
                   ? dbBadges.map(b => (
                       <option key={b.id} value={b.label} className="dark:bg-[#1A1816]">{b.label}</option>
@@ -511,15 +731,18 @@ export default function AddProductForm() {
                   )
                 }
               </select>
+              {errors.badge && (
+                <p className="mt-1 text-xs text-red-600 dark:text-red-400 font-medium">{errors.badge.message}</p>
+              )}
               {/* Live badge colour preview */}
-              {watch('badge') && dbBadges.find(b => b.label === watch('badge')) && (
+              {watch('badge') && (
                 <div className="mt-2 flex items-center gap-2">
                   <span className="text-[10px] text-secondary dark:text-white/40 uppercase tracking-wider">Preview:</span>
                   <span
                     className="px-2.5 py-0.5 rounded-full text-[11px] font-bold"
                     style={{
-                      backgroundColor: dbBadges.find(b => b.label === watch('badge'))?.color,
-                      color: dbBadges.find(b => b.label === watch('badge'))?.text_color,
+                      backgroundColor: dbBadges.find(b => b.label === watch('badge'))?.color || '#D4AF37',
+                      color: dbBadges.find(b => b.label === watch('badge'))?.text_color || '#FFFFFF',
                     }}
                   >
                     {watch('badge')}
@@ -527,6 +750,231 @@ export default function AddProductForm() {
                 </div>
               )}
             </div>
+          </div>
+
+          {/* Multi-Color Variants Batch Section */}
+          <div className="rounded-2xl border border-border dark:border-[#2E2925] bg-gradient-to-br from-cream/20 via-white to-amber-50/10 dark:from-white/[0.03] dark:via-black/20 dark:to-[#D4AF37]/5 p-5 space-y-4">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+              <div>
+                <div className="flex items-center gap-2">
+                  <Palette size={16} className="text-[#D4AF37]" />
+                  <span className="text-xs font-bold uppercase tracking-wider text-primary dark:text-white">
+                    Color Variants & Multi-Color Batch Creation
+                  </span>
+                  <span className="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-[#D4AF37]/20 text-[#A67C1E] dark:text-[#E5C158]">
+                    Time-Saver
+                  </span>
+                </div>
+                <p className="text-xs text-secondary dark:text-white/60 mt-1">
+                  Upload multiple colorways (e.g., Midnight Navy, Emerald Green, Burgundy) at once. All variants inherit identical category, price, specs, and description with individual SKUs and stock.
+                </p>
+              </div>
+
+              {/* Toggle Switch */}
+              <label className="relative inline-flex items-center cursor-pointer select-none self-start sm:self-auto">
+                <input
+                  type="checkbox"
+                  checked={enableColorVariants}
+                  onChange={(e) => {
+                    const checked = e.target.checked;
+                    setEnableColorVariants(checked);
+                    if (checked && colorVariants.length === 0) {
+                      addColorPreset(LUXURY_COLOR_PRESETS[0]);
+                      addColorPreset(LUXURY_COLOR_PRESETS[1]);
+                    }
+                  }}
+                  className="sr-only peer"
+                />
+                <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer dark:bg-zinc-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[#D4AF37]"></div>
+                <span className="ml-2.5 text-xs font-semibold text-primary dark:text-white">
+                  {enableColorVariants ? 'Enabled' : 'Disabled'}
+                </span>
+              </label>
+            </div>
+
+            {enableColorVariants && (
+              <div className="space-y-4 pt-2 border-t border-border/60 dark:border-[#2E2925]/60">
+                {/* Preset Chips */}
+                <div>
+                  <label className="block text-[11px] font-semibold uppercase tracking-wider text-secondary dark:text-white/60 mb-2">
+                    Quick-Add Luxury Palette Presets:
+                  </label>
+                  <div className="flex flex-wrap gap-2">
+                    {LUXURY_COLOR_PRESETS.map((preset) => {
+                      const isAdded = colorVariants.some(v => v.name.toLowerCase() === preset.name.toLowerCase());
+                      return (
+                        <button
+                          key={preset.name}
+                          type="button"
+                          disabled={isAdded}
+                          onClick={() => addColorPreset(preset)}
+                          className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-medium border transition-all ${
+                            isAdded
+                              ? 'opacity-40 cursor-not-allowed bg-cream/40 dark:bg-white/5 border-border dark:border-[#2E2925] text-secondary dark:text-white/40'
+                              : 'bg-white dark:bg-[#151311] border-border dark:border-[#2E2925] hover:border-[#D4AF37] dark:hover:border-[#D4AF37] hover:shadow-xs text-primary dark:text-white'
+                          }`}
+                        >
+                          <span
+                            className="w-3 h-3 rounded-full border border-black/20 shadow-inner"
+                            style={{ backgroundColor: preset.hex }}
+                          />
+                          <span>{preset.name}</span>
+                          <Plus size={11} className="text-secondary dark:text-white/50" />
+                        </button>
+                      );
+                    })}
+                    <button
+                      type="button"
+                      onClick={addCustomColor}
+                      className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold border border-dashed border-[#D4AF37] text-[#A67C1E] dark:text-[#E5C158] hover:bg-[#D4AF37]/10 transition-colors"
+                    >
+                      <Plus size={13} />
+                      Custom Color
+                    </button>
+                  </div>
+                </div>
+
+                {/* Configured Variants List */}
+                <div className="space-y-3">
+                  <div className="flex items-center justify-between text-xs font-semibold text-secondary dark:text-white/70">
+                    <span>Configured Colorways ({colorVariants.length})</span>
+                    <span className="text-[11px] font-normal text-secondary dark:text-white/50">
+                      Total Units: {colorVariants.reduce((sum, v) => sum + (Number(v.quantity) || 0), 0)}
+                    </span>
+                  </div>
+
+                  {colorVariants.length === 0 ? (
+                    <div className="p-4 rounded-xl border border-dashed border-border dark:border-[#2E2925] text-center text-xs text-secondary dark:text-white/50">
+                      No colors added yet. Click any preset color above or add a custom color.
+                    </div>
+                  ) : (
+                    colorVariants.map((variant) => (
+                      <div
+                        key={variant.id}
+                        className="p-3.5 rounded-xl bg-white dark:bg-[#12100E] border border-border dark:border-[#2E2925] shadow-xs flex flex-col md:flex-row md:items-center gap-3 transition-all"
+                      >
+                        {/* Swatch & Color Picker */}
+                        <div className="flex items-center gap-2">
+                          <label className="relative cursor-pointer group">
+                            <input
+                              type="color"
+                              value={variant.hex}
+                              onChange={(e) => updateVariant(variant.id, { hex: e.target.value })}
+                              className="sr-only"
+                            />
+                            <div
+                              className="w-8 h-8 rounded-full border-2 border-white dark:border-[#2E2925] shadow-md group-hover:scale-110 transition-transform"
+                              style={{ backgroundColor: variant.hex }}
+                              title="Click to change color swatch"
+                            />
+                          </label>
+                          <span className="font-mono text-[11px] uppercase text-secondary dark:text-white/60">
+                            {variant.hex}
+                          </span>
+                        </div>
+
+                        {/* Name Input */}
+                        <div className="flex-1 min-w-[140px]">
+                          <label className="block text-[10px] uppercase font-semibold text-secondary dark:text-white/50 mb-0.5">
+                            Color Name
+                          </label>
+                          <input
+                            type="text"
+                            value={variant.name}
+                            onChange={(e) => updateVariant(variant.id, { name: e.target.value })}
+                            placeholder="e.g. Royal Ivory"
+                            className="w-full text-xs font-semibold px-2.5 py-1.5 rounded-lg border border-border dark:border-[#2E2925] bg-cream/20 dark:bg-[#1A1816] text-primary dark:text-white outline-none focus:border-[#D4AF37]"
+                          />
+                        </div>
+
+                        {/* SKU Suffix */}
+                        <div className="w-24">
+                          <label className="block text-[10px] uppercase font-semibold text-secondary dark:text-white/50 mb-0.5">
+                            SKU Suffix
+                          </label>
+                          <input
+                            type="text"
+                            value={variant.skuSuffix}
+                            onChange={(e) => updateVariant(variant.id, { skuSuffix: e.target.value.toUpperCase() })}
+                            placeholder="IVR"
+                            className="w-full font-mono uppercase text-xs font-bold px-2.5 py-1.5 rounded-lg border border-border dark:border-[#2E2925] bg-cream/20 dark:bg-[#1A1816] text-primary dark:text-[#D4AF37] outline-none focus:border-[#D4AF37]"
+                          />
+                        </div>
+
+                        {/* Quantity */}
+                        <div className="w-24">
+                          <label className="block text-[10px] uppercase font-semibold text-secondary dark:text-white/50 mb-0.5">
+                            Units / Stock
+                          </label>
+                          <input
+                            type="number"
+                            min={1}
+                            value={variant.quantity}
+                            onChange={(e) => updateVariant(variant.id, { quantity: Math.max(1, parseInt(e.target.value) || 1) })}
+                            className="w-full text-xs font-semibold px-2.5 py-1.5 rounded-lg border border-border dark:border-[#2E2925] bg-cream/20 dark:bg-[#1A1816] text-primary dark:text-white outline-none focus:border-[#D4AF37]"
+                          />
+                        </div>
+
+                        {/* Variant-specific Image Upload */}
+                        <div className="flex items-center gap-2">
+                          <label className="cursor-pointer inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg border border-border dark:border-[#2E2925] bg-cream/20 dark:bg-[#1A1816] hover:border-[#D4AF37] text-secondary dark:text-white/70 hover:text-primary text-[11px] font-medium transition-colors">
+                            <Upload size={12} />
+                            <span>
+                              {variantUploadLoading === variant.id
+                                ? 'Uploading...'
+                                : variant.images.length > 0
+                                ? `${variant.images.length} photo(s)`
+                                : 'Add Photos'}
+                            </span>
+                            <input
+                              type="file"
+                              accept="image/*"
+                              multiple
+                              disabled={variantUploadLoading === variant.id}
+                              onChange={(e) => handleVariantImageUpload(variant.id, e.target.files)}
+                              className="hidden"
+                            />
+                          </label>
+
+                          {variant.images.length > 0 && (
+                            <div className="flex -space-x-1.5 overflow-hidden">
+                              {variant.images.map((img, imgIdx) => (
+                                <img
+                                  key={imgIdx}
+                                  src={img}
+                                  alt=""
+                                  className="inline-block h-6 w-6 rounded-full ring-1 ring-white dark:ring-[#1A1816] object-cover"
+                                />
+                              ))}
+                            </div>
+                          )}
+
+                          {/* Delete Variant */}
+                          <button
+                            type="button"
+                            onClick={() => removeVariant(variant.id)}
+                            className="p-1.5 text-secondary dark:text-white/40 hover:text-red-600 dark:hover:text-red-400 hover:bg-red-50 dark:hover:bg-red-950/30 rounded-lg transition-colors"
+                            title="Remove this colorway"
+                          >
+                            <Trash2 size={14} />
+                          </button>
+                        </div>
+                      </div>
+                    ))
+                  )}
+                </div>
+
+                {/* Batch Creation Notice */}
+                {colorVariants.length > 0 && (
+                  <div className="p-3 bg-[#D4AF37]/10 rounded-xl border border-[#D4AF37]/20 flex items-start gap-2.5 text-xs text-primary dark:text-[#E5C158]">
+                    <Layers size={15} className="mt-0.5 shrink-0 text-[#D4AF37]" />
+                    <p>
+                      Saving will automatically generate <strong>{colorVariants.length} distinct products</strong> in your catalog with individual SKUs and sequential barcodes. Customers can seamlessly switch between these colors on the storefront.
+                    </p>
+                  </div>
+                )}
+              </div>
+            )}
           </div>
 
           {/* SKU Architecture & Manual Series Selection */}
@@ -732,13 +1180,27 @@ export default function AddProductForm() {
           </div>
 
           <div>
-            <label className="block text-xs font-semibold uppercase tracking-wider text-secondary dark:text-white/70 mb-1.5">Description</label>
+            <div className="flex items-center justify-between mb-1.5">
+              <label className="block text-xs font-semibold uppercase tracking-wider text-secondary dark:text-white/70">
+                Description / Specifications
+              </label>
+              <button
+                type="button"
+                onClick={handleAddBullet}
+                className="inline-flex items-center gap-1 text-[11px] font-bold text-[#A67C1E] dark:text-[#E5C158] hover:underline bg-[#D4AF37]/10 px-2.5 py-1 rounded-lg border border-[#D4AF37]/30 transition-colors"
+              >
+                <Plus size={12} /> Add Bullet Point (•)
+              </button>
+            </div>
             <textarea
-              rows={3}
+              rows={5}
               {...register('description')}
-              placeholder="Detailed product specifications, weave origin, and tactile notes..."
-              className="w-full rounded-xl border border-border dark:border-[#2E2925] bg-cream/30 dark:bg-[#100E0D] px-4 py-3 text-sm text-primary dark:text-white outline-none focus:border-primary dark:focus:border-[#D4AF37] resize-none transition-colors"
+              placeholder={'Detailed product specifications and tactile notes...\n• 100% Long-staple Egyptian cotton\n• 800 thread count sateen weave\n• Subtle champagne embroidery detailing\n• Machine washable with gentle cycle'}
+              className="w-full rounded-xl border border-border dark:border-[#2E2925] bg-cream/30 dark:bg-[#100E0D] px-4 py-3 text-sm text-primary dark:text-white outline-none focus:border-primary dark:focus:border-[#D4AF37] resize-y transition-colors font-sans"
             />
+            <p className="mt-1 text-[11px] text-secondary dark:text-white/50">
+              Tip: Start lines with bullet points (<code className="font-mono text-primary dark:text-[#D4AF37]">•</code> or <code className="font-mono text-primary dark:text-[#D4AF37]">-</code>) to display them as luxury styled points on the product page.
+            </p>
           </div>
 
           <div className="flex items-center gap-3 pt-4 border-t border-border dark:border-[#2E2925]">
@@ -765,9 +1227,15 @@ export default function AddProductForm() {
           <div className="mt-6 bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800 rounded-2xl p-5 flex flex-col sm:flex-row items-center justify-between gap-4">
             <div>
               <p className="text-sm font-semibold text-emerald-900 dark:text-emerald-300">
-                Product Created! Generated {generatedSerials.length} Unique Physical Unit Serials.
+                {batchCreatedProducts.length > 0
+                  ? `Product Batch Created! Generated ${batchCreatedProducts.length} Colorways (${generatedSerials.length} Total Physical Unit Serials).`
+                  : `Product Created! Generated ${generatedSerials.length} Unique Physical Unit Serials.`}
               </p>
-              <p className="text-xs text-emerald-700 dark:text-emerald-400 mt-0.5">{productName}</p>
+              <p className="text-xs text-emerald-700 dark:text-emerald-400 mt-0.5">
+                {batchCreatedProducts.length > 0
+                  ? batchCreatedProducts.map(b => b.colorName || b.name).filter(Boolean).join(' • ')
+                  : productName}
+              </p>
             </div>
             <div className="flex gap-2">
               <button
@@ -795,7 +1263,7 @@ export default function AddProductForm() {
                     Retail Packaging Barcode Stickers
                   </h2>
                   <p className="text-xs text-secondary dark:text-white/60 mt-0.5">
-                    {productName} • {generatedSerials.length} Units Generated
+                    {productName} • {batchCreatedProducts.length > 0 ? `${batchCreatedProducts.length} Colorways • ` : ''}{generatedSerials.length} Units Generated
                   </p>
                 </div>
 
@@ -868,26 +1336,92 @@ export default function AddProductForm() {
                 </div>
               </div>
 
+              {/* Batch Colorway Selector Tabs (if batch created) */}
+              {batchCreatedProducts.length > 0 && (
+                <div className="flex items-center gap-2 overflow-x-auto px-6 py-2.5 bg-cream/40 dark:bg-white/5 border-b border-border dark:border-[#2E2925]">
+                  <span className="text-[10px] font-bold uppercase tracking-wider text-secondary dark:text-white/60 shrink-0">
+                    Filter Color:
+                  </span>
+                  <button
+                    type="button"
+                    onClick={() => setSelectedBatchVariantIndex('all')}
+                    className={`px-3 py-1 rounded-lg text-xs font-semibold transition-all shrink-0 ${
+                      selectedBatchVariantIndex === 'all'
+                        ? 'bg-primary dark:bg-[#D4AF37] text-white dark:text-black shadow-xs font-bold'
+                        : 'bg-white dark:bg-[#1A1816] text-secondary dark:text-white/70 border border-border dark:border-[#2E2925]'
+                    }`}
+                  >
+                    All Colors ({generatedSerials.length})
+                  </button>
+                  {batchCreatedProducts.map((bp, bIdx) => (
+                    <button
+                      key={bp.id}
+                      type="button"
+                      onClick={() => setSelectedBatchVariantIndex(bIdx)}
+                      className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-lg text-xs font-semibold transition-all border shrink-0 ${
+                        selectedBatchVariantIndex === bIdx
+                          ? 'bg-primary dark:bg-[#D4AF37] text-white dark:text-black border-transparent shadow-xs font-bold'
+                          : 'bg-white dark:bg-[#1A1816] text-secondary dark:text-white/70 border-border dark:border-[#2E2925] hover:border-[#D4AF37]'
+                      }`}
+                    >
+                      {bp.colorHex && (
+                        <span
+                          className="w-2.5 h-2.5 rounded-full border border-black/20"
+                          style={{ backgroundColor: bp.colorHex }}
+                        />
+                      )}
+                      <span>{bp.colorName || bp.name} ({bp.serials.length})</span>
+                    </button>
+                  ))}
+                </div>
+              )}
+
               {/* Printable Grid of Labels */}
               <div className="p-6 overflow-y-auto flex-1 bg-gray-100 dark:bg-[#100E0D]">
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-6 max-w-4xl mx-auto">
-                  {generatedSerials.map((serial) => (
-                    <ProductPackagingLabel
-                      key={serial}
-                      productName={productName}
-                      sku={createdProductDetails.sku || effectiveSku}
-                      serialNumber={serial}
-                      price={createdProductDetails.price || watch('price') || 1882}
-                      discountPrice={createdProductDetails.discount_price || watch('discount_price')}
-                      badge={createdProductDetails.badge || watch('badge')}
-                      cost={createdProductDetails.cost}
-                      category={createdProductDetails.category || watch('category') || 'BED SHEET (DOUBLE BED)'}
-                      collection={selectedLabelCollection}
-                      showChannels={labelShowChannels}
-                      showQR={labelShowQR}
-                      className="shadow-md hover:shadow-lg transition-shadow"
-                    />
-                  ))}
+                  {batchCreatedProducts.length > 0 ? (
+                    (selectedBatchVariantIndex === 'all'
+                      ? batchCreatedProducts.flatMap(bp => bp.serials.map(s => ({ ...bp, serial: s })))
+                      : (batchCreatedProducts[selectedBatchVariantIndex]?.serials || []).map(s => ({
+                          ...batchCreatedProducts[selectedBatchVariantIndex],
+                          serial: s,
+                        }))
+                    ).map((item) => (
+                      <ProductPackagingLabel
+                        key={item.serial}
+                        productName={item.name}
+                        sku={item.sku}
+                        serialNumber={item.serial}
+                        price={item.price || watch('price') || 1882}
+                        discountPrice={item.discount_price || watch('discount_price')}
+                        badge={item.badge || watch('badge')}
+                        cost={item.cost}
+                        category={item.category || watch('category') || 'BED SHEET (DOUBLE BED)'}
+                        collection={selectedLabelCollection}
+                        showChannels={labelShowChannels}
+                        showQR={labelShowQR}
+                        className="shadow-md hover:shadow-lg transition-shadow"
+                      />
+                    ))
+                  ) : (
+                    generatedSerials.map((serial) => (
+                      <ProductPackagingLabel
+                        key={serial}
+                        productName={productName}
+                        sku={createdProductDetails.sku || effectiveSku}
+                        serialNumber={serial}
+                        price={createdProductDetails.price || watch('price') || 1882}
+                        discountPrice={createdProductDetails.discount_price || watch('discount_price')}
+                        badge={createdProductDetails.badge || watch('badge')}
+                        cost={createdProductDetails.cost}
+                        category={createdProductDetails.category || watch('category') || 'BED SHEET (DOUBLE BED)'}
+                        collection={selectedLabelCollection}
+                        showChannels={labelShowChannels}
+                        showQR={labelShowQR}
+                        className="shadow-md hover:shadow-lg transition-shadow"
+                      />
+                    ))
+                  )}
                 </div>
               </div>
 

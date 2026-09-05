@@ -44,7 +44,7 @@ export default function Login() {
   }
 
   return (
-    <main className="min-h-screen bg-[#F3EDE3] dark:bg-[#12100E] text-[#1A1A1A] dark:text-[#F5F2EB] flex items-center justify-center p-4 sm:p-8 transition-colors duration-300">
+    <main className="min-h-screen bg-[#F5EDE3] dark:bg-[#12100E] text-[#1A1A1A] dark:text-[#FCFAF7] flex items-center justify-center p-4 sm:p-8 transition-colors duration-300">
       {/* Top Left Floating Brand Link */}
       <Link
         to="/"
@@ -54,14 +54,25 @@ export default function Login() {
       </Link>
 
       {/* Main Dual-Panel Container */}
-      <div className="w-full max-w-6xl grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center justify-center my-auto py-6">
+      <div className="w-full max-w-5xl grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center justify-center my-auto py-6" style={{ minHeight: '80vh' }}>
         
-        {/* LEFT COLUMN: Animated Interactive Geometric Characters */}
-        <div className="lg:col-span-6 flex flex-col items-center justify-center order-2 lg:order-1 pt-4 lg:pt-0">
+        {/* LEFT COLUMN: Jorique Product Characters */}
+        <div className="lg:col-span-6 flex flex-col items-center justify-center order-2 lg:order-1 pt-4 lg:pt-0 relative">
+          {/* Brand decorative corner — gold top-right */}
+          <div className="absolute top-0 right-0 w-28 h-28 pointer-events-none opacity-30"
+            style={{ background: 'radial-gradient(circle at top right, #C6A96B 0%, transparent 70%)' }} />
+          {/* Brand decorative accent — gold bottom-left */}
+          <div className="absolute bottom-0 left-0 w-24 h-24 pointer-events-none opacity-20"
+            style={{ background: 'radial-gradient(circle at bottom left, #C6A96B 0%, transparent 70%)' }} />
+          {/* Brand label */}
+          <p className="text-[10px] uppercase tracking-[0.3em] font-semibold text-[#C6A96B] mb-2 font-sans">JORIQUE Collection</p>
           <InteractiveLoginCharacters
             focusedField={focusedField}
             showPassword={showPassword}
+            emailLength={email.length}
           />
+          {/* Tagline */}
+          <p className="text-xs text-[#8A847D] dark:text-[#8A847D] mt-4 tracking-wide font-serif italic">Crafted with care, worn with pride.</p>
         </div>
 
         {/* RIGHT COLUMN: Modern Crisp White Login Card */}

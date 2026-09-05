@@ -17,12 +17,99 @@ const shippingInfo = [
   { icon: <Shield size={15} strokeWidth={1.5} />, text: '100% Heirloom Quality Guaranteed' },
 ];
 
+const COLOR_HEX_MAP: Record<string, string> = {
+  'royal ivory': '#F5EDE3',
+  'ivory': '#F5EDE3',
+  'cream': '#F5EDE3',
+  'midnight navy': '#1B2A4A',
+  'navy': '#1B2A4A',
+  'blue': '#243B64',
+  'emerald green': '#0B5F61',
+  'emerald': '#0B5F61',
+  'green': '#2D5A27',
+  'sage green': '#7A8B72',
+  'sage': '#7A8B72',
+  'olive': '#556B2F',
+  'burgundy wine': '#641F2D',
+  'burgundy': '#641F2D',
+  'wine': '#641F2D',
+  'ruby': '#9B111E',
+  'red': '#8B0000',
+  'classic charcoal': '#2B2825',
+  'charcoal': '#2B2825',
+  'black': '#1A1A1A',
+  'dusty rose': '#B9787D',
+  'rose': '#B9787D',
+  'pink': '#D88579',
+  'blush': '#E8A898',
+  'heritage gold': '#C6A96B',
+  'gold': '#C6A96B',
+  'pristine white': '#FFFFFF',
+  'white': '#FFFFFF',
+  'slate grey': '#4B5563',
+  'grey': '#6B7280',
+  'gray': '#6B7280',
+  'terracotta': '#D4956A',
+  'rust': '#B7410E',
+};
+
+function getColorInfo(productName: string, tags?: string[]) {
+  const parts = productName.split(' - ');
+  const colorName = parts.length > 1 ? parts[1].trim() : (tags?.find(t => COLOR_HEX_MAP[t.toLowerCase()]) || 'Classic Edition');
+  const lower = colorName.toLowerCase();
+  let hex = '#C6A96B';
+  for (const [k, v] of Object.entries(COLOR_HEX_MAP)) {
+    if (lower.includes(k)) {
+      hex = v;
+      break;
+    }
+  }
+  return { colorName, colorHex: hex };
+}
+
+function renderFormattedDescription(description?: string) {
+  if (!description) return null;
+  const lines = description.split(/\r?\n/).map(l => l.trim()).filter(Boolean);
+  const isBullet = (l: string) => /^([•\-\*]|\d+[\.\)])\s+/.test(l);
+  const hasBullets = lines.some(isBullet);
+
+  if (lines.length > 1 || hasBullets) {
+    return (
+      <div className="space-y-2.5 mb-6 text-sm text-secondary dark:text-white/70 leading-relaxed">
+        {lines.map((line, idx) => {
+          if (isBullet(line)) {
+            const cleanText = line.replace(/^([•\-\*]|\d+[\.\)])\s+/, '');
+            return (
+              <div key={idx} className="flex items-start gap-2.5">
+                <span className="w-1.5 h-1.5 rounded-full bg-primary dark:bg-[#D4AF37] mt-2 shrink-0 shadow-xs" />
+                <span className="flex-1">{cleanText}</span>
+              </div>
+            );
+          }
+          return (
+            <p key={idx} className="leading-relaxed">
+              {line}
+            </p>
+          );
+        })}
+      </div>
+    );
+  }
+
+  return (
+    <p className="text-sm text-secondary dark:text-white/70 leading-relaxed mb-6 whitespace-pre-line">
+      {description}
+    </p>
+  );
+}
+
 export default function ProductDetails() {
   const { id } = useParams<{ id: string }>(); // This is the SKU
   const navigate = useNavigate();
 
   const [product, setProduct] = useState<Product | null>(null);
   const [relatedProducts, setRelatedProducts] = useState<Product[]>([]);
+  const [siblingColorways, setSiblingColorways] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -53,8 +140,18 @@ export default function ProductDetails() {
         setProduct(data);
         setActiveImage(0);
 
-        // Fetch related products
+        // Fetch related products & sibling color variants
         const allProducts = await productService.getProducts();
+        
+        // Find sibling colorways (products sharing base title before " - ")
+        const baseTitle = data.name.includes(' - ') ? data.name.split(' - ')[0].trim() : data.name.trim();
+        const siblings = allProducts.filter((p) => {
+          if (p.id === data.id || p.sku === data.sku) return false;
+          const pBase = p.name.includes(' - ') ? p.name.split(' - ')[0].trim() : p.name.trim();
+          return pBase.toLowerCase() === baseTitle.toLowerCase();
+        });
+        setSiblingColorways(siblings);
+
         const related = allProducts.filter((p) => p.id !== data.id && p.category === data.category).slice(0, 3);
         const fallback = allProducts.filter((p) => p.id !== data.id).slice(0, 3);
         setRelatedProducts(related.length >= 2 ? related : fallback);
@@ -309,6 +406,48 @@ export default function ProductDetails() {
                 )}
               </div>
 
+              {/* Sibling Colorways Selector */}
+              {siblingColorways.length > 0 && (
+                <div className="mb-6 p-4 rounded-2xl bg-cream/40 dark:bg-white/5 border border-border dark:border-[#2E2925]">
+                  <div className="flex items-center justify-between mb-3">
+                    <span className="text-xs font-semibold uppercase tracking-wider text-secondary dark:text-white/70">
+                      Available Colors ({siblingColorways.length + 1}):
+                    </span>
+                    <span className="text-xs font-bold text-primary dark:text-[#D4AF37]">
+                      {getColorInfo(product.name, product.tags).colorName}
+                    </span>
+                  </div>
+                  <div className="flex flex-wrap items-center gap-2.5">
+                    {/* Active product color pill */}
+                    <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-xl border-2 border-primary dark:border-[#D4AF37] bg-white dark:bg-[#1A1816] shadow-sm text-xs font-bold text-primary dark:text-white">
+                      <span
+                        className="w-3.5 h-3.5 rounded-full border border-black/20 shrink-0"
+                        style={{ backgroundColor: getColorInfo(product.name, product.tags).colorHex }}
+                      />
+                      <span>{getColorInfo(product.name, product.tags).colorName}</span>
+                    </div>
+
+                    {/* Sibling color pills */}
+                    {siblingColorways.map((sibling) => {
+                      const sibColor = getColorInfo(sibling.name, sibling.tags);
+                      return (
+                        <button
+                          key={sibling.id}
+                          onClick={() => navigate(`/product/${sibling.sku || sibling.id}`)}
+                          className="inline-flex items-center gap-2 px-3 py-1.5 rounded-xl border border-border dark:border-[#2E2925] hover:border-primary dark:hover:border-[#D4AF37] bg-white/70 dark:bg-[#100E0D] text-xs font-medium text-secondary dark:text-white/80 hover:text-primary dark:hover:text-white transition-all shadow-2xs"
+                        >
+                          <span
+                            className="w-3.5 h-3.5 rounded-full border border-black/20 shrink-0"
+                            style={{ backgroundColor: sibColor.colorHex }}
+                          />
+                          <span>{sibColor.colorName}</span>
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+              )}
+
               {/* 🛒 QUANTITY SELECTOR & WHATSAPP CHECKOUT CTAs */}
               <div className="mb-8 p-4 rounded-2xl bg-cream/40 dark:bg-white/5 border border-border dark:border-[#2E2925] space-y-4">
                 <div className="flex items-center justify-between">
@@ -353,9 +492,7 @@ export default function ProductDetails() {
                 </div>
               </div>
 
-              <p className="text-sm text-secondary dark:text-white/70 leading-relaxed mb-6">
-                {product.description}
-              </p>
+              {renderFormattedDescription(product.description)}
 
               {/* Tags & Features */}
               {product.tags && product.tags.length > 0 && (

@@ -139,7 +139,7 @@ export default function ProductPackagingLabel({
                   PRODUCT SPECIFICATION & WEAVE
                 </span>
                 <p
-                  className="font-serif italic text-[11px] sm:text-[12px] leading-snug max-w-md mx-auto"
+                  className="font-serif italic text-[11px] sm:text-[12px] leading-snug max-w-md mx-auto whitespace-pre-line"
                   style={{ color: textPrimary, opacity: 0.9 }}
                 >
                   {description}
