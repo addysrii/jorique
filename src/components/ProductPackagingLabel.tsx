@@ -1,5 +1,6 @@
 import React from 'react';
 import Barcode128 from './Barcode128';
+import { QRCodeSVG } from 'qrcode.react';
 import { getCollectionTheme, getBadgeColors } from '../lib/constants/collections';
 
 export interface ProductPackagingLabelProps {
@@ -43,8 +44,9 @@ export default function ProductPackagingLabel({
   showChannels = true,
   className = '',
 }: ProductPackagingLabelProps) {
-  const effectiveSku = sku || serialNumber || 'JR-BS-400-01';
-  const barcodeValue = effectiveSku.toUpperCase();
+  const unitSku = (serialNumber || sku || 'JR-BS-400-01').toUpperCase();
+  const masterSku = (sku || '').toUpperCase();
+  const barcodeValue = unitSku;
   const displayPrice = Number(discountPrice || price).toFixed(2);
 
   const theme = getCollectionTheme(collection);
@@ -265,20 +267,37 @@ export default function ProductPackagingLabel({
               </div>
 
               {/* Barcode & SKU Box (high contrast white card for 100% optical barcode scanner reliability) */}
-              <div className="col-span-7 flex flex-col items-center justify-center bg-white rounded-xl p-2 shadow-xs border border-black/10">
-                <div className="w-full flex justify-center overflow-hidden px-1">
-                  <Barcode128
-                    value={barcodeValue}
-                    width={1.2}
-                    height={36}
-                    fontSize={0}
-                    displayValue={false}
-                    className="max-w-full"
-                  />
+              <div className="col-span-7 flex items-center justify-between bg-white rounded-xl p-2 shadow-xs border border-black/10 gap-1.5">
+                <div className="flex-1 flex flex-col items-center overflow-hidden px-0.5">
+                  <div className="w-full flex justify-center overflow-hidden">
+                    <Barcode128
+                      value={barcodeValue}
+                      width={1.15}
+                      height={34}
+                      fontSize={0}
+                      displayValue={false}
+                      className="max-w-full"
+                    />
+                  </div>
+                  <p className="font-mono text-[9px] font-bold tracking-[0.14em] text-black mt-0.5 uppercase text-center leading-tight">
+                    {serialNumber ? `UNIT SKU: ${unitSku}` : `SKU: ${unitSku}`}
+                  </p>
+                  {serialNumber && masterSku && (
+                    <p className="font-mono text-[7.5px] font-semibold text-black/60 tracking-wider uppercase text-center mt-0.5 leading-tight">
+                      MODEL: {masterSku}
+                    </p>
+                  )}
                 </div>
-                <p className="font-mono text-[9px] font-bold tracking-[0.18em] text-black mt-0.5 uppercase">
-                  SKU: {effectiveSku}
-                </p>
+                {showQR && (
+                  <div className="shrink-0 p-1 border border-black/10 rounded-lg bg-white flex flex-col items-center">
+                    <QRCodeSVG
+                      value={`https://jorique.in/scan?serial=${encodeURIComponent(unitSku)}`}
+                      size={44}
+                      level="M"
+                    />
+                    <span className="text-[6px] font-bold tracking-wider uppercase text-black/60 mt-0.5">SCAN</span>
+                  </div>
+                )}
               </div>
             </div>
 

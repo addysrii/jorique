@@ -199,6 +199,9 @@ export default function AdminDashboard() {
   const reservedCount = serials.filter(s => s.status === 'reserved').length;
   const damagedCount = serials.filter(s => s.status === 'damaged').length;
   const claimedGiftsCount = serials.filter(s => s.gift_claimed).length;
+  const avgRating = reviews.length > 0
+    ? (reviews.reduce((acc, r) => acc + (Number(r.rating) || 5), 0) / reviews.length).toFixed(1)
+    : '0.0';
 
   // Filtered inventory serials
   const filteredSerials = serials.filter(s => {
@@ -327,7 +330,7 @@ export default function AdminDashboard() {
                         <Star size={16} className="text-primary dark:text-[#D4AF37]" />
                       </div>
                       <p className="text-3xl font-light text-primary dark:text-white">{reviews.length}</p>
-                      <span className="text-[11px] text-secondary dark:text-white/50 mt-1 block">Average Rating: 4.9 / 5.0</span>
+                      <span className="text-[11px] text-secondary dark:text-white/50 mt-1 block">Average Rating: {avgRating} / 5.0</span>
                     </div>
                   </div>
 

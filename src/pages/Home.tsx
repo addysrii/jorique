@@ -7,13 +7,10 @@ import Footer from '../components/Footer';
 import ProductCard from '../components/ProductCard';
 import Button from '../components/Button';
 import Parallax3DShowcase from '../components/Parallax3DShowcase';
-import Parallax3DCard from '../components/Parallax3DCard';
-import FabricExploded3D from '../components/FabricExploded3D';
 import Spatial3DCarousel from '../components/Spatial3DCarousel';
 import { productService } from '../lib/api/products';
 import { Product } from '../types';
 import ProductCollisionIntro from '../components/ProductCollisionIntro';
-import ScrollVideoSection from '../components/ScrollVideoSection';
 
 const HERO_IMAGE = '/images/hero.png';
 const HERO_VIDEO = '/videos/bedsheet-spread.mp4';
@@ -180,7 +177,7 @@ export default function Home() {
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.2, ease: [0.22, 1, 0.36, 1] }}
-            className="font-serif text-[#C6A96B] text-5xl sm:text-7xl md:text-8xl lg:text-9xl font-light tracking-[0.20em] uppercase mb-4 sm:mb-6 drop-shadow-[0_20px_50px_rgba(0,0,0,0.9)]"
+            className="font-serif text-white text-5xl sm:text-7xl md:text-8xl lg:text-9xl font-light tracking-[0.20em] uppercase mb-4 sm:mb-6 drop-shadow-[0_20px_50px_rgba(0,0,0,0.9)]"
           >
             JORIQUE
           </motion.h1>
@@ -335,64 +332,53 @@ export default function Home() {
         </div>
       </section>
 
-      {/* 3D Depth CTA Banner */}
+      {/* Luxury CTA Banner */}
       <section className="py-12 px-6 max-w-7xl mx-auto dark:bg-[#100E0D]">
-        <Parallax3DCard
-          maxRotation={6}
-          perspective={1600}
-          glareEffect={true}
-          scaleOnHover={1.01}
-          className="rounded-3xl overflow-hidden shadow-2xl"
-        >
-          <div className="relative rounded-3xl overflow-hidden py-24 lg:py-32 px-6 text-center transform-style-3d bg-primary dark:bg-[#1A1816] border border-border/20 dark:border-[#2E2925]">
-            <div className="absolute inset-0">
-              <img
-                src="/Products/1.jpg"
-                alt="Transform your space"
-                className="w-full h-full object-cover opacity-35 dark:opacity-25"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/40 to-black/75" />
-            </div>
-
-            <div className="relative z-10 max-w-2xl mx-auto transform-style-3d">
-              <motion.p
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                className="text-[#D4AF37] text-xs font-semibold tracking-[0.3em] uppercase mb-4"
-                style={{ transform: 'translateZ(30px)' }}
-              >
-                Elevate Your Space
-              </motion.p>
-              <motion.h2
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                className="text-3xl sm:text-4xl lg:text-5xl font-light text-white tracking-wide mb-8 leading-tight drop-shadow-lg"
-                style={{ transform: 'translateZ(45px)' }}
-              >
-                Transform Your Space Today
-              </motion.h2>
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                style={{ transform: 'translateZ(60px)' }}
-              >
-                <Link to="/shop">
-                  <motion.button
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.97 }}
-                    className="inline-flex items-center gap-3 bg-white dark:bg-[#D4AF37] text-primary dark:text-black text-xs font-bold tracking-widest uppercase px-10 py-4 rounded-xl hover:bg-cream shadow-xl hover:shadow-white/20 transition-all duration-200"
-                  >
-                    Shop Now
-                    <ArrowRight size={14} strokeWidth={1.5} />
-                  </motion.button>
-                </Link>
-              </motion.div>
-            </div>
+        <div className="relative rounded-3xl overflow-hidden py-24 lg:py-32 px-6 text-center bg-primary dark:bg-[#1A1816] border border-border/20 dark:border-[#2E2925] shadow-2xl">
+          <div className="absolute inset-0">
+            <img
+              src={featuredProducts[0]?.images?.[0] || '/Products/1.jpg'}
+              alt="Transform your space"
+              className="w-full h-full object-cover opacity-35 dark:opacity-25"
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/40 to-black/75" />
           </div>
-        </Parallax3DCard>
+
+          <div className="relative z-10 max-w-2xl mx-auto">
+            <motion.p
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              className="text-[#D4AF37] text-xs font-semibold tracking-[0.3em] uppercase mb-4"
+            >
+              Elevate Your Space
+            </motion.p>
+            <motion.h2
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              className="text-3xl sm:text-4xl lg:text-5xl font-light text-white tracking-wide mb-8 leading-tight drop-shadow-lg"
+            >
+              Transform Your Space Today
+            </motion.h2>
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+            >
+              <Link to="/shop">
+                <motion.button
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.97 }}
+                  className="inline-flex items-center gap-3 bg-white dark:bg-[#D4AF37] text-primary dark:text-black text-xs font-bold tracking-widest uppercase px-10 py-4 rounded-xl hover:bg-cream shadow-xl hover:shadow-white/20 transition-all duration-200"
+                >
+                  Shop Now
+                  <ArrowRight size={14} strokeWidth={1.5} />
+                </motion.button>
+              </Link>
+            </motion.div>
+          </div>
+        </div>
       </section>
 
       {/* Newsletter */}

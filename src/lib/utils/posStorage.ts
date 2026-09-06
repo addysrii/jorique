@@ -14,152 +14,16 @@ export function normalizePhone(raw: string): string {
   return digits;
 }
 
-// Initial realistic customer database presets for demo & showroom testing
-const DEFAULT_PRESET_CUSTOMERS: InStoreCustomer[] = [
-  {
-    id: 'cust-1',
-    phone: '9876543210',
-    fullName: 'Priya Sharma',
-    email: 'priya.sharma@example.com',
-    city: 'Mumbai',
-    address: 'Bandra West, Luxury Enclave',
-    totalSpent: 34990,
-    ordersCount: 3,
-    lastVisit: '2026-08-22T14:30:00Z',
-    notes: 'Prefers 800TC Egyptian sateen bedsheets in Champagne and Emerald.',
-    createdAt: '2026-03-15T10:00:00Z',
-  },
-  {
-    id: 'cust-2',
-    phone: '9811223344',
-    fullName: 'Rajesh Malhotra',
-    email: 'malhotra.r@outlook.com',
-    city: 'New Delhi',
-    address: 'Golf Links, New Delhi',
-    totalSpent: 52400,
-    ordersCount: 4,
-    lastVisit: '2026-08-30T16:45:00Z',
-    notes: 'VIP collector; bought Mulberry Silk Comforter set and velvet throws.',
-    createdAt: '2026-01-10T12:00:00Z',
-  },
-  {
-    id: 'cust-3',
-    phone: '9744556677',
-    fullName: 'Ananya Deshmukh',
-    email: 'ananya.d@gmail.com',
-    city: 'Pune',
-    totalSpent: 8990,
-    ordersCount: 1,
-    lastVisit: '2026-07-14T11:20:00Z',
-    createdAt: '2026-07-14T11:20:00Z',
-  },
-];
-
-const DEFAULT_PRESET_INVOICES: InStoreInvoice[] = [
-  {
-    id: 'inv-1',
-    invoiceNumber: 'INV-2026-0018',
-    customer: DEFAULT_PRESET_CUSTOMERS[0],
-    items: [
-      {
-        productId: 'prod-bed-1',
-        name: '800TC Egyptian Cotton Sateen Sheet Set',
-        sku: 'JR-BED-2026-001',
-        category: 'Bedsheets',
-        unitPrice: 12999,
-        quantity: 1,
-        lineTotal: 12999,
-      },
-      {
-        productId: 'prod-pil-1',
-        name: 'Mulberry Silk Pillowcase Pair (Ivory)',
-        sku: 'JR-PIL-2026-004',
-        category: 'Pillows',
-        unitPrice: 4999,
-        quantity: 2,
-        lineTotal: 9998,
-      },
-    ],
-    subtotal: 22997,
-    couponCode: 'WELCOME10',
-    discountAmount: 1000,
-    taxAmount: 0,
-    grandTotal: 21997,
-    paymentMethod: 'upi',
-    paymentStatus: 'paid',
-    cashierName: 'Maison Jorique POS 1',
-    createdAt: '2026-08-22T14:30:00Z',
-  },
-  {
-    id: 'inv-2',
-    invoiceNumber: 'INV-2026-0012',
-    customer: DEFAULT_PRESET_CUSTOMERS[0],
-    items: [
-      {
-        productId: 'prod-cush-1',
-        name: 'Hand-Tufted Velvet Accent Cushion',
-        sku: 'JR-CUS-2026-002',
-        category: 'Home Decor',
-        unitPrice: 3248,
-        quantity: 4,
-        lineTotal: 12993,
-      },
-    ],
-    subtotal: 12993,
-    discountAmount: 0,
-    taxAmount: 0,
-    grandTotal: 12993,
-    paymentMethod: 'card',
-    paymentStatus: 'paid',
-    cashierName: 'Maison Jorique POS 1',
-    createdAt: '2026-05-18T17:15:00Z',
-  },
-  {
-    id: 'inv-3',
-    invoiceNumber: 'INV-2026-0024',
-    customer: DEFAULT_PRESET_CUSTOMERS[1],
-    items: [
-      {
-        productId: 'prod-silk-1',
-        name: 'Royal Heritage Silk Duvet Ensemble',
-        sku: 'RHS-2026-0001-LUX',
-        category: 'Bedsheets',
-        unitPrice: 28900,
-        quantity: 1,
-        lineTotal: 28900,
-      },
-      {
-        productId: 'prod-throw-1',
-        name: 'Fine Cashmere Blend Throw Blanket',
-        sku: 'JR-THW-2026-003',
-        category: 'Home Decor',
-        unitPrice: 23500,
-        quantity: 1,
-        lineTotal: 23500,
-      },
-    ],
-    subtotal: 52400,
-    discountAmount: 0,
-    taxAmount: 0,
-    grandTotal: 52400,
-    paymentMethod: 'card',
-    paymentStatus: 'paid',
-    cashierName: 'Maison Jorique Flagship',
-    createdAt: '2026-08-30T16:45:00Z',
-  },
-];
-
 function getLocalCustomers(): InStoreCustomer[] {
   try {
     const raw = localStorage.getItem(CUSTOMERS_STORAGE_KEY);
-    if (!raw) {
-      localStorage.setItem(CUSTOMERS_STORAGE_KEY, JSON.stringify(DEFAULT_PRESET_CUSTOMERS));
-      return DEFAULT_PRESET_CUSTOMERS;
-    }
+    if (!raw) return [];
     const parsed = JSON.parse(raw);
-    return Array.isArray(parsed) && parsed.length > 0 ? parsed : DEFAULT_PRESET_CUSTOMERS;
+    // Filter out any leftover legacy dummy presets (cust-1, cust-2, cust-3)
+    const realOnly = Array.isArray(parsed) ? parsed.filter(c => !c.id?.startsWith('cust-')) : [];
+    return realOnly;
   } catch {
-    return DEFAULT_PRESET_CUSTOMERS;
+    return [];
   }
 }
 
@@ -174,14 +38,13 @@ function saveLocalCustomers(list: InStoreCustomer[]): void {
 function getLocalInvoices(): InStoreInvoice[] {
   try {
     const raw = localStorage.getItem(INVOICES_STORAGE_KEY);
-    if (!raw) {
-      localStorage.setItem(INVOICES_STORAGE_KEY, JSON.stringify(DEFAULT_PRESET_INVOICES));
-      return DEFAULT_PRESET_INVOICES;
-    }
+    if (!raw) return [];
     const parsed = JSON.parse(raw);
-    return Array.isArray(parsed) && parsed.length > 0 ? parsed : DEFAULT_PRESET_INVOICES;
+    // Filter out any leftover legacy dummy presets (inv-1, inv-2, inv-3)
+    const realOnly = Array.isArray(parsed) ? parsed.filter(inv => !inv.id?.startsWith('inv-')) : [];
+    return realOnly;
   } catch {
-    return DEFAULT_PRESET_INVOICES;
+    return [];
   }
 }
 

@@ -7,11 +7,12 @@ import ProductCard from '../components/ProductCard';
 import { productService } from '../lib/api/products';
 import { Product } from '../types';
 
-const categories = ['All', 'Bedsheets', 'Home Decor', 'Bath', 'Kitchen', 'Accessories'];
+import { supabase } from '../lib/supabase';
 
 export default function Shop() {
   const [products, setProducts] = useState<Product[]>([]);
   const [filteredProducts, setFilteredProducts] = useState<Product[]>([]);
+  const [categories, setCategories] = useState<string[]>(['All']);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [selectedCategory, setSelectedCategory] = useState('All');
@@ -19,22 +20,33 @@ export default function Shop() {
   const [showMobileFilters, setShowMobileFilters] = useState(false);
 
   useEffect(() => {
-    const fetchProducts = async () => {
+    const fetchData = async () => {
       try {
         setLoading(true);
         setError(null);
-        const data = await productService.getProducts();
-        setProducts(data);
-        setFilteredProducts(data);
+        
+        const [prodData, catRes] = await Promise.all([
+          productService.getProducts(),
+          supabase.from('categories').select('name').order('name'),
+        ]);
+
+        setProducts(prodData);
+        setFilteredProducts(prodData);
+
+        // Derive unique real categories from DB and active products
+        const dbCatNames = (catRes.data || []).map((c: { name: string }) => c.name).filter(Boolean);
+        const prodCatNames = prodData.map((p) => p.category).filter(Boolean);
+        const uniqueCats = Array.from(new Set([...dbCatNames, ...prodCatNames]));
+        setCategories(['All', ...uniqueCats]);
       } catch (err) {
-        console.error('Error fetching products:', err);
+        console.error('Error fetching shop data:', err);
         setError('Failed to load products');
       } finally {
         setLoading(false);
       }
     };
 
-    fetchProducts();
+    fetchData();
   }, []);
 
   // Filter products when category or search changes

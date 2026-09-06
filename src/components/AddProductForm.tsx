@@ -19,6 +19,7 @@ import {
 } from 'lucide-react';
 import { Link, useSearchParams } from 'react-router-dom';
 import ProductPackagingLabel from './ProductPackagingLabel';
+import ProductDescriptionGrid from './ProductDescriptionGrid';
 import { supabase } from '../lib/supabase';
 import { createProductRequest } from '../lib/api';
 import { generateSKU, generateSerials } from '../lib/utils/product';
@@ -280,6 +281,19 @@ export default function AddProductForm() {
     const current = watch('description') || '';
     const addition = current.length > 0 && !current.endsWith('\n') ? '\n• ' : '• ';
     setValue('description', current + addition, { shouldValidate: true, shouldDirty: true });
+  };
+
+  const handleAddKeyValue = (label = 'Material') => {
+    const current = watch('description') || '';
+    const addition = current.length > 0 && !current.endsWith('\n') ? `\n${label}: ` : `${label}: `;
+    setValue('description', current + addition, { shouldValidate: true, shouldDirty: true });
+  };
+
+  const handleInsertGridTemplate = () => {
+    const current = watch('description') || '';
+    const template = `Material: 100% Extra-Long Staple Cotton\nWeave: 800 Thread Count Sateen\nDimensions: 274 x 274 cm (108 x 108 in)\nCare: Machine wash cold, gentle cycle\nFit: Deep elastic pockets up to 18" mattress\nOrigin: Certified Master Mill`;
+    const finalVal = current.trim().length > 0 ? `${current.trim()}\n\n${template}` : template;
+    setValue('description', finalVal, { shouldValidate: true, shouldDirty: true });
   };
 
   const addColorPreset = (preset: typeof LUXURY_COLOR_PRESETS[0]) => {
@@ -1156,19 +1170,19 @@ export default function AddProductForm() {
             <div className="flex items-center justify-between mb-2">
               <div className="flex items-center gap-2">
                 <Sparkles size={14} className="text-[#D4AF37]" />
-                <span className="text-xs font-bold uppercase tracking-wider text-primary dark:text-white">Sequential Serial & Barcode Structure</span>
+                <span className="text-xs font-bold uppercase tracking-wider text-primary dark:text-white">Sequential Unit SKU & Barcode Structure</span>
               </div>
               <span className="text-xs font-mono font-medium text-secondary dark:text-white/60">Units: {previewSerials.length}</span>
             </div>
             <p className="text-xs text-secondary dark:text-white/70 mb-3">
-              Master SKU: <span className="font-mono font-bold text-primary dark:text-[#D4AF37]">{effectiveSku || 'PENDING'}</span> • Sequential physical unit serials:
+              Master Model SKU: <span className="font-mono font-bold text-primary dark:text-[#D4AF37]">{effectiveSku || 'PENDING'}</span> • Unique Unit SKUs for each of the {previewSerials.length} physical units:
             </p>
             
             <div className="grid gap-2 text-xs text-primary sm:grid-cols-2">
-              {(showAllSerials ? previewSerials : previewSerials.slice(0, 4)).map((serial) => (
+              {(showAllSerials ? previewSerials : previewSerials.slice(0, 4)).map((serial, idx) => (
                 <div key={serial} className="flex items-center justify-between bg-white dark:bg-[#100E0D] px-3 py-2 rounded-xl border border-border dark:border-[#2E2925] font-mono text-[11px] shadow-sm text-primary dark:text-white">
-                  <span>{serial}</span>
-                  <span className="text-[9px] text-emerald-700 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/40 px-2 py-0.5 rounded-full font-sans font-semibold">Available</span>
+                  <span>Unit {idx + 1} SKU: <strong className="text-primary dark:text-[#D4AF37]">{serial}</strong></span>
+                  <span className="text-[9px] text-emerald-700 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/40 px-2 py-0.5 rounded-full font-sans font-semibold">Unique Unit</span>
                 </div>
               ))}
             </div>
@@ -1196,27 +1210,53 @@ export default function AddProductForm() {
           </div>
 
           <div>
-            <div className="flex items-center justify-between mb-1.5">
+            <div className="flex flex-wrap items-center justify-between gap-2 mb-2">
               <label className="block text-xs font-semibold uppercase tracking-wider text-secondary dark:text-white/70">
                 Description / Specifications
               </label>
-              <button
-                type="button"
-                onClick={handleAddBullet}
-                className="inline-flex items-center gap-1 text-[11px] font-bold text-[#A67C1E] dark:text-[#E5C158] hover:underline bg-[#D4AF37]/10 px-2.5 py-1 rounded-lg border border-[#D4AF37]/30 transition-colors"
-              >
-                <Plus size={12} /> Add Bullet Point (•)
-              </button>
+              <div className="flex flex-wrap items-center gap-1.5">
+                <button
+                  type="button"
+                  onClick={handleInsertGridTemplate}
+                  className="inline-flex items-center gap-1 text-[11px] font-bold text-[#A67C1E] dark:text-[#E5C158] hover:underline bg-[#D4AF37]/10 px-2.5 py-1 rounded-lg border border-[#D4AF37]/30 transition-colors"
+                  title="Insert standard luxury specifications grid (Material, Weave, Dimensions, Care, Fit, Origin)"
+                >
+                  <Sparkles size={12} /> Insert Specs Grid Template
+                </button>
+                <button
+                  type="button"
+                  onClick={() => handleAddKeyValue('Material')}
+                  className="inline-flex items-center gap-1 text-[11px] font-semibold text-secondary dark:text-white/70 hover:text-primary dark:hover:text-white bg-cream dark:bg-[#1A1816] px-2.5 py-1 rounded-lg border border-border dark:border-[#2E2925] transition-colors"
+                >
+                  <Plus size={11} /> + Key: Value
+                </button>
+                <button
+                  type="button"
+                  onClick={handleAddBullet}
+                  className="inline-flex items-center gap-1 text-[11px] font-semibold text-secondary dark:text-white/70 hover:text-primary dark:hover:text-white bg-cream dark:bg-[#1A1816] px-2.5 py-1 rounded-lg border border-border dark:border-[#2E2925] transition-colors"
+                >
+                  <Plus size={11} /> + Bullet (•)
+                </button>
+              </div>
             </div>
             <textarea
-              rows={5}
+              rows={6}
               {...register('description')}
-              placeholder={'Detailed product specifications and tactile notes...\n• 100% Long-staple Egyptian cotton\n• 800 thread count sateen weave\n• Subtle champagne embroidery detailing\n• Machine washable with gentle cycle'}
+              placeholder={'Detailed product specifications and tactile notes...\n\nMaterial: 100% Extra-Long Staple Cotton\nWeave: 800 Thread Count Sateen\nDimensions: 274 x 274 cm (108 x 108 in)\nCare: Machine wash cold, gentle cycle\n• Subtle champagne embroidery detailing\n• Hypoallergenic and OEKO-TEX certified'}
               className="w-full rounded-xl border border-border dark:border-[#2E2925] bg-cream/30 dark:bg-[#100E0D] px-4 py-3 text-sm text-primary dark:text-white outline-none focus:border-primary dark:focus:border-[#D4AF37] resize-y transition-colors font-sans"
             />
             <p className="mt-1 text-[11px] text-secondary dark:text-white/50">
-              Tip: Start lines with bullet points (<code className="font-mono text-primary dark:text-[#D4AF37]">•</code> or <code className="font-mono text-primary dark:text-[#D4AF37]">-</code>) to display them as luxury styled points on the product page.
+              Format using <code className="font-mono text-primary dark:text-[#D4AF37]">Key: Value</code> (e.g. Material: Cotton) or bullet points (<code className="font-mono text-primary dark:text-[#D4AF37]">•</code>) to automatically render as a sleek responsive grid on the storefront.
             </p>
+
+            {watch('description') && watch('description').trim().length > 0 && (
+              <div className="mt-3 p-4 rounded-xl bg-cream/20 dark:bg-[#100E0D]/60 border border-border/70 dark:border-[#2E2925]">
+                <div className="text-[10px] font-bold uppercase tracking-wider text-secondary dark:text-white/50 mb-2">
+                  Live Storefront Preview
+                </div>
+                <ProductDescriptionGrid description={watch('description')} />
+              </div>
+            )}
           </div>
 
           <div className="flex items-center gap-3 pt-4 border-t border-border dark:border-[#2E2925]">

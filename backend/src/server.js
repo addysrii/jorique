@@ -7,6 +7,7 @@ import ordersRouter from "./routes/orders.js";
 import reviewsRouter from "./routes/reviews.js";
 import giftsRouter from "./routes/gifts.js";
 import analyticsRouter from "./routes/analytics.js";
+import { supabase } from "./supabase.js";
 
 if (!process.env.JWT_SECRET) {
   throw new Error("Missing JWT_SECRET");
@@ -58,6 +59,7 @@ app.use("/api/reviews", reviewsRouter);
 app.use("/api/gifts", giftsRouter);
 app.use("/api/analytics", analyticsRouter);
 
+// Routes & Auth
 app.get("/api/health", (_req, res) => {
   res.json({
     ok: true,
@@ -73,39 +75,86 @@ app.get("/api/auth/me", authRequired, (req, res) => {
   res.json({ user: req.user });
 });
 
-app.get("/api/dashboard/user", authRequired, (req, res) => {
-  res.json({
-    welcome: `Welcome back, ${req.user.fullName}`,
-    stats: [
-      { label: "Orders", value: "03" },
-      { label: "Wishlist", value: "12" },
-      { label: "Rewards", value: "480" },
-    ],
-    recentOrders: [
-      { id: "JRQ-1024", status: "Processing", total: "$248" },
-      { id: "JRQ-1018", status: "Delivered", total: "$129" },
-    ],
-  });
+app.get("/api/dashboard/user", authRequired, async (req, res) => {
+  try {
+    const { data: userOrders } = await supabase
+      .from("orders")
+      .select("id, order_number, status, total, created_at")
+      .eq("customer_id", req.user.id)
+      .order("created_at", { ascending: false });
+
+    const ordersList = userOrders || [];
+    const formattedOrders = ordersList.slice(0, 5).map((o) => ({
+      id: o.order_number || o.id,
+      status: o.status ? (o.status.charAt(0).toUpperCase() + o.status.slice(1)) : "Placed",
+      total: `₹${Number(o.total || 0).toLocaleString("en-IN")}`,
+    }));
+
+    res.json({
+      welcome: `Welcome back, ${req.user.fullName || req.user.email || 'Patron'}`,
+      stats: [
+        { label: "Orders", value: String(ordersList.length).padStart(2, "0") },
+        { label: "Wishlist", value: "00" },
+        { label: "Rewards", value: "0" },
+      ],
+      recentOrders: formattedOrders,
+    });
+  } catch (error) {
+    res.json({
+      welcome: `Welcome back, ${req.user.fullName || req.user.email || 'Patron'}`,
+      stats: [
+        { label: "Orders", value: "00" },
+        { label: "Wishlist", value: "00" },
+        { label: "Rewards", value: "0" },
+      ],
+      recentOrders: [],
+    });
+  }
 });
 
-app.get("/api/dashboard/admin", authRequired, (req, res) => {
+app.get("/api/dashboard/admin", authRequired, async (req, res) => {
   if (req.user.role !== "admin") {
     return res.status(403).json({ message: "Admin access required." });
   }
 
-  res.json({
-    stats: [
-      { label: "Revenue", value: "$18.4k" },
-      { label: "Orders", value: "126" },
-      { label: "Customers", value: "842" },
-      { label: "Pending", value: "09" },
-    ],
-    activity: [
-      "New order JRQ-1031 placed",
-      "Inventory updated for bedding collection",
-      "Customer review pending approval",
-    ],
-  });
+  try {
+    const [{ count: productsCount }, { count: ordersCount }, { count: customersCount }, { data: revenueRows }] = await Promise.all([
+      supabase.from('products').select('id', { count: 'exact', head: true }),
+      supabase.from('orders').select('id', { count: 'exact', head: true }),
+      supabase.from('customers').select('id', { count: 'exact', head: true }),
+      supabase.from('orders').select('total').in('status', ['confirmed', 'processing', 'shipped', 'delivered']),
+    ]);
+
+    const revenue = (revenueRows || []).reduce((sum, order) => sum + Number(order.total || 0), 0);
+
+    const { data: latestOrders } = await supabase
+      .from('orders')
+      .select('order_number, created_at')
+      .order('created_at', { ascending: false })
+      .limit(3);
+
+    const activity = (latestOrders || []).map((o) => `New order ${o.order_number || 'placed'}`);
+
+    res.json({
+      stats: [
+        { label: "Revenue", value: `₹${revenue.toLocaleString('en-IN')}` },
+        { label: "Orders", value: String(ordersCount || 0) },
+        { label: "Customers", value: String(customersCount || 0) },
+        { label: "Products", value: String(productsCount || 0) },
+      ],
+      activity,
+    });
+  } catch (error) {
+    res.json({
+      stats: [
+        { label: "Revenue", value: "₹0" },
+        { label: "Orders", value: "0" },
+        { label: "Customers", value: "0" },
+        { label: "Products", value: "0" },
+      ],
+      activity: [],
+    });
+  }
 });
 
 // Centralized Production Error Handler

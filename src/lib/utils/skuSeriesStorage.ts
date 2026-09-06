@@ -3,77 +3,15 @@ import type { SkuSeries } from '../../types/skuSeries';
 
 const LOCAL_STORAGE_KEY = 'jorique_sku_series';
 
-// Initial Luxury Series Presets for JORIQUE
-const DEFAULT_PRESET_SERIES: SkuSeries[] = [
-  {
-    id: 'preset-1',
-    name: 'Jorique Standard Master',
-    prefix: 'JR',
-    separator: '-',
-    includeYear: true,
-    padding: 3,
-    currentCounter: 1,
-    suffix: '',
-    category: '',
-    description: 'Standard luxury maison series format (e.g. JR-2026-001)',
-    isActive: true,
-    createdAt: new Date().toISOString(),
-  },
-  {
-    id: 'preset-2',
-    name: 'Royal Heritage Silk',
-    prefix: 'RHS',
-    separator: '-',
-    includeYear: true,
-    padding: 4,
-    currentCounter: 1,
-    suffix: 'LUX',
-    category: 'Bedsheets',
-    description: 'Ultra-luxury mulberry silk & 800TC sateen collection',
-    isActive: true,
-    createdAt: new Date().toISOString(),
-  },
-  {
-    id: 'preset-3',
-    name: 'Artisan Cushion & Drape',
-    prefix: 'ART-FAB',
-    separator: '-',
-    includeYear: false,
-    padding: 3,
-    currentCounter: 1,
-    suffix: '',
-    category: 'Home Decor',
-    description: 'Handcrafted cushions, drapes, and artisanal accessories',
-    isActive: true,
-    createdAt: new Date().toISOString(),
-  },
-  {
-    id: 'preset-4',
-    name: 'Limited Edition Vault',
-    prefix: 'LTD',
-    separator: '-',
-    includeYear: true,
-    padding: 3,
-    currentCounter: 1,
-    suffix: 'ED1',
-    category: '',
-    description: 'Numbered limited editions with custom serial certificates',
-    isActive: true,
-    createdAt: new Date().toISOString(),
-  },
-];
-
 function getLocalSeries(): SkuSeries[] {
   try {
     const raw = localStorage.getItem(LOCAL_STORAGE_KEY);
-    if (!raw) {
-      localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(DEFAULT_PRESET_SERIES));
-      return DEFAULT_PRESET_SERIES;
-    }
+    if (!raw) return [];
     const parsed = JSON.parse(raw);
-    return Array.isArray(parsed) && parsed.length > 0 ? parsed : DEFAULT_PRESET_SERIES;
+    const realOnly = Array.isArray(parsed) ? parsed.filter(s => !s.id?.startsWith('preset-')) : [];
+    return realOnly;
   } catch {
-    return DEFAULT_PRESET_SERIES;
+    return [];
   }
 }
 

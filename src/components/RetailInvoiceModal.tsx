@@ -16,8 +16,21 @@ export default function RetailInvoiceModal({ invoice, onClose, onNewBill }: Reta
     const cleanPhone = invoice.customer.phone.replace(/\D/g, '');
     const recipient = cleanPhone.length === 10 ? `91${cleanPhone}` : cleanPhone;
 
+    const totalMarkdownSavings = invoice.items.reduce((acc, item) => {
+      if (item.originalPrice && item.originalPrice > item.unitPrice) {
+        return acc + (item.originalPrice - item.unitPrice) * item.quantity;
+      }
+      return acc;
+    }, 0);
+    const totalSaved = totalMarkdownSavings + (invoice.discountAmount || 0);
+
     const itemsSummary = invoice.items
-      .map((item, idx) => `${idx + 1}. ${item.name} (${item.sku}) × ${item.quantity} = ₹${item.lineTotal.toLocaleString('en-IN')}`)
+      .map((item, idx) => {
+        const discountTag = item.originalPrice && item.originalPrice > item.unitPrice
+          ? ` [Discounted from MRP ₹${item.originalPrice.toLocaleString('en-IN')}]`
+          : '';
+        return `${idx + 1}. ${item.name} (${item.sku}) × ${item.quantity} = ₹${item.lineTotal.toLocaleString('en-IN')}${discountTag}`;
+      })
       .join('\n');
 
     const message = `✨ *JORIQUE — Official Retail Tax Invoice* ✨\n\n` +
@@ -27,7 +40,9 @@ export default function RetailInvoiceModal({ invoice, onClose, onNewBill }: Reta
       `*Date:* ${new Date(invoice.createdAt).toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' })}\n` +
       `*Payment:* ${invoice.paymentMethod.toUpperCase()} (PAID)\n\n` +
       `*Items Purchased:*\n${itemsSummary}\n\n` +
-      (invoice.discountAmount > 0 ? `*Discount (${invoice.couponCode || 'Promo'}):* -₹${invoice.discountAmount.toLocaleString('en-IN')}\n` : '') +
+      `*Subtotal:* ₹${invoice.subtotal.toLocaleString('en-IN')}\n` +
+      (invoice.discountAmount > 0 ? `*Coupon Discount (${invoice.couponCode || 'Promo'}):* -₹${invoice.discountAmount.toLocaleString('en-IN')}\n` : '') +
+      (totalSaved > 0 ? `*Total Savings:* ₹${totalSaved.toLocaleString('en-IN')}\n` : '') +
       `*Grand Total:* ₹${invoice.grandTotal.toLocaleString('en-IN')}\n\n` +
       `We hope our heirloom textiles bring sanctuary to your home.\n` +
       `_JORIQUE Flagship Store • Customer Care: +91 98765 43210_`;
@@ -185,8 +200,15 @@ export default function RetailInvoiceModal({ invoice, onClose, onNewBill }: Reta
                         </span>
                       </td>
                       <td className="py-3 text-center font-mono font-medium">{item.quantity}</td>
-                      <td className="py-3 text-right font-mono text-secondary dark:text-white/80">
-                        ₹{item.unitPrice.toLocaleString('en-IN')}
+                      <td className="py-3 text-right font-mono">
+                        <div className="text-primary dark:text-white font-semibold">
+                          ₹{item.unitPrice.toLocaleString('en-IN')}
+                        </div>
+                        {item.originalPrice && item.originalPrice > item.unitPrice && (
+                          <div className="text-[10px] text-secondary/50 line-through">
+                            MRP ₹{item.originalPrice.toLocaleString('en-IN')}
+                          </div>
+                        )}
                       </td>
                       <td className="py-3 text-right font-mono font-bold text-primary dark:text-white">
                         ₹{item.lineTotal.toLocaleString('en-IN')}
@@ -201,18 +223,34 @@ export default function RetailInvoiceModal({ invoice, onClose, onNewBill }: Reta
             <div className="pt-4 border-t border-border dark:border-[#2E2925] flex justify-end">
               <div className="w-full sm:w-72 space-y-2 text-xs">
                 <div className="flex justify-between text-secondary dark:text-white/70">
-                  <span>Subtotal:</span>
-                  <span className="font-mono">₹{invoice.subtotal.toLocaleString('en-IN')}</span>
+                  <span>Subtotal (Discounted Rates):</span>
+                  <span className="font-mono font-medium">₹{invoice.subtotal.toLocaleString('en-IN')}</span>
                 </div>
 
                 {invoice.discountAmount > 0 && (
                   <div className="flex justify-between text-emerald-600 dark:text-emerald-400 font-semibold">
                     <span>
-                      Discount {invoice.couponCode ? `(${invoice.couponCode})` : ''}:
+                      Coupon Discount {invoice.couponCode ? `(${invoice.couponCode})` : ''}:
                     </span>
                     <span className="font-mono">-₹{invoice.discountAmount.toLocaleString('en-IN')}</span>
                   </div>
                 )}
+
+                {(() => {
+                  const mSavings = invoice.items.reduce((acc, item) => {
+                    if (item.originalPrice && item.originalPrice > item.unitPrice) {
+                      return acc + (item.originalPrice - item.unitPrice) * item.quantity;
+                    }
+                    return acc;
+                  }, 0);
+                  if (mSavings <= 0) return null;
+                  return (
+                    <div className="flex justify-between text-emerald-700 dark:text-emerald-400 font-medium text-[11px] pt-1 border-t border-dashed border-border/70 dark:border-white/10">
+                      <span>Product Markdown Savings:</span>
+                      <span className="font-mono">₹{mSavings.toLocaleString('en-IN')}</span>
+                    </div>
+                  );
+                })()}
 
                 {invoice.taxAmount > 0 && (
                   <div className="flex justify-between text-secondary dark:text-white/70">

@@ -60,11 +60,11 @@ export default function Reviews() {
           avatarColor: 'bg-[#3F3A36] text-white',
           rating: Number(r.rating) || 5,
           date: r.created_at ? r.created_at.split('T')[0] : new Date().toISOString().split('T')[0],
-          title: r.comment ? `${r.comment.slice(0, 35)}...` : 'Luxury Experience',
+          title: r.comment ? `${r.comment.slice(0, 35)}...` : 'Verified Review',
           body: r.comment || '',
-          productName: r.product?.name || 'JORIQUE Collection',
-          verified: true,
-          helpfulCount: Math.floor(Math.random() * 12) + 1,
+          productName: r.product?.name || 'JORIQUE Product',
+          verified: Boolean(r.verified ?? true),
+          helpfulCount: Number(r.helpful_count || 0),
         }));
 
         setReviews(formatted);

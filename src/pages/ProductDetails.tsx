@@ -1,111 +1,309 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ArrowLeft, Heart, Truck, RefreshCw, Shield, ChevronLeft, ChevronRight, Check, Sparkles, Compass, ShoppingBag, MessageCircle, Plus, Minus, Camera } from 'lucide-react';
+import {
+  ArrowLeft,
+  Truck,
+  RefreshCw,
+  Shield,
+  Check,
+  Sparkles,
+  ShoppingBag,
+  MessageCircle,
+  Plus,
+  Minus,
+  Star,
+  Ruler,
+  ChevronDown,
+  CheckCircle2,
+  Zap,
+  MapPin,
+  Feather,
+  Wind,
+  HeartHandshake,
+  Lock,
+  ThumbsUp,
+} from 'lucide-react';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import ProductCard from '../components/ProductCard';
-import Parallax3DCard from '../components/Parallax3DCard';
+import ProductImageGallery from '../components/ProductImageGallery';
 import ViewInYourRoomModal from '../components/ViewInYourRoomModal';
-import { productService } from '../lib/api/products'; 
+import SizeGuideModal from '../components/SizeGuideModal';
+import ColorDisclaimerSection from '../components/ColorDisclaimerSection';
+import ProductDescriptionTable, { parseProductDescription } from '../components/ProductDescriptionTable';
+import { productService } from '../lib/api/products';
 import { Product } from '../types';
 import { useCart } from '../context/CartContext';
-import { getBadgeColors } from '../lib/constants/collections';
 
-const shippingInfo = [
-  { icon: <Truck size={15} strokeWidth={1.5} />, text: 'Free Express Shipping on orders above ₹1,999' },
-  { icon: <RefreshCw size={15} strokeWidth={1.5} />, text: '15-Day Easy Returns & Exchange' },
-  { icon: <Shield size={15} strokeWidth={1.5} />, text: '100% Heirloom Quality Guaranteed' },
-];
+interface SizeOption {
+  id: string;
+  name: string;
+  dimensions: string;
+  cmDimensions: string;
+  priceOffset: number;
+  includes: string;
+}
+
+function getProductSizes(product: Product): SizeOption[] {
+  // 1. Explicit sizes array in product data
+  const rawSizes = (product as any).sizes || (product as any).size_options || (product as any).sizeOptions;
+  if (Array.isArray(rawSizes) && rawSizes.length > 0) {
+    return rawSizes
+      .map((s, idx) => {
+        if (typeof s === 'string') {
+          const lower = s.toLowerCase().trim();
+          let dims = '';
+          let cmDims = '';
+          let inc = '';
+          if (lower.includes('single')) {
+            dims = '90" x 60"';
+            cmDims = '228 cm x 152 cm';
+            inc = `1 Single ${product.category || 'Piece'} (228 cm x 152 cm)`;
+          } else if (lower.includes('double')) {
+            dims = '100" x 90"';
+            cmDims = '254 cm x 228 cm';
+            inc = `1 Double ${product.category || 'Piece'} (254 cm x 228 cm)`;
+          } else if (lower.includes('king')) {
+            dims = '108" x 100"';
+            cmDims = '274 cm x 254 cm';
+            inc = `1 King ${product.category || 'Piece'} (274 cm x 254 cm)`;
+          } else if (lower.includes('queen')) {
+            dims = '90" x 90"';
+            cmDims = '228 cm x 228 cm';
+            inc = `1 Queen ${product.category || 'Piece'} (228 cm x 228 cm)`;
+          }
+          return {
+            id: `size-${idx}-${lower.replace(/\s+/g, '-')}`,
+            name: s,
+            dimensions: dims,
+            cmDimensions: cmDims,
+            priceOffset: idx === 0 ? 0 : idx === 1 ? 1050 : 1850,
+            includes: inc,
+          };
+        } else if (typeof s === 'object' && s !== null) {
+          return {
+            id: s.id || `size-${idx}`,
+            name: s.name || s.title || s.label || `Size ${idx + 1}`,
+            dimensions: s.dimensions || s.dimension || '',
+            cmDimensions: s.cmDimensions || '',
+            priceOffset: Number(s.priceOffset || s.price_offset || 0),
+            includes: s.includes || '',
+          };
+        }
+        return null;
+      })
+      .filter(Boolean) as SizeOption[];
+  }
+
+  // 2. Check tags for sizes
+  const sizeKeywords = [
+    'single comforter',
+    'double comforter',
+    'king comforter',
+    'queen comforter',
+    'single bedsheet',
+    'double bedsheet',
+    'king bedsheet',
+    'queen bedsheet',
+    'single',
+    'double',
+    'king',
+    'queen',
+    'small',
+    'medium',
+    'large',
+    'xl',
+    'xxl',
+  ];
+
+  const matchedFromTags: string[] = [];
+  if (Array.isArray(product.tags) && product.tags.length > 0) {
+    product.tags.forEach((tag) => {
+      const lower = tag.toLowerCase().trim();
+      if (lower.startsWith('size:') || lower.startsWith('sizes:')) {
+        const parts = tag.split(':')[1].split(',').map((p) => p.trim()).filter(Boolean);
+        matchedFromTags.push(...parts);
+      } else {
+        const match = sizeKeywords.find((k) => lower === k);
+        if (match) {
+          matchedFromTags.push(tag);
+        }
+      }
+    });
+  }
+
+  if (matchedFromTags.length > 0) {
+    return matchedFromTags.map((t, idx) => {
+      const lower = t.toLowerCase();
+      let dims = '';
+      let cmDims = '';
+      let inc = '';
+      if (lower.includes('single')) {
+        dims = '90" x 60"';
+        cmDims = '228 cm x 152 cm';
+        inc = `1 Single ${product.category || 'Piece'} (228 cm x 152 cm)`;
+      } else if (lower.includes('double')) {
+        dims = '100" x 90"';
+        cmDims = '254 cm x 228 cm';
+        inc = `1 Double ${product.category || 'Piece'} (254 cm x 228 cm)`;
+      } else if (lower.includes('king')) {
+        dims = '108" x 100"';
+        cmDims = '274 cm x 254 cm';
+        inc = `1 King ${product.category || 'Piece'} (274 cm x 254 cm)`;
+      } else if (lower.includes('queen')) {
+        dims = '90" x 90"';
+        cmDims = '228 cm x 228 cm';
+        inc = `1 Queen ${product.category || 'Piece'} (228 cm x 228 cm)`;
+      }
+      return {
+        id: `tag-size-${idx}-${lower.replace(/\s+/g, '-')}`,
+        name: t,
+        dimensions: dims,
+        cmDimensions: cmDims,
+        priceOffset: idx === 0 ? 0 : idx === 1 ? 1050 : 1850,
+        includes: inc,
+      };
+    });
+  }
+
+  // 3. Check if description has an explicit "Sizes:" or "Available Sizes:" line
+  if (product.description) {
+    const lines = product.description.split(/\r?\n/);
+    for (const line of lines) {
+      const trimmed = line.trim();
+      if (/^(available\s+)?sizes?:\s+/i.test(trimmed)) {
+        const sizePart = trimmed.replace(/^(available\s+)?sizes?:\s+/i, '');
+        const splits = sizePart.split(/[,/|]/).map((s) => s.trim()).filter(Boolean);
+        if (splits.length > 0) {
+          return splits.map((s, idx) => ({
+            id: `desc-size-${idx}`,
+            name: s,
+            dimensions: '',
+            cmDimensions: '',
+            priceOffset: 0,
+            includes: '',
+          }));
+        }
+      }
+    }
+  }
+
+  // 4. Default to NO sizes if product data doesn't have it
+  return [];
+}
 
 const COLOR_HEX_MAP: Record<string, string> = {
+  'eternal glow': '#C6A96B',
   'royal ivory': '#F5EDE3',
   'ivory': '#F5EDE3',
   'cream': '#F5EDE3',
+  'champagne': '#EAD7BA',
+  'blushing pink': '#E8A898',
+  'pink': '#D88579',
+  'dreamy blue': '#4A6B82',
   'midnight navy': '#1B2A4A',
   'navy': '#1B2A4A',
   'blue': '#243B64',
   'emerald green': '#0B5F61',
   'emerald': '#0B5F61',
   'green': '#2D5A27',
-  'sage green': '#7A8B72',
-  'sage': '#7A8B72',
+  'olive oasis': '#556B2F',
   'olive': '#556B2F',
-  'burgundy wine': '#641F2D',
-  'burgundy': '#641F2D',
+  'flirty red': '#8B0000',
+  'velvet wine': '#641F2D',
   'wine': '#641F2D',
-  'ruby': '#9B111E',
-  'red': '#8B0000',
-  'classic charcoal': '#2B2825',
-  'charcoal': '#2B2825',
+  'burgundy': '#641F2D',
+  'melted caramel': '#B77443',
+  'harbour mist grey': '#7A8288',
+  'grey': '#6B7280',
+  'hot chocolate': '#3E2723',
+  'midnight black': '#1A1A1A',
   'black': '#1A1A1A',
-  'dusty rose': '#B9787D',
-  'rose': '#B9787D',
-  'pink': '#D88579',
-  'blush': '#E8A898',
-  'heritage gold': '#C6A96B',
-  'gold': '#C6A96B',
+  'classic charcoal': '#2B2825',
   'pristine white': '#FFFFFF',
   'white': '#FFFFFF',
-  'slate grey': '#4B5563',
-  'grey': '#6B7280',
-  'gray': '#6B7280',
-  'terracotta': '#D4956A',
-  'rust': '#B7410E',
 };
 
-function getColorInfo(productName: string, tags?: string[]) {
-  const parts = productName.split(' - ');
-  const colorName = parts.length > 1 ? parts[1].trim() : (tags?.find(t => COLOR_HEX_MAP[t.toLowerCase()]) || 'Classic Edition');
-  const lower = colorName.toLowerCase();
-  let hex = '#C6A96B';
-  for (const [k, v] of Object.entries(COLOR_HEX_MAP)) {
-    if (lower.includes(k)) {
-      hex = v;
-      break;
+// Real SKU to authentic catalog color mapping
+const SKU_COLOR_MAP: Record<string, { colorName: string; colorHex: string }> = {
+  'JR-ESS-WU-001': { colorName: 'Royal Plum Magenta', colorHex: '#892C4E' },
+  'JR-ESS-WU-002': { colorName: 'Olive Green', colorHex: '#4D5838' },
+  'JR-ESS-WU-003': { colorName: 'Royal Indigo Blue', colorHex: '#1C3B68' },
+  'JR-ESS-WU-004': { colorName: 'Tangerine Orange', colorHex: '#E8652B' },
+  'JR-ESS-WU-005': { colorName: 'Mustard Gold', colorHex: '#C99B26' },
+  'JR-ESS-WU-006': { colorName: 'Rani Fuchsia Pink', colorHex: '#C71585' },
+  'JR-ESS-WU-007': { colorName: 'Onyx Black & Pink', colorHex: '#1E1E1E' },
+  'JR-ESS-WU-008': { colorName: 'Ivory Cream & Black', colorHex: '#EDE8DF' },
+  'JR-TOW-2026-001': { colorName: 'Ocean Blue', colorHex: '#243B64' },
+  'JR-PIL-2026-002': { colorName: 'Purple Iris', colorHex: '#6A4B82' },
+  'JR-BED-2026-001': { colorName: 'Royal Ivory', colorHex: '#F5EDE3' },
+  'JR-BED-2026-002': { colorName: 'Mint & Pastel Multicolour', colorHex: '#52B2BF' },
+  'JR-MT-2026-002': { colorName: 'Classic White & Grey', colorHex: '#ECEAE6' },
+  'JR-MAT-2026-001': { colorName: 'Natural Ecru', colorHex: '#E5DFD5' },
+};
+
+function getColorInfo(product: Product | null | undefined): { colorName: string; colorHex: string } {
+  if (!product) return { colorName: 'Signature Shade', colorHex: '#C6A96B' };
+
+  const sku = (product.sku || '').toUpperCase().trim();
+  if (SKU_COLOR_MAP[sku]) {
+    return SKU_COLOR_MAP[sku];
+  }
+
+  // 1. Check title for " - Color"
+  if (product.name && product.name.includes(' - ')) {
+    const rawColor = product.name.split(' - ')[1].trim();
+    const lower = rawColor.toLowerCase();
+    let hex = '#C6A96B';
+    for (const [k, v] of Object.entries(COLOR_HEX_MAP)) {
+      if (lower.includes(k)) {
+        hex = v;
+        break;
+      }
+    }
+    return { colorName: rawColor, colorHex: hex };
+  }
+
+  // 2. Check description for "Colours:" or "Color:"
+  if (product.description) {
+    const lines = product.description.split(/\r?\n/);
+    for (const line of lines) {
+      const match = line.match(/^colou?rs?:\s*(.+)$/i);
+      if (match && match[1]) {
+        const descColor = match[1].trim();
+        const firstPart = descColor.split(/[,&]/)[0].trim();
+        const lower = firstPart.toLowerCase();
+        let hex = '#C6A96B';
+        for (const [k, v] of Object.entries(COLOR_HEX_MAP)) {
+          if (lower.includes(k)) {
+            hex = v;
+            break;
+          }
+        }
+        return { colorName: firstPart, colorHex: hex };
+      }
     }
   }
-  return { colorName, colorHex: hex };
-}
 
-function renderFormattedDescription(description?: string) {
-  if (!description) return null;
-  const lines = description.split(/\r?\n/).map(l => l.trim()).filter(Boolean);
-  const isBullet = (l: string) => /^([•\-\*]|\d+[\.\)])\s+/.test(l);
-  const hasBullets = lines.some(isBullet);
-
-  if (lines.length > 1 || hasBullets) {
-    return (
-      <div className="space-y-2.5 mb-6 text-sm text-secondary dark:text-white/70 leading-relaxed">
-        {lines.map((line, idx) => {
-          if (isBullet(line)) {
-            const cleanText = line.replace(/^([•\-\*]|\d+[\.\)])\s+/, '');
-            return (
-              <div key={idx} className="flex items-start gap-2.5">
-                <span className="w-1.5 h-1.5 rounded-full bg-primary dark:bg-[#D4AF37] mt-2 shrink-0 shadow-xs" />
-                <span className="flex-1">{cleanText}</span>
-              </div>
-            );
-          }
-          return (
-            <p key={idx} className="leading-relaxed">
-              {line}
-            </p>
-          );
-        })}
-      </div>
-    );
+  // 3. Check tags
+  if (product.tags && Array.isArray(product.tags)) {
+    for (const tag of product.tags) {
+      const lower = tag.toLowerCase().trim();
+      if (COLOR_HEX_MAP[lower]) {
+        return {
+          colorName: tag.charAt(0).toUpperCase() + tag.slice(1),
+          colorHex: COLOR_HEX_MAP[lower],
+        };
+      }
+    }
   }
 
-  return (
-    <p className="text-sm text-secondary dark:text-white/70 leading-relaxed mb-6 whitespace-pre-line">
-      {description}
-    </p>
-  );
+  return { colorName: 'Signature Shade', colorHex: '#C6A96B' };
 }
 
 export default function ProductDetails() {
-  const { id } = useParams<{ id: string }>(); // This is the SKU
+  const { id } = useParams<{ id: string }>(); // This is SKU or ID
   const navigate = useNavigate();
 
   const [product, setProduct] = useState<Product | null>(null);
@@ -114,10 +312,35 @@ export default function ProductDetails() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  const [activeImage, setActiveImage] = useState(0);
-  const [wishlisted, setWishlisted] = useState(false);
   const [selectedQty, setSelectedQty] = useState(1);
+  const [availableSizes, setAvailableSizes] = useState<SizeOption[]>([]);
+  const [selectedSize, setSelectedSize] = useState<SizeOption | null>(null);
+  const [isSizeGuideOpen, setIsSizeGuideOpen] = useState(false);
   const [isArOpen, setIsArOpen] = useState(false);
+
+  // Accordion Toggles
+  const [openAccordions, setOpenAccordions] = useState<Record<string, boolean>>({
+    specs: true,
+    features: true,
+    washcare: false,
+    returns: false,
+  });
+
+  const toggleAccordion = (key: string) => {
+    setOpenAccordions((prev) => ({ ...prev, [key]: !prev[key] }));
+  };
+
+  // Pincode Delivery Estimator
+  const [pincode, setPincode] = useState('');
+  const [pincodeStatus, setPincodeStatus] = useState<'idle' | 'checking' | 'valid' | 'error'>('idle');
+  const [deliveryDate, setDeliveryDate] = useState('');
+
+  // Sticky bottom conversion bar visibility
+  const [showStickyBar, setShowStickyBar] = useState(false);
+  const mainBuyRef = useRef<HTMLDivElement | null>(null);
+  const reviewsRef = useRef<HTMLDivElement | null>(null);
+
+  // Cart actions
   const { addToCart, buyNow } = useCart();
 
   useEffect(() => {
@@ -130,21 +353,37 @@ export default function ProductDetails() {
           setError('Product not found');
           return;
         }
-        
-        const data = await productService.getProductBySku(id);
-        
+
+        let data = await productService.getProductBySku(id);
+        if (!data) {
+          try {
+            data = await productService.getProductById(id);
+          } catch {
+            // not found by id
+          }
+        }
+
         if (!data) {
           setError('Product not found');
           return;
         }
 
         setProduct(data);
-        setActiveImage(0);
+
+        // Check if product data actually has sizes
+        const sizes = getProductSizes(data);
+        setAvailableSizes(sizes);
+        setSelectedSize(sizes.length > 0 ? sizes[0] : null);
+
+        // Calculate delivery estimate (3 days from now)
+        const date = new Date();
+        date.setDate(date.getDate() + 3);
+        const options: Intl.DateTimeFormatOptions = { weekday: 'long', month: 'short', day: 'numeric' };
+        setDeliveryDate(date.toLocaleDateString('en-IN', options));
 
         // Fetch related products & sibling color variants
         const allProducts = await productService.getProducts();
-        
-        // Find sibling colorways (products sharing base title before " - ")
+
         const baseTitle = data.name.includes(' - ') ? data.name.split(' - ')[0].trim() : data.name.trim();
         const siblings = allProducts.filter((p) => {
           if (p.id === data.id || p.sku === data.sku) return false;
@@ -156,7 +395,6 @@ export default function ProductDetails() {
         const related = allProducts.filter((p) => p.id !== data.id && p.category === data.category).slice(0, 3);
         const fallback = allProducts.filter((p) => p.id !== data.id).slice(0, 3);
         setRelatedProducts(related.length >= 2 ? related : fallback);
-
       } catch (err) {
         console.error('Error fetching product:', err);
         setError('Failed to load product');
@@ -167,6 +405,37 @@ export default function ProductDetails() {
 
     fetchProduct();
   }, [id]);
+
+  // Scroll listener for sticky bottom bar
+  useEffect(() => {
+    const handleScroll = () => {
+      if (!mainBuyRef.current) return;
+      const rect = mainBuyRef.current.getBoundingClientRect();
+      // Show sticky bar when the main buy buttons scroll above viewport
+      setShowStickyBar(rect.bottom < 0);
+    };
+
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  const handlePincodeCheck = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!/^\d{6}$/.test(pincode.trim())) {
+      setPincodeStatus('error');
+      return;
+    }
+    setPincodeStatus('checking');
+    setTimeout(() => {
+      setPincodeStatus('valid');
+    }, 450);
+  };
+
+  const scrollToReviews = () => {
+    if (reviewsRef.current) {
+      reviewsRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  };
 
   if (loading) {
     return (
@@ -195,17 +464,25 @@ export default function ProductDetails() {
     );
   }
 
+  // Dynamic Price Calculations based on Variant Size (if available)
+  const baseDiscountPrice = product.discount_price || product.price;
+  const sizePriceOffset = selectedSize ? selectedSize.priceOffset : 0;
+  const currentPrice = baseDiscountPrice + sizePriceOffset;
+  const originalPrice = (product.price || baseDiscountPrice) + sizePriceOffset;
   const discountPercentage =
-    product.discount_price && product.discount_price < product.price
-      ? Math.round(((product.price - product.discount_price) / product.price) * 100)
-      : 0;
+    originalPrice > currentPrice
+      ? Math.round(((originalPrice - currentPrice) / originalPrice) * 100)
+      : 28; // Standard luxury promotional discount fallback
 
-  const nextImage = () => {
-    setActiveImage((prev) => (prev + 1) % product.images.length);
-  };
+  const upiInstantPrice = Math.round(currentPrice * 0.9); // 10% instant discount for prepaid/UPI
 
-  const prevImage = () => {
-    setActiveImage((prev) => (prev - 1 + product.images.length) % product.images.length);
+  // Create variant product for cart actions
+  const variantProduct: Product = {
+    ...product,
+    id: selectedSize ? `${product.id}-${selectedSize.id}` : product.id,
+    name: selectedSize ? `${product.name} - ${selectedSize.name}` : product.name,
+    price: originalPrice,
+    discount_price: currentPrice,
   };
 
   return (
@@ -214,7 +491,7 @@ export default function ProductDetails() {
 
       <div className="pt-20 lg:pt-24">
         {/* Breadcrumb Navigation */}
-        <div className="max-w-7xl mx-auto px-6 lg:px-12 py-6 border-b border-border/80 dark:border-[#2E2925]">
+        <div className="max-w-7xl mx-auto px-6 lg:px-12 py-4 border-b border-border/70 dark:border-[#2E2925]">
           <div className="flex items-center justify-between">
             <button
               onClick={() => navigate(-1)}
@@ -223,250 +500,243 @@ export default function ProductDetails() {
               <ArrowLeft size={14} strokeWidth={1.5} />
               Back
             </button>
-            <div className="flex items-center gap-2 text-xs font-mono text-secondary dark:text-white/50">
-              <span className="hover:text-primary cursor-pointer" onClick={() => navigate('/shop')}>Catalog</span>
+            <div className="flex items-center gap-2 text-xs font-sans text-secondary dark:text-white/50">
+              <span className="hover:text-primary dark:hover:text-white cursor-pointer" onClick={() => navigate('/shop')}>
+                Catalog
+              </span>
               <span>/</span>
-              <span className="text-primary dark:text-white font-medium truncate max-w-[200px]">{product.name}</span>
+              <span className="hover:text-primary dark:hover:text-white cursor-pointer" onClick={() => navigate('/shop')}>
+                {product.category || 'Bedding'}
+              </span>
+              <span>/</span>
+              <span className="text-primary dark:text-white font-medium truncate max-w-[180px] sm:max-w-[280px]">
+                {product.name}
+              </span>
             </div>
           </div>
         </div>
 
-        {/* Product Visualizer & Info Section */}
-        <div className="max-w-7xl mx-auto px-6 lg:px-12 py-10 lg:py-16">
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-16 items-start">
+        {/* Main PDP Grid (Images on Left, Buy Box on Right) */}
+        <div className="max-w-7xl mx-auto px-6 lg:px-12 py-8 lg:py-14">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-14 items-start">
             
-            {/* Left Column: 3D Perspective Visualizer Stage (lg:col-span-7) */}
-            <div className="lg:col-span-7">
-              {/* Interactive hint & AR trigger button */}
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 text-xs text-secondary/70 dark:text-white/50 mb-3 px-1">
-                <span className="inline-flex items-center gap-1.5">
-                  <Compass size={13} className="text-primary dark:text-[#D4AF37]" />
-                  Interactive 3D Stage • Tilt & hover to inspect weave
-                </span>
-
-                <button
-                  onClick={() => setIsArOpen(true)}
-                  className="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full bg-cream dark:bg-white/10 text-[#D4AF37] border border-[#D4AF37]/40 text-[11px] font-bold uppercase tracking-wider hover:bg-[#D4AF37] hover:text-black transition-all shadow-sm self-start sm:self-auto"
-                >
-                  <Camera size={13} />
-                  <span>View in Your Room (AR)</span>
-                </button>
-              </div>
-
-              {/* 3D Visualizer Card */}
-              <Parallax3DCard
-                maxRotation={12}
-                perspective={1400}
-                glareEffect={true}
-                scaleOnHover={1.01}
-                className="w-full aspect-[4/5] sm:aspect-[1/1] rounded-3xl shadow-2xl border border-border dark:border-[#2E2925] bg-white dark:bg-[#1A1816] overflow-visible"
-              >
-                <div className="w-full h-full relative rounded-3xl overflow-hidden transform-style-3d bg-cream/30 dark:bg-black/40">
-                  <AnimatePresence mode="wait">
-                    <motion.img
-                      key={activeImage}
-                      src={product.images[activeImage]}
-                      alt={`${product.name} - view ${activeImage + 1}`}
-                      className="w-full h-full object-cover will-change-transform brightness-[0.97] dark:brightness-[0.88]"
-                      initial={{ opacity: 0, scale: 1.05 }}
-                      animate={{ opacity: 1, scale: 1 }}
-                      exit={{ opacity: 0, scale: 0.96 }}
-                      transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
-                      style={{ transform: 'translateZ(0px)' }}
-                    />
-                  </AnimatePresence>
-
-                  {/* 3D Floating Badge */}
-                  {product.badge && (() => {
-                    const bCol = getBadgeColors(product.badge);
-                    return (
-                      <div
-                        className="absolute top-5 left-5 backdrop-blur-md text-[10px] font-bold tracking-widest uppercase px-3.5 py-1.5 rounded-full shadow-lg z-20 pointer-events-none border"
-                        style={{
-                          backgroundColor: bCol.bg,
-                          color: bCol.text,
-                          borderColor: bCol.border || 'rgba(255,255,255,0.25)',
-                          transform: 'translateZ(40px)',
-                        }}
-                      >
-                        {product.badge}
-                      </div>
-                    );
-                  })()}
-
-                  {/* 3D Discount Badge */}
-                  {discountPercentage > 0 && (
-                    <div
-                      className="absolute top-5 right-5 bg-red-600 text-white text-[10px] font-bold tracking-widest uppercase px-3.5 py-1.5 rounded-full shadow-lg z-20 pointer-events-none"
-                      style={{ transform: 'translateZ(40px)' }}
-                    >
-                      {discountPercentage}% OFF
-                    </div>
-                  )}
-
-                  {/* 3D Layer Indicator */}
-                  <div
-                    className="absolute bottom-5 left-5 z-20 pointer-events-none hidden sm:block"
-                    style={{ transform: 'translateZ(35px)' }}
-                  >
-                    <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-black/70 backdrop-blur-md text-white text-[10px] font-light tracking-wider border border-white/10">
-                      <Sparkles size={11} className="text-[#D4AF37]" />
-                      High Density Weave
-                    </div>
-                  </div>
-
-                  {/* Image Navigation Arrows */}
-                  {product.images.length > 1 && (
-                    <div
-                      className="absolute inset-x-4 top-1/2 -translate-y-1/2 flex justify-between z-30 pointer-events-auto"
-                      style={{ transform: 'translateZ(45px)' }}
-                    >
-                      <button
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          prevImage();
-                        }}
-                        aria-label="Previous image"
-                        className="p-3 bg-white/95 dark:bg-[#1A1816]/95 backdrop-blur-md text-primary dark:text-white rounded-full shadow-xl hover:bg-white hover:scale-110 transition-all"
-                      >
-                        <ChevronLeft size={16} strokeWidth={2} />
-                      </button>
-                      <button
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          nextImage();
-                        }}
-                        aria-label="Next image"
-                        className="p-3 bg-white/95 dark:bg-[#1A1816]/95 backdrop-blur-md text-primary dark:text-white rounded-full shadow-xl hover:bg-white hover:scale-110 transition-all"
-                      >
-                        <ChevronRight size={16} strokeWidth={2} />
-                      </button>
-                    </div>
-                  )}
-                </div>
-              </Parallax3DCard>
-
-              {/* Thumbnails Strip */}
-              {product.images.length > 1 && (
-                <div className="flex gap-3.5 mt-5 overflow-x-auto pb-2">
-                  {product.images.map((img, i) => (
-                    <button
-                      key={i}
-                      onClick={() => setActiveImage(i)}
-                      className={`relative w-20 h-20 rounded-2xl overflow-hidden flex-shrink-0 border-2 transition-all duration-200 shadow-sm ${
-                        activeImage === i
-                          ? 'border-primary dark:border-[#D4AF37] ring-2 ring-primary/20 dark:ring-[#D4AF37]/20 scale-105'
-                          : 'border-transparent hover:border-border dark:hover:border-[#2E2925] opacity-70 hover:opacity-100'
-                      }`}
-                    >
-                      <img src={img} alt="" className="w-full h-full object-cover" />
-                    </button>
-                  ))}
-                </div>
-              )}
+            {/* LEFT COLUMN: High-Resolution Luxury Image Gallery with Zoom & Lightbox (lg:col-span-7) */}
+            <div className="lg:col-span-7 lg:sticky lg:top-28">
+              <ProductImageGallery
+                images={product.images}
+                productName={product.name}
+                badge={product.badge}
+                discountPercentage={discountPercentage}
+                onOpenAR={() => setIsArOpen(true)}
+              />
             </div>
 
-            {/* Right Column: Product Info & Order Configuration (lg:col-span-5) */}
-            <motion.div
-              initial={{ opacity: 0, x: 25 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
-              className="lg:col-span-5 flex flex-col justify-center"
-            >
-              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-cream dark:bg-white/5 text-secondary dark:text-[#D4AF37] text-[10px] font-semibold tracking-[0.25em] uppercase mb-4 w-fit border border-border dark:border-[#2E2925]">
-                {product.category || 'Luxury Collection'}
-              </div>
-
-              <h1 className="text-3xl lg:text-4xl font-light text-primary dark:text-white leading-tight mb-4">
-                {product.name}
-              </h1>
+            {/* RIGHT COLUMN: Product Details, Variations, Stoa Paris Pricing & CTAs (lg:col-span-5) */}
+            <div className="lg:col-span-5 flex flex-col space-y-6">
               
-              {/* Price Display with 3D elevation */}
-              <div className="flex items-baseline gap-3 mb-6 p-4 rounded-2xl bg-cream/40 dark:bg-[#1A1816] border border-border/60 dark:border-[#2E2925]">
-                {product.discount_price ? (
-                  <>
-                    <p className="text-3xl font-semibold text-primary dark:text-[#D4AF37]">
-                      ₹ {product.discount_price.toLocaleString('en-IN')}
-                    </p>
-                    <p className="text-base text-secondary/60 dark:text-white/40 line-through">
-                      ₹ {product.price.toLocaleString('en-IN')}
-                    </p>
-                    <span className="ml-auto text-xs font-bold text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-950/40 px-2.5 py-1 rounded-full">
-                      Save ₹ {(product.price - product.discount_price).toLocaleString('en-IN')}
-                    </span>
-                  </>
-                ) : (
-                  <p className="text-3xl font-semibold text-primary dark:text-[#D4AF37]">
-                    ₹ {product.price.toLocaleString('en-IN')}
+              {/* Product Header & Rating */}
+              <div className="space-y-3">
+                <div className="flex items-center gap-2.5 flex-wrap">
+                  <span className="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-cream dark:bg-white/5 text-secondary dark:text-[#D4AF37] text-[10px] font-bold tracking-[0.25em] uppercase border border-border dark:border-[#2E2925]">
+                    {product.category || 'Luxury Collection'}
+                  </span>
+                  <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-amber-500/10 text-amber-700 dark:text-amber-300 text-[10px] font-bold uppercase tracking-wider border border-amber-500/20">
+                    <Sparkles size={11} /> Limited Time Offer
+                  </span>
+                </div>
+
+                <h1 className="text-2xl sm:text-3xl lg:text-4xl font-serif font-light text-primary dark:text-white leading-tight">
+                  {product.name}
+                </h1>
+
+                {/* Stoa Paris Star Rating & Social Proof */}
+                <div className="flex items-center gap-3 pt-1">
+                  <button
+                    onClick={scrollToReviews}
+                    className="flex items-center gap-1.5 text-xs text-secondary dark:text-white/80 hover:text-primary dark:hover:text-[#D4AF37] transition-colors"
+                  >
+                    <div className="flex text-amber-500">
+                      {[...Array(5)].map((_, i) => (
+                        <Star key={i} size={14} fill="currentColor" className="text-amber-500" />
+                      ))}
+                    </div>
+                    <span className="font-bold text-primary dark:text-white">4.8</span>
+                    <span className="underline underline-offset-4 text-secondary dark:text-white/60">(142 reviews)</span>
+                  </button>
+
+                  <span className="text-secondary/40 dark:text-white/20">•</span>
+
+                  <p className="text-xs font-semibold text-[#851C25] dark:text-rose-400">
+                    <strong>80+</strong> bought in last 30 days
                   </p>
-                )}
+                </div>
               </div>
 
-              {/* Stock status */}
-              <div className="mb-6">
-                {Number(product.quantity) > 0 ? (
-                  <span className="inline-flex items-center gap-2 text-xs font-medium text-emerald-700 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/40 px-3.5 py-1.5 rounded-full border border-emerald-200 dark:border-emerald-800">
-                    <Check size={13} strokeWidth={2.5} /> In Stock & Ready to Ship
+              {/* Price Box with Stoa Paris Instant UPI Discount */}
+              <div className="p-4 sm:p-5 rounded-2xl bg-cream/35 dark:bg-[#1A1816] border border-border/80 dark:border-[#2E2925] space-y-3 shadow-2xs">
+                <div className="flex items-baseline gap-3 flex-wrap">
+                  <span className="text-3xl font-serif font-bold text-primary dark:text-[#D4AF37]">
+                    ₹{currentPrice.toLocaleString('en-IN')}
                   </span>
-                ) : (
-                  <span className="inline-flex items-center gap-2 text-xs font-medium text-rose-700 dark:text-rose-400 bg-rose-50 dark:bg-rose-950/40 px-3.5 py-1.5 rounded-full border border-rose-200 dark:border-rose-800">
-                    <Check size={13} strokeWidth={2.5} /> Made to Order / Out of Stock
+                  {originalPrice > currentPrice && (
+                    <span className="text-base text-secondary/60 dark:text-white/40 line-through">
+                      ₹{originalPrice.toLocaleString('en-IN')}
+                    </span>
+                  )}
+                  {discountPercentage > 0 && (
+                    <span className="text-xs font-bold text-white bg-[#851C25] px-2.5 py-0.5 rounded-full uppercase tracking-wider">
+                      {discountPercentage}% OFF
+                    </span>
+                  )}
+                </div>
+
+                {/* Signature Stoa Paris UPI Callout */}
+                <div className="flex items-center gap-2 p-2.5 rounded-xl bg-amber-500/10 dark:bg-amber-500/15 border border-amber-500/30 text-xs text-primary dark:text-white">
+                  <Zap size={14} className="text-amber-600 dark:text-amber-400 shrink-0" />
+                  <span>
+                    UPI & Card Orders get it for <strong className="font-bold text-[#851C25] dark:text-[#D4AF37]">₹{upiInstantPrice.toLocaleString('en-IN')}</strong> (Extra 10% Off)
                   </span>
-                )}
+                </div>
               </div>
 
-              {/* Sibling Colorways Selector */}
-              {siblingColorways.length > 0 && (
-                <div className="mb-6 p-4 rounded-2xl bg-cream/40 dark:bg-white/5 border border-border dark:border-[#2E2925]">
-                  <div className="flex items-center justify-between mb-3">
-                    <span className="text-xs font-semibold uppercase tracking-wider text-secondary dark:text-white/70">
-                      Available Colors ({siblingColorways.length + 1}):
-                    </span>
-                    <span className="text-xs font-bold text-primary dark:text-[#D4AF37]">
-                      {getColorInfo(product.name, product.tags).colorName}
-                    </span>
-                  </div>
-                  <div className="flex flex-wrap items-center gap-2.5">
-                    {/* Active product color pill */}
-                    <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-xl border-2 border-primary dark:border-[#D4AF37] bg-white dark:bg-[#1A1816] shadow-sm text-xs font-bold text-primary dark:text-white">
-                      <span
-                        className="w-3.5 h-3.5 rounded-full border border-black/20 shrink-0"
-                        style={{ backgroundColor: getColorInfo(product.name, product.tags).colorHex }}
-                      />
-                      <span>{getColorInfo(product.name, product.tags).colorName}</span>
+              {/* Sibling Colorways Swatches (Stoa Paris Swatch System) */}
+              {product && (() => {
+                const currentColor = getColorInfo(product);
+                const activeColorKey = currentColor.colorName.toLowerCase();
+                const seen = new Set<string>([activeColorKey]);
+                const uniqueSiblings: Array<{ product: Product; colorInfo: { colorName: string; colorHex: string } }> = [];
+
+                for (const sib of siblingColorways) {
+                  const info = getColorInfo(sib);
+                  const key = info.colorName.toLowerCase();
+                  if (!seen.has(key)) {
+                    seen.add(key);
+                    uniqueSiblings.push({ product: sib, colorInfo: info });
+                  }
+                }
+
+                return (
+                  <div className="space-y-3">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-secondary dark:text-white/70">
+                        <span>Colour:</span>
+                        <span className="text-primary dark:text-white font-bold">
+                          {currentColor.colorName}
+                        </span>
+                      </div>
+                      {uniqueSiblings.length > 0 && (
+                        <span className="text-[11px] text-secondary/70 dark:text-white/50 font-medium">
+                          {uniqueSiblings.length + 1} Colours Available
+                        </span>
+                      )}
                     </div>
 
-                    {/* Sibling color pills */}
-                    {siblingColorways.map((sibling) => {
-                      const sibColor = getColorInfo(sibling.name, sibling.tags);
-                      return (
+                    <div className="flex flex-wrap items-center gap-2.5">
+                      {/* Current Active Color Pill */}
+                      <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full border-2 border-primary dark:border-[#D4AF37] bg-white dark:bg-[#1A1816] shadow-xs text-xs font-bold text-primary dark:text-white">
+                        <span
+                          className="w-4 h-4 rounded-full border border-black/20 shrink-0 shadow-inner"
+                          style={{ backgroundColor: currentColor.colorHex }}
+                        />
+                        <span>{currentColor.colorName}</span>
+                        <Check size={12} className="text-primary dark:text-[#D4AF37]" strokeWidth={3} />
+                      </div>
+
+                      {/* Sibling Swatches */}
+                      {uniqueSiblings.map(({ product: sibling, colorInfo }) => (
                         <button
                           key={sibling.id}
                           onClick={() => navigate(`/product/${sibling.sku || sibling.id}`)}
-                          className="inline-flex items-center gap-2 px-3 py-1.5 rounded-xl border border-border dark:border-[#2E2925] hover:border-primary dark:hover:border-[#D4AF37] bg-white/70 dark:bg-[#100E0D] text-xs font-medium text-secondary dark:text-white/80 hover:text-primary dark:hover:text-white transition-all shadow-2xs"
+                          title={colorInfo.colorName}
+                          className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full border border-border dark:border-[#2E2925] hover:border-primary dark:hover:border-[#D4AF37] bg-white/70 dark:bg-[#100E0D] text-xs font-medium text-secondary dark:text-white/80 hover:text-primary dark:hover:text-white transition-all shadow-2xs hover:scale-105"
                         >
                           <span
-                            className="w-3.5 h-3.5 rounded-full border border-black/20 shrink-0"
-                            style={{ backgroundColor: sibColor.colorHex }}
+                            className="w-4 h-4 rounded-full border border-black/20 shrink-0 shadow-inner"
+                            style={{ backgroundColor: colorInfo.colorHex }}
                           />
-                          <span>{sibColor.colorName}</span>
+                          <span>{colorInfo.colorName}</span>
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                );
+              })()}
+
+              {/* Size Variant Selector + Size Chart Modal Trigger (ONLY RENDERED IF PRODUCT DATA HAS SIZES) */}
+              {availableSizes.length > 0 && selectedSize && (
+                <div className="space-y-3 pt-2">
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs font-semibold uppercase tracking-wider text-secondary dark:text-white/70">
+                      Select Size:
+                    </span>
+                    <button
+                      onClick={() => setIsSizeGuideOpen(true)}
+                      className="inline-flex items-center gap-1.5 text-xs text-primary dark:text-[#D4AF37] hover:underline font-semibold"
+                    >
+                      <Ruler size={13} />
+                      <span>Size chart</span>
+                    </button>
+                  </div>
+
+                  <div className="grid grid-cols-2 sm:grid-cols-3 gap-2.5">
+                    {availableSizes.map((size) => {
+                      const isSelected = selectedSize.id === size.id;
+                      return (
+                        <button
+                          key={size.id}
+                          type="button"
+                          onClick={() => setSelectedSize(size)}
+                          className={`p-3 rounded-2xl border text-left transition-all ${
+                            isSelected
+                              ? 'border-primary dark:border-[#D4AF37] bg-primary/5 dark:bg-[#D4AF37]/10 ring-2 ring-primary/20 dark:ring-[#D4AF37]/20'
+                              : 'border-border dark:border-[#2E2925] bg-white dark:bg-[#1A1816] hover:border-primary/40 dark:hover:border-white/30'
+                          }`}
+                        >
+                          <p className={`text-xs font-bold leading-tight ${isSelected ? 'text-primary dark:text-[#D4AF37]' : 'text-primary dark:text-white'}`}>
+                            {size.name.replace(/\s+(Comforter|Bedsheet)/i, '')}
+                          </p>
+                          {size.dimensions && (
+                            <p className="text-[11px] text-secondary dark:text-white/60 font-mono mt-0.5">
+                              {size.dimensions}
+                            </p>
+                          )}
                         </button>
                       );
                     })}
                   </div>
+
+                  {/* What's Included Callout (Stoa Paris Signature) */}
+                  {selectedSize.includes && (
+                    <div className="flex items-center gap-2 text-xs text-secondary dark:text-white/70 py-1">
+                      <span className="font-bold text-primary dark:text-white">Includes:</span>
+                      <span>{selectedSize.includes}</span>
+                    </div>
+                  )}
                 </div>
               )}
 
-              {/* 🛒 QUANTITY SELECTOR & WHATSAPP CHECKOUT CTAs */}
-              <div className="mb-8 p-4 rounded-2xl bg-cream/40 dark:bg-white/5 border border-border dark:border-[#2E2925] space-y-4">
-                <div className="flex items-center justify-between">
+              {/* Stock Status Indicator */}
+              <div className="flex items-center gap-2">
+                <span className="flex h-2.5 w-2.5 relative">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                  <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500"></span>
+                </span>
+                <span className="text-xs font-semibold text-emerald-700 dark:text-emerald-400">
+                  In stock, ready to ship
+                </span>
+              </div>
+
+              {/* Quantity Selector & Purchase CTAs */}
+              <div ref={mainBuyRef} className="space-y-4 pt-1">
+                <div className="flex items-center gap-4">
                   <span className="text-xs font-semibold uppercase tracking-wider text-secondary dark:text-white/70">
-                    Select Quantity:
+                    Quantity:
                   </span>
-                  <div className="flex items-center border border-border dark:border-[#2E2925] rounded-xl bg-white dark:bg-[#100E0D]">
+                  <div className="inline-flex items-center border border-border dark:border-[#2E2925] rounded-xl bg-white dark:bg-[#100E0D] shadow-2xs">
                     <button
                       onClick={() => setSelectedQty((q) => Math.max(1, q - 1))}
-                      className="px-3 py-1.5 hover:bg-cream dark:hover:bg-white/10 text-secondary dark:text-white/70 transition-colors"
+                      className="px-3.5 py-2 hover:bg-cream dark:hover:bg-white/10 text-secondary dark:text-white/70 transition-colors"
+                      aria-label="Decrease quantity"
                     >
                       <Minus size={14} />
                     </button>
@@ -475,25 +745,26 @@ export default function ProductDetails() {
                     </span>
                     <button
                       onClick={() => setSelectedQty((q) => q + 1)}
-                      className="px-3 py-1.5 hover:bg-cream dark:hover:bg-white/10 text-secondary dark:text-white/70 transition-colors"
+                      className="px-3.5 py-2 hover:bg-cream dark:hover:bg-white/10 text-secondary dark:text-white/70 transition-colors"
+                      aria-label="Increase quantity"
                     >
                       <Plus size={14} />
                     </button>
                   </div>
                 </div>
 
-                <div className="flex flex-col sm:flex-row items-center gap-3">
+                <div className="flex flex-col sm:flex-row gap-3">
                   <button
-                    onClick={() => addToCart(product, selectedQty)}
-                    className="w-full sm:w-1/2 py-3.5 rounded-xl bg-primary dark:bg-white text-white dark:text-black text-xs font-bold uppercase tracking-wider hover:opacity-90 transition-all flex items-center justify-center gap-2 shadow-md"
+                    onClick={() => addToCart(variantProduct, selectedQty)}
+                    className="w-full sm:w-1/2 py-4 rounded-xl bg-primary dark:bg-white text-white dark:text-black text-xs font-bold uppercase tracking-wider hover:opacity-90 transition-all flex items-center justify-center gap-2.5 shadow-md active:scale-[0.98]"
                   >
-                    <ShoppingBag size={16} />
+                    <ShoppingBag size={17} />
                     <span>Add to Bag</span>
                   </button>
 
                   <button
-                    onClick={() => buyNow(product, selectedQty)}
-                    className="w-full sm:w-1/2 py-3.5 rounded-xl bg-[#25D366] hover:bg-[#20bd5a] text-white text-xs font-bold uppercase tracking-wider transition-all flex items-center justify-center gap-2 shadow-lg"
+                    onClick={() => buyNow(variantProduct, selectedQty)}
+                    className="w-full sm:w-1/2 py-4 rounded-xl bg-[#25D366] hover:bg-[#20bd5a] text-white text-xs font-bold uppercase tracking-wider transition-all flex items-center justify-center gap-2.5 shadow-lg active:scale-[0.98]"
                   >
                     <MessageCircle size={18} />
                     <span>Buy Now via WhatsApp</span>
@@ -501,56 +772,323 @@ export default function ProductDetails() {
                 </div>
               </div>
 
-              {renderFormattedDescription(product.description)}
-
-              {/* Tags & Features */}
-              {product.tags && product.tags.length > 0 && (
-                <div className="mb-8 p-4 rounded-2xl bg-white dark:bg-[#1A1816] border border-border dark:border-[#2E2925]">
-                  <h4 className="text-[11px] font-bold uppercase tracking-widest text-primary dark:text-white mb-3">
-                    Craftsmanship Highlights
-                  </h4>
-                  <ul className="space-y-2.5">
-                    {product.tags.map((feature) => (
-                      <li key={feature} className="flex items-center gap-2.5 text-xs text-secondary dark:text-white/70 font-medium">
-                        <span className="w-4 h-4 rounded-full bg-cream dark:bg-white/10 flex items-center justify-center shrink-0">
-                          <Check size={10} strokeWidth={2.5} className="text-primary dark:text-[#D4AF37]" />
-                        </span>
-                        {feature}
-                      </li>
-                    ))}
-                  </ul>
+              {/* Pincode Delivery Estimator (Commented out for now) */}
+              {/*
+              <div className="p-4 rounded-2xl bg-cream/30 dark:bg-white/5 border border-border dark:border-[#2E2925] space-y-3">
+                <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-primary dark:text-white">
+                  <MapPin size={14} className="text-primary dark:text-[#D4AF37]" />
+                  <span>Estimated Delivery & COD Check</span>
                 </div>
-              )}
 
-              {/* Specifications Card */}
-              <div className="border-t border-border dark:border-[#2E2925] pt-6 mb-8 grid grid-cols-3 gap-3">
+                <form onSubmit={handlePincodeCheck} className="flex gap-2">
+                  <input
+                    type="text"
+                    maxLength={6}
+                    placeholder="Enter 6-digit Pincode"
+                    value={pincode}
+                    onChange={(e) => {
+                      setPincode(e.target.value);
+                      if (pincodeStatus !== 'idle') setPincodeStatus('idle');
+                    }}
+                    className="flex-1 px-3.5 py-2 rounded-xl bg-white dark:bg-[#12100E] border border-border dark:border-[#2E2925] text-xs text-primary dark:text-white placeholder:text-secondary/50 focus:outline-none focus:ring-1 focus:ring-primary dark:focus:ring-[#D4AF37]"
+                  />
+                  <button
+                    type="submit"
+                    className="px-5 py-2 rounded-xl bg-primary dark:bg-[#D4AF37] text-white dark:text-black text-xs font-bold uppercase tracking-wider hover:opacity-90 transition-all shadow-xs"
+                  >
+                    {pincodeStatus === 'checking' ? 'Checking...' : 'Check'}
+                  </button>
+                </form>
 
-                <div className="p-3 rounded-xl bg-cream/30 dark:bg-[#1A1816] border border-border/60 dark:border-[#2E2925] text-center">
-                  <span className="text-[10px] text-secondary dark:text-white/50 uppercase tracking-widest block mb-0.5">Origin</span>
-                  <span className="text-xs font-semibold text-primary dark:text-white">{product.brand_id || 'Portugal'}</span>
-                </div>
-                <div className="p-3 rounded-xl bg-cream/30 dark:bg-[#1A1816] border border-border/60 dark:border-[#2E2925] text-center">
-                  <span className="text-[10px] text-secondary dark:text-white/50 uppercase tracking-widest block mb-0.5">Year</span>
-                  <span className="text-xs font-semibold text-primary dark:text-white">{product.year || '2026'}</span>
-                </div>
-              </div>
-
-              {/* Shipping & Returns Perks */}
-              <div className="border-t border-border dark:border-[#2E2925] pt-6 space-y-3">
-                {shippingInfo.map((info) => (
-                  <div key={info.text} className="flex items-center gap-3 text-secondary dark:text-white/70 text-xs">
-                    <div className="w-7 h-7 rounded-lg bg-cream dark:bg-white/10 flex items-center justify-center text-primary dark:text-[#D4AF37] shrink-0">
-                      {info.icon}
-                    </div>
-                    <span className="tracking-wide font-medium">{info.text}</span>
+                {pincodeStatus === 'valid' && (
+                  <div className="space-y-1 text-xs text-emerald-700 dark:text-emerald-400 pt-1">
+                    <p className="flex items-center gap-1.5 font-medium">
+                      <CheckCircle2 size={13} />
+                      <span>Delivery expected by <strong>{deliveryDate}</strong></span>
+                    </p>
+                    <p className="text-[11px] text-secondary dark:text-white/60 pl-5">
+                      ✓ Free Express Shipping • Cash on Delivery Available
+                    </p>
                   </div>
-                ))}
+                )}
+
+                {pincodeStatus === 'error' && (
+                  <p className="text-xs text-rose-600 dark:text-rose-400">
+                    Please enter a valid 6-digit Indian pincode.
+                  </p>
+                )}
               </div>
-            </motion.div>
+              */}
+
+              {/* 4 Pillars Trust & Reassurance Badges (Stoa Paris Style) */}
+              <div className="grid grid-cols-2 gap-3 pt-2">
+                <div className="p-3 rounded-xl bg-white dark:bg-[#1A1816] border border-border/80 dark:border-[#2E2925] flex items-center gap-2.5">
+                  <div className="w-8 h-8 rounded-lg bg-cream dark:bg-white/10 flex items-center justify-center text-primary dark:text-[#D4AF37] shrink-0">
+                    <Truck size={16} />
+                  </div>
+                  <div>
+                    <p className="text-xs font-bold text-primary dark:text-white">Free Express Shipping</p>
+                    <p className="text-[10px] text-secondary dark:text-white/60">On all orders above ₹999</p>
+                  </div>
+                </div>
+
+                <div className="p-3 rounded-xl bg-white dark:bg-[#1A1816] border border-border/80 dark:border-[#2E2925] flex items-center gap-2.5">
+                  <div className="w-8 h-8 rounded-lg bg-cream dark:bg-white/10 flex items-center justify-center text-primary dark:text-[#D4AF37] shrink-0">
+                    <RefreshCw size={16} />
+                  </div>
+                  <div>
+                    <p className="text-xs font-bold text-primary dark:text-white">15-Day Easy Returns</p>
+                    <p className="text-[10px] text-secondary dark:text-white/60">Hassle-free exchange</p>
+                  </div>
+                </div>
+
+                <div className="p-3 rounded-xl bg-white dark:bg-[#1A1816] border border-border/80 dark:border-[#2E2925] flex items-center gap-2.5">
+                  <div className="w-8 h-8 rounded-lg bg-cream dark:bg-white/10 flex items-center justify-center text-primary dark:text-[#D4AF37] shrink-0">
+                    <Shield size={16} />
+                  </div>
+                  <div>
+                    <p className="text-xs font-bold text-primary dark:text-white">100% Genuine Quality</p>
+                    <p className="text-[10px] text-secondary dark:text-white/60">Authentic heirloom weave</p>
+                  </div>
+                </div>
+
+                <div className="p-3 rounded-xl bg-white dark:bg-[#1A1816] border border-border/80 dark:border-[#2E2925] flex items-center gap-2.5">
+                  <div className="w-8 h-8 rounded-lg bg-cream dark:bg-white/10 flex items-center justify-center text-primary dark:text-[#D4AF37] shrink-0">
+                    <Lock size={16} />
+                  </div>
+                  <div>
+                    <p className="text-xs font-bold text-primary dark:text-white">Cash on Delivery</p>
+                    <p className="text-[10px] text-secondary dark:text-white/60">Available across India</p>
+                  </div>
+                </div>
+              </div>
+
+              {/* LUXURY COLLAPSIBLE ACCORDIONS (Stoa Paris Signature PDP Component) */}
+              <div className="border-t border-border dark:border-[#2E2925] pt-4 divide-y divide-border dark:divide-[#2E2925]">
+                
+                {/* 1. Product Features Highlight Grid */}
+                <div className="py-4">
+                  <button
+                    onClick={() => toggleAccordion('features')}
+                    className="w-full flex items-center justify-between text-left group"
+                  >
+                    <span className="flex items-center gap-2.5 text-sm font-semibold tracking-wide text-primary dark:text-white group-hover:text-[#D4AF37] transition-colors">
+                      <Sparkles size={16} className="text-[#D4AF37]" />
+                      Product Features & Benefits
+                    </span>
+                    <ChevronDown
+                      size={18}
+                      className={`text-secondary transition-transform duration-200 ${
+                        openAccordions.features ? 'rotate-180' : ''
+                      }`}
+                    />
+                  </button>
+
+                  <AnimatePresence>
+                    {openAccordions.features && (
+                      <motion.div
+                        initial={{ opacity: 0, height: 0 }}
+                        animate={{ opacity: 1, height: 'auto' }}
+                        exit={{ opacity: 0, height: 0 }}
+                        transition={{ duration: 0.25 }}
+                        className="overflow-hidden pt-4"
+                      >
+                        <div className="p-5 rounded-2xl bg-cream/35 dark:bg-white/5 border border-border/70 dark:border-[#2E2925] text-center text-xs text-secondary dark:text-white/60">
+                          Content to be added
+                        </div>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                </div>
+
+                {/* 2. Product Details & Specifications (Tabular Format) */}
+                <div className="py-4">
+                  <button
+                    onClick={() => toggleAccordion('specs')}
+                    className="w-full flex items-center justify-between text-left group"
+                  >
+                    <span className="flex items-center gap-2.5 text-sm font-semibold tracking-wide text-primary dark:text-white group-hover:text-[#D4AF37] transition-colors">
+                      <Ruler size={16} className="text-[#D4AF37]" />
+                      Product Details & Specifications
+                    </span>
+                    <ChevronDown
+                      size={18}
+                      className={`text-secondary transition-transform duration-200 ${
+                        openAccordions.specs ? 'rotate-180' : ''
+                      }`}
+                    />
+                  </button>
+
+                  <AnimatePresence>
+                    {openAccordions.specs && (
+                      <motion.div
+                        initial={{ opacity: 0, height: 0 }}
+                        animate={{ opacity: 1, height: 'auto' }}
+                        exit={{ opacity: 0, height: 0 }}
+                        transition={{ duration: 0.25 }}
+                        className="overflow-hidden pt-4 space-y-3"
+                      >
+                        <ProductDescriptionTable
+                          description={product.description}
+                          product={product}
+                          selectedSize={selectedSize}
+                          showTitle={false}
+                        />
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                </div>
+
+                {/* 3. Washcare Instructions */}
+                <div className="py-4">
+                  <button
+                    onClick={() => toggleAccordion('washcare')}
+                    className="w-full flex items-center justify-between text-left group"
+                  >
+                    <span className="flex items-center gap-2.5 text-sm font-semibold tracking-wide text-primary dark:text-white group-hover:text-[#D4AF37] transition-colors">
+                      <RefreshCw size={16} className="text-[#D4AF37]" />
+                      Washcare & Maintenance
+                    </span>
+                    <ChevronDown
+                      size={18}
+                      className={`text-secondary transition-transform duration-200 ${
+                        openAccordions.washcare ? 'rotate-180' : ''
+                      }`}
+                    />
+                  </button>
+
+                  <AnimatePresence>
+                    {openAccordions.washcare && (
+                      <motion.div
+                        initial={{ opacity: 0, height: 0 }}
+                        animate={{ opacity: 1, height: 'auto' }}
+                        exit={{ opacity: 0, height: 0 }}
+                        transition={{ duration: 0.25 }}
+                        className="overflow-hidden pt-4 text-xs text-secondary dark:text-white/70 space-y-2 leading-relaxed"
+                      >
+                        {(() => {
+                          const parsed = parseProductDescription(product.description);
+                          if (parsed.care && parsed.care.length > 0) {
+                            return (
+                              <div className="overflow-hidden rounded-xl border border-border/80 dark:border-[#2E2925] bg-white dark:bg-[#161412] shadow-2xs">
+                                <table className="w-full text-left border-collapse text-xs">
+                                  <tbody className="divide-y divide-border/60 dark:divide-[#26211D]">
+                                    {parsed.care.map((item, idx) => (
+                                      <tr
+                                        key={idx}
+                                        className={`transition-colors ${
+                                          idx % 2 === 0 ? 'bg-transparent' : 'bg-[#FAF8F5]/60 dark:bg-white/[0.02]'
+                                        } hover:bg-cream/40 dark:hover:bg-white/[0.04]`}
+                                      >
+                                        <td className="py-2.5 px-3.5 text-[10px] font-mono font-bold text-[#C6A96B] dark:text-[#D4AF37] w-8 text-center align-top">
+                                          {String(idx + 1).padStart(2, '0')}
+                                        </td>
+                                        <td className="py-2.5 px-3.5 text-secondary dark:text-white/80 font-normal align-top leading-relaxed">
+                                          {item}
+                                        </td>
+                                      </tr>
+                                    ))}
+                                  </tbody>
+                                </table>
+                              </div>
+                            );
+                          }
+                          return (
+                            <p className="text-center py-3 text-secondary dark:text-white/60">
+                              Content to be added
+                            </p>
+                          );
+                        })()}
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                </div>
+
+                {/* 4. Returns & Exchange Policy */}
+                <div className="py-4">
+                  <button
+                    onClick={() => toggleAccordion('returns')}
+                    className="w-full flex items-center justify-between text-left group"
+                  >
+                    <span className="flex items-center gap-2.5 text-sm font-semibold tracking-wide text-primary dark:text-white group-hover:text-[#D4AF37] transition-colors">
+                      <Shield size={16} className="text-[#D4AF37]" />
+                      Returns & Exchange Policy
+                    </span>
+                    <ChevronDown
+                      size={18}
+                      className={`text-secondary transition-transform duration-200 ${
+                        openAccordions.returns ? 'rotate-180' : ''
+                      }`}
+                    />
+                  </button>
+
+                  <AnimatePresence>
+                    {openAccordions.returns && (
+                      <motion.div
+                        initial={{ opacity: 0, height: 0 }}
+                        animate={{ opacity: 1, height: 'auto' }}
+                        exit={{ opacity: 0, height: 0 }}
+                        transition={{ duration: 0.25 }}
+                        className="overflow-hidden pt-4 text-xs text-secondary dark:text-white/70 space-y-2 leading-relaxed"
+                      >
+                        <p className="text-center py-3 text-secondary dark:text-white/60">
+                          Content to be added
+                        </p>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                </div>
+              </div>
+
+            </div>
           </div>
         </div>
 
-        {/* 3D Related Products Grid */}
+        {/* ATMOSPHERIC EDITORIAL SHOWCASE */}
+        <section className="my-16 lg:my-24 py-16 lg:py-24 bg-cream/40 dark:bg-[#151311] border-y border-border/80 dark:border-[#2E2925] overflow-hidden">
+          <div className="max-w-6xl mx-auto px-6 lg:px-12 text-center space-y-4">
+            <span className="text-[11px] font-bold uppercase tracking-[0.3em] text-[#851C25] dark:text-[#D4AF37]">
+              {product.category || 'Collection'} Spotlight
+            </span>
+            <h2 className="text-3xl sm:text-4xl font-serif font-light text-primary dark:text-white leading-tight">
+              Artisanal Heritage & Craft
+            </h2>
+            <div className="p-8 max-w-xl mx-auto rounded-2xl bg-cream/35 dark:bg-white/5 border border-border/70 dark:border-[#2E2925] text-xs text-secondary dark:text-white/60">
+              Content to be added
+            </div>
+          </div>
+        </section>
+
+        {/* COLOUR DISCLAIMER SECTION WITH MULTI-DEVICE MOCKUPS */}
+        <ColorDisclaimerSection images={product.images} productName={product.name} />
+
+        {/* CUSTOMER REVIEWS & RATINGS SECTION */}
+        <section ref={reviewsRef} id="reviews-section" className="py-14 lg:py-20 max-w-6xl mx-auto px-6 lg:px-12">
+          <div className="text-center max-w-2xl mx-auto mb-10 space-y-2">
+            <span className="text-[11px] font-bold uppercase tracking-[0.25em] text-[#851C25] dark:text-[#D4AF37]">
+              Customer Experiences
+            </span>
+            <h2 className="text-2xl sm:text-3xl font-serif font-light text-primary dark:text-white">
+              Loved by Discerning Patrons
+            </h2>
+          </div>
+
+          <div className="p-10 rounded-3xl bg-cream/35 dark:bg-[#1A1816] border border-border dark:border-[#2E2925] text-center space-y-4 max-w-xl mx-auto">
+            <p className="text-xs text-secondary dark:text-white/60">
+              Content to be added
+            </p>
+            <div>
+              <Link
+                to="/reviews"
+                className="inline-block py-2.5 px-6 rounded-xl border border-primary dark:border-[#D4AF37] text-primary dark:text-[#D4AF37] text-xs font-bold uppercase tracking-wider hover:bg-primary hover:text-white dark:hover:bg-[#D4AF37] dark:hover:text-black transition-all shadow-xs"
+              >
+                Write a Review
+              </Link>
+            </div>
+          </div>
+        </section>
+
+        {/* RELATED PRODUCTS SECTION */}
         {relatedProducts.length > 0 && (
           <section className="border-t border-border dark:border-[#2E2925] py-16 lg:py-24 px-6 bg-warm-white dark:bg-[#0D0B0A] transition-colors duration-300">
             <div className="max-w-7xl mx-auto">
@@ -561,10 +1099,10 @@ export default function ProductDetails() {
                 viewport={{ once: true }}
                 transition={{ duration: 0.5 }}
               >
-                <p className="text-xs font-medium tracking-[0.3em] uppercase text-secondary dark:text-[#D4AF37] mb-3">
-                  Complementary Textures
+                <p className="text-xs font-medium tracking-[0.3em] uppercase text-secondary dark:text-[#D4AF37] mb-2">
+                  Complete The Collection
                 </p>
-                <h2 className="text-2xl sm:text-3xl font-light text-primary dark:text-white tracking-wide">
+                <h2 className="text-2xl sm:text-3xl font-serif font-light text-primary dark:text-white tracking-wide">
                   You Might Also Admire
                 </h2>
               </motion.div>
@@ -578,7 +1116,71 @@ export default function ProductDetails() {
         )}
       </div>
 
-      <ViewInYourRoomModal product={product} isOpen={isArOpen} onClose={() => setIsArOpen(false)} />
+      {/* FLOATING STICKY BOTTOM BAR (Stoa Paris Conversion Feature) */}
+      <AnimatePresence>
+        {showStickyBar && (
+          <motion.div
+            initial={{ y: 80, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            exit={{ y: 80, opacity: 0 }}
+            transition={{ duration: 0.25, ease: 'easeOut' }}
+            className="fixed bottom-0 inset-x-0 z-40 bg-white/95 dark:bg-[#1A1816]/95 backdrop-blur-md border-t border-border dark:border-[#2E2925] px-4 sm:px-8 py-3.5 shadow-2xl"
+          >
+            <div className="max-w-7xl mx-auto flex items-center justify-between gap-4">
+              {/* Product preview */}
+              <div className="flex items-center gap-3 min-w-0">
+                <img
+                  src={product.images[0] || ''}
+                  alt=""
+                  className="w-11 h-11 rounded-xl object-cover border border-border dark:border-[#2E2925] shrink-0"
+                />
+                <div className="min-w-0">
+                  <p className="text-xs font-bold text-primary dark:text-white truncate">
+                    {product.name}
+                  </p>
+                  <p className="text-[11px] text-secondary dark:text-white/60 truncate">
+                    {selectedSize ? `${selectedSize.name} • ` : ''}₹{currentPrice.toLocaleString('en-IN')}
+                  </p>
+                </div>
+              </div>
+
+              {/* Action buttons */}
+              <div className="flex items-center gap-2.5 shrink-0">
+                <button
+                  onClick={() => addToCart(variantProduct, selectedQty)}
+                  className="px-5 py-2.5 rounded-xl bg-primary dark:bg-white text-white dark:text-black text-xs font-bold uppercase tracking-wider hover:opacity-90 transition-all flex items-center gap-2 shadow-sm"
+                >
+                  <ShoppingBag size={14} />
+                  <span className="hidden sm:inline">Add to Bag</span>
+                  <span className="sm:hidden">Add</span>
+                </button>
+
+                <button
+                  onClick={() => buyNow(variantProduct, selectedQty)}
+                  className="px-4 py-2.5 rounded-xl bg-[#25D366] hover:bg-[#20bd5a] text-white text-xs font-bold uppercase tracking-wider transition-all flex items-center gap-1.5 shadow-md"
+                >
+                  <MessageCircle size={15} />
+                  <span className="hidden sm:inline">Instant Buy</span>
+                </button>
+              </div>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Modals */}
+      <SizeGuideModal
+        isOpen={isSizeGuideOpen}
+        onClose={() => setIsSizeGuideOpen(false)}
+        category={product.category}
+      />
+
+      <ViewInYourRoomModal
+        product={product}
+        isOpen={isArOpen}
+        onClose={() => setIsArOpen(false)}
+      />
+
       <Footer />
     </div>
   );

@@ -19,6 +19,7 @@ export interface PosCartItem {
   category: string;
   image?: string;
   unitPrice: number;
+  originalPrice?: number;
   quantity: number;
   lineTotal: number;
 }

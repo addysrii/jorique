@@ -4,66 +4,15 @@ import { calculateCouponDiscount } from '../../types/coupon';
 
 const COUPONS_STORAGE_KEY = 'jorique_coupons';
 
-const DEFAULT_PRESET_COUPONS: Coupon[] = [
-  {
-    id: 'coupon-1',
-    code: 'WELCOME10',
-    discountType: 'percentage',
-    discountValue: 10,
-    minOrderAmount: 1500,
-    maxDiscountAmount: 1000,
-    timesUsed: 14,
-    isActive: true,
-    description: '10% off for first-time walk-in and boutique clients',
-    createdAt: new Date().toISOString(),
-  },
-  {
-    id: 'coupon-2',
-    code: 'VIP15',
-    discountType: 'percentage',
-    discountValue: 15,
-    minOrderAmount: 5000,
-    maxDiscountAmount: 2500,
-    timesUsed: 8,
-    isActive: true,
-    description: '15% off for VIP collectors & high-volume orders',
-    createdAt: new Date().toISOString(),
-  },
-  {
-    id: 'coupon-3',
-    code: 'FESTIVE500',
-    discountType: 'fixed',
-    discountValue: 500,
-    minOrderAmount: 3000,
-    timesUsed: 22,
-    isActive: true,
-    description: 'Flat ₹500 discount on festival & gift collection purchases',
-    createdAt: new Date().toISOString(),
-  },
-  {
-    id: 'coupon-4',
-    code: 'MAISON1000',
-    discountType: 'fixed',
-    discountValue: 1000,
-    minOrderAmount: 8000,
-    timesUsed: 5,
-    isActive: true,
-    description: 'Flat ₹1,000 privilege reduction on luxury silk & duvet sets',
-    createdAt: new Date().toISOString(),
-  },
-];
-
 function getLocalCoupons(): Coupon[] {
   try {
     const raw = localStorage.getItem(COUPONS_STORAGE_KEY);
-    if (!raw) {
-      localStorage.setItem(COUPONS_STORAGE_KEY, JSON.stringify(DEFAULT_PRESET_COUPONS));
-      return DEFAULT_PRESET_COUPONS;
-    }
+    if (!raw) return [];
     const parsed = JSON.parse(raw);
-    return Array.isArray(parsed) && parsed.length > 0 ? parsed : DEFAULT_PRESET_COUPONS;
+    const realOnly = Array.isArray(parsed) ? parsed.filter(c => !c.id?.startsWith('coupon-')) : [];
+    return realOnly;
   } catch {
-    return DEFAULT_PRESET_COUPONS;
+    return [];
   }
 }
 

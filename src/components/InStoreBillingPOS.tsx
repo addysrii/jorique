@@ -120,10 +120,11 @@ export default function InStoreBillingPOS({ products, initialCouponCode }: InSto
     return products.filter((p) => {
       const matchesCategory = selectedCategory === 'All' || p.category === selectedCategory;
       const q = productSearch.toLowerCase().trim();
+      const pSku = (p.sku || '').toLowerCase();
       const matchesSearch =
         !q ||
         p.name.toLowerCase().includes(q) ||
-        (p.sku && p.sku.toLowerCase().includes(q)) ||
+        (pSku && (pSku.includes(q) || q.includes(pSku))) ||
         (p.category && p.category.toLowerCase().includes(q));
       return matchesCategory && matchesSearch;
     });
@@ -141,7 +142,14 @@ export default function InStoreBillingPOS({ products, initialCouponCode }: InSto
   const addToCart = (product: Product) => {
     setCart((prev) => {
       const idx = prev.findIndex((item) => item.productId === product.id);
-      const price = Number(product.price) || 0;
+      const originalPrice = Number(product.price) || 0;
+      // ALWAYS prioritize discounted price for billing and invoicing
+      const effectivePrice = Number(
+        product.discount_price && product.discount_price > 0 && product.discount_price < originalPrice
+          ? product.discount_price
+          : product.price
+      ) || 0;
+
       if (idx >= 0) {
         const updated = [...prev];
         const newQty = updated[idx].quantity + 1;
@@ -158,9 +166,10 @@ export default function InStoreBillingPOS({ products, initialCouponCode }: InSto
           sku: product.sku || 'JR-GEN',
           category: product.category,
           image: product.images?.[0],
-          unitPrice: price,
+          unitPrice: effectivePrice,
+          originalPrice: originalPrice > effectivePrice ? originalPrice : undefined,
           quantity: 1,
-          lineTotal: price,
+          lineTotal: effectivePrice,
         };
         return [...prev, newItem];
       }
@@ -628,9 +637,16 @@ export default function InStoreBillingPOS({ products, initialCouponCode }: InSto
                         <p className="text-[10px] font-mono text-secondary dark:text-white/50 truncate">
                           {p.sku || 'No SKU'}
                         </p>
-                        <p className="text-xs font-bold text-primary dark:text-[#D4AF37] mt-1">
-                          ₹{Number(p.price).toLocaleString('en-IN')}
-                        </p>
+                        <div className="flex items-baseline gap-1.5 mt-1">
+                          <p className="text-xs font-bold text-primary dark:text-[#D4AF37]">
+                            ₹{Number(p.discount_price && p.discount_price > 0 && p.discount_price < p.price ? p.discount_price : p.price).toLocaleString('en-IN')}
+                          </p>
+                          {p.discount_price && p.discount_price < p.price && (
+                            <p className="text-[10px] text-secondary/50 line-through font-normal">
+                              ₹{Number(p.price).toLocaleString('en-IN')}
+                            </p>
+                          )}
+                        </div>
                       </div>
                     </div>
 
@@ -696,9 +712,17 @@ export default function InStoreBillingPOS({ products, initialCouponCode }: InSto
                     <p className="font-semibold text-primary dark:text-white truncate">
                       {item.name}
                     </p>
-                    <p className="text-[10px] font-mono text-secondary dark:text-white/60">
-                      ₹{item.unitPrice.toLocaleString('en-IN')} × {item.quantity}
-                    </p>
+                    <div className="flex items-baseline gap-1.5 text-[10px] font-mono text-secondary dark:text-white/60">
+                      <span className="font-bold text-primary dark:text-[#D4AF37]">
+                        ₹{item.unitPrice.toLocaleString('en-IN')}
+                      </span>
+                      {item.originalPrice && item.originalPrice > item.unitPrice && (
+                        <span className="line-through text-secondary/40">
+                          ₹{item.originalPrice.toLocaleString('en-IN')}
+                        </span>
+                      )}
+                      <span>× {item.quantity}</span>
+                    </div>
                   </div>
 
                   {/* Quantity Stepper */}

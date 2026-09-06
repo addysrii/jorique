@@ -1,10 +1,11 @@
 import { useState, useEffect } from 'react';
-import { X, Save, Loader2, Pencil, QrCode, Download, Copy } from 'lucide-react';
+import { X, Save, Loader2, Pencil, QrCode, Download, Copy, Plus, Sparkles } from 'lucide-react';
 import { productService } from '../lib/api/products';
 import { getProductWithSerialsRequest } from '../lib/api';
 import { Product } from '../types';
 import { supabase } from '../lib/supabase';
 import { getBadgeColors } from '../lib/constants/collections';
+import ProductDescriptionGrid from './ProductDescriptionGrid';
 
 interface AdminProductModifyButtonProps {
   product: Product;
@@ -61,6 +62,25 @@ export default function AdminProductModifyButton({ product, onProductUpdated }: 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
+  };
+
+  const handleAddBullet = () => {
+    const current = formData.description || '';
+    const addition = current.length > 0 && !current.endsWith('\n') ? '\n• ' : '• ';
+    setFormData(prev => ({ ...prev, description: current + addition }));
+  };
+
+  const handleAddKeyValue = (label = 'Material') => {
+    const current = formData.description || '';
+    const addition = current.length > 0 && !current.endsWith('\n') ? `\n${label}: ` : `${label}: `;
+    setFormData(prev => ({ ...prev, description: current + addition }));
+  };
+
+  const handleInsertGridTemplate = () => {
+    const current = formData.description || '';
+    const template = `Material: 100% Extra-Long Staple Cotton\nWeave: 800 Thread Count Sateen\nDimensions: 274 x 274 cm (108 x 108 in)\nCare: Machine wash cold, gentle cycle\nFit: Deep elastic pockets up to 18" mattress\nOrigin: Certified Master Mill`;
+    const finalVal = current.trim().length > 0 ? `${current.trim()}\n\n${template}` : template;
+    setFormData(prev => ({ ...prev, description: finalVal }));
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -252,14 +272,55 @@ export default function AdminProductModifyButton({ product, onProductUpdated }: 
               </div>
 
               <div>
-                <label className="block text-xs font-semibold uppercase tracking-wider text-secondary dark:text-white/70 mb-1.5">Description</label>
+                <div className="flex flex-wrap items-center justify-between gap-2 mb-1.5">
+                  <label className="block text-xs font-semibold uppercase tracking-wider text-secondary dark:text-white/70">
+                    Description & Specifications
+                  </label>
+                  <div className="flex flex-wrap items-center gap-1.5">
+                    <button
+                      type="button"
+                      onClick={handleInsertGridTemplate}
+                      className="inline-flex items-center gap-1 text-[11px] font-bold text-[#A67C1E] dark:text-[#E5C158] hover:underline bg-[#D4AF37]/10 px-2 py-0.5 rounded-lg border border-[#D4AF37]/30 transition-colors"
+                      title="Insert standard luxury specifications grid"
+                    >
+                      <Sparkles size={11} /> Specs Grid Template
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => handleAddKeyValue('Material')}
+                      className="inline-flex items-center gap-1 text-[11px] font-semibold text-secondary dark:text-white/70 hover:text-primary dark:hover:text-white bg-cream dark:bg-[#1A1816] px-2 py-0.5 rounded-lg border border-border dark:border-[#2E2925] transition-colors"
+                    >
+                      <Plus size={10} /> + Key: Value
+                    </button>
+                    <button
+                      type="button"
+                      onClick={handleAddBullet}
+                      className="inline-flex items-center gap-1 text-[11px] font-semibold text-secondary dark:text-white/70 hover:text-primary dark:hover:text-white bg-cream dark:bg-[#1A1816] px-2 py-0.5 rounded-lg border border-border dark:border-[#2E2925] transition-colors"
+                    >
+                      <Plus size={10} /> + Bullet
+                    </button>
+                  </div>
+                </div>
                 <textarea
                   name="description"
                   value={formData.description}
                   onChange={handleChange}
-                  rows={3}
-                  className="w-full px-4 py-2.5 bg-cream/30 dark:bg-[#100E0D] border border-border dark:border-[#2E2925] rounded-xl text-sm text-primary dark:text-white focus:outline-none focus:border-primary dark:focus:border-[#D4AF37] resize-none"
+                  rows={4}
+                  placeholder={'Describe the product or add specs (e.g. Material: Cotton)...\n• Premium hand-finished trim'}
+                  className="w-full px-4 py-2.5 bg-cream/30 dark:bg-[#100E0D] border border-border dark:border-[#2E2925] rounded-xl text-sm text-primary dark:text-white focus:outline-none focus:border-primary dark:focus:border-[#D4AF37] resize-y"
                 />
+                <p className="mt-1 text-[11px] text-secondary dark:text-white/50">
+                  Tip: Use <code className="font-mono text-primary dark:text-[#D4AF37]">Key: Value</code> or bullets (<code className="font-mono text-primary dark:text-[#D4AF37]">•</code>) to format specifications as a luxury grid.
+                </p>
+
+                {formData.description && formData.description.trim().length > 0 && (
+                  <div className="mt-2.5 p-3 rounded-xl bg-cream/20 dark:bg-[#100E0D]/60 border border-border/70 dark:border-[#2E2925]">
+                    <div className="text-[10px] font-bold uppercase tracking-wider text-secondary dark:text-white/50 mb-1.5">
+                      Storefront Grid Preview
+                    </div>
+                    <ProductDescriptionGrid description={formData.description} />
+                  </div>
+                )}
               </div>
 
               {/* QR Codes Section */}

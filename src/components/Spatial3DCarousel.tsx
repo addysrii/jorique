@@ -4,6 +4,7 @@ import { ChevronLeft, ChevronRight, Sparkles, ArrowRight, Eye } from 'lucide-rea
 import { Link } from 'react-router-dom';
 import Parallax3DCard from './Parallax3DCard';
 import { productService } from '../lib/api/products';
+import { getBadgeColors } from '../lib/constants/collections';
 
 interface CarouselItem {
   id: string;
@@ -21,6 +22,7 @@ export default function Spatial3DCarousel() {
   const [items, setItems] = useState<CarouselItem[]>([]);
   const [activeIndex, setActiveIndex] = useState(0);
   const [isMobile, setIsMobile] = useState(false);
+  const [isHovered, setIsHovered] = useState(false);
   const touchStartX = useRef<number | null>(null);
 
   useEffect(() => {
@@ -28,18 +30,19 @@ export default function Spatial3DCarousel() {
       try {
         const prods = await productService.getProducts();
         if (prods && prods.length > 0) {
-          const mapped: CarouselItem[] = prods.map((p) => ({
+          const withImages = prods.filter((p) => p.images && p.images.length > 0);
+          const mapped: CarouselItem[] = (withImages.length > 0 ? withImages : prods).map((p) => ({
             id: p.id,
             sku: p.sku || 'JRQ-2026',
             title: p.name,
             category: p.category || 'Luxury Bedding',
             badge: p.badge || 'Artisanal Edition',
             price: `₹${(p.discount_price || p.price).toLocaleString('en-IN')}`,
-            image: p.images[0] || '/Products/1.jpg',
+            image: p.images?.[0] || '/Products/1.jpg',
             tagline: p.description || 'Meticulously woven with extra-long staple certified organic fibers.',
             metric: p.tags && p.tags.length > 0 ? p.tags[0] : 'Heirloom Quality',
           }));
-          setItems(mapped);
+          setItems(mapped.slice(0, 7));
         }
       } catch (err) {
         console.error('Spatial3DCarousel API load error:', err);
@@ -57,6 +60,16 @@ export default function Spatial3DCarousel() {
   }, []);
 
   const totalItems = items.length;
+
+  // Auto-advance every 6 seconds when not hovered
+  useEffect(() => {
+    if (isHovered || totalItems <= 1) return;
+    const interval = setInterval(() => {
+      setActiveIndex((curr) => (curr + 1) % totalItems);
+    }, 6000);
+    return () => clearInterval(interval);
+  }, [isHovered, totalItems]);
+
   if (totalItems === 0) return null;
 
   const prev = () => setActiveIndex((curr) => (curr - 1 + totalItems) % totalItems);
@@ -75,7 +88,11 @@ export default function Spatial3DCarousel() {
   };
 
   return (
-    <section className="py-20 sm:py-28 lg:py-40 bg-gradient-to-b from-[#FAF8F5] via-[#F3EFE9] to-[#FAF8F5] dark:from-[#181615] dark:via-[#1F1C1A] dark:to-[#181615] text-primary dark:text-white overflow-hidden relative select-none border-b border-border/80 dark:border-[#2E2925] transition-colors duration-300">
+    <section
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
+      className="py-20 sm:py-28 lg:py-40 bg-gradient-to-b from-[#FAF8F5] via-[#F3EFE9] to-[#FAF8F5] dark:from-[#181615] dark:via-[#1F1C1A] dark:to-[#181615] text-primary dark:text-white overflow-hidden relative select-none border-b border-border/80 dark:border-[#2E2925] transition-colors duration-300"
+    >
       {/* Ambient background lights */}
       <div className="absolute top-1/2 left-1/4 -translate-y-1/2 w-72 sm:w-96 h-72 sm:h-96 bg-[#D4AF37]/10 dark:bg-[#D4AF37]/15 rounded-full blur-[100px] sm:blur-[140px] pointer-events-none" />
       <div className="absolute top-1/2 right-1/4 -translate-y-1/2 w-72 sm:w-96 h-72 sm:h-96 bg-[#C4A482]/10 dark:bg-[#C4A482]/15 rounded-full blur-[100px] sm:blur-[140px] pointer-events-none" />
@@ -101,14 +118,14 @@ export default function Spatial3DCarousel() {
             <button
               onClick={prev}
               aria-label="Previous masterpiece"
-              className="w-10 sm:w-12 h-10 sm:h-12 rounded-2xl bg-white dark:bg-white/5 border border-border dark:border-white/15 flex items-center justify-center text-primary dark:text-white hover:bg-primary hover:text-white dark:hover:bg-white dark:hover:text-black transition-all duration-300 shadow-md"
+              className="w-10 sm:w-12 h-10 sm:h-12 rounded-2xl bg-white dark:bg-white/5 border border-border dark:border-white/15 flex items-center justify-center text-primary dark:text-white hover:bg-primary hover:text-white dark:hover:bg-white dark:hover:text-black transition-all duration-300 shadow-md cursor-pointer"
             >
               <ChevronLeft size={18} />
             </button>
             <button
               onClick={next}
               aria-label="Next masterpiece"
-              className="w-10 sm:w-12 h-10 sm:h-12 rounded-2xl bg-white dark:bg-white/5 border border-border dark:border-white/15 flex items-center justify-center text-primary dark:text-white hover:bg-primary hover:text-white dark:hover:bg-white dark:hover:text-black transition-all duration-300 shadow-md"
+              className="w-10 sm:w-12 h-10 sm:h-12 rounded-2xl bg-white dark:bg-white/5 border border-border dark:border-white/15 flex items-center justify-center text-primary dark:text-white hover:bg-primary hover:text-white dark:hover:bg-white dark:hover:text-black transition-all duration-300 shadow-md cursor-pointer"
             >
               <ChevronRight size={18} />
             </button>
@@ -139,6 +156,8 @@ export default function Spatial3DCarousel() {
               const rotateY = offset * (isMobile ? -18 : -25); // 3D curve angle
               const scale = isCenter ? 1.02 : 1 - Math.abs(offset) * (isMobile ? 0.12 : 0.15);
               const opacity = isCenter ? 1 : Math.max(0.4, 1 - Math.abs(offset) * 0.45);
+
+              const badgeColors = getBadgeColors(item.badge);
 
               return (
                 <motion.div
@@ -186,7 +205,14 @@ export default function Spatial3DCarousel() {
                         className="absolute top-5 left-5 z-20 pointer-events-none transform-style-3d"
                         style={{ transform: 'translateZ(35px)' }}
                       >
-                        <span className="px-3 py-1 rounded-full bg-white/95 dark:bg-black/60 backdrop-blur-md border border-border dark:border-white/20 text-[10px] font-bold tracking-widest uppercase text-primary dark:text-[#D4AF37] shadow-md">
+                        <span
+                          className="px-3 py-1 rounded-full backdrop-blur-md border text-[10px] font-bold tracking-widest uppercase shadow-md"
+                          style={{
+                            backgroundColor: badgeColors.bg,
+                            color: badgeColors.text,
+                            borderColor: badgeColors.border || 'rgba(255,255,255,0.25)',
+                          }}
+                        >
                           {item.badge}
                         </span>
                       </div>
@@ -209,7 +235,7 @@ export default function Spatial3DCarousel() {
                         <span className="text-[10px] uppercase font-bold tracking-[0.25em] text-[#D4AF37] block mb-1">
                           {item.category}
                         </span>
-                        <h3 className="text-xl font-light text-white tracking-wide mb-1 leading-snug drop-shadow-md">
+                        <h3 className="text-xl font-light text-white tracking-wide mb-1 leading-snug drop-shadow-md line-clamp-1">
                           {item.title}
                         </h3>
                         <p className="text-xs text-white/80 line-clamp-2 mb-4 font-light leading-relaxed">
@@ -244,7 +270,7 @@ export default function Spatial3DCarousel() {
             <button
               key={i}
               onClick={() => setActiveIndex(i)}
-              className={`h-1.5 rounded-full transition-all duration-300 ${
+              className={`h-1.5 rounded-full transition-all duration-300 cursor-pointer ${
                 activeIndex === i ? 'w-8 bg-primary dark:bg-[#D4AF37]' : 'w-2 bg-secondary/30 dark:bg-white/20 hover:bg-secondary/60'
               }`}
             />
