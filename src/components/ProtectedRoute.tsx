@@ -21,10 +21,20 @@ export default function ProtectedRoute({ children, role }: ProtectedRouteProps) 
   }
 
   if (!user) {
-    return <Navigate to="/login" state={{ from: location.pathname }} replace />;
+    const targetLogin = role === 'admin' ? '/admin/login' : '/login';
+    return <Navigate to={targetLogin} state={{ from: location.pathname }} replace />;
   }
 
   if (role && user.role !== role) {
+    if (role === 'admin') {
+      return (
+        <Navigate
+          to="/admin/login"
+          state={{ from: location.pathname, error: 'Access Denied: Administrative privileges required.' }}
+          replace
+        />
+      );
+    }
     return <Navigate to={user.role === 'admin' ? '/admin' : '/dashboard'} replace />;
   }
 

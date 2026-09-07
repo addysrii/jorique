@@ -1,6 +1,14 @@
 import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import type { AppUser } from '../types';
-import { googleAuthRequest, loginRequest, meRequest, signupRequest, verifyOtpRequest } from '../lib/api';
+import {
+  googleAuthRequest,
+  loginRequest,
+  meRequest,
+  signupRequest,
+  verifyOtpRequest,
+  sendWhatsAppOtpRequest,
+  verifyWhatsAppOtpRequest,
+} from '../lib/api';
 
 interface AuthContextValue {
   user: AppUser | null;
@@ -15,6 +23,8 @@ interface AuthContextValue {
     role?: AppUser['role']
   ) => Promise<{ error: string | null; email?: string }>;
   verifyOtp: (email: string, otp: string) => Promise<{ error: string | null }>;
+  sendWhatsAppOtp: (phone: string) => Promise<{ error: string | null; whatsappUrl?: string; whatsappWebUrl?: string; devOtp?: string }>;
+  verifyWhatsAppOtp: (phone: string, otp: string, fullName?: string) => Promise<{ error: string | null }>;
   signOut: () => Promise<void>;
 }
 
@@ -108,6 +118,42 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   };
 
+  const sendWhatsAppOtp = async (
+    phone: string
+  ): Promise<{ error: string | null; whatsappUrl?: string; whatsappWebUrl?: string; devOtp?: string }> => {
+    try {
+      const result = await sendWhatsAppOtpRequest(phone);
+      return {
+        error: null,
+        whatsappUrl: result.whatsappUrl,
+        whatsappWebUrl: result.whatsappWebUrl,
+        devOtp: result.devOtp,
+      };
+    } catch (error) {
+      return {
+        error: error instanceof Error ? error.message : 'Unable to send WhatsApp OTP.',
+      };
+    }
+  };
+
+  const verifyWhatsAppOtp = async (
+    phone: string,
+    otp: string,
+    fullName?: string
+  ): Promise<{ error: string | null }> => {
+    try {
+      const result = await verifyWhatsAppOtpRequest(phone, otp, fullName);
+      setUser(result.user);
+      setToken(result.token);
+      saveToken(result.token);
+      return { error: null };
+    } catch (error) {
+      return {
+        error: error instanceof Error ? error.message : 'Unable to verify WhatsApp OTP.',
+      };
+    }
+  };
+
   const signOut = async () => {
     saveToken(null);
     setUser(null);
@@ -116,7 +162,18 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   return (
     <AuthContext.Provider
-      value={{ user, token, loading, signIn, signInWithGoogle, signUp, verifyOtp, signOut }}
+      value={{
+        user,
+        token,
+        loading,
+        signIn,
+        signInWithGoogle,
+        signUp,
+        verifyOtp,
+        sendWhatsAppOtp,
+        verifyWhatsAppOtp,
+        signOut,
+      }}
     >
       {children}
     </AuthContext.Provider>

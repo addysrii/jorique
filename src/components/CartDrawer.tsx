@@ -168,6 +168,17 @@ export default function CartDrawer() {
                 <span>Checkout via WhatsApp</span>
                 <ArrowRight size={16} />
               </button>
+
+              <p className="text-[10px] text-center text-secondary/70 dark:text-white/50">
+                Pre-dispatch inspected • 48-hr defect exchange guarantee •{' '}
+                <Link
+                  to="/return-policy"
+                  onClick={() => setIsCartOpen(false)}
+                  className="text-[#851C25] dark:text-[#D4AF37] underline hover:opacity-80"
+                >
+                  Return Policy
+                </Link>
+              </p>
             </div>
           )}
 

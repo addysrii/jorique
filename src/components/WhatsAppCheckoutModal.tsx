@@ -1,6 +1,7 @@
 import { useState } from 'react';
+import { Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, MessageCircle, MapPin, User, Phone, FileText, CheckCircle2, ShieldCheck, ShoppingBag } from 'lucide-react';
+import { X, MessageCircle, MapPin, User, Phone, FileText, CheckCircle2, ShieldCheck, ShoppingBag, Video, ArrowRight } from 'lucide-react';
 import { useCart } from '../context/CartContext';
 import { useAuth } from '../context/AuthContext';
 import { orderService } from '../lib/api/orders';
@@ -92,6 +93,8 @@ ${formattedItems}
 💰 *GRAND TOTAL:* ₹${subtotal.toLocaleString('en-IN')}
 🚚 *Delivery:* FREE Express Delivery
 ────────────────────────────
+⚠️ *NOTICE:* Handcrafted & pre-dispatch inspected. For transit damage or defect claims, a continuous 360° unboxing video recorded prior to opening is mandatory within 48 hours of delivery (care@jorique.in).
+────────────────────────────
 Please confirm this order and advise on delivery timeline. Thank you!`;
 
     const encodedMessage = encodeURIComponent(message);
@@ -163,7 +166,26 @@ Please confirm this order and advise on delivery timeline. Thank you!`;
                 </p>
               </div>
 
-              <div className="pt-4 flex flex-col sm:flex-row items-center justify-center gap-3">
+              {/* Mandatory Unboxing Video Reminder */}
+              <div className="p-4 rounded-2xl bg-amber-500/10 dark:bg-amber-500/15 border border-amber-500/30 text-left space-y-2 max-w-md mx-auto">
+                <div className="flex items-center gap-2 text-amber-800 dark:text-amber-300 font-semibold text-xs uppercase tracking-wider">
+                  <Video size={15} />
+                  <span>Important Delivery Reminder</span>
+                </div>
+                <p className="text-xs text-secondary dark:text-white/80 leading-relaxed">
+                  Upon arrival, please record a <strong>continuous 360° unboxing video</strong> starting <em>before</em> breaking the outer seal. Defect and damage claims must be registered within <strong>48 hours</strong> of delivery.
+                </p>
+                <Link
+                  to="/return-policy"
+                  target="_blank"
+                  className="inline-flex items-center gap-1 text-[11px] font-bold text-[#851C25] dark:text-[#D4AF37] hover:underline pt-1"
+                >
+                  <span>Review Return & Exchange Policy</span>
+                  <ArrowRight size={12} />
+                </Link>
+              </div>
+
+              <div className="pt-2 flex flex-col sm:flex-row items-center justify-center gap-3">
                 <button
                   onClick={handleClose}
                   className="w-full sm:w-auto px-8 py-3.5 rounded-xl bg-primary dark:bg-[#D4AF37] text-white dark:text-black text-xs font-bold uppercase tracking-wider hover:opacity-90 transition-all shadow-md"
@@ -314,6 +336,18 @@ Please confirm this order and advise on delivery timeline. Thank you!`;
               <div className="flex items-center gap-2 p-3 rounded-xl bg-emerald-50 dark:bg-emerald-950/30 border border-emerald-200 dark:border-emerald-800 text-[11px] text-emerald-800 dark:text-emerald-300">
                 <ShieldCheck size={16} className="shrink-0" />
                 <span>You will chat directly with JORIQUE Concierge on WhatsApp to confirm payment & dispatch.</span>
+              </div>
+
+              {/* Policy Acknowledgement */}
+              <div className="text-[11px] text-secondary dark:text-white/60 leading-relaxed px-1">
+                By placing this order, you acknowledge that all items undergo pre-dispatch inspection. For transit damage or defects, claims must be made within 48 hours accompanied by a mandatory 360° unboxing video.{' '}
+                <Link
+                  to="/return-policy"
+                  target="_blank"
+                  className="text-[#851C25] dark:text-[#D4AF37] underline font-medium hover:opacity-80"
+                >
+                  Return & Exchange Policy
+                </Link>
               </div>
 
               {/* Submit CTA Button */}

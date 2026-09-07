@@ -320,7 +320,7 @@ END:VCARD`;
               <motion.h1
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
-                className="text-4xl md:text-5xl font-light tracking-[0.25em] pl-[0.25em] text-primary dark:text-white uppercase text-center"
+                className="font-logo font-normal text-4xl md:text-5xl tracking-[0.25em] pl-[0.25em] text-primary dark:text-white uppercase text-center"
               >
                 JORIQUE
               </motion.h1>

@@ -1,6 +1,7 @@
 import { Router } from 'express';
 import { supabase } from '../supabase.js';
 import { adminRequired, authRequired } from '../middleware/auth.js';
+import { sendOrderWhatsAppNotification, normalizePhoneNumber } from '../services/whatsapp.js';
 
 const router = Router();
 const ORDER_STATUSES = ['pending', 'confirmed', 'processing', 'shipped', 'delivered', 'cancelled', 'returned'];
@@ -60,15 +61,92 @@ router.post('/', authRequired, async (req, res) => {
   } catch (error) { res.status(400).json({ success: false, message: message(error) }); }
 });
 
+function extractCustomerInfo(order) {
+  let phone = '';
+  let name = '';
+
+  if (order.items) {
+    if (typeof order.items === 'object' && !Array.isArray(order.items)) {
+      phone = order.items.customer_phone || order.items.phone || '';
+      name = order.items.customer_name || order.items.name || '';
+    } else if (Array.isArray(order.items)) {
+      const itemWithPhone = order.items.find((i) => i && (i.customer_phone || i.phone));
+      if (itemWithPhone) {
+        phone = itemWithPhone.customer_phone || itemWithPhone.phone;
+        name = itemWithPhone.customer_name || itemWithPhone.name;
+      }
+    }
+  }
+
+  if (!phone && order.shipping_address) {
+    const match = order.shipping_address.match(/(?:\+?\d{1,3}[- ]?)?\d{10}/);
+    if (match) phone = match[0];
+  }
+
+  return { phone: phone || '', name: name || 'Valued Patron' };
+}
+
 router.put('/:id/status', authRequired, adminRequired, async (req, res) => {
   try {
-    const { status } = req.body || {};
+    const { status, notify_whatsapp, tracking_number, custom_note, customer_phone } = req.body || {};
     if (!ORDER_STATUSES.includes(status)) return res.status(400).json({ success: false, message: 'Invalid order status.' });
+    
     const { data, error } = await supabase.from('orders').update({ status }).eq('id', req.params.id).select('*').maybeSingle();
     if (error) throw error;
     if (!data) return res.status(404).json({ success: false, message: 'Order not found.' });
-    res.json({ success: true, data });
+
+    let whatsappResult = null;
+    if (notify_whatsapp) {
+      const customerInfo = extractCustomerInfo(data);
+      const targetPhone = customer_phone || customerInfo.phone;
+      if (targetPhone) {
+        const itemsList = Array.isArray(data.items) ? data.items : (data.items?.products || []);
+        whatsappResult = await sendOrderWhatsAppNotification({
+          orderNumber: data.order_number,
+          customerPhone: targetPhone,
+          customerName: customerInfo.name,
+          status,
+          total: data.total,
+          itemsCount: itemsList.length || 1,
+          trackingNumber: tracking_number,
+          customNote: custom_note,
+        });
+      }
+    }
+
+    res.json({ success: true, data, whatsapp: whatsappResult });
   } catch (error) { res.status(400).json({ success: false, message: message(error) }); }
+});
+
+router.post('/:id/notify-whatsapp', authRequired, adminRequired, async (req, res) => {
+  try {
+    const { phone: overridePhone, status: overrideStatus, tracking_number, custom_note } = req.body || {};
+    const { data: order, error } = await supabase.from('orders').select('*').eq('id', req.params.id).maybeSingle();
+    if (error) throw error;
+    if (!order) return res.status(404).json({ success: false, message: 'Order not found.' });
+
+    const customerInfo = extractCustomerInfo(order);
+    const targetPhone = overridePhone || customerInfo.phone;
+    if (!targetPhone) {
+      return res.status(400).json({ success: false, message: 'Customer phone number not found on order. Please provide phone number.' });
+    }
+
+    const itemsList = Array.isArray(order.items) ? order.items : (order.items?.products || []);
+    const whatsappResult = await sendOrderWhatsAppNotification({
+      orderNumber: order.order_number,
+      customerPhone: targetPhone,
+      customerName: customerInfo.name,
+      status: overrideStatus || order.status,
+      total: order.total,
+      itemsCount: itemsList.length || 1,
+      trackingNumber: tracking_number,
+      customNote: custom_note,
+    });
+
+    res.json({ success: true, message: 'WhatsApp notification sent.', whatsapp: whatsappResult });
+  } catch (error) {
+    res.status(400).json({ success: false, message: message(error) });
+  }
 });
 
 export default router;

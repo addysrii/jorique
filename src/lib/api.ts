@@ -52,6 +52,59 @@ export function signupRequest(fullName: string, email: string, password: string,
   });
 }
 
+export interface WhatsAppOtpResponse {
+  success: boolean;
+  message: string;
+  phone: string;
+  whatsappUrl?: string;
+  whatsappWebUrl?: string;
+  devOtp?: string;
+}
+
+export function sendWhatsAppOtpRequest(phone: string) {
+  return apiRequest<WhatsAppOtpResponse>('/api/auth/whatsapp/send-otp', {
+    method: 'POST',
+    body: JSON.stringify({ phone }),
+  });
+}
+
+export function verifyWhatsAppOtpRequest(phone: string, otp: string, fullName?: string) {
+  return apiRequest<AuthResponse>('/api/auth/whatsapp/verify-otp', {
+    method: 'POST',
+    body: JSON.stringify({ phone, otp, fullName }),
+  });
+}
+
+export function sendOrderWhatsAppNotificationRequest(
+  orderId: string,
+  payload: { status?: string; tracking_number?: string; custom_note?: string; phone?: string },
+  token: string
+) {
+  return apiRequest<{ success: boolean; message: string; whatsapp?: { whatsappUrl?: string } }>(
+    `/api/orders/${orderId}/notify-whatsapp`,
+    {
+      method: 'POST',
+      body: JSON.stringify(payload),
+      token,
+    }
+  );
+}
+
+export function updateOrderStatusWithWhatsAppRequest(
+  orderId: string,
+  payload: { status: string; notify_whatsapp?: boolean; tracking_number?: string; custom_note?: string; customer_phone?: string },
+  token: string
+) {
+  return apiRequest<{ success: boolean; data: any; whatsapp?: { whatsappUrl?: string } }>(
+    `/api/orders/${orderId}/status`,
+    {
+      method: 'PUT',
+      body: JSON.stringify(payload),
+      token,
+    }
+  );
+}
+
 export function verifyOtpRequest(email: string, otp: string) {
   return apiRequest<AuthResponse>('/api/auth/verify-otp', {
     method: 'POST',
@@ -302,6 +355,10 @@ export default {
   loginRequest,
   signupRequest,
   verifyOtpRequest,
+  sendWhatsAppOtpRequest,
+  verifyWhatsAppOtpRequest,
+  sendOrderWhatsAppNotificationRequest,
+  updateOrderStatusWithWhatsAppRequest,
   googleAuthRequest,
   meRequest,
   dashboardRequest,

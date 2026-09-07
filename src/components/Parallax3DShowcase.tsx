@@ -1,5 +1,5 @@
 import { useState, useEffect, useMemo, useRef } from 'react';
-import { motion, AnimatePresence, useMotionValue, useSpring, useTransform } from 'framer-motion';
+import { motion, AnimatePresence, useMotionValue, useSpring, useTransform, type Variants } from 'framer-motion';
 import {
   Sparkles,
   ShoppingBag,
@@ -10,7 +10,6 @@ import {
   Check,
   Eye,
   Table as TableIcon,
-  ShieldCheck,
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { productService } from '../lib/api/products';
@@ -186,7 +185,7 @@ function FullWidthCategoryCarousel({
   };
 
   // Cinematic 3D Motion Variants with depth perspective
-  const slideVariants = {
+  const slideVariants: Variants = {
     enter: (dir: number) => ({
       x: dir > 0 ? 90 : -90,
       rotateY: dir > 0 ? 8 : -8,
@@ -202,7 +201,7 @@ function FullWidthCategoryCarousel({
       filter: 'blur(0px)',
       transition: {
         duration: 0.65,
-        ease: [0.16, 1, 0.3, 1],
+        ease: [0.16, 1, 0.3, 1] as const,
       },
     },
     exit: (dir: number) => ({
@@ -213,7 +212,7 @@ function FullWidthCategoryCarousel({
       filter: 'blur(8px)',
       transition: {
         duration: 0.4,
-        ease: [0.16, 1, 0.3, 1],
+        ease: [0.16, 1, 0.3, 1] as const,
       },
     }),
   };
@@ -334,7 +333,7 @@ function FullWidthCategoryCarousel({
                       key={currentImage}
                       initial={{ scale: 1.1, opacity: 0.8 }}
                       animate={{ scale: 1, opacity: 1 }}
-                      transition={{ duration: 0.95, ease: [0.16, 1, 0.3, 1] }}
+                      transition={{ duration: 0.95, ease: [0.16, 1, 0.3, 1] as const }}
                       style={{
                         x: imageCounterX,
                         y: imageCounterY,

@@ -4,6 +4,7 @@ import { z } from 'zod';
 import { OAuth2Client } from 'google-auth-library';
 import { supabase } from './supabase.js';
 import { sendOtpEmail } from './mailer.js';
+import { sendWhatsAppOtp, normalizePhoneNumber } from './services/whatsapp.js';
 
 const googleAuthClient = new OAuth2Client();
 
@@ -50,18 +51,30 @@ const verifyOtpSchema = z.object({
   otp: z.string().trim().regex(/^\d{6}$/),
 });
 
+const whatsappSendOtpSchema = z.object({
+  phone: z.string().trim().min(8, 'Please enter a valid phone number.'),
+});
+
+const whatsappVerifyOtpSchema = z.object({
+  phone: z.string().trim().min(8, 'Please enter a valid phone number.'),
+  otp: z.string().trim().regex(/^\d{6}$/, 'OTP must be 6 digits.'),
+  fullName: z.string().trim().optional(),
+});
+
 function createOtp() {
   return String(Math.floor(100000 + Math.random() * 900000));
 }
 
 function publicProfile(profile) {
+  const phone = profile.phone || (profile.email?.endsWith('@whatsapp.jorique.in') ? profile.email.split('@')[0] : null);
   return {
     id: profile.id,
     email: profile.email,
+    phone,
     role: profile.role,
     isVerified: profile.is_verified,
     fullName: profile.full_name,
-    user_metadata: { full_name: profile.full_name },
+    user_metadata: { full_name: profile.full_name, phone },
   };
 }
 
@@ -279,6 +292,120 @@ export function registerAuthRoutes(app) {
     } catch (error) {
       console.error('Google OAuth error:', error.message);
       res.status(400).json({ message: error.message || 'Google sign in failed.' });
+    }
+  });
+
+  app.post('/api/auth/whatsapp/send-otp', async (req, res) => {
+    try {
+      const { phone: rawPhone } = whatsappSendOtpSchema.parse(req.body);
+      const cleanPhone = normalizePhoneNumber(rawPhone);
+      if (!cleanPhone || cleanPhone.length < 10) {
+        return res.status(400).json({ message: 'Please enter a valid 10-digit mobile number.' });
+      }
+
+      const otpIdentifier = `phone:${cleanPhone}`;
+      const otp = createOtp();
+      const otpHash = await bcrypt.hash(otp, 10);
+      const ttl = Number(process.env.OTP_TTL_MINUTES || 10);
+      const expiresAt = new Date(Date.now() + ttl * 60 * 1000).toISOString();
+
+      const { error } = await supabase.from('email_otps').insert({
+        email: otpIdentifier,
+        otp_hash: otpHash,
+        expires_at: expiresAt,
+      });
+
+      if (error) throw error;
+
+      const sendResult = await sendWhatsAppOtp(cleanPhone, otp);
+
+      res.status(200).json({
+        success: true,
+        message: `OTP generated for WhatsApp number +${cleanPhone}.`,
+        phone: cleanPhone,
+        whatsappUrl: sendResult.whatsappUrl,
+        whatsappWebUrl: sendResult.whatsappWebUrl,
+        devOtp: otp,
+      });
+    } catch (error) {
+      console.error('WhatsApp send-otp error:', error);
+      res.status(400).json({ message: error?.message || 'Failed to send WhatsApp OTP.' });
+    }
+  });
+
+  app.post('/api/auth/whatsapp/verify-otp', async (req, res) => {
+    try {
+      const { phone: rawPhone, otp, fullName } = whatsappVerifyOtpSchema.parse(req.body);
+      const cleanPhone = normalizePhoneNumber(rawPhone);
+      const otpIdentifier = `phone:${cleanPhone}`;
+      const now = new Date().toISOString();
+
+      const { data: otpRows, error: otpError } = await supabase
+        .from('email_otps')
+        .select('*')
+        .eq('email', otpIdentifier)
+        .is('consumed_at', null)
+        .gt('expires_at', now)
+        .order('created_at', { ascending: false })
+        .limit(5);
+
+      if (otpError) throw otpError;
+
+      const matched = [];
+      for (const row of otpRows || []) {
+        if (await bcrypt.compare(otp, row.otp_hash)) matched.push(row);
+      }
+
+      if (!matched.length) {
+        return res.status(400).json({ message: 'Invalid or expired OTP. Please check the code or request a new one.' });
+      }
+
+      // Mark OTP as consumed
+      await supabase
+        .from('email_otps')
+        .update({ consumed_at: now })
+        .eq('id', matched[0].id);
+
+      // Find or create profile
+      const virtualEmail = `${cleanPhone}@whatsapp.jorique.in`;
+      let { data: profile, error: profileErr } = await supabase
+        .from('profiles')
+        .select('*')
+        .eq('email', virtualEmail)
+        .maybeSingle();
+
+      if (profileErr) throw profileErr;
+
+      if (!profile) {
+        const { data: newProfile, error: createError } = await supabase
+          .from('profiles')
+          .insert({
+            full_name: fullName || 'Patron',
+            email: virtualEmail,
+            password_hash: 'WHATSAPP_OTP_USER',
+            role: 'user',
+            is_verified: true,
+          })
+          .select('*')
+          .single();
+
+        if (createError) throw createError;
+        profile = newProfile;
+      } else if (!profile.is_verified) {
+        const { data: updatedProfile, error: updateError } = await supabase
+          .from('profiles')
+          .update({ is_verified: true, updated_at: now })
+          .eq('id', profile.id)
+          .select('*')
+          .single();
+
+        if (!updateError && updatedProfile) profile = updatedProfile;
+      }
+
+      res.json({ token: signToken(profile), user: publicProfile(profile) });
+    } catch (error) {
+      console.error('WhatsApp verify-otp error:', error);
+      res.status(400).json({ message: error?.message || 'OTP verification failed.' });
     }
   });
 }

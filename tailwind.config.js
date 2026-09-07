@@ -38,6 +38,7 @@ export default {
       },
       fontFamily: {
         serif: ['"Cormorant Garamond"', 'Georgia', 'serif'],
+        times: ['"Times New Roman"', 'Times', 'Georgia', 'serif'],
         sans: ['"Manrope"', 'Inter', 'system-ui', 'sans-serif'],
         heading: ['"Cormorant Garamond"', 'Georgia', 'serif'],
         body: ['"Manrope"', 'Inter', 'system-ui', 'sans-serif'],

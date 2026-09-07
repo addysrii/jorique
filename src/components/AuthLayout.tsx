@@ -18,7 +18,7 @@ export default function AuthLayout({ title, subtitle, children }: AuthLayoutProp
         <div className="absolute inset-0 bg-primary/45 dark:bg-black/60 backdrop-blur-[1px]" />
         <Link
           to="/"
-          className="absolute top-10 left-10 text-white text-sm font-semibold tracking-[0.25em] uppercase"
+          className="absolute top-10 left-10 text-white text-base font-logo font-normal tracking-[0.25em] uppercase"
         >
           JORIQUE
         </Link>
@@ -28,7 +28,7 @@ export default function AuthLayout({ title, subtitle, children }: AuthLayoutProp
         <div className="w-full max-w-md">
           <Link
             to="/"
-            className="lg:hidden inline-block text-primary dark:text-white text-sm font-semibold tracking-[0.25em] uppercase mb-12"
+            className="lg:hidden inline-block text-primary dark:text-white text-base font-logo font-normal tracking-[0.25em] uppercase mb-12"
           >
             JORIQUE
           </Link>

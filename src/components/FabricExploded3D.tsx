@@ -1,5 +1,5 @@
 import { useState, useRef } from 'react';
-import { motion, useScroll, useTransform, useMotionValue, useSpring } from 'framer-motion';
+import { motion, useTransform, useMotionValue, useSpring } from 'framer-motion';
 import { Sparkles, Layers, Compass, CheckCircle2, ChevronRight, Wind, ShieldCheck, Flame } from 'lucide-react';
 import { Link } from 'react-router-dom';
 

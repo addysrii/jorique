@@ -130,8 +130,8 @@ export default function ProductCard({ product, index = 0 }: ProductCardProps) {
           </h3>
           
           {/* Price */}
-          <div className="mt-1 flex items-center gap-2 font-sans">
-            <p className="text-sm text-primary dark:text-[#C6A96B] font-semibold">
+          <div className="mt-1 flex items-center gap-2 font-times tabular-nums">
+            <p className="text-sm text-primary dark:text-[#C6A96B] font-bold">
               ₹ {getDisplayPrice().toLocaleString('en-IN')}
             </p>
             {hasDiscount() && (

@@ -47,7 +47,7 @@ export default function ComingSoon() {
           transition={{ duration: 0.6 }}
           className="mb-8 flex flex-col items-center"
         >
-          <h1 className="text-4xl sm:text-6xl font-light tracking-[0.25em] pl-[0.25em] text-primary dark:text-white uppercase">
+          <h1 className="font-logo font-normal text-4xl sm:text-6xl tracking-[0.25em] pl-[0.25em] text-primary dark:text-white uppercase">
             JORIQUE
           </h1>
           

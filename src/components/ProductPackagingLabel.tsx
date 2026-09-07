@@ -90,7 +90,7 @@ export default function ProductPackagingLabel({
             <div className="text-center pb-2">
               <div className="flex items-center justify-center gap-2 mb-1">
                 <h1
-                  className="font-serif text-3xl sm:text-4xl font-normal tracking-[0.20em] uppercase leading-none"
+                  className="font-logo font-normal text-3xl sm:text-4xl tracking-[0.20em] uppercase leading-none"
                   style={{ color: textPrimary }}
                 >
                   {brandName}

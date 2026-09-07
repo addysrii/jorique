@@ -4,7 +4,7 @@ import {
   Loader2, PackageCheck, Users, WalletCards, Plus, Boxes, Trash2, 
   Layers, ShoppingCart, Gift, Star, Truck, Barcode as BarcodeIcon, Tag,
   Printer, CheckCircle2, AlertCircle, RefreshCw, Eye, Search, Filter, Hash,
-  Receipt, Ticket
+  Receipt, Ticket, MessageCircle, Send, X, ExternalLink
 } from 'lucide-react';
 import { QRCodeSVG } from 'qrcode.react';
 import Navbar from '../components/Navbar';
@@ -12,7 +12,7 @@ import Footer from '../components/Footer';
 import Barcode128 from '../components/Barcode128';
 import ProductPackagingLabel from '../components/ProductPackagingLabel';
 import { useAuth } from '../context/AuthContext';
-import { dashboardRequest } from '../lib/api';
+import { dashboardRequest, sendOrderWhatsAppNotificationRequest } from '../lib/api';
 import { productService } from '../lib/api/products';
 import { supabase } from '../lib/supabase';
 import { Product } from '../types';
@@ -30,7 +30,10 @@ interface ProductSerialRow {
   id: string;
   product_id: string;
   serial_number: string;
+  qr_code?: string;
+  barcode?: string;
   status: 'available' | 'reserved' | 'sold' | 'returned' | 'damaged';
+  reviewed: boolean;
   gift_claimed: boolean;
   created_at: string;
   product?: { name: string; sku: string; category: string };
@@ -42,7 +45,8 @@ interface OrderRow {
   customer_id?: string;
   status: string;
   total: number;
-  items: Array<{ name?: string; quantity?: number; price?: number }>;
+  items: any;
+  shipping_address?: string;
   created_at: string;
 }
 
@@ -89,6 +93,15 @@ export default function AdminDashboard() {
   const [labelShowChannels, setLabelShowChannels] = useState(true);
   const [labelShowQR, setLabelShowQR] = useState(true);
   const [labelCustomBadge, setLabelCustomBadge] = useState<string>('');
+
+  // WhatsApp Order Notification Modal
+  const [whatsAppModalOrder, setWhatsAppModalOrder] = useState<OrderRow | null>(null);
+  const [whatsAppPhone, setWhatsAppPhone] = useState('');
+  const [whatsAppStatus, setWhatsAppStatus] = useState('confirmed');
+  const [whatsAppTracking, setWhatsAppTracking] = useState('');
+  const [whatsAppNote, setWhatsAppNote] = useState('');
+  const [whatsAppSending, setWhatsAppSending] = useState(false);
+  const [whatsAppFeedback, setWhatsAppFeedback] = useState<string | null>(null);
 
   // Fetch initial data
   useEffect(() => {
@@ -210,6 +223,128 @@ export default function AdminDashboard() {
     const matchesSearch = !q || s.serial_number.toLowerCase().includes(q) || s.product?.name.toLowerCase().includes(q);
     return matchesStatus && matchesSearch;
   });
+
+  // WhatsApp Order Helpers
+  function getOrderCustomer(order: OrderRow) {
+    let name = 'Valued Patron';
+    let phone = '';
+
+    if (order.items) {
+      if (typeof order.items === 'object' && !Array.isArray(order.items)) {
+        phone = order.items.customer_phone || order.items.phone || '';
+        name = order.items.customer_name || order.items.name || name;
+      } else if (Array.isArray(order.items)) {
+        const itemWithPhone = (order.items as any[]).find((i) => i && (i.customer_phone || i.phone));
+        if (itemWithPhone) {
+          phone = itemWithPhone.customer_phone || itemWithPhone.phone;
+          name = itemWithPhone.customer_name || itemWithPhone.name || name;
+        }
+      }
+    }
+
+    if (!phone && order.shipping_address) {
+      const match = order.shipping_address.match(/(?:\+?\d{1,3}[- ]?)?\d{10}/);
+      if (match) phone = match[0];
+    }
+
+    return { name, phone };
+  }
+
+  function openWhatsAppModal(order: OrderRow) {
+    const customer = getOrderCustomer(order);
+    setWhatsAppModalOrder(order);
+    setWhatsAppPhone(customer.phone);
+    setWhatsAppStatus(order.status || 'confirmed');
+    setWhatsAppTracking('');
+    setWhatsAppNote('');
+    setWhatsAppFeedback(null);
+  }
+
+  async function handleUpdateOrderStatus(orderId: string, newStatus: string) {
+    try {
+      const { error } = await supabase.from('orders').update({ status: newStatus }).eq('id', orderId);
+      if (error) throw error;
+      setOrders((prev) => prev.map((o) => (o.id === orderId ? { ...o, status: newStatus } : o)));
+    } catch (err: any) {
+      alert('Failed to update status: ' + err.message);
+    }
+  }
+
+  async function handleSendWhatsApp() {
+    if (!whatsAppModalOrder) return;
+    if (!whatsAppPhone.trim()) {
+      setWhatsAppFeedback('Please provide a valid phone number.');
+      return;
+    }
+
+    setWhatsAppSending(true);
+    setWhatsAppFeedback(null);
+
+    try {
+      if (token) {
+        await sendOrderWhatsAppNotificationRequest(
+          whatsAppModalOrder.id,
+          {
+            phone: whatsAppPhone.trim(),
+            status: whatsAppStatus,
+            tracking_number: whatsAppTracking.trim() || undefined,
+            custom_note: whatsAppNote.trim() || undefined,
+          },
+          token
+        );
+        setWhatsAppFeedback('WhatsApp notification dispatched successfully!');
+        setTimeout(() => {
+          setWhatsAppModalOrder(null);
+        }, 1600);
+      } else {
+        openWhatsAppDirect();
+      }
+    } catch (err: any) {
+      setWhatsAppFeedback(err.message || 'API dispatch deferred. Click below to open direct WhatsApp chat.');
+    } finally {
+      setWhatsAppSending(false);
+    }
+  }
+
+  function openWhatsAppDirect() {
+    if (!whatsAppModalOrder) return;
+    const cleanDigits = whatsAppPhone.replace(/\D/g, '');
+    const targetPhone = cleanDigits.length === 10 ? `91${cleanDigits}` : cleanDigits;
+
+    const statusLabels: Record<string, string> = {
+      pending: '⏳ Pending Confirmation',
+      confirmed: '✨ Confirmed & In Atelier Curation',
+      processing: '🧵 In Crafting & Quality Inspection',
+      shipped: '📦 Dispatched via Express Courier',
+      delivered: '🏡 Delivered to Your Doorstep',
+      cancelled: '❌ Cancelled',
+      returned: '🔄 Exchange / Return Request',
+    };
+
+    let body = `⚜️ *JORIQUE CONCIERGE — ORDER UPDATE*
+────────────────────────────
+Dear *${getOrderCustomer(whatsAppModalOrder).name}*,
+
+Here is the latest update on your JORIQUE order:
+📋 *Order ID:* #${whatsAppModalOrder.order_number}
+🏷️ *Current Status:* ${statusLabels[whatsAppStatus] || whatsAppStatus}
+💰 *Amount:* ₹${Number(whatsAppModalOrder.total).toLocaleString('en-IN')}
+`;
+
+    if (whatsAppTracking.trim()) {
+      body += `🚚 *Courier Tracking:* ${whatsAppTracking.trim()}\n`;
+    }
+    if (whatsAppNote.trim()) {
+      body += `📝 *Note from Atelier:* ${whatsAppNote.trim()}\n`;
+    }
+    if (whatsAppStatus === 'shipped') {
+      body += `\n⚠️ *IMPORTANT UNBOXING REMINDER:*
+To ensure protection under our Return & Exchange Policy, please record a continuous, unedited *360° unboxing video* starting before opening the parcel seals.\n`;
+    }
+    body += `────────────────────────────\nQuestions? Reach our concierge at care@jorique.in.`;
+
+    window.open(`https://wa.me/${targetPhone}?text=${encodeURIComponent(body)}`, '_blank');
+  }
 
   return (
     <div className="min-h-screen bg-[#F8F7F5] dark:bg-[#100E0D] text-primary dark:text-[#F5F2EB] transition-colors duration-300">
@@ -589,11 +724,17 @@ export default function AdminDashboard() {
 
               {/* TAB 4: ORDERS */}
               {activeTab === 'orders' && (
-                <div className="bg-white dark:bg-[#1A1816] rounded-3xl border border-border dark:border-[#2E2925] shadow-sm overflow-hidden">
-                  <div className="p-5 border-b border-border dark:border-[#2E2925]">
-                    <h3 className="text-sm font-semibold text-primary dark:text-white">Orders Pipeline</h3>
-                    <p className="text-xs text-secondary dark:text-white/60">Track confirmed purchases and fulfillment status</p>
+                <div className="bg-white dark:bg-[#1A1816] rounded-3xl border border-border dark:border-[#2E2925] shadow-sm overflow-hidden space-y-6">
+                  <div className="p-5 border-b border-border dark:border-[#2E2925] flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                    <div>
+                      <h3 className="text-sm font-semibold text-primary dark:text-white">Orders Pipeline & WhatsApp Dispatch</h3>
+                      <p className="text-xs text-secondary dark:text-white/60">Manage orders, update fulfillment status, and send instant WhatsApp notifications</p>
+                    </div>
+                    <span className="text-xs font-mono px-3 py-1 rounded-full bg-cream dark:bg-white/5 border border-border dark:border-[#2E2925] text-secondary dark:text-white/70">
+                      {orders.length} Total Orders
+                    </span>
                   </div>
+
                   {orders.length === 0 ? (
                     <div className="p-12 text-center text-secondary dark:text-white/50 text-xs">
                       No active orders found in the database.
@@ -604,28 +745,227 @@ export default function AdminDashboard() {
                         <thead className="bg-cream/40 dark:bg-white/5 text-secondary dark:text-white/60 uppercase tracking-wider text-[10px] border-b border-border dark:border-[#2E2925]">
                           <tr>
                             <th className="p-4">Order #</th>
+                            <th className="p-4">Customer</th>
                             <th className="p-4">Status</th>
                             <th className="p-4">Total Amount</th>
                             <th className="p-4">Items</th>
                             <th className="p-4">Date</th>
+                            <th className="p-4 text-right">WhatsApp Update</th>
                           </tr>
                         </thead>
                         <tbody className="divide-y divide-border dark:divide-[#2E2925]">
-                          {orders.map(order => (
-                            <tr key={order.id} className="hover:bg-cream/20 dark:hover:bg-white/5">
-                              <td className="p-4 font-mono font-semibold text-primary dark:text-[#D4AF37]">{order.order_number}</td>
-                              <td className="p-4">
-                                <span className="px-2.5 py-1 rounded-full text-[10px] font-semibold uppercase bg-emerald-50 dark:bg-emerald-950/40 text-emerald-800 dark:text-emerald-300">
-                                  {order.status}
-                                </span>
-                              </td>
-                              <td className="p-4 font-semibold text-primary dark:text-white">₹{Number(order.total).toLocaleString('en-IN')}</td>
-                              <td className="p-4 text-secondary dark:text-white/70">{order.items?.length || 1} Item(s)</td>
-                              <td className="p-4 text-secondary dark:text-white/60">{new Date(order.created_at).toLocaleDateString()}</td>
-                            </tr>
-                          ))}
+                          {orders.map((order) => {
+                            const customer = getOrderCustomer(order);
+                            const itemsList = Array.isArray(order.items) ? order.items : (order.items?.products || []);
+                            
+                            return (
+                              <tr key={order.id} className="hover:bg-cream/20 dark:hover:bg-white/5 transition-colors">
+                                <td className="p-4 font-mono font-semibold text-primary dark:text-[#D4AF37]">
+                                  {order.order_number}
+                                </td>
+
+                                <td className="p-4">
+                                  <div className="font-semibold text-primary dark:text-white">
+                                    {customer.name}
+                                  </div>
+                                  <div className="text-[11px] font-mono text-secondary dark:text-white/60 flex items-center gap-1 mt-0.5">
+                                    <Phone size={11} className="text-emerald-600 dark:text-emerald-400" />
+                                    <span>{customer.phone || 'No phone recorded'}</span>
+                                  </div>
+                                </td>
+
+                                <td className="p-4">
+                                  <select
+                                    value={order.status}
+                                    onChange={(e) => handleUpdateOrderStatus(order.id, e.target.value)}
+                                    className={`px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider border outline-none cursor-pointer ${
+                                      order.status === 'delivered'
+                                        ? 'bg-emerald-50 dark:bg-emerald-950/40 text-emerald-800 dark:text-emerald-300 border-emerald-200 dark:border-emerald-800'
+                                        : order.status === 'shipped'
+                                        ? 'bg-blue-50 dark:bg-blue-950/40 text-blue-800 dark:text-blue-300 border-blue-200 dark:border-blue-800'
+                                        : order.status === 'processing'
+                                        ? 'bg-amber-50 dark:bg-amber-950/40 text-amber-800 dark:text-amber-300 border-amber-200 dark:border-amber-800'
+                                        : order.status === 'cancelled'
+                                        ? 'bg-rose-50 dark:bg-rose-950/40 text-rose-800 dark:text-rose-300 border-rose-200 dark:border-rose-800'
+                                        : 'bg-cream dark:bg-white/10 text-primary dark:text-white border-border dark:border-[#2E2925]'
+                                    }`}
+                                  >
+                                    <option value="pending" className="dark:bg-[#1A1816]">Pending</option>
+                                    <option value="confirmed" className="dark:bg-[#1A1816]">Confirmed</option>
+                                    <option value="processing" className="dark:bg-[#1A1816]">Processing</option>
+                                    <option value="shipped" className="dark:bg-[#1A1816]">Shipped</option>
+                                    <option value="delivered" className="dark:bg-[#1A1816]">Delivered</option>
+                                    <option value="cancelled" className="dark:bg-[#1A1816]">Cancelled</option>
+                                    <option value="returned" className="dark:bg-[#1A1816]">Returned</option>
+                                  </select>
+                                </td>
+
+                                <td className="p-4 font-semibold text-primary dark:text-white">
+                                  ₹{Number(order.total).toLocaleString('en-IN')}
+                                </td>
+
+                                <td className="p-4 text-secondary dark:text-white/70">
+                                  {itemsList.length || 1} Item(s)
+                                </td>
+
+                                <td className="p-4 text-secondary dark:text-white/60">
+                                  {new Date(order.created_at).toLocaleDateString()}
+                                </td>
+
+                                <td className="p-4 text-right">
+                                  <button
+                                    type="button"
+                                    onClick={() => openWhatsAppModal(order)}
+                                    className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-700 dark:text-emerald-400 border border-emerald-500/30 text-xs font-semibold transition-all shadow-xs"
+                                    title="Send WhatsApp update to customer"
+                                  >
+                                    <MessageCircle size={14} />
+                                    <span>WhatsApp</span>
+                                  </button>
+                                </td>
+                              </tr>
+                            );
+                          })}
                         </tbody>
                       </table>
+                    </div>
+                  )}
+
+                  {/* WhatsApp Order Notification Modal */}
+                  {whatsAppModalOrder && (
+                    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs">
+                      <div className="relative w-full max-w-lg bg-white dark:bg-[#1A1816] rounded-3xl border border-border dark:border-[#2E2925] shadow-2xl overflow-hidden p-6 space-y-5 animate-in fade-in zoom-in-95 duration-200">
+                        {/* Header */}
+                        <div className="flex items-center justify-between border-b border-border dark:border-[#2E2925] pb-4">
+                          <div className="flex items-center gap-2.5">
+                            <div className="w-8 h-8 rounded-xl bg-[#25D366]/15 border border-[#25D366]/30 flex items-center justify-center text-[#25D366]">
+                              <MessageCircle size={18} />
+                            </div>
+                            <div>
+                              <h4 className="font-semibold text-sm text-primary dark:text-white">
+                                Send WhatsApp Update
+                              </h4>
+                              <p className="text-[11px] font-mono text-secondary dark:text-white/60">
+                                #{whatsAppModalOrder.order_number}
+                              </p>
+                            </div>
+                          </div>
+                          <button
+                            type="button"
+                            onClick={() => setWhatsAppModalOrder(null)}
+                            className="p-1.5 rounded-full hover:bg-cream dark:hover:bg-white/10 text-secondary dark:text-white/70"
+                          >
+                            <X size={16} />
+                          </button>
+                        </div>
+
+                        {/* Feedback message */}
+                        {whatsAppFeedback && (
+                          <div className="p-3 rounded-xl bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800 text-xs text-emerald-800 dark:text-emerald-300">
+                            {whatsAppFeedback}
+                          </div>
+                        )}
+
+                        {/* Form controls */}
+                        <div className="space-y-3.5 text-xs">
+                          <div>
+                            <label className="block font-semibold text-secondary dark:text-white/70 mb-1">
+                              Recipient Mobile Number
+                            </label>
+                            <input
+                              type="tel"
+                              value={whatsAppPhone}
+                              onChange={(e) => setWhatsAppPhone(e.target.value)}
+                              placeholder="e.g. +91 99193 88211"
+                              className="w-full px-3.5 py-2 rounded-xl bg-cream/30 dark:bg-[#100E0D] border border-border dark:border-[#2E2925] font-mono text-xs text-primary dark:text-white outline-none focus:border-[#25D366]"
+                            />
+                          </div>
+
+                          <div className="grid grid-cols-2 gap-3">
+                            <div>
+                              <label className="block font-semibold text-secondary dark:text-white/70 mb-1">
+                                Update Status To
+                              </label>
+                              <select
+                                value={whatsAppStatus}
+                                onChange={(e) => setWhatsAppStatus(e.target.value)}
+                                className="w-full px-3 py-2 rounded-xl bg-cream/30 dark:bg-[#100E0D] border border-border dark:border-[#2E2925] text-xs text-primary dark:text-white outline-none focus:border-[#25D366]"
+                              >
+                                <option value="confirmed">Confirmed</option>
+                                <option value="processing">Processing</option>
+                                <option value="shipped">Shipped</option>
+                                <option value="delivered">Delivered</option>
+                                <option value="cancelled">Cancelled</option>
+                                <option value="returned">Returned</option>
+                              </select>
+                            </div>
+
+                            <div>
+                              <label className="block font-semibold text-secondary dark:text-white/70 mb-1">
+                                Tracking Number (Optional)
+                              </label>
+                              <input
+                                type="text"
+                                value={whatsAppTracking}
+                                onChange={(e) => setWhatsAppTracking(e.target.value)}
+                                placeholder="e.g. BD91823901"
+                                className="w-full px-3.5 py-2 rounded-xl bg-cream/30 dark:bg-[#100E0D] border border-border dark:border-[#2E2925] text-xs text-primary dark:text-white outline-none focus:border-[#25D366]"
+                              />
+                            </div>
+                          </div>
+
+                          <div>
+                            <label className="block font-semibold text-secondary dark:text-white/70 mb-1">
+                              Custom Atelier Note (Optional)
+                            </label>
+                            <input
+                              type="text"
+                              value={whatsAppNote}
+                              onChange={(e) => setWhatsAppNote(e.target.value)}
+                              placeholder="e.g. Handcrafted with organic Egyptian cotton, dispatched with care."
+                              className="w-full px-3.5 py-2 rounded-xl bg-cream/30 dark:bg-[#100E0D] border border-border dark:border-[#2E2925] text-xs text-primary dark:text-white outline-none focus:border-[#25D366]"
+                            />
+                          </div>
+                        </div>
+
+                        {/* Live Message Preview */}
+                        <div className="p-3.5 rounded-2xl bg-cream/50 dark:bg-white/5 border border-border/70 dark:border-[#2E2925] text-[11px] text-secondary dark:text-white/70 space-y-1 font-sans">
+                          <span className="font-bold uppercase tracking-wider text-[10px] text-primary dark:text-[#D4AF37] block">
+                            Preview Message:
+                          </span>
+                          <p>
+                            ⚜️ <strong>JORIQUE CONCIERGE:</strong> Update on Order <strong>#{whatsAppModalOrder.order_number}</strong> — Status: <strong>{whatsAppStatus}</strong>
+                            {whatsAppTracking ? ` (Tracking: ${whatsAppTracking})` : ''}
+                            {whatsAppStatus === 'shipped' ? ' • Reminder: continuous 360° unboxing video required upon delivery.' : ''}
+                          </p>
+                        </div>
+
+                        {/* Actions */}
+                        <div className="pt-2 flex flex-col sm:flex-row items-center gap-2.5">
+                          <button
+                            type="button"
+                            onClick={openWhatsAppDirect}
+                            className="w-full sm:w-1/2 py-2.5 px-4 rounded-xl bg-cream dark:bg-white/10 hover:bg-cream/80 dark:hover:bg-white/15 text-primary dark:text-white text-xs font-semibold flex items-center justify-center gap-1.5 transition-all"
+                          >
+                            <ExternalLink size={14} />
+                            <span>Open in WhatsApp Web</span>
+                          </button>
+
+                          <button
+                            type="button"
+                            disabled={whatsAppSending || !whatsAppPhone.trim()}
+                            onClick={handleSendWhatsApp}
+                            className="w-full sm:w-1/2 py-2.5 px-4 rounded-xl bg-[#25D366] hover:bg-[#20bd5a] text-white text-xs font-bold flex items-center justify-center gap-1.5 transition-all shadow-md disabled:opacity-50"
+                          >
+                            {whatsAppSending ? (
+                              <Loader2 size={14} className="animate-spin" />
+                            ) : (
+                              <Send size={14} />
+                            )}
+                            <span>{whatsAppSending ? 'Sending...' : 'Send WhatsApp API'}</span>
+                          </button>
+                        </div>
+                      </div>
                     </div>
                   )}
                 </div>

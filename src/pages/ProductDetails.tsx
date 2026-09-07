@@ -6,23 +6,19 @@ import {
   Truck,
   RefreshCw,
   Shield,
+  ShieldCheck,
   Check,
   Sparkles,
   ShoppingBag,
   MessageCircle,
   Plus,
   Minus,
-  Star,
   Ruler,
   ChevronDown,
   CheckCircle2,
   Zap,
   MapPin,
-  Feather,
-  Wind,
-  HeartHandshake,
   Lock,
-  ThumbsUp,
 } from 'lucide-react';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
@@ -47,7 +43,8 @@ interface SizeOption {
 
 function getProductSizes(product: Product): SizeOption[] {
   // 1. Explicit sizes array in product data
-  const rawSizes = (product as any).sizes || (product as any).size_options || (product as any).sizeOptions;
+  const pRecord = product as unknown as Record<string, unknown>;
+  const rawSizes = pRecord.sizes || pRecord.size_options || pRecord.sizeOptions;
   if (Array.isArray(rawSizes) && rawSizes.length > 0) {
     return rawSizes
       .map((s, idx) => {
@@ -338,7 +335,6 @@ export default function ProductDetails() {
   // Sticky bottom conversion bar visibility
   const [showStickyBar, setShowStickyBar] = useState(false);
   const mainBuyRef = useRef<HTMLDivElement | null>(null);
-  const reviewsRef = useRef<HTMLDivElement | null>(null);
 
   // Cart actions
   const { addToCart, buyNow } = useCart();
@@ -431,12 +427,6 @@ export default function ProductDetails() {
     }, 450);
   };
 
-  const scrollToReviews = () => {
-    if (reviewsRef.current) {
-      reviewsRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    }
-  };
-
   if (loading) {
     return (
       <div className="min-h-screen bg-background dark:bg-[#100E0D] text-primary dark:text-[#F5F2EB] flex flex-col items-center justify-center gap-4">
@@ -519,7 +509,7 @@ export default function ProductDetails() {
         {/* Main PDP Grid (Images on Left, Buy Box on Right) */}
         <div className="max-w-7xl mx-auto px-6 lg:px-12 py-8 lg:py-14">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-14 items-start">
-            
+
             {/* LEFT COLUMN: High-Resolution Luxury Image Gallery with Zoom & Lightbox (lg:col-span-7) */}
             <div className="lg:col-span-7 lg:sticky lg:top-28">
               <ProductImageGallery
@@ -533,7 +523,7 @@ export default function ProductDetails() {
 
             {/* RIGHT COLUMN: Product Details, Variations, Stoa Paris Pricing & CTAs (lg:col-span-5) */}
             <div className="lg:col-span-5 flex flex-col space-y-6">
-              
+
               {/* Product Header & Rating */}
               <div className="space-y-3">
                 <div className="flex items-center gap-2.5 flex-wrap">
@@ -548,43 +538,21 @@ export default function ProductDetails() {
                 <h1 className="text-2xl sm:text-3xl lg:text-4xl font-serif font-light text-primary dark:text-white leading-tight">
                   {product.name}
                 </h1>
-
-                {/* Stoa Paris Star Rating & Social Proof */}
-                <div className="flex items-center gap-3 pt-1">
-                  <button
-                    onClick={scrollToReviews}
-                    className="flex items-center gap-1.5 text-xs text-secondary dark:text-white/80 hover:text-primary dark:hover:text-[#D4AF37] transition-colors"
-                  >
-                    <div className="flex text-amber-500">
-                      {[...Array(5)].map((_, i) => (
-                        <Star key={i} size={14} fill="currentColor" className="text-amber-500" />
-                      ))}
-                    </div>
-                    <span className="font-bold text-primary dark:text-white">4.8</span>
-                    <span className="underline underline-offset-4 text-secondary dark:text-white/60">(142 reviews)</span>
-                  </button>
-
-                  <span className="text-secondary/40 dark:text-white/20">•</span>
-
-                  <p className="text-xs font-semibold text-[#851C25] dark:text-rose-400">
-                    <strong>80+</strong> bought in last 30 days
-                  </p>
-                </div>
               </div>
 
               {/* Price Box with Stoa Paris Instant UPI Discount */}
               <div className="p-4 sm:p-5 rounded-2xl bg-cream/35 dark:bg-[#1A1816] border border-border/80 dark:border-[#2E2925] space-y-3 shadow-2xs">
                 <div className="flex items-baseline gap-3 flex-wrap">
-                  <span className="text-3xl font-serif font-bold text-primary dark:text-[#D4AF37]">
+                  <span className="text-3xl font-times font-bold text-primary dark:text-[#D4AF37] tracking-tight tabular-nums">
                     ₹{currentPrice.toLocaleString('en-IN')}
                   </span>
                   {originalPrice > currentPrice && (
-                    <span className="text-base text-secondary/60 dark:text-white/40 line-through">
+                    <span className="text-base font-times text-secondary/60 dark:text-white/40 line-through tabular-nums">
                       ₹{originalPrice.toLocaleString('en-IN')}
                     </span>
                   )}
                   {discountPercentage > 0 && (
-                    <span className="text-xs font-bold text-white bg-[#851C25] px-2.5 py-0.5 rounded-full uppercase tracking-wider">
+                    <span className="text-xs font-times font-bold text-white bg-[#851C25] px-2.5 py-0.5 rounded-full uppercase tracking-wider tabular-nums">
                       {discountPercentage}% OFF
                     </span>
                   )}
@@ -594,7 +562,7 @@ export default function ProductDetails() {
                 <div className="flex items-center gap-2 p-2.5 rounded-xl bg-amber-500/10 dark:bg-amber-500/15 border border-amber-500/30 text-xs text-primary dark:text-white">
                   <Zap size={14} className="text-amber-600 dark:text-amber-400 shrink-0" />
                   <span>
-                    UPI & Card Orders get it for <strong className="font-bold text-[#851C25] dark:text-[#D4AF37]">₹{upiInstantPrice.toLocaleString('en-IN')}</strong> (Extra 10% Off)
+                    UPI & Card Orders get it for <strong className="font-times font-bold text-[#851C25] dark:text-[#D4AF37] tabular-nums">₹{upiInstantPrice.toLocaleString('en-IN')}</strong> (Extra 10% Off)
                   </span>
                 </div>
               </div>
@@ -686,11 +654,10 @@ export default function ProductDetails() {
                           key={size.id}
                           type="button"
                           onClick={() => setSelectedSize(size)}
-                          className={`p-3 rounded-2xl border text-left transition-all ${
-                            isSelected
+                          className={`p-3 rounded-2xl border text-left transition-all ${isSelected
                               ? 'border-primary dark:border-[#D4AF37] bg-primary/5 dark:bg-[#D4AF37]/10 ring-2 ring-primary/20 dark:ring-[#D4AF37]/20'
                               : 'border-border dark:border-[#2E2925] bg-white dark:bg-[#1A1816] hover:border-primary/40 dark:hover:border-white/30'
-                          }`}
+                            }`}
                         >
                           <p className={`text-xs font-bold leading-tight ${isSelected ? 'text-primary dark:text-[#D4AF37]' : 'text-primary dark:text-white'}`}>
                             {size.name.replace(/\s+(Comforter|Bedsheet)/i, '')}
@@ -772,8 +739,7 @@ export default function ProductDetails() {
                 </div>
               </div>
 
-              {/* Pincode Delivery Estimator (Commented out for now) */}
-              {/*
+              {/* Pincode Delivery Estimator */}
               <div className="p-4 rounded-2xl bg-cream/30 dark:bg-white/5 border border-border dark:border-[#2E2925] space-y-3">
                 <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-primary dark:text-white">
                   <MapPin size={14} className="text-primary dark:text-[#D4AF37]" />
@@ -818,7 +784,6 @@ export default function ProductDetails() {
                   </p>
                 )}
               </div>
-              */}
 
               {/* 4 Pillars Trust & Reassurance Badges (Stoa Paris Style) */}
               <div className="grid grid-cols-2 gap-3 pt-2">
@@ -834,11 +799,11 @@ export default function ProductDetails() {
 
                 <div className="p-3 rounded-xl bg-white dark:bg-[#1A1816] border border-border/80 dark:border-[#2E2925] flex items-center gap-2.5">
                   <div className="w-8 h-8 rounded-lg bg-cream dark:bg-white/10 flex items-center justify-center text-primary dark:text-[#D4AF37] shrink-0">
-                    <RefreshCw size={16} />
+                    <ShieldCheck size={16} />
                   </div>
                   <div>
-                    <p className="text-xs font-bold text-primary dark:text-white">15-Day Easy Returns</p>
-                    <p className="text-[10px] text-secondary dark:text-white/60">Hassle-free exchange</p>
+                    <p className="text-xs font-bold text-primary dark:text-white">Defect Exchange Guarantee</p>
+                    <p className="text-[10px] text-secondary dark:text-white/60">48-Hr transit/defect claim window</p>
                   </div>
                 </div>
 
@@ -865,7 +830,7 @@ export default function ProductDetails() {
 
               {/* LUXURY COLLAPSIBLE ACCORDIONS (Stoa Paris Signature PDP Component) */}
               <div className="border-t border-border dark:border-[#2E2925] pt-4 divide-y divide-border dark:divide-[#2E2925]">
-                
+
                 {/* 1. Product Features Highlight Grid */}
                 <div className="py-4">
                   <button
@@ -878,9 +843,8 @@ export default function ProductDetails() {
                     </span>
                     <ChevronDown
                       size={18}
-                      className={`text-secondary transition-transform duration-200 ${
-                        openAccordions.features ? 'rotate-180' : ''
-                      }`}
+                      className={`text-secondary transition-transform duration-200 ${openAccordions.features ? 'rotate-180' : ''
+                        }`}
                     />
                   </button>
 
@@ -913,9 +877,8 @@ export default function ProductDetails() {
                     </span>
                     <ChevronDown
                       size={18}
-                      className={`text-secondary transition-transform duration-200 ${
-                        openAccordions.specs ? 'rotate-180' : ''
-                      }`}
+                      className={`text-secondary transition-transform duration-200 ${openAccordions.specs ? 'rotate-180' : ''
+                        }`}
                     />
                   </button>
 
@@ -951,9 +914,8 @@ export default function ProductDetails() {
                     </span>
                     <ChevronDown
                       size={18}
-                      className={`text-secondary transition-transform duration-200 ${
-                        openAccordions.washcare ? 'rotate-180' : ''
-                      }`}
+                      className={`text-secondary transition-transform duration-200 ${openAccordions.washcare ? 'rotate-180' : ''
+                        }`}
                     />
                   </button>
 
@@ -976,9 +938,8 @@ export default function ProductDetails() {
                                     {parsed.care.map((item, idx) => (
                                       <tr
                                         key={idx}
-                                        className={`transition-colors ${
-                                          idx % 2 === 0 ? 'bg-transparent' : 'bg-[#FAF8F5]/60 dark:bg-white/[0.02]'
-                                        } hover:bg-cream/40 dark:hover:bg-white/[0.04]`}
+                                        className={`transition-colors ${idx % 2 === 0 ? 'bg-transparent' : 'bg-[#FAF8F5]/60 dark:bg-white/[0.02]'
+                                          } hover:bg-cream/40 dark:hover:bg-white/[0.04]`}
                                       >
                                         <td className="py-2.5 px-3.5 text-[10px] font-mono font-bold text-[#C6A96B] dark:text-[#D4AF37] w-8 text-center align-top">
                                           {String(idx + 1).padStart(2, '0')}
@@ -1016,9 +977,8 @@ export default function ProductDetails() {
                     </span>
                     <ChevronDown
                       size={18}
-                      className={`text-secondary transition-transform duration-200 ${
-                        openAccordions.returns ? 'rotate-180' : ''
-                      }`}
+                      className={`text-secondary transition-transform duration-200 ${openAccordions.returns ? 'rotate-180' : ''
+                        }`}
                     />
                   </button>
 
@@ -1029,11 +989,34 @@ export default function ProductDetails() {
                         animate={{ opacity: 1, height: 'auto' }}
                         exit={{ opacity: 0, height: 0 }}
                         transition={{ duration: 0.25 }}
-                        className="overflow-hidden pt-4 text-xs text-secondary dark:text-white/70 space-y-2 leading-relaxed"
+                        className="overflow-hidden pt-4 text-xs text-secondary dark:text-white/70 space-y-3 leading-relaxed"
                       >
-                        <p className="text-center py-3 text-secondary dark:text-white/60">
-                          Content to be added
+                        <p className="font-semibold text-primary dark:text-white">
+                          Pre-Dispatch Inspection & Defect-Only Exchange Policy:
                         </p>
+                        <ul className="space-y-1.5 list-disc pl-4 text-secondary/90 dark:text-white/80">
+                          <li>
+                            Every JORIQUE product is meticulously inspected before packaging. We do <strong>not</strong> accept returns or exchanges for change of mind or subjective preference.
+                          </li>
+                          <li>
+                            Exchange is available exclusively for genuine manufacturing defects, transit damage, or incorrect items reported within <strong>48 hours of delivery</strong>.
+                          </li>
+                          <li>
+                            <strong>Mandatory 360° Unboxing Video:</strong> A complete, continuous opening video recorded from <em>before</em> the parcel is opened (showing outer packaging, shipping label, and item condition) is strictly required to verify any claim.
+                          </li>
+                          <li>
+                            The item must remain unused, unwashed, unaltered, and in its original luxury packaging.
+                          </li>
+                        </ul>
+                        <div className="pt-2">
+                          <Link
+                            to="/return-policy"
+                            className="inline-flex items-center gap-1.5 font-bold text-[#851C25] dark:text-[#D4AF37] hover:underline"
+                          >
+                            <span>Read Full Return & Exchange Policy</span>
+                            <span>→</span>
+                          </Link>
+                        </div>
                       </motion.div>
                     )}
                   </AnimatePresence>
@@ -1041,20 +1024,41 @@ export default function ProductDetails() {
               </div>
 
             </div>
+
           </div>
         </div>
 
-        {/* ATMOSPHERIC EDITORIAL SHOWCASE */}
+        {/* ATMOSPHERIC EDITORIAL SHOWCASE (Stoa Paris Signature Full-Width Section) */}
         <section className="my-16 lg:my-24 py-16 lg:py-24 bg-cream/40 dark:bg-[#151311] border-y border-border/80 dark:border-[#2E2925] overflow-hidden">
-          <div className="max-w-6xl mx-auto px-6 lg:px-12 text-center space-y-4">
-            <span className="text-[11px] font-bold uppercase tracking-[0.3em] text-[#851C25] dark:text-[#D4AF37]">
-              {product.category || 'Collection'} Spotlight
-            </span>
-            <h2 className="text-3xl sm:text-4xl font-serif font-light text-primary dark:text-white leading-tight">
-              Artisanal Heritage & Craft
-            </h2>
-            <div className="p-8 max-w-xl mx-auto rounded-2xl bg-cream/35 dark:bg-white/5 border border-border/70 dark:border-[#2E2925] text-xs text-secondary dark:text-white/60">
-              Content to be added
+          <div className="max-w-6xl mx-auto px-6 lg:px-12">
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-14 items-center">
+              <div className="lg:col-span-6 space-y-6">
+                <div>
+                  <span className="text-[11px] font-bold uppercase tracking-[0.3em] text-[#851C25] dark:text-[#D4AF37] block mb-2">
+                    {product.category || 'Collection'} Spotlight
+                  </span>
+                  <h2 className="text-3xl sm:text-4xl font-serif font-light text-primary dark:text-white leading-tight">
+
+                  </h2>
+                </div>
+                <div className="p-8 rounded-2xl bg-cream/35 dark:bg-white/5 border border-border/70 dark:border-[#2E2925] text-xs text-secondary dark:text-white/60">
+                  Content to be added
+                </div>
+              </div>
+
+              <div className="lg:col-span-6 relative">
+                <div className="rounded-3xl overflow-hidden shadow-2xl border border-border dark:border-[#2E2925] aspect-[4/3]">
+                  <img
+                    src={product.images[1] || product.images[0] || 'https://images.unsplash.com/photo-1522771739844-6a9f6d5f14af?q=80&w=1200'}
+                    alt="Luxury lifestyle detail"
+                    className="w-full h-full object-cover"
+                  />
+                </div>
+                {/* Micro Ambient Note */}
+                <p className="text-[11px] text-secondary/70 dark:text-white/50 text-center mt-3 italic">
+                  * Fabric sheen and golden hues adapt gracefully to warm ambient bedroom lighting.
+                </p>
+              </div>
             </div>
           </div>
         </section>
@@ -1063,13 +1067,13 @@ export default function ProductDetails() {
         <ColorDisclaimerSection images={product.images} productName={product.name} />
 
         {/* CUSTOMER REVIEWS & RATINGS SECTION */}
-        <section ref={reviewsRef} id="reviews-section" className="py-14 lg:py-20 max-w-6xl mx-auto px-6 lg:px-12">
+        <section id="reviews-section" className="py-14 lg:py-20 max-w-6xl mx-auto px-6 lg:px-12">
           <div className="text-center max-w-2xl mx-auto mb-10 space-y-2">
             <span className="text-[11px] font-bold uppercase tracking-[0.25em] text-[#851C25] dark:text-[#D4AF37]">
               Customer Experiences
             </span>
             <h2 className="text-2xl sm:text-3xl font-serif font-light text-primary dark:text-white">
-              Loved by Discerning Patrons
+              Content to be added
             </h2>
           </div>
 
@@ -1138,7 +1142,7 @@ export default function ProductDetails() {
                   <p className="text-xs font-bold text-primary dark:text-white truncate">
                     {product.name}
                   </p>
-                  <p className="text-[11px] text-secondary dark:text-white/60 truncate">
+                  <p className="text-[11px] font-times text-secondary dark:text-white/60 truncate tabular-nums">
                     {selectedSize ? `${selectedSize.name} • ` : ''}₹{currentPrice.toLocaleString('en-IN')}
                   </p>
                 </div>

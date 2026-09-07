@@ -6,7 +6,7 @@
       .jorique-title {
         font-family: 'Cormorant Garamond', 'Times New Roman', Georgia, serif;
         font-size: 58px;
-        font-weight: 300;
+        font-weight: 400; /* Cormorant Garamond Regular */
         letter-spacing: 0.22em;
         fill: #1A1A1A;
         text-anchor: middle;

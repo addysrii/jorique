@@ -6,7 +6,7 @@ export default function Footer() {
     <footer className="bg-white dark:bg-[#0D0B0A] border-t border-border dark:border-[#2E2925] transition-colors duration-300">
       <div className="max-w-7xl mx-auto px-6 lg:px-12 py-12 lg:py-14">
         <div className="flex flex-col md:flex-row items-center justify-between gap-6">
-          <Link to="/" className="text-sm font-semibold tracking-[0.25em] uppercase text-primary dark:text-[#F5F2EB]">
+          <Link to="/" className="font-logo font-normal text-base tracking-[0.25em] uppercase text-primary dark:text-[#F5F2EB]">
             JORIQUE
           </Link>
 
@@ -15,6 +15,7 @@ export default function Footer() {
               { label: 'Shop', href: '/shop' },
               { label: 'About', href: '/about' },
               { label: 'Reviews', href: '/reviews' },
+              { label: 'Return Policy', href: '/return-policy' },
               { label: 'Scan QR', href: '/scan' },
               { label: 'Connect', href: '/connect' },
             ].map((link) => (

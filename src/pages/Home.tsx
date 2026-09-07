@@ -1,13 +1,16 @@
 import { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { motion, useMotionValue, useSpring, useTransform, useScroll } from 'framer-motion';
-import { ArrowRight, Truck, RefreshCw, Shield, Sparkles, Award, Wind, Compass, Flame } from 'lucide-react';
+import { ArrowRight, Truck, RefreshCw, Shield, ShieldCheck } from 'lucide-react';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import ProductCard from '../components/ProductCard';
 import Button from '../components/Button';
 import Parallax3DShowcase from '../components/Parallax3DShowcase';
 import Spatial3DCarousel from '../components/Spatial3DCarousel';
+import FabricExploded3D from '../components/FabricExploded3D';
+import AtelierParallaxThemes from '../components/AtelierParallaxThemes';
+import PopOutProductDeck from '../components/PopOutProductDeck';
 import { productService } from '../lib/api/products';
 import { Product } from '../types';
 import ProductCollisionIntro from '../components/ProductCollisionIntro';
@@ -17,7 +20,7 @@ const HERO_VIDEO = '/videos/bedsheet-spread.mp4';
 
 const perks = [
   { icon: <Truck size={18} strokeWidth={1.5} />, title: 'Free Express Shipping', label: 'On all orders above ₹1,999' },
-  { icon: <RefreshCw size={18} strokeWidth={1.5} />, title: '15-Day Easy Returns', label: 'Hassle-free exchange policy' },
+  { icon: <ShieldCheck size={18} strokeWidth={1.5} />, title: 'Pre-Dispatch Inspected', label: '48-Hour defect exchange guarantee' },
   { icon: <Shield size={18} strokeWidth={1.5} />, title: 'Heirloom Quality Guarantee', label: '100% Certified Organic Fibers' },
 ];
 
@@ -177,7 +180,7 @@ export default function Home() {
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.2, ease: [0.22, 1, 0.36, 1] }}
-            className="font-serif text-white text-5xl sm:text-7xl md:text-8xl lg:text-9xl font-light tracking-[0.20em] uppercase mb-4 sm:mb-6 drop-shadow-[0_20px_50px_rgba(0,0,0,0.9)]"
+            className="font-mainlogo text-white text-5xl sm:text-7xl md:text-8xl lg:text-9xl font-light tracking-[0.20em] uppercase mb-4 sm:mb-6 drop-shadow-[0_20px_50px_rgba(0,0,0,0.9)]"
           >
             JORIQUE
           </motion.h1>
@@ -274,11 +277,17 @@ export default function Home() {
         </div>
       </section>
 
-      {/* 🔬 CRAZY 3D FABRIC LAYER DECONSTRUCTION STAGE */}
-      {/* <FabricExploded3D /> */}
-
       {/* 🌌 3D SPATIAL CURVED CAROUSEL SHOWCASE */}
       <Spatial3DCarousel />
+
+      {/* 🎴 3D POP-OUT PRODUCT SWIPE DECK (Inspired by video animation with user products) */}
+      <PopOutProductDeck />
+
+      {/* 🏛️ ARCHITECTURAL 3D PARALLAX THEMES & LIVING SPACES */}
+      {/* <AtelierParallaxThemes /> */}
+
+      {/* 🔬 CRAZY 3D FABRIC LAYER DECONSTRUCTION STAGE */}
+      {/* <FabricExploded3D /> */}
 
       {/* 👑 INTERACTIVE 3D LOOKBOOK ROOM STAGE */}
       <Parallax3DShowcase />

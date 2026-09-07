@@ -22,10 +22,12 @@ const Signup = lazy(() => import('./pages/Signup'));
 const VerifyOtp = lazy(() => import('./pages/VerifyOtp'));
 const UserDashboard = lazy(() => import('./pages/UserDashboard'));
 const AdminDashboard = lazy(() => import('./pages/AdminDashboard'));
+const AdminLogin = lazy(() => import('./pages/AdminLogin'));
 const AddNewProducts = lazy(() => import('./pages/AddNewProducts'));
 const ScanPage = lazy(() => import('./pages/Scan'));
 const ReviewPage = lazy(() => import('./pages/Review'));
 const GiftPage = lazy(() => import('./pages/GiftPage'));
+const ReturnPolicy = lazy(() => import('./pages/ReturnPolicy'));
 
 function PageLoader() {
   return (
@@ -205,8 +207,25 @@ function AnimatedRoutes() {
               </PageTransition>
             }
           />
+          <Route
+            path="/return-policy"
+            element={
+              <PageTransition>
+                <ReturnPolicy />
+              </PageTransition>
+            }
+          />
+          <Route path="/returns" element={<Navigate to="/return-policy" replace />} />
 
           {/* Admin JORIQUE OS Suite */}
+          <Route
+            path="/admin/login"
+            element={
+              <PageTransition>
+                <AdminLogin />
+              </PageTransition>
+            }
+          />
           <Route
             path="/admin"
             element={

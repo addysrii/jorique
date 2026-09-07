@@ -438,7 +438,7 @@ export default function ProductCollisionIntro({ onComplete }: { onComplete?: () 
               initial={{ opacity: 0, y: 32, letterSpacing: '0.7em' }}
               animate={{ opacity: 1, y: 0, letterSpacing: '0.22em' }}
               transition={{ delay: 0.18, duration: 1.05, ease: [0.22, 1, 0.36, 1] }}
-              className="font-serif text-5xl sm:text-7xl md:text-8xl font-light uppercase text-white"
+              className="font-logo font-normal text-5xl sm:text-7xl md:text-8xl uppercase text-white"
               style={{ textShadow: '0 0 120px rgba(198,169,107,0.55), 0 0 40px rgba(198,169,107,0.22)' }}
             >
               JORIQUE

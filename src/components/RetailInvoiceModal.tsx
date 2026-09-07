@@ -113,7 +113,7 @@ export default function RetailInvoiceModal({ invoice, onClose, onNewBill }: Reta
             <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4 pb-6 border-b border-border dark:border-[#2E2925]">
               <div>
                 <div className="flex items-center gap-2 mb-1">
-                  <span className="font-serif tracking-widest text-xl font-bold uppercase text-primary dark:text-[#D4AF37]">
+                  <span className="font-logo font-normal tracking-[0.20em] text-2xl uppercase text-primary dark:text-[#D4AF37]">
                     JORIQUE
                   </span>
                   <span className="px-2 py-0.5 rounded text-[9px] font-bold uppercase tracking-wider bg-[#D4AF37]/10 text-[#D4AF37] border border-[#D4AF37]/20">
