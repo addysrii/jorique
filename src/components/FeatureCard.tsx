@@ -25,9 +25,9 @@ export default function FeatureCard({ icon, title, description, index = 0 }: Fea
         scaleOnHover={1.03}
         className="h-full"
       >
-        <div className="flex flex-col items-center text-center p-8 rounded-3xl bg-white/95 dark:bg-[#1A1816] backdrop-blur-sm border border-border dark:border-[#2E2925] hover:border-primary/40 dark:hover:border-[#D4AF37]/50 shadow-sm hover:shadow-xl transition-all duration-300 h-full transform-style-3d">
+        <div className="flex flex-col items-center text-center p-8 rounded-3xl  backdrop-blur-sm border border-border dark:border-[#2E2925] hover:border-primary/40 dark:hover:border-[#D4AF37]/50 shadow-sm hover:shadow-xl transition-all duration-300 h-full transform-style-3d">
           <div
-            className="w-14 h-14 flex items-center justify-center rounded-2xl bg-cream/80 dark:bg-white/10 text-primary dark:text-[#D4AF37] mb-5 shadow-inner"
+            className="w-14 h-14 flex items-center justify-center rounded-2xl  text-primary dark:text-[#D4AF37] mb-5 shadow-inner"
             style={{ transform: 'translateZ(30px)' }}
           >
             {icon}

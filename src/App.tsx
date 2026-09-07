@@ -8,9 +8,10 @@ import CartDrawer from './components/CartDrawer';
 import WhatsAppCheckoutModal from './components/WhatsAppCheckoutModal';
 import ErrorBoundary from './components/ErrorBoundary';
 import ProtectedRoute from './components/ProtectedRoute';
+import HandcraftedFloralBackground from './components/HandcraftedFloralBackground';
+import Home from './pages/Home';
 
 // Lazy-loaded routes for performance & code splitting
-const Home = lazy(() => import('./pages/Home'));
 const Shop = lazy(() => import('./pages/Shop'));
 const ProductDetails = lazy(() => import('./pages/ProductDetails'));
 const About = lazy(() => import('./pages/About'));
@@ -265,6 +266,13 @@ function AnimatedRoutes() {
   );
 }
 
+function GlobalBackground() {
+  const { pathname } = useLocation();
+  const isHome = pathname === '/' || pathname === '/home';
+  if (isHome) return null; // Home has its full-variant background with floating petals
+  return <HandcraftedFloralBackground variant="subtle" showFloatingPetals={false} />;
+}
+
 export default function App() {
   return (
     <ErrorBoundary>
@@ -273,6 +281,7 @@ export default function App() {
           <CartProvider>
             <BrowserRouter>
               <ScrollToTop />
+              <GlobalBackground />
               <AnimatedRoutes />
               <CartDrawer />
               <WhatsAppCheckoutModal />

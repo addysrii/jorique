@@ -1,10 +1,12 @@
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, ShoppingBag, Plus, Minus, Trash2, ArrowRight, ShieldCheck } from 'lucide-react';
+import { X, ShoppingBag, Plus, Minus, Trash2, ArrowRight, ShieldCheck, Lock } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { useCart } from '../context/CartContext';
+import { useAuth } from '../context/AuthContext';
 
 export default function CartDrawer() {
   const { cart, removeFromCart, updateQuantity, isCartOpen, setIsCartOpen, setIsCheckoutOpen, subtotal, cartCount } = useCart();
+  const { user } = useAuth();
 
   if (!isCartOpen) return null;
 
@@ -156,16 +158,23 @@ export default function CartDrawer() {
                 </div>
               </div>
 
-              <div className="flex items-center gap-2 p-2.5 rounded-xl bg-emerald-50 dark:bg-emerald-950/30 text-[10px] text-emerald-800 dark:text-emerald-300 font-medium">
-                <ShieldCheck size={14} className="shrink-0" />
-                <span>Direct WhatsApp Checkout • Instant Confirmation</span>
-              </div>
+              {user ? (
+                <div className="flex items-center gap-2 p-2.5 rounded-xl bg-emerald-50 dark:bg-emerald-950/30 text-[10px] text-emerald-800 dark:text-emerald-300 font-medium">
+                  <ShieldCheck size={14} className="shrink-0" />
+                  <span>Direct WhatsApp Checkout • Instant Confirmation</span>
+                </div>
+              ) : (
+                <div className="flex items-center gap-2 p-2.5 rounded-xl bg-[#D4AF37]/10 border border-[#D4AF37]/25 text-[11px] text-primary dark:text-[#F5F2EB]">
+                  <Lock size={13} className="shrink-0 text-[#C6A96B] dark:text-[#D4AF37]" />
+                  <span>Login required to place order. You will be prompted at checkout.</span>
+                </div>
+              )}
 
               <button
                 onClick={handleProceedToCheckout}
-                className="w-full py-4 rounded-2xl bg-[#25D366] hover:bg-[#20bd5a] text-white text-xs font-bold uppercase tracking-[0.2em] shadow-xl transition-all flex items-center justify-center gap-2"
+                className="w-full py-4 rounded-2xl bg-[#25D366] hover:bg-[#20bd5a] text-white text-xs font-bold uppercase tracking-[0.2em] shadow-xl transition-all flex items-center justify-center gap-2 cursor-pointer"
               >
-                <span>Checkout via WhatsApp</span>
+                <span>{user ? 'Checkout via WhatsApp' : 'Proceed to Checkout (Login Required)'}</span>
                 <ArrowRight size={16} />
               </button>
 

@@ -1,16 +1,34 @@
-import { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { useState, useEffect } from 'react';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, MessageCircle, MapPin, User, Phone, FileText, CheckCircle2, ShieldCheck, ShoppingBag, Video, ArrowRight } from 'lucide-react';
+import {
+  X,
+  MessageCircle,
+  MapPin,
+  User,
+  Phone,
+  FileText,
+  CheckCircle2,
+  ShieldCheck,
+  ShoppingBag,
+  Video,
+  ArrowRight,
+  Lock,
+  LogIn,
+  UserPlus,
+} from 'lucide-react';
 import { useCart } from '../context/CartContext';
 import { useAuth } from '../context/AuthContext';
 import { orderService } from '../lib/api/orders';
+import GoogleAuthButton from './GoogleAuthButton';
 
 export default function WhatsAppCheckoutModal() {
   const { cart, subtotal, isCheckoutOpen, setIsCheckoutOpen, clearCart, whatsappNumber } = useCart();
   const { user } = useAuth();
+  const navigate = useNavigate();
+  const location = useLocation();
 
-  const [fullName, setFullName] = useState(user?.user_metadata?.full_name || '');
+  const [fullName, setFullName] = useState(user?.user_metadata?.full_name || user?.fullName || '');
   const [phone, setPhone] = useState('');
   const [address, setAddress] = useState('');
   const [city, setCity] = useState('');
@@ -20,10 +38,32 @@ export default function WhatsAppCheckoutModal() {
   const [orderCompleted, setOrderCompleted] = useState(false);
   const [orderNumber, setOrderNumber] = useState('');
 
+  // Update name if user logs in
+  useEffect(() => {
+    if (user && !fullName) {
+      setFullName(user.fullName || user.user_metadata?.full_name || '');
+    }
+  }, [user]);
+
+  // If user just authenticated after being redirected to login, automatically reopen checkout
+  useEffect(() => {
+    const shouldReopen = localStorage.getItem('jorique_reopen_checkout');
+    if (shouldReopen === 'true' && user) {
+      localStorage.removeItem('jorique_reopen_checkout');
+      setIsCheckoutOpen(true);
+    }
+  }, [user, setIsCheckoutOpen]);
+
   if (!isCheckoutOpen) return null;
 
   const handleCheckoutSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    // Strict authentication barrier
+    if (!user) {
+      alert('Please log in or register before placing your order.');
+      return;
+    }
 
     if (!fullName.trim() || !phone.trim() || !address.trim() || !city.trim() || !pincode.trim()) {
       alert('Please fill in all delivery details (Name, Phone, Address, City & Pincode).');
@@ -80,10 +120,11 @@ export default function WhatsAppCheckoutModal() {
 📋 *Order ID:* #${generatedOrderNum}
 📅 *Date:* ${todayDate}
 
-👤 *CUSTOMER DELIVERY DETAILS:*
-• *Name:* ${fullName.trim()}
+👤 *CUSTOMER DETAILS (Verified Account):*
+• *Account Email:* ${user.email}
+• *Recipient Name:* ${fullName.trim()}
 • *Phone:* ${phone.trim()}
-• *Address:* ${address.trim()}
+• *Delivery Address:* ${address.trim()}
 • *City:* ${city.trim()} - ${pincode.trim()}
 ${notes.trim() ? `• *Notes:* ${notes.trim()}\n` : ''}
 📦 *ORDER SUMMARY:*
@@ -114,6 +155,18 @@ Please confirm this order and advise on delivery timeline. Thank you!`;
     setOrderCompleted(false);
   };
 
+  const handleNavigateToAuth = (path: '/login' | '/signup') => {
+    localStorage.setItem('jorique_reopen_checkout', 'true');
+    setIsCheckoutOpen(false);
+    navigate(path, {
+      state: {
+        from: location.pathname,
+        openCheckout: true,
+        message: 'Please sign in to finalize and place your order.',
+      },
+    });
+  };
+
   return (
     <AnimatePresence>
       <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 overflow-y-auto bg-black/70 backdrop-blur-md">
@@ -127,15 +180,37 @@ Please confirm this order and advise on delivery timeline. Thank you!`;
           {/* Header */}
           <div className="flex items-center justify-between px-6 py-5 border-b border-border dark:border-[#2E2925] bg-cream/40 dark:bg-white/5">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-2xl bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center text-emerald-600 dark:text-emerald-400">
-                <MessageCircle size={20} />
+              <div
+                className={`w-10 h-10 rounded-2xl flex items-center justify-center ${
+                  orderCompleted
+                    ? 'bg-emerald-500/10 border border-emerald-500/30 text-emerald-600 dark:text-emerald-400'
+                    : !user
+                    ? 'bg-[#D4AF37]/10 border border-[#D4AF37]/30 text-[#D4AF37]'
+                    : 'bg-emerald-500/10 border border-emerald-500/30 text-emerald-600 dark:text-emerald-400'
+                }`}
+              >
+                {orderCompleted ? (
+                  <CheckCircle2 size={20} />
+                ) : !user ? (
+                  <Lock size={20} />
+                ) : (
+                  <MessageCircle size={20} />
+                )}
               </div>
               <div>
                 <h3 className="text-lg font-light tracking-wide text-primary dark:text-white">
-                  {orderCompleted ? 'Order Sent via WhatsApp!' : 'Delivery Details & WhatsApp Order'}
+                  {orderCompleted
+                    ? 'Order Sent via WhatsApp!'
+                    : !user
+                    ? 'Account Login Required'
+                    : 'Delivery Details & WhatsApp Order'}
                 </h3>
                 <p className="text-xs text-secondary dark:text-white/60">
-                  {orderCompleted ? 'Direct chat initialized with JORIQUE Concierge' : 'No credit card required • Order directly on WhatsApp'}
+                  {orderCompleted
+                    ? 'Direct chat initialized with JORIQUE Concierge'
+                    : !user
+                    ? 'Please log in to place your order with verified tracking'
+                    : 'Verified Customer • Direct WhatsApp confirmation'}
                 </p>
               </div>
             </div>
@@ -148,7 +223,7 @@ Please confirm this order and advise on delivery timeline. Thank you!`;
           </div>
 
           {orderCompleted ? (
-            /* Order Success View */
+            /* ── Order Success View ── */
             <div className="p-8 text-center space-y-6">
               <div className="w-16 h-16 rounded-full bg-emerald-100 dark:bg-emerald-950/60 text-emerald-600 dark:text-emerald-400 flex items-center justify-center mx-auto shadow-inner">
                 <CheckCircle2 size={36} />
@@ -194,9 +269,114 @@ Please confirm this order and advise on delivery timeline. Thank you!`;
                 </button>
               </div>
             </div>
+          ) : !user ? (
+            /* ── Sign In Required View (Enforces Login Before Order Placement) ── */
+            <div className="p-6 sm:p-8 space-y-6 max-h-[80vh] overflow-y-auto">
+              {/* Order Items Summary Teaser */}
+              <div className="p-4 rounded-2xl bg-cream/40 dark:bg-white/5 border border-border/70 dark:border-[#2E2925] space-y-3">
+                <div className="flex items-center justify-between text-xs font-semibold uppercase tracking-wider text-secondary dark:text-white/60">
+                  <span className="flex items-center gap-1.5">
+                    <ShoppingBag size={14} className="text-primary dark:text-[#D4AF37]" /> Your Order ({cart.reduce((a, c) => a + c.quantity, 0)} items saved)
+                  </span>
+                  <span className="text-primary dark:text-[#D4AF37] text-sm font-bold">
+                    ₹{subtotal.toLocaleString('en-IN')}
+                  </span>
+                </div>
+                <div className="flex items-center gap-2 overflow-x-auto py-1">
+                  {cart.map((item) => (
+                    <div
+                      key={item.product.id}
+                      className="flex items-center gap-2 p-1.5 pr-3 rounded-xl bg-white/60 dark:bg-[#1A1816] border border-border/60 dark:border-white/10 shrink-0 text-xs"
+                    >
+                      <img
+                        src={item.product.images[0] || '/placeholder-image.jpg'}
+                        alt=""
+                        className="w-8 h-8 rounded-lg object-cover"
+                      />
+                      <div className="truncate max-w-[130px]">
+                        <p className="truncate font-medium text-[11px] text-primary dark:text-white">{item.product.name}</p>
+                        <p className="text-[10px] text-secondary dark:text-white/50">{item.quantity} × ₹{(item.product.discount_price || item.product.price).toLocaleString('en-IN')}</p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Login Callout Card */}
+              <div className="text-center py-4 px-2 space-y-4">
+                <div className="w-14 h-14 rounded-2xl bg-[#D4AF37]/15 border border-[#D4AF37]/30 text-[#D4AF37] flex items-center justify-center mx-auto shadow-sm">
+                  <Lock size={26} />
+                </div>
+                <div>
+                  <h4 className="text-xl sm:text-2xl font-light text-primary dark:text-white tracking-wide">
+                    Sign in to Place Your Order
+                  </h4>
+                  <p className="text-xs text-secondary dark:text-white/70 max-w-md mx-auto mt-2 leading-relaxed">
+                    To connect your order with WhatsApp concierge, track shipment milestones, and secure your 48-hour video exchange guarantee, please sign in.
+                  </p>
+                </div>
+              </div>
+
+              {/* Authentication Actions */}
+              <div className="space-y-3 max-w-md mx-auto">
+                {/* 1-Click Google Sign-In */}
+                <GoogleAuthButton
+                  onSuccess={() => {
+                    // Google auth succeeds, user is updated in AuthContext automatically!
+                  }}
+                  text="Continue with Google to Checkout"
+                  className="w-full py-3.5 px-6 rounded-2xl bg-white dark:bg-[#100E0D] hover:bg-gray-50 dark:hover:bg-white/5 text-gray-800 dark:text-white border border-gray-200 dark:border-white/15 text-xs font-bold tracking-wider uppercase transition-all shadow-md flex items-center justify-center gap-2.5 active:scale-[0.99]"
+                />
+
+                <div className="relative flex items-center justify-center my-3">
+                  <div className="border-t border-border/70 dark:border-[#2E2925] w-full" />
+                  <span className="bg-white dark:bg-[#181615] px-3 text-[10px] font-semibold tracking-widest text-secondary/60 dark:text-white/40 uppercase absolute">
+                    Or
+                  </span>
+                </div>
+
+                {/* Email / WhatsApp Sign-In Button */}
+                <button
+                  type="button"
+                  onClick={() => handleNavigateToAuth('/login')}
+                  className="w-full py-3.5 rounded-2xl bg-primary dark:bg-[#D4AF37] text-white dark:text-black text-xs font-bold uppercase tracking-[0.18em] shadow-xl hover:opacity-90 transition-all flex items-center justify-center gap-2"
+                >
+                  <LogIn size={15} />
+                  <span>Sign In with Email or Phone</span>
+                </button>
+
+                {/* Create Account Link */}
+                <div className="text-center pt-2">
+                  <button
+                    type="button"
+                    onClick={() => handleNavigateToAuth('/signup')}
+                    className="inline-flex items-center gap-1.5 text-xs text-secondary dark:text-white/70 hover:text-primary dark:hover:text-[#D4AF37] transition-colors"
+                  >
+                    <UserPlus size={13} />
+                    <span>Don't have an account? <strong className="underline text-primary dark:text-[#D4AF37]">Sign Up</strong></span>
+                  </button>
+                </div>
+              </div>
+
+              {/* Assurance Guarantee */}
+              <div className="flex items-center justify-center gap-2 text-[11px] text-secondary/80 dark:text-white/50 pt-2 border-t border-border/50 dark:border-[#2E2925]">
+                <ShieldCheck size={14} className="text-emerald-600 dark:text-emerald-400" />
+                <span>Your cart items remain securely preserved while you sign in.</span>
+              </div>
+            </div>
           ) : (
-            /* Form View */
+            /* ── Logged-in Form View (Order Placement) ── */
             <form onSubmit={handleCheckoutSubmit} className="p-6 space-y-6 max-h-[80vh] overflow-y-auto">
+              {/* Logged in User Bar */}
+              <div className="flex items-center justify-between p-3 rounded-2xl bg-emerald-50 dark:bg-emerald-950/30 border border-emerald-200 dark:border-emerald-800 text-xs">
+                <div className="flex items-center gap-2 text-emerald-900 dark:text-emerald-300">
+                  <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+                  <span>Ordering as: <strong>{user.fullName || user.user_metadata?.full_name || user.email}</strong></span>
+                </div>
+                <span className="text-[10px] font-mono text-emerald-700 dark:text-emerald-400 uppercase tracking-wider bg-emerald-100 dark:bg-emerald-900/50 px-2 py-0.5 rounded-md">
+                  Verified
+                </span>
+              </div>
 
               {/* Order Items Brief */}
               <div className="p-4 rounded-2xl bg-cream/40 dark:bg-white/5 border border-border/70 dark:border-[#2E2925] space-y-3">
@@ -230,7 +410,7 @@ Please confirm this order and advise on delivery timeline. Thank you!`;
               {/* Delivery Details Fields */}
               <div className="space-y-4">
                 <h4 className="text-xs font-bold uppercase tracking-[0.2em] text-primary dark:text-[#D4AF37]">
-                  1. Delivery Details
+                  Delivery Details
                 </h4>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -243,7 +423,7 @@ Please confirm this order and advise on delivery timeline. Thank you!`;
                       <input
                         type="text"
                         required
-                        placeholder="e.g. Aditya Srivastava"
+                        placeholder="Recipient full name"
                         value={fullName}
                         onChange={(e) => setFullName(e.target.value)}
                         className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-cream/30 dark:bg-[#100E0D] border border-border dark:border-[#2E2925] text-xs text-primary dark:text-white placeholder:text-secondary/40 focus:outline-none focus:border-primary dark:focus:border-[#D4AF37]"
@@ -278,7 +458,7 @@ Please confirm this order and advise on delivery timeline. Thank you!`;
                     <textarea
                       rows={2}
                       required
-                      placeholder="House/Flat No., Street, Landmark..."
+                      placeholder="House/Flat No., Building, Street, Landmark..."
                       value={address}
                       onChange={(e) => setAddress(e.target.value)}
                       className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-cream/30 dark:bg-[#100E0D] border border-border dark:border-[#2E2925] text-xs text-primary dark:text-white placeholder:text-secondary/40 focus:outline-none focus:border-primary dark:focus:border-[#D4AF37] resize-none"

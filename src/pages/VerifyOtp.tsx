@@ -26,7 +26,12 @@ export default function VerifyOtp() {
       return;
     }
 
-    navigate('/dashboard', { replace: true });
+    const from = (location.state as { from?: string; openCheckout?: boolean } | null)?.from;
+    const openCheckout = (location.state as { from?: string; openCheckout?: boolean } | null)?.openCheckout;
+    if (openCheckout) {
+      localStorage.setItem('jorique_reopen_checkout', 'true');
+    }
+    navigate(from || '/dashboard', { replace: true });
   }
 
   return (

@@ -1,5 +1,5 @@
 import { FormEvent, useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { AlertCircle, Eye, EyeOff, Loader2, Mail } from 'lucide-react';
 import AuthLayout from '../components/AuthLayout';
 import GoogleAuthButton from '../components/GoogleAuthButton';
@@ -9,6 +9,10 @@ import type { AppUser } from '../types';
 export default function Signup() {
   const { signUp } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
+  const from = (location.state as { from?: string; openCheckout?: boolean } | null)?.from;
+  const openCheckout = (location.state as { from?: string; openCheckout?: boolean } | null)?.openCheckout;
+
   const [fullName, setFullName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -30,7 +34,7 @@ export default function Signup() {
       return;
     }
 
-    navigate('/verify-otp', { state: { email: result.email || email } });
+    navigate('/verify-otp', { state: { email: result.email || email, from, openCheckout } });
   }
 
   return (
@@ -38,7 +42,12 @@ export default function Signup() {
       <div className="space-y-5">
         <GoogleAuthButton
           role={role}
-          onSuccess={() => navigate(role === 'admin' ? '/admin' : '/dashboard', { replace: true })}
+          onSuccess={() => {
+            if (openCheckout) {
+              localStorage.setItem('jorique_reopen_checkout', 'true');
+            }
+            navigate(from || (role === 'admin' ? '/admin' : '/dashboard'), { replace: true });
+          }}
           onError={(err) => setError(err)}
           text="Sign up with Google"
         />

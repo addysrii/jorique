@@ -11,9 +11,10 @@ import Spatial3DCarousel from '../components/Spatial3DCarousel';
 import FabricExploded3D from '../components/FabricExploded3D';
 import AtelierParallaxThemes from '../components/AtelierParallaxThemes';
 import PopOutProductDeck from '../components/PopOutProductDeck';
+import CraftsmanshipHeritageSection from '../components/CraftsmanshipHeritageSection';
+import HandcraftedFloralBackground, { HandcraftedFloralDivider } from '../components/HandcraftedFloralBackground';
 import { productService } from '../lib/api/products';
 import { Product } from '../types';
-import ProductCollisionIntro from '../components/ProductCollisionIntro';
 
 const HERO_IMAGE = '/images/hero.png';
 const HERO_VIDEO = '/videos/bedsheet-spread.mp4';
@@ -28,16 +29,6 @@ export default function Home() {
   const [featuredProducts, setFeaturedProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-
-  // Collision intro — shown once per browser session
-  const [showIntro, setShowIntro] = useState<boolean>(() => {
-    return !sessionStorage.getItem('jorique_intro_seen');
-  });
-
-  const handleIntroComplete = () => {
-    sessionStorage.setItem('jorique_intro_seen', '1');
-    setShowIntro(false);
-  };
 
   // Hero Section 3D Mouse Parallax
   const heroRef = useRef<HTMLDivElement>(null);
@@ -90,7 +81,7 @@ export default function Home() {
       try {
         setLoading(true);
         setError(null);
-        const products = await productService.getFeaturedProducts(3);
+        const products = await productService.getFeaturedProducts(6);
         setFeaturedProducts(products);
       } catch (err) {
         console.error('Error fetching products:', err);
@@ -105,13 +96,13 @@ export default function Home() {
 
   if (error) {
     return (
-      <div className="min-h-screen bg-background">
+      <div className="min-h-screen bg-background dark:bg-[#12100E] text-primary dark:text-[#FCFAF7] transition-colors duration-300">
         <Navbar />
         <div className="flex flex-col items-center justify-center min-h-[60vh] px-6">
-          <p className="text-secondary mb-4">{error}</p>
+          <p className="text-secondary dark:text-white/60 mb-4">{error}</p>
           <button
             onClick={() => window.location.reload()}
-            className="text-primary border-b border-primary pb-0.5 text-sm font-medium"
+            className="text-primary dark:text-[#D4AF37] border-b border-primary dark:border-[#D4AF37] pb-0.5 text-sm font-medium"
           >
             Try Again
           </button>
@@ -122,18 +113,18 @@ export default function Home() {
   }
 
   return (
-    <div className="min-h-screen bg-background overflow-hidden">
-      {/* ── Collision Brand Intro (once per session) ── */}
-      {showIntro && <ProductCollisionIntro onComplete={handleIntroComplete} />}
-
+    <div className="min-h-screen bg-background dark:bg-[#12100E] text-primary dark:text-[#FCFAF7] overflow-hidden transition-colors duration-300">
       <Navbar />
+
+      {/* 🌸 Handcrafted Artisanal Floral & Botanical Background Tapestry */}
+      <HandcraftedFloralBackground variant="full" showFloatingPetals={true} />
 
       {/* 🌌 CRAZY 3D MULTI-LAYER SPATIAL HERO */}
       <section
         ref={heroRef}
         onMouseMove={handleHeroMouseMove}
         onMouseLeave={handleHeroMouseLeave}
-        className="relative h-screen min-h-[720px] overflow-hidden select-none perspective-2000 bg-[#0E0D0C]"
+        className="relative z-20 h-screen min-h-[720px] overflow-hidden select-none perspective-2000 bg-[#0E0D0C]"
       >
         {/* Layer 0: Real-time 3D Dynamic Ambient Flashlight Aura */}
         <motion.div
@@ -250,7 +241,7 @@ export default function Home() {
       {/* <ScrollVideoSection /> */}
 
       {/* Perks bar with 3D Float Cards */}
-      <section className="bg-white dark:bg-[#151311] border-b border-border/80 dark:border-[#2E2925] relative z-20 py-8 px-6 transition-colors duration-300">
+      <section className="bg-transparent border-b border-border/80 dark:border-[#2E2925] relative z-20 py-8 px-6 transition-colors duration-300">
         <div className="max-w-7xl mx-auto">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {perks.map((perk, i) => (
@@ -260,9 +251,9 @@ export default function Home() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.4, delay: i * 0.1 }}
-                className="flex items-center gap-4 p-4 rounded-2xl bg-cream/40 dark:bg-white/5 border border-border dark:border-[#2E2925] hover:border-primary/20 dark:hover:border-[#D4AF37]/30 hover:shadow-md transition-all duration-300"
+                className="flex items-center gap-4 p-4 rounded-2xl bg-white/40 dark:bg-white/5 backdrop-blur-xs border border-border/70 dark:border-[#2E2925] hover:border-primary/20 dark:hover:border-[#D4AF37]/30 hover:shadow-md transition-all duration-300"
               >
-                <div className="w-12 h-12 rounded-xl bg-white dark:bg-[#201D1B] flex items-center justify-center text-primary dark:text-[#D4AF37] shadow-sm shrink-0">
+                <div className="w-12 h-12 rounded-xl bg-white/80 dark:bg-[#201D1B] flex items-center justify-center text-primary dark:text-[#D4AF37] shadow-sm shrink-0">
                   {perk.icon}
                 </div>
                 <div>
@@ -280,21 +271,15 @@ export default function Home() {
       {/* 🌌 3D SPATIAL CURVED CAROUSEL SHOWCASE */}
       <Spatial3DCarousel />
 
-      {/* 🎴 3D POP-OUT PRODUCT SWIPE DECK (Inspired by video animation with user products) */}
-      <PopOutProductDeck />
-
-      {/* 🏛️ ARCHITECTURAL 3D PARALLAX THEMES & LIVING SPACES */}
-      {/* <AtelierParallaxThemes /> */}
-
-      {/* 🔬 CRAZY 3D FABRIC LAYER DECONSTRUCTION STAGE */}
-      {/* <FabricExploded3D /> */}
-
       {/* 👑 INTERACTIVE 3D LOOKBOOK ROOM STAGE */}
       <Parallax3DShowcase />
 
+      {/* 📜 WHY JORIQUE: CRAFTSMANSHIP, THREAD COUNTS & 48-HR VIDEO GUARANTEE */}
+      {/* <CraftsmanshipHeritageSection /> */}
+
       {/* Featured Products with 3D Parallax Tilt Cards */}
-      <section className="py-24 lg:py-32 px-6 dark:bg-[#100E0D] transition-colors duration-300">
-        <div className="max-w-7xl mx-auto">
+      <section className="py-24 lg:py-32 px-6 transition-colors duration-300 relative overflow-hidden">
+        <div className="max-w-7xl mx-auto relative z-10">
           <motion.div
             className="text-center mb-14"
             initial={{ opacity: 0, y: 20 }}
@@ -302,17 +287,28 @@ export default function Home() {
             viewport={{ once: true }}
             transition={{ duration: 0.5 }}
           >
-            <p className="text-xs font-medium tracking-[0.3em] uppercase text-secondary dark:text-[#D4AF37] mb-3">
+            {/* Handcrafted Floral Filigree Ornament */}
+            <div className="flex items-center justify-center gap-3 mb-3 text-[#C6A96B]">
+              <span className="w-10 sm:w-16 h-[1px] bg-gradient-to-r from-transparent to-[#C6A96B]/60" />
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" className="opacity-80">
+                <path d="M12 2 C10 6, 6 10, 2 12 C6 14, 10 18, 12 22 C14 18, 18 14, 22 12 C18 10, 14 6, 12 2 Z" />
+              </svg>
+              <span className="w-10 sm:w-16 h-[1px] bg-gradient-to-l from-transparent to-[#C6A96B]/60" />
+            </div>
+
+            <p className="text-xs font-medium tracking-[0.3em] uppercase text-secondary dark:text-[#D4AF37] mb-2">
               Curated Selection
             </p>
-            <h2 className="text-2xl lg:text-3xl font-light text-primary dark:text-white tracking-wide">
+            <h2 className="text-2xl sm:text-3xl lg:text-4xl font-serif font-light text-primary dark:text-white tracking-wide uppercase">
               Featured Products
             </h2>
           </motion.div>
 
           {loading ? (
-            <div className="flex justify-center py-12">
-              <div className="w-10 h-10 border-2 border-primary dark:border-[#D4AF37] border-t-transparent rounded-full animate-spin"></div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8 max-w-5xl mx-auto">
+              {[...Array(6)].map((_, i) => (
+                <div key={i} className="rounded-2xl bg-black/5 dark:bg-white/5 aspect-[4/5] animate-pulse border border-border/50 dark:border-white/5" />
+              ))}
             </div>
           ) : featuredProducts.length === 0 ? (
             <p className="text-center text-secondary dark:text-white/60 py-12">No products available</p>
@@ -342,7 +338,7 @@ export default function Home() {
       </section>
 
       {/* Luxury CTA Banner */}
-      <section className="py-12 px-6 max-w-7xl mx-auto dark:bg-[#100E0D]">
+      <section className="py-12 px-6 max-w-7xl mx-auto bg-transparent">
         <div className="relative rounded-3xl overflow-hidden py-24 lg:py-32 px-6 text-center bg-primary dark:bg-[#1A1816] border border-border/20 dark:border-[#2E2925] shadow-2xl">
           <div className="absolute inset-0">
             <img
@@ -391,7 +387,7 @@ export default function Home() {
       </section>
 
       {/* Newsletter */}
-      <section className="py-24 px-6 bg-warm-white dark:bg-[#151311] border-t border-border/60 dark:border-[#2E2925] transition-colors duration-300">
+      <section className="py-24 px-6 bg-transparent border-t border-border/60 dark:border-[#2E2925] transition-colors duration-300">
         <motion.div
           className="max-w-lg mx-auto text-center"
           initial={{ opacity: 0, y: 24 }}

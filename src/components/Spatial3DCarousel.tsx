@@ -91,18 +91,18 @@ export default function Spatial3DCarousel() {
     <section
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
-      className="py-20 sm:py-28 lg:py-40 bg-gradient-to-b from-[#FAF8F5] via-[#F3EFE9] to-[#FAF8F5] dark:from-[#181615] dark:via-[#1F1C1A] dark:to-[#181615] text-primary dark:text-white overflow-hidden relative select-none border-b border-border/80 dark:border-[#2E2925] transition-colors duration-300"
+      className="py-20 sm:py-28 lg:py-40 bg-transparent text-primary dark:text-white overflow-hidden relative select-none border-b border-border/80 dark:border-[#2E2925] transition-colors duration-300"
     >
-      {/* Ambient background lights */}
-      <div className="absolute top-1/2 left-1/4 -translate-y-1/2 w-72 sm:w-96 h-72 sm:h-96 bg-[#D4AF37]/10 dark:bg-[#D4AF37]/15 rounded-full blur-[100px] sm:blur-[140px] pointer-events-none" />
-      <div className="absolute top-1/2 right-1/4 -translate-y-1/2 w-72 sm:w-96 h-72 sm:h-96 bg-[#C4A482]/10 dark:bg-[#C4A482]/15 rounded-full blur-[100px] sm:blur-[140px] pointer-events-none" />
+      {/* Ambient background lights (Dark mode only for soft spatial glow without tinting light mode background) */}
+      <div className="hidden dark:block absolute top-1/2 left-1/4 -translate-y-1/2 w-72 sm:w-96 h-72 sm:h-96 bg-[#D4AF37]/15 rounded-full blur-[100px] sm:blur-[140px] pointer-events-none" />
+      <div className="hidden dark:block absolute top-1/2 right-1/4 -translate-y-1/2 w-72 sm:w-96 h-72 sm:h-96 bg-[#C4A482]/15 rounded-full blur-[100px] sm:blur-[140px] pointer-events-none" />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-12 relative z-10">
-        
+
         {/* Header */}
         <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-6 mb-10 sm:mb-16">
           <div>
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-cream dark:bg-white/10 border border-border dark:border-white/15 backdrop-blur-md mb-3 shadow-sm">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-border dark:border-white/15 bg-white/40 dark:bg-white/5 backdrop-blur-md mb-3 shadow-sm">
               <Sparkles size={13} className="text-[#D4AF37]" />
               <span className="text-[10px] font-bold tracking-[0.3em] uppercase text-primary dark:text-white/80">
                 Spatial 3D Showcase
@@ -179,9 +179,8 @@ export default function Spatial3DCarousel() {
                   style={{
                     transformStyle: 'preserve-3d',
                   }}
-                  className={`absolute w-[260px] sm:w-80 md:w-84 aspect-[4/5] rounded-3xl cursor-pointer will-change-transform shadow-2xl ${
-                    isCenter ? 'z-30' : 'z-10 pointer-events-auto'
-                  }`}
+                  className={`absolute w-[260px] sm:w-80 md:w-84 aspect-[4/5] rounded-3xl cursor-pointer will-change-transform shadow-2xl ${isCenter ? 'z-30' : 'z-10 pointer-events-auto'
+                    }`}
                 >
                   <Parallax3DCard
                     maxRotation={isCenter ? 14 : 4}
@@ -191,7 +190,7 @@ export default function Spatial3DCarousel() {
                     className="w-full h-full rounded-3xl"
                   >
                     <div className="w-full h-full relative rounded-3xl overflow-hidden border-2 border-white/60 dark:border-white/20 transform-style-3d bg-white dark:bg-black shadow-2xl">
-                      
+
                       {/* Image Layer */}
                       <img
                         src={item.image}
@@ -270,9 +269,8 @@ export default function Spatial3DCarousel() {
             <button
               key={i}
               onClick={() => setActiveIndex(i)}
-              className={`h-1.5 rounded-full transition-all duration-300 cursor-pointer ${
-                activeIndex === i ? 'w-8 bg-primary dark:bg-[#D4AF37]' : 'w-2 bg-secondary/30 dark:bg-white/20 hover:bg-secondary/60'
-              }`}
+              className={`h-1.5 rounded-full transition-all duration-300 cursor-pointer ${activeIndex === i ? 'w-8 bg-primary dark:bg-[#D4AF37]' : 'w-2 bg-secondary/30 dark:bg-white/20 hover:bg-secondary/60'
+                }`}
             />
           ))}
         </div>

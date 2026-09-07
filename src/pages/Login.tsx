@@ -38,7 +38,9 @@ export default function Login() {
   const [emptyAttempt, setEmptyAttempt] = useState(false);
   const [hoverTarget, setHoverTarget] = useState<'none' | 'forgot' | 'submit'>('none');
 
-  const from = (location.state as { from?: string } | null)?.from;
+  const from = (location.state as { from?: string; openCheckout?: boolean; message?: string } | null)?.from;
+  const openCheckout = (location.state as { from?: string; openCheckout?: boolean; message?: string } | null)?.openCheckout;
+  const stateMessage = (location.state as { from?: string; openCheckout?: boolean; message?: string } | null)?.message;
 
   // Countdown timer for OTP resend
   useEffect(() => {
@@ -50,7 +52,10 @@ export default function Login() {
   }, [resendTimer]);
 
   if (user) {
-    return <Navigate to={user.role === 'admin' ? '/admin' : '/dashboard'} replace />;
+    if (openCheckout) {
+      localStorage.setItem('jorique_reopen_checkout', 'true');
+    }
+    return <Navigate to={from || (user.role === 'admin' ? '/admin' : '/dashboard')} replace />;
   }
 
   async function handlePasswordSubmit(event: FormEvent) {
@@ -75,6 +80,9 @@ export default function Login() {
       return;
     }
 
+    if (openCheckout) {
+      localStorage.setItem('jorique_reopen_checkout', 'true');
+    }
     navigate(from || '/dashboard', { replace: true });
   }
 
@@ -125,6 +133,9 @@ export default function Login() {
       return;
     }
 
+    if (openCheckout) {
+      localStorage.setItem('jorique_reopen_checkout', 'true');
+    }
     navigate(from || '/dashboard', { replace: true });
   }
 
@@ -223,6 +234,14 @@ export default function Login() {
               </button>
             </div>
             */}
+
+            {/* Checkout Redirection Notice */}
+            {stateMessage && (
+              <div className="mb-5 flex items-start gap-2.5 bg-[#D4AF37]/10 dark:bg-[#D4AF37]/15 border border-[#D4AF37]/30 rounded-2xl p-3 text-xs text-primary dark:text-[#F5F2EB]">
+                <Sparkles size={15} className="shrink-0 mt-0.5 text-[#C6A96B] dark:text-[#D4AF37]" />
+                <p className="leading-relaxed font-medium">{stateMessage}</p>
+              </div>
+            )}
 
             {/* Error Notification */}
             {error && (
@@ -332,7 +351,12 @@ export default function Login() {
 
                 {/* Google Sign-In Button */}
                 <GoogleAuthButton
-                  onSuccess={() => navigate(from || '/dashboard', { replace: true })}
+                  onSuccess={() => {
+                    if (openCheckout) {
+                      localStorage.setItem('jorique_reopen_checkout', 'true');
+                    }
+                    navigate(from || '/dashboard', { replace: true });
+                  }}
                   onError={(err) => setError(err)}
                   text="Log in with Google"
                   className="w-full py-3 px-6 rounded-full bg-white dark:bg-[#100E0D] hover:bg-gray-50 dark:hover:bg-white/5 text-gray-800 dark:text-white border border-gray-200 dark:border-white/15 text-xs font-semibold tracking-wider transition-all shadow-xs flex items-center justify-center gap-2.5 active:scale-[0.99]"

@@ -742,13 +742,13 @@ export default function Parallax3DShowcase() {
   if (categoryRows.length === 0) return null;
 
   return (
-    <section className="py-20 sm:py-28 lg:py-36 bg-[#FAF8F5] dark:bg-[#12100E] text-primary dark:text-white border-y border-border/80 dark:border-[#2E2925] transition-colors duration-300">
+    <section className="py-20 sm:py-28 lg:py-36 bg-transparent text-primary dark:text-white border-y border-border/80 dark:border-[#2E2925] transition-colors duration-300">
       <div className="max-w-7xl mx-auto px-6 lg:px-12 space-y-16 lg:space-y-24">
         
         {/* Main Section Header */}
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
           <div>
-            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full border border-border/80 dark:border-white/15 bg-cream dark:bg-white/5 backdrop-blur-md mb-3.5 shadow-xs">
+            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full border border-border/80 dark:border-white/15 bg-white/40 dark:bg-white/5 backdrop-blur-md mb-3.5 shadow-xs">
               <Sparkles size={13} className="text-[#C6A96B] dark:text-[#D4AF37]" />
               <span className="text-[10px] font-bold tracking-[0.28em] uppercase text-secondary dark:text-[#D4AF37]">
                 Curated Category Showcases
