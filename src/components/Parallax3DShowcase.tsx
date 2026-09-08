@@ -445,10 +445,6 @@ function FullWidthCategoryCarousel({
                       <span className="text-[11px] font-bold uppercase tracking-[0.25em] text-[#C6A96B] dark:text-[#D4AF37]">
                         {currentProduct.category}
                       </span>
-                      <span className="text-secondary/40 dark:text-white/30">•</span>
-                      <span className="text-[10px] font-mono text-secondary dark:text-white/60">
-                        {currentProduct.sku || 'JR-ATELIER'}
-                      </span>
                     </motion.div>
 
                     {/* Product Title */}

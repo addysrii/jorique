@@ -96,7 +96,7 @@ export default function Home() {
 
   if (error) {
     return (
-      <div className="min-h-screen bg-background dark:bg-[#12100E] text-primary dark:text-[#FCFAF7] transition-colors duration-300">
+      <div className="min-h-screen bg-background dark:bg-[#14100D] text-primary dark:text-[#FCFAF7] transition-colors duration-300">
         <Navbar />
         <div className="flex flex-col items-center justify-center min-h-[60vh] px-6">
           <p className="text-secondary dark:text-white/60 mb-4">{error}</p>
@@ -113,11 +113,11 @@ export default function Home() {
   }
 
   return (
-    <div className="min-h-screen bg-background dark:bg-[#12100E] text-primary dark:text-[#FCFAF7] overflow-hidden transition-colors duration-300">
+    <div className="min-h-screen bg-background dark:bg-[#14100D] text-primary dark:text-[#FCFAF7] overflow-hidden transition-colors duration-300">
       <Navbar />
 
       {/* 🌸 Handcrafted Artisanal Floral & Botanical Background Tapestry */}
-      <HandcraftedFloralBackground variant="full" showFloatingPetals={true} />
+      <HandcraftedFloralBackground variant="full" showFloatingPetals={false} />
 
       {/* 🌌 CRAZY 3D MULTI-LAYER SPATIAL HERO */}
       <section

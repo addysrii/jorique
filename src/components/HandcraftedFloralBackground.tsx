@@ -23,11 +23,42 @@ export default function HandcraftedFloralBackground({
       className={`fixed inset-0 pointer-events-none z-0 overflow-hidden select-none transition-opacity duration-700 ${className}`}
       aria-hidden="true"
     >
-      {/* ── 0. TRANSPARENT HAND-CRAFTED ROYAL ELEPHANT & PAISLEY WALLPAPER ── */}
+      {/* ── 0. DARK MODE REFINED MINIMALIST SMOKED WALNUT TEXTURE ── */}
+      <div className="absolute inset-0 hidden dark:block pointer-events-none transition-opacity duration-700">
+        {/* Soft, diffuse warm timber glow */}
+        <div
+          className="absolute inset-0 pointer-events-none"
+          style={{
+            background:
+              'radial-gradient(ellipse at 50% 0%, rgba(95, 58, 35, 0.16) 0%, rgba(45, 28, 18, 0.22) 50%, rgba(20, 16, 13, 0.85) 90%, #14100D 100%)',
+          }}
+        />
+        {/* Ultra-subtle, clean organic timber lines (minimal & unobtrusive) */}
+        <svg
+          className="absolute inset-0 w-full h-full text-[#A47148] opacity-[0.035] pointer-events-none"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <defs>
+            <pattern
+              id="jorique-dark-woodgrain"
+              width="360"
+              height="600"
+              patternUnits="userSpaceOnUse"
+            >
+              <path d="M60 0 Q66 200, 58 400 T62 600" stroke="currentColor" strokeWidth="0.6" fill="none" />
+              <path d="M180 0 Q170 250, 186 450 T178 600" stroke="currentColor" strokeWidth="0.7" fill="none" />
+              <path d="M300 0 Q310 180, 294 380 T304 600" stroke="currentColor" strokeWidth="0.6" fill="none" />
+            </pattern>
+          </defs>
+          <rect width="100%" height="100%" fill="url(#jorique-dark-woodgrain)" />
+        </svg>
+      </div>
+
+      {/* ── 1. TRANSPARENT HAND-CRAFTED ROYAL ELEPHANT & PAISLEY WALLPAPER ── */}
       {/* Light Mode: Warm antique bronze & gold transparent elephant and paisley figures visible delicately */}
       <div
         className={`absolute inset-0 dark:hidden pointer-events-none mix-blend-multiply transition-opacity duration-700 ${
-          isSubtle ? 'opacity-[0.04] sm:opacity-[0.05]' : 'opacity-[0.07] sm:opacity-[0.09]'
+          isSubtle ? 'opacity-[0.03] sm:opacity-[0.04]' : 'opacity-[0.05] sm:opacity-[0.06]'
         }`}
         style={{
           backgroundImage: 'url(/images/transparent-elephant-light.png)',
@@ -36,10 +67,10 @@ export default function HandcraftedFloralBackground({
         }}
       />
 
-      {/* Dark Mode: Shimmering gilded gold transparent elephant and paisley figures */}
+      {/* Dark Mode: Understated gilded gold watermark */}
       <div
         className={`absolute inset-0 hidden dark:block pointer-events-none mix-blend-screen transition-opacity duration-700 ${
-          isSubtle ? 'opacity-[0.03] sm:opacity-[0.04]' : 'opacity-[0.055] sm:opacity-[0.075]'
+          isSubtle ? 'opacity-[0.02] sm:opacity-[0.025]' : 'opacity-[0.035] sm:opacity-[0.045]'
         }`}
         style={{
           backgroundImage: 'url(/images/transparent-elephant-dark.png)',
@@ -48,10 +79,10 @@ export default function HandcraftedFloralBackground({
         }}
       />
 
-      {/* ── 1. DELICATE FLORAL TRELLIS ACCENT ── */}
+      {/* ── 2. DELICATE FLORAL TRELLIS ACCENT (Light Mode Only - hidden in Dark to prevent clutter) ── */}
       <svg
-        className={`absolute inset-0 w-full h-full text-[#8C6D37] dark:text-[#E8D2A0] transition-opacity duration-700 ${
-          isSubtle ? 'opacity-[0.025] dark:opacity-[0.015]' : 'opacity-[0.045] dark:opacity-[0.03]'
+        className={`absolute inset-0 w-full h-full text-[#8C6D37] dark:hidden transition-opacity duration-700 ${
+          isSubtle ? 'opacity-[0.02]' : 'opacity-[0.035]'
         }`}
       >
         <defs>

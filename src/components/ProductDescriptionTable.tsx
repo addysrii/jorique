@@ -103,16 +103,16 @@ export default function ProductDescriptionTable({
     return parseProductDescription(description || product?.description);
   }, [description, product?.description]);
 
-  // Combine extracted specs with relevant product metadata without duplicates
+  // Combine extracted specs with relevant product metadata without duplicates (Excluding SKU from user view)
   const finalSpecs = useMemo(() => {
-    const list: Array<{ key: string; value: string }> = [...parsed.specs];
+    // Filter out any specs extracted from raw description that mention SKU
+    const list: Array<{ key: string; value: string }> = parsed.specs.filter(
+      (s) => !/sku|product\s*sku|sku\s*code/i.test(s.key)
+    );
     const existingKeys = new Set(list.map((s) => s.key.toLowerCase()));
 
-    // Inject metadata if not already present
+    // Inject metadata if not already present (SKU is excluded from customer-facing table)
     if (product) {
-      if (product.sku && !existingKeys.has('sku') && !existingKeys.has('product sku') && !existingKeys.has('code')) {
-        list.push({ key: 'Product SKU', value: product.sku });
-      }
       if (product.category && !existingKeys.has('category') && !existingKeys.has('type')) {
         list.push({ key: 'Category', value: product.category });
       }

@@ -26,11 +26,11 @@ export default {
         ivory: '#FCFAF7',
         'warm-white': '#FAF7F2',
 
-        // Dark Mode Luxury Palette
-        'dark-bg': '#12100E',
-        'dark-surface': '#1A1816',
-        'dark-card': '#23201D',
-        'dark-border': '#2E2925',
+        // Dark Mode Luxury Palette (Smoked Walnut & Aged Teak)
+        'dark-bg': '#14100D',
+        'dark-surface': '#1C1613',
+        'dark-card': '#251E19',
+        'dark-border': '#332922',
         'dark-text': '#FCFAF7',
         'dark-muted': '#8A847D',
         'dark-gold': '#C6A96B',

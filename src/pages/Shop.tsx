@@ -6,6 +6,7 @@ import Footer from '../components/Footer';
 import ProductCard from '../components/ProductCard';
 import { productService } from '../lib/api/products';
 import { Product } from '../types';
+import ShopDealsBannerCarousel from '../components/ShopDealsBannerCarousel';
 
 import { supabase } from '../lib/supabase';
 
@@ -24,7 +25,7 @@ export default function Shop() {
       try {
         setLoading(true);
         setError(null);
-        
+
         const [prodData, catRes] = await Promise.all([
           productService.getProducts(),
           supabase.from('categories').select('name').order('name'),
@@ -103,11 +104,36 @@ export default function Shop() {
       <Navbar />
 
       <div className="pt-20 lg:pt-24">
+        {/* 🏷️ Top Running Deals Banner Carousel (At the very top of Shop) */}
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-12 pt-4 sm:pt-6 pb-4">
+          <ShopDealsBannerCarousel
+            onSelectFilter={(target) => {
+              if (target === 'All') {
+                setSelectedCategory('All');
+                setSearchQuery('');
+              } else {
+                const matched = categories.find(
+                  (c) => c.toLowerCase() === target.toLowerCase()
+                );
+                if (matched) {
+                  setSelectedCategory(matched);
+                } else {
+                  setSearchQuery(target);
+                }
+              }
+              const gridEl = document.getElementById('shop-catalog-grid');
+              if (gridEl) {
+                gridEl.scrollIntoView({ behavior: 'smooth' });
+              }
+            }}
+          />
+        </div>
+
         {/* Parallax Atmospheric Header */}
-        <div className="relative overflow-hidden bg-cream/70 dark:bg-[#0D0B0A] text-primary dark:text-white py-14 lg:py-20 px-6 border-b border-border/80 dark:border-[#2E2925] transition-colors duration-300">
+        <div className="relative overflow-hidden bg-transparent text-primary dark:text-white py-12 lg:py-16 px-6  transition-colors duration-300">
           <div className="absolute inset-0 opacity-15 dark:opacity-20 pointer-events-none bg-[radial-gradient(#8D867F_1px,transparent_1px)] [background-size:24px_24px]" />
-          <div className="absolute -top-24 -right-24 w-96 h-96 bg-[#D4AF37]/10 dark:bg-[#D4AF37]/15 rounded-full blur-3xl pointer-events-none" />
-          
+          <div className="absolute -top-24 -right-24 w-96 h-96  rounded-full blur-3xl pointer-events-none" />
+
           <div className="max-w-7xl mx-auto lg:px-6 relative z-10">
             <motion.div
               initial={{ opacity: 0, y: 20 }}
@@ -129,7 +155,7 @@ export default function Shop() {
           </div>
         </div>
 
-        <div className="max-w-7xl mx-auto px-6 lg:px-12 py-10">
+        <div className="max-w-7xl mx-auto px-6 lg:px-12 py-8 lg:py-10">
           {/* Controls Bar */}
           <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-5 mb-10">
             {/* Search Input */}
@@ -153,18 +179,17 @@ export default function Shop() {
             </div>
 
             {/* 3D Category Pills - Desktop */}
-            <div className="hidden lg:flex items-center gap-2 bg-cream/60 dark:bg-[#1A1816] p-1.5 rounded-2xl border border-border dark:border-[#2E2925]">
+            <div className="hidden lg:flex items-center gap-2 bg-transparent p-1.5 rounded-2xl border border-border dark:border-[#2E2925]">
               {categories.map((category) => {
                 const isSelected = selectedCategory === category;
                 return (
                   <button
                     key={category}
                     onClick={() => handleCategoryChange(category)}
-                    className={`px-5 py-2 text-xs font-semibold uppercase tracking-wider rounded-xl transition-all duration-200 relative ${
-                      isSelected
-                        ? 'text-white dark:text-black shadow-md'
-                        : 'text-secondary dark:text-white/60 hover:text-primary dark:hover:text-white hover:bg-white/40 dark:hover:bg-white/5'
-                    }`}
+                    className={`px-5 py-2 text-xs font-semibold uppercase tracking-wider rounded-xl transition-all duration-200 relative ${isSelected
+                      ? 'text-white dark:text-black shadow-md'
+                      : 'text-secondary dark:text-white/60 hover:text-primary dark:hover:text-white hover:bg-white/40 dark:hover:bg-white/5'
+                      }`}
                   >
                     {isSelected && (
                       <motion.div
@@ -203,11 +228,10 @@ export default function Shop() {
                   <button
                     key={category}
                     onClick={() => handleCategoryChange(category)}
-                    className={`px-4 py-2 text-xs font-semibold uppercase tracking-wider rounded-xl transition-all duration-200 ${
-                      selectedCategory === category
-                        ? 'bg-primary dark:bg-[#D4AF37] text-white dark:text-black shadow-md'
-                        : 'bg-cream dark:bg-white/5 text-secondary dark:text-white/70 hover:bg-cream/80'
-                    }`}
+                    className={`px-4 py-2 text-xs font-semibold uppercase tracking-wider rounded-xl transition-all duration-200 ${selectedCategory === category
+                      ? 'bg-primary dark:bg-[#D4AF37] text-white dark:text-black shadow-md'
+                      : 'bg-cream dark:bg-white/5 text-secondary dark:text-white/70 hover:bg-cream/80'
+                      }`}
                   >
                     {category}
                   </button>
@@ -216,8 +240,8 @@ export default function Shop() {
             )}
           </AnimatePresence>
 
-          {/* Results Count */}
-          <div className="flex items-center justify-between mb-8">
+          {/* Results Count & Grid Anchor */}
+          <div id="shop-catalog-grid" className="flex items-center justify-between mb-8 scroll-mt-24">
             <p className="text-xs font-semibold tracking-wider uppercase text-secondary dark:text-white/60">
               Showing {filteredProducts.length} Crafted Product{filteredProducts.length !== 1 ? 's' : ''}
             </p>
