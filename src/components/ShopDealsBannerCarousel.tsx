@@ -1,15 +1,15 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { 
-  Sparkles, 
-  ChevronLeft, 
-  ChevronRight, 
-  Tag, 
-  Copy, 
-  Check, 
-  ArrowRight, 
-  Clock, 
-  Gift, 
+import { motion, AnimatePresence, type Variants } from 'framer-motion';
+import {
+  Sparkles,
+  ChevronLeft,
+  ChevronRight,
+  Tag,
+  Copy,
+  Check,
+  ArrowRight,
+  Clock,
+  Gift,
   Zap,
   Percent
 } from 'lucide-react';
@@ -135,7 +135,7 @@ export default function ShopDealsBannerCarousel({
   const currentDeal = DEFAULT_DEALS[currentIndex];
 
   // Slide transition variants
-  const slideVariants = {
+  const slideVariants: Variants = {
     enter: (dir: number) => ({
       x: dir > 0 ? 60 : -60,
       opacity: 0,
@@ -181,7 +181,7 @@ export default function ShopDealsBannerCarousel({
             className={`absolute inset-0 w-full h-full bg-gradient-to-r ${currentDeal.gradientBgLight} dark:${currentDeal.gradientBgDark} transition-colors duration-700 flex flex-col justify-center px-6 sm:px-10 lg:px-14 py-6 sm:py-7`}
           >
             {/* Ambient luxury light aura */}
-            <div 
+            <div
               className="absolute -right-16 -top-16 w-80 h-80 rounded-full blur-3xl opacity-30 dark:opacity-20 pointer-events-none"
               style={{ backgroundColor: currentDeal.accentColor }}
             />
@@ -284,11 +284,10 @@ export default function ShopDealsBannerCarousel({
                 setCurrentIndex(idx);
               }}
               aria-label={`Go to slide ${idx + 1}`}
-              className={`h-1.5 rounded-full transition-all duration-300 ${
-                isActive
+              className={`h-1.5 rounded-full transition-all duration-300 ${isActive
                   ? 'w-6 bg-primary dark:bg-[#D4AF37]'
                   : 'w-1.5 bg-black/30 dark:bg-white/30 hover:bg-black/60 dark:hover:bg-white/60'
-              }`}
+                }`}
             />
           );
         })}

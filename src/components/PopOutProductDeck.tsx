@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion, AnimatePresence, type Variants } from 'framer-motion';
 import {
   ChevronLeft,
   ChevronRight,
@@ -218,6 +218,33 @@ function formatDbDescription(desc?: string, category?: string): string {
 }
 
 const SLIDE_DURATION_MS = 5200;
+
+const cardTransitionVariants: Variants = {
+  enter: (dir: number) => ({
+    x: dir > 0 ? 210 : -210,
+    opacity: 0,
+    scale: 0.9,
+    rotateY: dir > 0 ? 15 : -15,
+  }),
+  center: {
+    x: 0,
+    opacity: 1,
+    scale: 1,
+    rotateY: 0,
+    transition: {
+      type: 'spring',
+      stiffness: 340,
+      damping: 26,
+    },
+  },
+  exit: (dir: number) => ({
+    x: dir > 0 ? -210 : 210,
+    opacity: 0,
+    scale: 0.9,
+    rotateY: dir > 0 ? -15 : 15,
+    transition: { duration: 0.2 },
+  }),
+};
 
 export default function PopOutProductDeck() {
   const [products, setProducts] = useState<PopOutProduct[]>(FALLBACK_PRODUCTS);
@@ -607,30 +634,10 @@ export default function PopOutProductDeck() {
                   <motion.div
                     key={activeProduct.id}
                     custom={direction}
-                    initial={(dir: number) => ({
-                      x: dir > 0 ? 210 : -210,
-                      opacity: 0,
-                      scale: 0.9,
-                      rotateY: dir > 0 ? 15 : -15,
-                    })}
-                    animate={{
-                      x: 0,
-                      opacity: 1,
-                      scale: 1,
-                      rotateY: 0,
-                      transition: {
-                        type: 'spring',
-                        stiffness: 340,
-                        damping: 26,
-                      },
-                    }}
-                    exit={(dir: number) => ({
-                      x: dir > 0 ? -210 : 210,
-                      opacity: 0,
-                      scale: 0.9,
-                      rotateY: dir > 0 ? -15 : 15,
-                      transition: { duration: 0.2 },
-                    })}
+                    variants={cardTransitionVariants}
+                    initial="enter"
+                    animate="center"
+                    exit="exit"
                     className="relative w-full h-full"
                   >
                     {/* The Rounded Card Frame - Everything fits completely inside */}

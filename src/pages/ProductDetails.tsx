@@ -26,7 +26,6 @@ import ProductCard from '../components/ProductCard';
 import ProductImageGallery from '../components/ProductImageGallery';
 import ViewInYourRoomModal from '../components/ViewInYourRoomModal';
 import SizeGuideModal from '../components/SizeGuideModal';
-import ColorDisclaimerSection from '../components/ColorDisclaimerSection';
 import ProductDescriptionTable, { parseProductDescription } from '../components/ProductDescriptionTable';
 import { productService } from '../lib/api/products';
 import { Product } from '../types';
@@ -1062,9 +1061,6 @@ export default function ProductDetails() {
             </div>
           </div>
         </section>
-
-        {/* COLOUR DISCLAIMER SECTION WITH MULTI-DEVICE MOCKUPS */}
-        <ColorDisclaimerSection images={product.images} productName={product.name} />
 
         {/* CUSTOMER REVIEWS & RATINGS SECTION */}
         <section id="reviews-section" className="py-14 lg:py-20 max-w-6xl mx-auto px-6 lg:px-12">

@@ -182,11 +182,10 @@ END:VCARD`;
                               className="p-1 focus:outline-none transition-transform hover:scale-110"
                             >
                               <Star
-                                className={`w-6 h-6 ${
-                                  star <= (hoverRating || rating)
-                                    ? 'fill-current text-[#D4AF37]'
-                                    : 'text-border dark:text-white/20'
-                                }`}
+                                className={`w-6 h-6 ${star <= (hoverRating || rating)
+                                  ? 'fill-current text-[#D4AF37]'
+                                  : 'text-border dark:text-white/20'
+                                  }`}
                               />
                             </button>
                           ))}
@@ -275,7 +274,7 @@ END:VCARD`;
         </AnimatePresence>
 
         <div className="w-full max-w-md bg-white dark:bg-[#1A1816] rounded-3xl p-6 sm:p-8 shadow-xl border border-border dark:border-[#2E2925] text-center transition-colors duration-300">
-          
+
           {/* Top Options Bar */}
           <div className="relative mb-6">
             <div className="flex justify-end">
@@ -320,7 +319,7 @@ END:VCARD`;
               <motion.h1
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
-                className="font-logo font-normal text-4xl md:text-5xl tracking-[0.25em] pl-[0.25em] text-primary dark:text-white uppercase text-center"
+                className="font-mainlogo font-normal text-4xl md:text-5xl tracking-[0.25em] pl-[0.25em] text-primary dark:text-white uppercase text-center"
               >
                 JORIQUE
               </motion.h1>
