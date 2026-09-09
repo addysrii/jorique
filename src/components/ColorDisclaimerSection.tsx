@@ -16,15 +16,15 @@ export default function ColorDisclaimerSection({
     (images && images.length > 0 ? images[0] : null) ||
     '/Products/1.webp';
 
-  // Each device simultaneously displays a distinct real-world lighting & screen profile:
-  // 1. Center Studio Display: Standard Studio Daylight (6500K neutral reference)
-  const studioFilter = 'brightness(0.99) contrast(1.02)';
+  // Each device simultaneously displays a distinct, clearly visible real-world lighting & screen profile:
+  // 1. Center Studio Display: Standard Studio Daylight (6500K crisp, balanced neutral reference)
+  const studioFilter = 'contrast(1.02) brightness(1.01) saturate(1.0)';
 
-  // 2. Left MacBook Pro: Warm Indoor Ambient (2700K incandescent warmth)
-  const laptopFilter = 'sepia(0.18) brightness(0.97) contrast(1.03) saturate(1.10)';
+  // 2. Left MacBook Pro: Warm Indoor Ambient (2700K cozy incandescent warmth)
+  const laptopFilter = 'sepia(0.36) saturate(1.40) brightness(0.96) contrast(1.04) hue-rotate(-8deg)';
 
-  // 3. Right iPad Pro: Vibrant OLED Retina P3 (high dynamic range & rich saturation)
-  const tabletFilter = 'saturate(1.24) contrast(1.10) brightness(1.02)';
+  // 3. Right iPad Pro: Vibrant OLED Retina P3 (ultra-rich contrast, punchy saturation)
+  const tabletFilter = 'saturate(1.65) contrast(1.22) brightness(1.02)';
 
   return (
     <section className="py-12 sm:py-16 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 my-6">
@@ -103,6 +103,8 @@ export default function ColorDisclaimerSection({
                   filter: laptopFilter,
                 }}
               />
+              {/* Warm ambient indoor glow */}
+              <div className="absolute inset-0 bg-amber-500/10 mix-blend-color pointer-events-none" />
               {/* Subtle glass reflection */}
               <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-transparent to-white/5 pointer-events-none" />
             </div>
@@ -126,8 +128,8 @@ export default function ColorDisclaimerSection({
                   filter: tabletFilter,
                 }}
               />
-              {/* Subtle glass reflection */}
-              <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-transparent to-white/5 pointer-events-none" />
+              {/* OLED rich contrast enhancement */}
+              <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-purple-500/5 to-white/5 pointer-events-none" />
             </div>
 
             {/* 4. REAL APPLE HARDWARE FRAME (Authentic Studio Display, MacBook Pro, iPad from user image) */}
@@ -139,7 +141,7 @@ export default function ColorDisclaimerSection({
           </div>
 
           {/* Micro Badges Indicating the Different Screen Calibrations */}
-          <div className="flex flex-wrap items-center justify-center gap-2 sm:gap-4 mt-6 text-[11px] font-medium text-secondary/80 dark:text-white/60">
+          {/* <div className="flex flex-wrap items-center justify-center gap-2 sm:gap-4 mt-6 text-[11px] font-medium text-secondary/80 dark:text-white/60">
             <span className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/70 dark:bg-white/5 border border-border/60 dark:border-white/10 shadow-2xs">
               <Laptop size={12} className="text-amber-500" />
               <span>MacBook: Warm Indoor (2700K)</span>
@@ -152,7 +154,7 @@ export default function ColorDisclaimerSection({
               <Tablet size={12} className="text-purple-500" />
               <span>iPad Pro: Vibrant OLED (Retina P3)</span>
             </span>
-          </div>
+          </div> */}
         </div>
       </motion.div>
     </section>
