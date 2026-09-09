@@ -595,7 +595,7 @@ export default function InteractiveLoginCharacters({
       {/* Main Character Stage */}
       <div
         ref={containerRef}
-        className="relative w-full aspect-[1/0.90] max-w-[720px] select-none flex items-end justify-center overflow-visible"
+        className="relative w-full aspect-[1/0.92] max-w-[620px] select-none flex items-end justify-center overflow-visible"
       >
 
         {/* ═══════════════════════════════════════════════════════════════════
@@ -604,7 +604,7 @@ export default function InteractiveLoginCharacters({
             Onyx Horn Buttons (NO white googly eye!) + Needlework Smirk
             ═══════════════════════════════════════════════════════════════════ */}
         <div
-          style={{ ...floatStyle, position: 'absolute', left: '-6%', bottom: '22%', width: '46%', zIndex: 5 }}
+          style={{ ...floatStyle, position: 'absolute', left: '-3%', bottom: '24%', width: '40%', zIndex: 5 }}
         >
           <motion.div
             animate={getAnimate('k')}
@@ -719,7 +719,7 @@ export default function InteractiveLoginCharacters({
             Delicate smiling eyes (with blink), fine needlework smile, peachy blush.
             ═══════════════════════════════════════════════════════════════════ */}
         <div
-          style={{ ...floatStyle, position: 'absolute', left: '28%', bottom: '25%', width: '46%', zIndex: 4 }}
+          style={{ ...floatStyle, position: 'absolute', left: '30%', bottom: '26%', width: '40%', zIndex: 4 }}
         >
           <motion.div
             animate={getAnimate('b')}
@@ -808,7 +808,7 @@ export default function InteractiveLoginCharacters({
             chic horn button eyes, subtle eyelid blink, fine eyebrows and smile!
             ═══════════════════════════════════════════════════════════════════ */}
         <div
-          style={{ ...floatStyle, position: 'absolute', left: '62%', bottom: '22%', width: '46%', zIndex: 5 }}
+          style={{ ...floatStyle, position: 'absolute', left: '63%', bottom: '24%', width: '40%', zIndex: 5 }}
         >
           <motion.div
             animate={getAnimate('s')}
@@ -889,7 +889,7 @@ export default function InteractiveLoginCharacters({
             Googly Eyes with bold black rim, single buck tooth, bouncy brows.
             ═══════════════════════════════════════════════════════════════════ */}
         <div
-          style={{ ...floatStyle, position: 'absolute', left: '12%', bottom: '11%', width: '52%', zIndex: 8 }}
+          style={{ ...floatStyle, position: 'absolute', left: '14%', bottom: '13%', width: '45%', zIndex: 8 }}
         >
           <motion.div
             animate={getAnimate('p')}
@@ -1026,7 +1026,7 @@ export default function InteractiveLoginCharacters({
             pearl-sheen eyes that follow cursor and blink, with soft blush!
             ═══════════════════════════════════════════════════════════════════ */}
         <div
-          style={{ ...floatStyle, position: 'absolute', left: '56%', bottom: '3%', width: '45%', zIndex: 12 }}
+          style={{ ...floatStyle, position: 'absolute', left: '58%', bottom: '4%', width: '38%', zIndex: 12 }}
         >
           <motion.div
             animate={getAnimate('t')}
@@ -1126,7 +1126,7 @@ export default function InteractiveLoginCharacters({
             (NO round googly eyeballs!)
             ═══════════════════════════════════════════════════════════════════ */}
         <div
-          style={{ ...floatStyle, position: 'absolute', left: '-9%', bottom: '0%', width: '60%', zIndex: 16 }}
+          style={{ ...floatStyle, position: 'absolute', left: '-6%', bottom: '0%', width: '53%', zIndex: 16 }}
         >
           <motion.div
             animate={getAnimate('co')}
@@ -1248,7 +1248,7 @@ export default function InteractiveLoginCharacters({
             Mouth with Tiny Tooth & Golden Freckle Dots!
             ═══════════════════════════════════════════════════════════════════ */}
         <div
-          style={{ ...floatStyle, position: 'absolute', left: '31%', bottom: '0%', width: '48%', zIndex: 18 }}
+          style={{ ...floatStyle, position: 'absolute', left: '35%', bottom: '0%', width: '41%', zIndex: 18 }}
         >
           <motion.div
             animate={getAnimate('cu')}
