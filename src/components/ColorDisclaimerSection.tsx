@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Sparkles, Monitor, Laptop, Tablet, Smartphone, SunMedium, Lamp, Sparkle } from 'lucide-react';
+import { Sparkles, Monitor, Laptop, Tablet, SunMedium, Lamp, Sparkle } from 'lucide-react';
 
 interface ColorDisclaimerSectionProps {
   images?: string[];
@@ -21,22 +21,22 @@ export default function ColorDisclaimerSection({
     '/Products/1.webp';
 
   // CSS filter string based on active simulated lighting
-  const getFilter = (device: 'monitor' | 'laptop' | 'tablet' | 'phone') => {
+  const getFilter = (device: 'monitor' | 'laptop' | 'tablet') => {
     if (activeMode === 'warm') {
-      if (device === 'monitor' || device === 'laptop') return 'sepia(0.12) brightness(0.97) contrast(1.02)';
-      if (device === 'tablet') return 'sepia(0.16) brightness(0.99) contrast(1.01)';
+      if (device === 'monitor') return 'sepia(0.12) brightness(0.97) contrast(1.02)';
+      if (device === 'laptop') return 'sepia(0.14) brightness(0.98) contrast(1.01)';
       return 'sepia(0.18) brightness(0.96) contrast(1.06)';
     }
 
     if (activeMode === 'vibrant') {
-      if (device === 'monitor' || device === 'laptop') return 'saturate(1.12) contrast(1.05)';
-      if (device === 'tablet') return 'saturate(1.15) contrast(1.04)';
+      if (device === 'monitor') return 'saturate(1.12) contrast(1.05)';
+      if (device === 'laptop') return 'saturate(1.14) contrast(1.04)';
       return 'saturate(1.22) contrast(1.10) brightness(1.02)';
     }
 
     // Studio Standard
-    if (device === 'monitor' || device === 'laptop') return 'brightness(0.98) contrast(1.02)';
-    if (device === 'tablet') return 'brightness(1.00) saturate(1.02)';
+    if (device === 'monitor') return 'brightness(0.98) contrast(1.02)';
+    if (device === 'laptop') return 'brightness(0.99) saturate(1.02)';
     return 'brightness(0.97) contrast(1.04)';
   };
 
@@ -125,20 +125,20 @@ export default function ColorDisclaimerSection({
           </div>
         </div>
 
-        {/* BOTTOM SECTION: Authentic Apple Ecosystem Multi-Screen Panoramic Showcase */}
+        {/* BOTTOM SECTION: Transparent Apple Hardware Multi-Screen Showcase */}
         <div className="relative z-10 w-full max-w-5xl mx-auto flex flex-col items-center select-none pt-2">
           
-          {/* Panoramic Device Frame Container (Matching exact 1906x825 proportion) */}
-          <div className="relative w-full aspect-[1906/825] drop-shadow-xl overflow-hidden rounded-2xl">
+          {/* Panoramic Device Frame Container (Matching exact 1780x883 proportion of user's image) */}
+          <div className="relative w-full aspect-[1780/883] drop-shadow-xl">
             
             {/* 1. Center Studio Display Screen (1.0x Full Lifestyle View) */}
             <div
               className="absolute overflow-hidden rounded-[6px]"
               style={{
-                left: '32.319%',
-                top: '8.606%',
-                width: '44.386%',
-                height: '57.576%',
+                left: '39.101%',
+                top: '10.872%',
+                width: '44.663%',
+                height: '56.399%',
                 zIndex: 1,
               }}
             >
@@ -155,21 +155,21 @@ export default function ColorDisclaimerSection({
               <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-transparent to-white/5 pointer-events-none" />
             </div>
 
-            {/* 2. Left MacBook Pro Screen (1.15x Laptop Perspective) */}
+            {/* 2. Left MacBook Pro Screen (1.20x Laptop Perspective) */}
             <div
               className="absolute overflow-hidden rounded-[8px]"
               style={{
-                left: '14.638%',
-                top: '44.727%',
-                width: '27.807%',
-                height: '40.121%',
+                left: '14.775%',
+                top: '48.131%',
+                width: '31.180%',
+                height: '39.864%',
                 zIndex: 2,
               }}
             >
               <img
                 src={displayImage}
                 alt={`${productName} on MacBook Pro`}
-                className="w-full h-full object-cover scale-[1.15] origin-center"
+                className="w-full h-full object-cover scale-[1.20] origin-center"
                 style={{
                   filter: getFilter('laptop'),
                   transition: 'filter 0.5s ease',
@@ -179,58 +179,34 @@ export default function ColorDisclaimerSection({
               <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-transparent to-white/5 pointer-events-none" />
             </div>
 
-            {/* 3. Right iPad Pro Screen (1.35x Mid-Range Texture View) */}
+            {/* 3. Right iPad Pro Screen (1.45x Texture Focus Zoom) */}
             <div
-              className="absolute overflow-hidden rounded-[12px]"
+              className="absolute overflow-hidden rounded-[14px]"
               style={{
-                left: '74.239%',
-                top: '40.242%',
-                width: '12.277%',
-                height: '46.788%',
+                left: '77.921%',
+                top: '42.356%',
+                width: '16.629%',
+                height: '44.168%',
                 zIndex: 2,
               }}
             >
               <img
                 src={displayImage}
                 alt={`${productName} on iPad Pro`}
-                className="w-full h-full object-cover scale-[1.35] origin-center"
+                className="w-full h-full object-cover scale-[1.45] origin-center"
                 style={{
                   filter: getFilter('tablet'),
                   transition: 'filter 0.5s ease',
                 }}
               />
               {/* Subtle glass reflection */}
-              <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-transparent to-white/10 pointer-events-none" />
+              <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-transparent to-white/5 pointer-events-none" />
             </div>
 
-            {/* 4. Far-Right iPhone Screen (1.75x High-Detail Macro View) */}
-            <div
-              className="absolute overflow-hidden rounded-[14px]"
-              style={{
-                left: '86.988%',
-                top: '55.030%',
-                width: '6.768%',
-                height: '34.545%',
-                zIndex: 2,
-              }}
-            >
-              <img
-                src={displayImage}
-                alt={`${productName} on iPhone`}
-                className="w-full h-full object-cover scale-[1.75] origin-center"
-                style={{
-                  filter: getFilter('phone'),
-                  transition: 'filter 0.5s ease',
-                }}
-              />
-              {/* Subtle glass reflection */}
-              <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-transparent to-white/10 pointer-events-none" />
-            </div>
-
-            {/* 5. AUTHENTIC APPLE HARDWARE FRAME (Real Studio Display, MacBook Pro, iPad, iPhone, Mac Studio) */}
+            {/* 4. REAL APPLE HARDWARE FRAME (Authentic Studio Display, MacBook Pro, iPad from user image) */}
             <img
               src="/images/apple-suite-transparent-frame.png"
-              alt="Real Apple Ecosystem Hardware"
+              alt="Real Apple Hardware Ecosystem"
               className="absolute inset-0 w-full h-full object-contain pointer-events-none select-none z-10"
             />
           </div>
@@ -242,15 +218,11 @@ export default function ColorDisclaimerSection({
             </span>
             <span>•</span>
             <span className="flex items-center gap-1">
-              <Laptop size={12} className="text-[#C6A96B] dark:text-[#D4AF37]" /> MacBook Pro (1.15× Context)
+              <Laptop size={12} className="text-[#C6A96B] dark:text-[#D4AF37]" /> MacBook Pro (1.20× Context)
             </span>
             <span>•</span>
             <span className="flex items-center gap-1">
-              <Tablet size={12} className="text-[#C6A96B] dark:text-[#D4AF37]" /> iPad Pro (1.35× Texture)
-            </span>
-            <span>•</span>
-            <span className="flex items-center gap-1">
-              <Smartphone size={12} className="text-[#C6A96B] dark:text-[#D4AF37]" /> iPhone (1.75× Macro)
+              <Tablet size={12} className="text-[#C6A96B] dark:text-[#D4AF37]" /> iPad Pro (1.45× Texture Focus)
             </span>
           </div>
 
