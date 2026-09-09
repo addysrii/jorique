@@ -40,7 +40,7 @@ export default function ColorDisclaimerSection({
         <div className="absolute -top-24 left-1/2 -translate-x-1/2 w-96 h-96 bg-[#C6A96B]/10 rounded-full blur-3xl pointer-events-none" />
 
         {/* TOP SECTION: Typography & Explanation */}
-        <div className="relative z-10 max-w-3xl mx-auto text-center space-y-3">
+        <div className="relative z-10 max-w-2xl mx-auto text-center space-y-3">
           {/* <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-cream dark:bg-white/5 text-primary dark:text-[#D4AF37] text-[10px] font-bold tracking-[0.25em] uppercase border border-border dark:border-[#2E2925]">
             <Sparkles size={11} className="text-[#C6A96B] dark:text-[#D4AF37]" />
             <span>Display Fidelity & Tone</span>
