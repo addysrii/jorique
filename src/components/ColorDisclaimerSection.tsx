@@ -159,9 +159,9 @@ export default function ColorDisclaimerSection({
             <div
               className="absolute overflow-hidden rounded-[6px]"
               style={{
-                left: '14.382%',
+                left: '11.124%',
                 top: '44.394%',
-                width: '31.517%',
+                width: '34.831%',
                 height: '43.715%',
                 zIndex: 2,
               }}
