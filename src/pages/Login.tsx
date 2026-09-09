@@ -181,13 +181,13 @@ export default function Login() {
           <div className="bg-white dark:bg-[#1A1816] rounded-[32px] p-8 sm:p-10 shadow-2xl border border-black/5 dark:border-white/5 relative">
 
             {/* Top Emblem Logo */}
-            <div className="flex justify-center mb-6">
+            {/* <div className="flex justify-center mb-6">
               <div className="w-10 h-10 rounded-2xl bg-black dark:bg-white flex items-center justify-center text-white dark:text-black shadow-sm">
                 <svg viewBox="0 0 24 24" className="w-5 h-5 fill-current">
                   <path d="M12 2 L14 9 L21 11 L14 13 L12 20 L10 13 L3 11 L10 9 Z" />
                 </svg>
               </div>
-            </div>
+            </div> */}
 
             {/* Header Text */}
             <div className="text-center mb-8">
