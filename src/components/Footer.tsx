@@ -63,7 +63,8 @@ export default function Footer() {
             &copy; {new Date().getFullYear()} JORIQUE. All rights reserved.
           </p>
           <p className="text-xs text-secondary/60 dark:text-white/40 tracking-wide">
-            Where Comfort Meets Architecture
+            Where Comfort Meets Design
+            
           </p>
         </div>
       </div>

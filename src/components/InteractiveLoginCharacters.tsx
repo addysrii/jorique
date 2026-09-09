@@ -9,20 +9,20 @@ import {
 
 // ─── Brand Palette ────────────────────────────────────────────────────────────
 const B = {
-  ivory:      '#F5EDE3',
-  black:      '#1A1A1A',
-  charcoal:   '#2B2825',
-  gold:       '#C6A96B',
+  ivory: '#F5EDE3',
+  black: '#1A1A1A',
+  charcoal: '#2B2825',
+  gold: '#C6A96B',
   goldBright: '#DFBF79',
-  teal:       '#0B5F61',
-  stone:      '#8A847D',
-  blushWarm:  '#D4956A',
-  blushShy:   '#E89686',
-  blushDeep:  '#F08080',
-  white:      '#FCFAF7',
-  pureWhite:  '#FFFFFF',
-  mouthBg:    '#1A1412',
-  tongue:     '#E57373',
+  teal: '#0B5F61',
+  stone: '#8A847D',
+  blushWarm: '#D4956A',
+  blushShy: '#E89686',
+  blushDeep: '#F08080',
+  white: '#FCFAF7',
+  pureWhite: '#FFFFFF',
+  mouthBg: '#1A1412',
+  tongue: '#E57373',
   tongueDark: '#C62828',
 };
 
@@ -48,12 +48,12 @@ function injectCSS() {
 }
 
 // ─── Responsive Physics ───────────────────────────────────────────────────────
-const BODY_SPR  = { stiffness: 95, damping: 15, mass: 1.0 };
-const EYE_SPR   = { stiffness: 320, damping: 20 };
-const FACE_SPR  = { stiffness: 220, damping: 18 };
+const BODY_SPR = { stiffness: 95, damping: 15, mass: 1.0 };
+const EYE_SPR = { stiffness: 320, damping: 20 };
+const FACE_SPR = { stiffness: 220, damping: 18 };
 const SPR_REACT = { type: 'spring', stiffness: 280, damping: 16, mass: 1.1 } as const;
-const SPR_PEEK  = { type: 'spring', stiffness: 380, damping: 20 }           as const;
-const SPR_BACK  = { type: 'spring', stiffness: 140, damping: 18 }           as const;
+const SPR_PEEK = { type: 'spring', stiffness: 380, damping: 20 } as const;
+const SPR_BACK = { type: 'spring', stiffness: 140, damping: 18 } as const;
 
 export type Emotion =
   | 'neutral'
@@ -257,10 +257,10 @@ export default function InteractiveLoginCharacters({
   const rawX = useMotionValue(0.25);
   const rawY = useMotionValue(0);
 
-  const bodyX    = useSpring(rawX, BODY_SPR);
-  const bodyY    = useSpring(rawY, BODY_SPR);
-  const eyeSprX  = useSpring(rawX, EYE_SPR);
-  const eyeSprY  = useSpring(rawY, EYE_SPR);
+  const bodyX = useSpring(rawX, BODY_SPR);
+  const bodyY = useSpring(rawY, BODY_SPR);
+  const eyeSprX = useSpring(rawX, EYE_SPR);
+  const eyeSprY = useSpring(rawY, EYE_SPR);
   const faceSprX = useSpring(rawX, FACE_SPR);
   const faceSprY = useSpring(rawY, FACE_SPR);
 
@@ -306,10 +306,10 @@ export default function InteractiveLoginCharacters({
   }, [blinkMV]);
 
   // ── 3. Active Emotion Determination (Purely Driven by User Actions!) ─────────
-  const isIdle      = focusedField === 'none';
-  const isEmail     = focusedField === 'email';
+  const isIdle = focusedField === 'none';
+  const isEmail = focusedField === 'email';
   const isPwdHidden = focusedField === 'password' && !showPassword;
-  const isPwdShown  = focusedField === 'password' && showPassword;
+  const isPwdShown = focusedField === 'password' && showPassword;
   const isCursorDriven = isIdle || isEmail;
 
   let currentEmotion: Emotion = 'happy';
@@ -343,72 +343,102 @@ export default function InteractiveLoginCharacters({
 
   // ── 4. Unified Body Lean & Motion ───────────────────────────────────────────
   const sharedBodyRot = useTransform(bodyX, [-1, 1], [-8.5, 8.5]);
-  const sharedBodyX   = useTransform(bodyX, [-1, 1], [-12, 12]);
-  const sharedBodyY   = useTransform(bodyY, [-1, 1], [-7, 5]);
+  const sharedBodyX = useTransform(bodyX, [-1, 1], [-12, 12]);
+  const sharedBodyY = useTransform(bodyY, [-1, 1], [-7, 5]);
 
   // ── 5. 3D Face Parallax Shifts ──────────────────────────────────────────────
-  const kFaceOffX  = useTransform(faceSprX, [-1, 1], [-14, 14]);
-  const kFaceOffY  = useTransform(faceSprY, [-1, 1], [-9, 9]);
+  const kFaceOffX = useTransform(faceSprX, [-1, 1], [-14, 14]);
+  const kFaceOffY = useTransform(faceSprY, [-1, 1], [-9, 9]);
 
-  const pFaceOffX  = useTransform(faceSprX, [-1, 1], [-18, 18]);
-  const pFaceOffY  = useTransform(faceSprY, [-1, 1], [-11, 11]);
+  const pFaceOffX = useTransform(faceSprX, [-1, 1], [-18, 18]);
+  const pFaceOffY = useTransform(faceSprY, [-1, 1], [-11, 11]);
 
-  const cFaceOffX  = useTransform(faceSprX, [-1, 1], [-18, 18]);
-  const cFaceOffY  = useTransform(faceSprY, [-1, 1], [-11, 11]);
+  const cFaceOffX = useTransform(faceSprX, [-1, 1], [-18, 18]);
+  const cFaceOffY = useTransform(faceSprY, [-1, 1], [-11, 11]);
 
   const cuFaceOffX = useTransform(faceSprX, [-1, 1], [-18, 18]);
   const cuFaceOffY = useTransform(faceSprY, [-1, 1], [-11, 11]);
 
+  const bFaceOffX = useTransform(faceSprX, [-1, 1], [-16, 16]);
+  const bFaceOffY = useTransform(faceSprY, [-1, 1], [-10, 10]);
+
+  const tFaceOffX = useTransform(faceSprX, [-1, 1], [-18, 18]);
+  const tFaceOffY = useTransform(faceSprY, [-1, 1], [-11, 11]);
+
+  const sFaceOffX = useTransform(faceSprX, [-1, 1], [-14, 14]);
+  const sFaceOffY = useTransform(faceSprY, [-1, 1], [-9, 9]);
+
   // ── 6. Expanded Dynamic Pupil Travel Limits ─────────────────────────────────
-  const kEyeOffX  = useTransform(eyeSprX, [-1, 1], [-14, 14]);
-  const kEyeOffY  = useTransform(eyeSprY, [-1, 1], [-10, 10]);
+  const kEyeOffX = useTransform(eyeSprX, [-1, 1], [-14, 14]);
+  const kEyeOffY = useTransform(eyeSprY, [-1, 1], [-10, 10]);
 
-  const pEyeOffX  = useTransform(eyeSprX, [-1, 1], [-26, 26]);
-  const pEyeOffY  = useTransform(eyeSprY, [-1, 1], [-19, 19]);
+  const pEyeOffX = useTransform(eyeSprX, [-1, 1], [-26, 26]);
+  const pEyeOffY = useTransform(eyeSprY, [-1, 1], [-19, 19]);
 
-  const cEyeOffX  = useTransform(eyeSprX, [-1, 1], [-24, 24]);
-  const cEyeOffY  = useTransform(eyeSprY, [-1, 1], [-16, 16]);
+  const cEyeOffX = useTransform(eyeSprX, [-1, 1], [-24, 24]);
+  const cEyeOffY = useTransform(eyeSprY, [-1, 1], [-16, 16]);
 
   const cuEyeOffX = useTransform(eyeSprX, [-1, 1], [-28, 28]);
   const cuEyeOffY = useTransform(eyeSprY, [-1, 1], [-20, 20]);
 
+  const bEyeOffX = useTransform(eyeSprX, [-1, 1], [-18, 18]);
+  const bEyeOffY = useTransform(eyeSprY, [-1, 1], [-12, 12]);
+
+  const tEyeOffX = useTransform(eyeSprX, [-1, 1], [-24, 24]);
+  const tEyeOffY = useTransform(eyeSprY, [-1, 1], [-16, 16]);
+
+  const sEyeOffX = useTransform(eyeSprX, [-1, 1], [-14, 14]);
+  const sEyeOffY = useTransform(eyeSprY, [-1, 1], [-10, 10]);
+
   // ── 7. Password & Emotion Animation Overrides ────────────────────────────────
   type Anim = { rotate?: any; y?: any; x?: any; scale?: any };
-  const getAnimate = (c: 'k' | 'p' | 'co' | 'cu'): Anim | undefined => {
+  const getAnimate = (c: 'k' | 'p' | 'co' | 'cu' | 'b' | 't' | 's'): Anim | undefined => {
     // 1. TEASE: Wrong password entered! Characters bounce and giggle teasingly!
     if (hasError || (hoverTarget === 'forgot' && isIdle)) {
       return {
-        k:  { rotate: [-2, 3, -2], y: [-4, 0, -4] },
-        p:  { rotate: [-4, 6, -4], y: [-14, -6, -14], scale: [1.02, 1.06, 1.02] }, // Pillow bounces with cheeky tease!
+        k: { rotate: [-2, 3, -2], y: [-4, 0, -4] },
+        p: { rotate: [-4, 6, -4], y: [-14, -6, -14], scale: [1.02, 1.06, 1.02] },
         co: { rotate: [-2, 2, -2], y: [-3, 0, -3] },
-        cu: { rotate: [4, -4, 4],  y: [-8, -4, -8] },
+        cu: { rotate: [4, -4, 4], y: [-8, -4, -8] },
+        b: { rotate: [-2, 2, -2], y: [-3, 1, -3] },
+        t: { rotate: [3, -3, 3], y: [-7, -2, -7] },
+        s: { rotate: [3, -2, 3], y: [-4, 1, -4] },
       }[c];
     }
     // 2. ANGRY: Empty submit attempt! Characters scowl with annoyance!
     if (emptyAttempt) {
       return {
-        k:  { rotate: -3, y: -2 },
-        p:  { rotate: 0,  y: -2 },
+        k: { rotate: -3, y: -2 },
+        p: { rotate: 0, y: -2 },
         co: { rotate: -2, y: 5, scale: 0.94 },
-        cu: { rotate: 2,  y: -2 },
+        cu: { rotate: 2, y: -2 },
+        b: { rotate: 1, y: -2 },
+        t: { rotate: -2, y: -2 },
+        s: { rotate: 2, y: -2 },
       }[c];
     }
     // 3. SHY: Secret password typing! Characters look away coyly / duck down!
     if (isPwdHidden) {
       return {
-        k:  { rotate: -16, x: -10, y: 6 }, // Kurta bashfully turns and tilts away
-        p:  { rotate: 0,   y: 195 },       // Pillow ducks down completely!
-        co: { rotate: -4,  y: 12, scale: 0.94 },
-        cu: { rotate: 16,  x: 8,  y: 6 },  // Cushion looks away
+        k: { rotate: -16, x: -10, y: 6 },
+        p: { rotate: 0, y: 195 },
+        co: { rotate: -4, y: 12, scale: 0.94 },
+        cu: { rotate: 16, x: 8, y: 6 },
+        b: { rotate: -8, y: 15, scale: 0.96 },
+        t: { rotate: 14, x: 10, y: 14 },
+        s: { rotate: 14, x: 10, y: 10 },
       }[c];
     }
     // 4. SHOCKED: Password revealed!
     if (isPwdShown) {
       return {
-        k:  { rotate: 8,  y: -12, x: 4 },
-        p:  { rotate: 0,  y: -14 },        // Pillow pops back up shocked!
-        co: { rotate: 5,  y: -8, scale: 1.05 },
+        k: { rotate: 8, y: -12, x: 4 },
+        p: { rotate: 0, y: -14 },
+        co: { rotate: 5, y: -8, scale: 1.05 },
         cu: { rotate: -6, y: -10 },
+        b: { rotate: -4, y: -8, scale: 1.03 },
+        t: { rotate: -8, y: -10, scale: 1.05 },
+        s: { rotate: -6, y: -12, scale: 1.04 },
       }[c];
     }
     return undefined;
@@ -417,32 +447,53 @@ export default function InteractiveLoginCharacters({
 
   // Pupil static overrides for special states
   const kPupilOv =
-    hasError                    ? { x: -5, y: 2 }
-    : emptyAttempt              ? { x: 0,  y: 3 }
-    : currentEmotion === 'shy'  ? { x: -8, y: 7 }
-    : isPwdShown                ? { x: 10, y: -2 }
-    : undefined;
+    hasError ? { x: -5, y: 2 }
+      : emptyAttempt ? { x: 0, y: 3 }
+        : currentEmotion === 'shy' ? { x: -8, y: 7 }
+          : isPwdShown ? { x: 10, y: -2 }
+            : undefined;
 
   const pPupilOv =
-    hasError                    ? { x: -6, y: 4 }
-    : emptyAttempt              ? { x: 0,  y: 4 }
-    : currentEmotion === 'shy'  ? { x: 0,  y: 16 }
-    : isPwdShown                ? { x: 18, y: 0 }
-    : undefined;
+    hasError ? { x: -6, y: 4 }
+      : emptyAttempt ? { x: 0, y: 4 }
+        : currentEmotion === 'shy' ? { x: 0, y: 16 }
+          : isPwdShown ? { x: 18, y: 0 }
+            : undefined;
 
   const cPupilOv =
-    hasError                    ? { x: -6, y: 2 }
-    : emptyAttempt              ? { x: 0,  y: 2 }
-    : currentEmotion === 'shy'  ? { x: -14, y: 11 }
-    : isPwdShown                ? { x: 18, y: -2 }
-    : undefined;
+    hasError ? { x: -6, y: 2 }
+      : emptyAttempt ? { x: 0, y: 2 }
+        : currentEmotion === 'shy' ? { x: -14, y: 11 }
+          : isPwdShown ? { x: 18, y: -2 }
+            : undefined;
 
   const cuPupilOv =
-    hasError                    ? { x: 12, y: -8 }
-    : emptyAttempt              ? { x: 0,  y: 4 }
-    : currentEmotion === 'shy'  ? { x: 20, y: -18 }
-    : isPwdShown                ? { x: 16, y: 0 }
-    : undefined;
+    hasError ? { x: 12, y: -8 }
+      : emptyAttempt ? { x: 0, y: 4 }
+        : currentEmotion === 'shy' ? { x: 20, y: -18 }
+          : isPwdShown ? { x: 16, y: 0 }
+            : undefined;
+
+  const bPupilOv =
+    hasError ? { x: -4, y: 2 }
+      : emptyAttempt ? { x: 0, y: 3 }
+        : currentEmotion === 'shy' ? { x: -10, y: 8 }
+          : isPwdShown ? { x: 14, y: -2 }
+            : undefined;
+
+  const tPupilOv =
+    hasError ? { x: 10, y: -4 }
+      : emptyAttempt ? { x: 0, y: 4 }
+        : currentEmotion === 'shy' ? { x: 16, y: 12 }
+          : isPwdShown ? { x: 16, y: 0 }
+            : undefined;
+
+  const sPupilOv =
+    hasError ? { x: -4, y: 2 }
+      : emptyAttempt ? { x: 0, y: 3 }
+        : currentEmotion === 'shy' ? { x: 8, y: 6 }
+          : isPwdShown ? { x: -10, y: -2 }
+            : undefined;
 
   const bodyMotionStyle = (origin = '50% 95%') =>
     isCursorDriven && !hasError && !emptyAttempt
@@ -453,8 +504,8 @@ export default function InteractiveLoginCharacters({
     animation: emptyAttempt
       ? 'joriqueAngryShake 0.4s ease-in-out infinite'
       : hasError
-      ? 'none'
-      : 'joriqueSyncFloat 3.2s ease-in-out infinite',
+        ? 'none'
+        : 'joriqueSyncFloat 3.2s ease-in-out infinite',
   };
 
   // ═══════════════════════════════════════════════════════════════════════════
@@ -501,6 +552,45 @@ export default function InteractiveLoginCharacters({
   const cuRx = useTransform(cuEyeOffX, x => 583.0 + (cuPupilOv ? cuPupilOv.x : x));
   const cuRy = useTransform(cuEyeOffY, y => 448.0 + (cuPupilOv ? cuPupilOv.y : y));
 
+  // 5. BEDSHEET: cx = 510.0, 620.0, cy = 315.0, 315.0
+  const bLx = useTransform(bEyeOffX, x => 510.0 + (bPupilOv ? bPupilOv.x : x));
+  const bLy = useTransform(bEyeOffY, y => 315.0 + (bPupilOv ? bPupilOv.y : y));
+  const bRx = useTransform(bEyeOffX, x => 620.0 + (bPupilOv ? bPupilOv.x : x));
+  const bRy = useTransform(bEyeOffY, y => 315.0 + (bPupilOv ? bPupilOv.y : y));
+  const bLhx = useTransform(bLx, x => x - 4.5);
+  const bLhy = useTransform(bLy, y => y - 4.5);
+  const bRhx = useTransform(bRx, x => x - 4.5);
+  const bRhy = useTransform(bRy, y => y - 4.5);
+
+  // 6. TOWEL: Top cx = 420.0, 555.0, cy = 362.0, 361.0 | Bottom cx = 422.0, 555.0, cy = 651.0, 652.0
+  const tLx = useTransform(tEyeOffX, x => 420.0 + (tPupilOv ? tPupilOv.x : x));
+  const tLy = useTransform(tEyeOffY, y => 362.0 + (tPupilOv ? tPupilOv.y : y));
+  const tRx = useTransform(tEyeOffX, x => 555.0 + (tPupilOv ? tPupilOv.x : x));
+  const tRy = useTransform(tEyeOffY, y => 361.0 + (tPupilOv ? tPupilOv.y : y));
+  const tLhx = useTransform(tLx, x => x - 6.0);
+  const tLhy = useTransform(tLy, y => y - 6.0);
+  const tRhx = useTransform(tRx, x => x - 6.0);
+  const tRhy = useTransform(tRy, y => y - 6.0);
+
+  const tbLx = useTransform(tEyeOffX, x => 422.0 + (tPupilOv ? tPupilOv.x * 0.7 : x * 0.7));
+  const tbLy = useTransform(tEyeOffY, y => 651.0 + (tPupilOv ? tPupilOv.y * 0.7 : y * 0.7));
+  const tbRx = useTransform(tEyeOffX, x => 555.0 + (tPupilOv ? tPupilOv.x * 0.7 : x * 0.7));
+  const tbRy = useTransform(tEyeOffY, y => 652.0 + (tPupilOv ? tPupilOv.y * 0.7 : y * 0.7));
+  const tbLhx = useTransform(tbLx, x => x - 5.5);
+  const tbLhy = useTransform(tbLy, y => y - 5.5);
+  const tbRhx = useTransform(tbRx, x => x - 5.5);
+  const tbRhy = useTransform(tbRy, y => y - 5.5);
+
+  // 7. SHIRT: cx = 531.0, 587.0, cy = 438.0
+  const sLx = useTransform(sEyeOffX, x => 531.0 + (sPupilOv ? sPupilOv.x : x));
+  const sLy = useTransform(sEyeOffY, y => 438.0 + (sPupilOv ? sPupilOv.y : y));
+  const sRx = useTransform(sEyeOffX, x => 587.0 + (sPupilOv ? sPupilOv.x : x));
+  const sRy = useTransform(sEyeOffY, y => 438.0 + (sPupilOv ? sPupilOv.y : y));
+  const sLhx = useTransform(sLx, x => x - 3.0);
+  const sLhy = useTransform(sLy, y => y - 3.0);
+  const sRhx = useTransform(sRx, x => x - 3.0);
+  const sRhy = useTransform(sRy, y => y - 3.0);
+
   return (
     <div className="flex flex-col items-center select-none w-full">
 
@@ -516,7 +606,7 @@ export default function InteractiveLoginCharacters({
             Onyx Horn Buttons (NO white googly eye!) + Needlework Smirk
             ═══════════════════════════════════════════════════════════════════ */}
         <div
-          style={{ ...floatStyle, position: 'absolute', left: '6%', bottom: '26%', width: '42%', zIndex: 5 }}
+          style={{ ...floatStyle, position: 'absolute', left: '-2%', bottom: '26%', width: '36%', zIndex: 5 }}
         >
           <motion.div
             animate={getAnimate('k')}
@@ -526,7 +616,7 @@ export default function InteractiveLoginCharacters({
           >
             <div className="relative w-full h-auto">
               <img
-                src="/images/characters/kurta_clean.png?v=6"
+                src="/images/characters/kurta_clean.png?v=7"
                 alt="JORIQUE Atelier Kurta"
                 className="w-full h-auto block select-none pointer-events-none drop-shadow-xl"
               />
@@ -539,7 +629,7 @@ export default function InteractiveLoginCharacters({
                 {/* 3D Face Parallax Group */}
                 <motion.g style={{ x: kFaceOffX, y: kFaceOffY }}>
                   {/* Fine High-Fashion Eyebrows */}
-                  <Brow x={497.5} y={384} emotion={currentEmotion} side="left"  sw={3.0} eyeOffY={kEyeOffY} browVariant="refined" />
+                  <Brow x={497.5} y={384} emotion={currentEmotion} side="left" sw={3.0} eyeOffY={kEyeOffY} browVariant="refined" />
                   <Brow x={549.5} y={384} emotion={currentEmotion} side="right" sw={3.0} eyeOffY={kEyeOffY} browVariant="refined" />
 
                   {/* ── Soft Linen Patch over the raw white buttons ── */}
@@ -626,12 +716,182 @@ export default function InteractiveLoginCharacters({
         </div>
 
         {/* ═══════════════════════════════════════════════════════════════════
-            2. THE LINEN PILLOW (Center)
+            2. THE EGYPTIAN LINEN BEDSHEET (Back-Center)
+            FACE STYLE: Elegant folded luxury bedsheet with golden hemstitch.
+            Delicate smiling eyes (with blink), fine needlework smile, peachy blush.
+            ═══════════════════════════════════════════════════════════════════ */}
+        <div
+          style={{ ...floatStyle, position: 'absolute', left: '32%', bottom: '28%', width: '36%', zIndex: 4 }}
+        >
+          <motion.div
+            animate={getAnimate('b')}
+            style={bodyMotionStyle('50% 95%')}
+            transition={getTransition()}
+            className="w-full pointer-events-none select-none"
+          >
+            <div className="relative w-full h-auto">
+              <img
+                src="/images/characters/bedsheet_clean.png?v=7"
+                alt="JORIQUE Luxury Bedsheet"
+                className="w-full h-auto block select-none pointer-events-none drop-shadow-xl"
+              />
+              <svg viewBox="0 0 1024 1024" className="absolute inset-0 w-full h-full pointer-events-none">
+                <defs>
+                  <clipPath id="b-left-eye"><circle cx="510.0" cy="315.0" r="26" /></clipPath>
+                  <clipPath id="b-right-eye"><circle cx="620.0" cy="315.0" r="26" /></clipPath>
+                </defs>
+
+                {/* 3D Face Parallax Group */}
+                <motion.g style={{ x: bFaceOffX, y: bFaceOffY }}>
+                  {/* Delicate Eyebrows */}
+                  <Brow x={510.0} y={276} emotion={currentEmotion} side="left" sw={3.5} eyeOffY={bEyeOffY} browVariant="refined" />
+                  <Brow x={620.0} y={276} emotion={currentEmotion} side="right" sw={3.5} eyeOffY={bEyeOffY} browVariant="refined" />
+
+                  {/* Eye Sockets Contour */}
+                  <circle cx={510.0} cy={315.0} r={26} fill="#FDFCF9" stroke={B.charcoal} strokeWidth={2.8} />
+                  <circle cx={620.0} cy={315.0} r={26} fill="#FDFCF9" stroke={B.charcoal} strokeWidth={2.8} />
+
+                  {/* Left Pupil */}
+                  <g clipPath="url(#b-left-eye)">
+                    <motion.circle cx={bLx} cy={bLy} r={13.5} fill="#1E1612" />
+                    <motion.circle cx={bLhx} cy={bLhy} r={4.5} fill={B.pureWhite} opacity={0.96} />
+                    <motion.circle cx={bLx} cy={bLy} r={2.4} fill={B.pureWhite} opacity={0.65} style={{ x: 3, y: 3 }} />
+                    <motion.rect
+                      x={480} y={280} width={65} height={65} fill="#F5EFE6"
+                      style={{ scaleY: blinkMV, transformOrigin: '510px 285px' }}
+                    />
+                  </g>
+
+                  {/* Right Pupil (or Wink during 'tease') */}
+                  {currentEmotion === 'tease' ? (
+                    <path d="M 605 315 Q 620 307 635 315" fill="none" stroke={B.charcoal} strokeWidth={3.6} strokeLinecap="round" />
+                  ) : (
+                    <g clipPath="url(#b-right-eye)">
+                      <motion.circle cx={bRx} cy={bRy} r={13.5} fill="#1E1612" />
+                      <motion.circle cx={bRhx} cy={bRhy} r={4.5} fill={B.pureWhite} opacity={0.96} />
+                      <motion.circle cx={bRx} cy={bRy} r={2.4} fill={B.pureWhite} opacity={0.65} style={{ x: 3, y: 3 }} />
+                      <motion.rect
+                        x={590} y={280} width={65} height={65} fill="#F5EFE6"
+                        style={{ scaleY: blinkMV, transformOrigin: '620px 285px' }}
+                      />
+                    </g>
+                  )}
+
+                  {/* Mouth */}
+                  {currentEmotion === 'tease' ? (
+                    <g>
+                      <path d="M 552 350 Q 565 358 578 350" fill="none" stroke={B.charcoal} strokeWidth={2.6} strokeLinecap="round" />
+                      <path d="M 567 353 Q 570 362 575 361 Q 578 359 576 351 Z" fill={B.tongue} stroke={B.charcoal} strokeWidth={1.4} />
+                    </g>
+                  ) : currentEmotion === 'angry' ? (
+                    <path d="M 552 358 Q 565 348 578 358" fill="none" stroke={B.charcoal} strokeWidth={3.0} strokeLinecap="round" />
+                  ) : currentEmotion === 'shy' ? (
+                    <path d="M 554 353 Q 565 360 576 353" fill="none" stroke={B.charcoal} strokeWidth={2.4} strokeLinecap="round" />
+                  ) : currentEmotion === 'talking' ? (
+                    <ellipse cx={565} cy={353} rx={9} ry={6} fill={B.mouthBg} stroke={B.charcoal} strokeWidth={2.4} />
+                  ) : currentEmotion === 'shocked' ? (
+                    <ellipse cx={565} cy={353} rx={8} ry={11} fill={B.mouthBg} stroke={B.charcoal} strokeWidth={2.4} />
+                  ) : (
+                    <path d="M 552 350 Q 565 360 578 350" fill="none" stroke={B.charcoal} strokeWidth={2.8} strokeLinecap="round" />
+                  )}
+
+                  {/* Soft Rosy Blush */}
+                  <Blush x={475} y={332} rx={18} ry={10} color={currentEmotion === 'shy' ? B.blushDeep : B.blushWarm} opacity={currentEmotion === 'shy' ? 0.6 : 0.32} isShy={currentEmotion === 'shy'} />
+                  <Blush x={655} y={332} rx={18} ry={10} color={currentEmotion === 'shy' ? B.blushDeep : B.blushWarm} opacity={currentEmotion === 'shy' ? 0.6 : 0.32} isShy={currentEmotion === 'shy'} />
+                </motion.g>
+              </svg>
+            </div>
+          </motion.div>
+        </div>
+
+        {/* ═══════════════════════════════════════════════════════════════════
+            3. THE CRISP LINEN SHIRT (Back-Right)
+            FACE STYLE: Tailored button-down linen shirt on wooden hanger with
+            chic horn button eyes, subtle eyelid blink, fine eyebrows and smile!
+            ═══════════════════════════════════════════════════════════════════ */}
+        <div
+          style={{ ...floatStyle, position: 'absolute', left: '66%', bottom: '26%', width: '36%', zIndex: 5 }}
+        >
+          <motion.div
+            animate={getAnimate('s')}
+            style={bodyMotionStyle('50% 95%')}
+            transition={getTransition()}
+            className="w-full pointer-events-none select-none"
+          >
+            <div className="relative w-full h-auto">
+              <img
+                src="/images/characters/shirt_clean.png?v=7"
+                alt="JORIQUE Linen Shirt"
+                className="w-full h-auto block select-none pointer-events-none drop-shadow-xl"
+              />
+              <svg viewBox="0 0 896 1200" className="absolute inset-0 w-full h-full pointer-events-none">
+                <defs>
+                  <clipPath id="s-left-eye"><circle cx="531.0" cy="438.0" r="21" /></clipPath>
+                  <clipPath id="s-right-eye"><circle cx="587.0" cy="438.0" r="21" /></clipPath>
+                </defs>
+
+                {/* 3D Face Parallax Group */}
+                <motion.g style={{ x: sFaceOffX, y: sFaceOffY }}>
+                  {/* Eyebrows */}
+                  <Brow x={531.0} y={404} emotion={currentEmotion} side="left" sw={3.2} eyeOffY={sEyeOffY} browVariant="refined" />
+                  <Brow x={587.0} y={404} emotion={currentEmotion} side="right" sw={3.2} eyeOffY={sEyeOffY} browVariant="refined" />
+
+                  {/* Left Eye Pupil */}
+                  <g clipPath="url(#s-left-eye)">
+                    <motion.circle cx={sLx} cy={sLy} r={10.5} fill="#1A1512" />
+                    <motion.circle cx={sLhx} cy={sLhy} r={3.2} fill={B.pureWhite} opacity={0.96} />
+                    <motion.circle cx={sLx} cy={sLy} r={1.8} fill={B.pureWhite} opacity={0.65} style={{ x: 2.5, y: 2.5 }} />
+                    <motion.rect
+                      x={506} y={414} width={50} height={50} fill="#ECE1D1"
+                      style={{ scaleY: blinkMV, transformOrigin: '531px 416px' }}
+                    />
+                  </g>
+
+                  {/* Right Eye Pupil (or Wink during 'tease') */}
+                  {currentEmotion === 'tease' ? (
+                    <path d="M 577 438 Q 587 430 597 438" fill="none" stroke={B.charcoal} strokeWidth={3.2} strokeLinecap="round" />
+                  ) : (
+                    <g clipPath="url(#s-right-eye)">
+                      <motion.circle cx={sRx} cy={sRy} r={10.5} fill="#1A1512" />
+                      <motion.circle cx={sRhx} cy={sRhy} r={3.2} fill={B.pureWhite} opacity={0.96} />
+                      <motion.circle cx={sRx} cy={sRy} r={1.8} fill={B.pureWhite} opacity={0.65} style={{ x: 2.5, y: 2.5 }} />
+                      <motion.rect
+                        x={562} y={414} width={50} height={50} fill="#ECE1D1"
+                        style={{ scaleY: blinkMV, transformOrigin: '587px 416px' }}
+                      />
+                    </g>
+                  )}
+
+                  {/* Mouth Emotion Reactions */}
+                  {currentEmotion === 'tease' ? (
+                    <g>
+                      <path d="M 547 476 Q 559 486 571 476" fill="none" stroke={B.charcoal} strokeWidth={2.6} strokeLinecap="round" />
+                      <path d="M 556 480 Q 559 488 563 487 Q 566 485 564 478 Z" fill={B.tongue} stroke={B.charcoal} strokeWidth={1.2} />
+                    </g>
+                  ) : currentEmotion === 'angry' ? (
+                    <path d="M 547 482 Q 559 472 571 482" fill="none" stroke={B.charcoal} strokeWidth={3.0} strokeLinecap="round" />
+                  ) : currentEmotion === 'shocked' ? (
+                    <ellipse cx={559} cy={478} rx={7} ry={10} fill={B.mouthBg} stroke={B.charcoal} strokeWidth={2.2} />
+                  ) : currentEmotion === 'talking' ? (
+                    <ellipse cx={559} cy={478} rx={8} ry={5} fill={B.mouthBg} stroke={B.charcoal} strokeWidth={2.2} />
+                  ) : null}
+
+                  {/* Cheeks / Blush */}
+                  <Blush x={502} y={458} rx={16} ry={9} color={currentEmotion === 'shy' ? B.blushDeep : B.blushWarm} opacity={currentEmotion === 'shy' ? 0.65 : 0.3} isShy={currentEmotion === 'shy'} />
+                  <Blush x={616} y={458} rx={16} ry={9} color={currentEmotion === 'shy' ? B.blushDeep : B.blushWarm} opacity={currentEmotion === 'shy' ? 0.65 : 0.3} isShy={currentEmotion === 'shy'} />
+                </motion.g>
+              </svg>
+            </div>
+          </motion.div>
+        </div>
+
+        {/* ═══════════════════════════════════════════════════════════════════
+            4. THE LINEN PILLOW (Mid-Left)
             FACE STYLE: The Star Googly-Eyed Cartoon Cutie! Big White
             Googly Eyes with bold black rim, single buck tooth, bouncy brows.
             ═══════════════════════════════════════════════════════════════════ */}
         <div
-          style={{ ...floatStyle, position: 'absolute', left: '36%', bottom: '18%', width: '46%', zIndex: 7 }}
+          style={{ ...floatStyle, position: 'absolute', left: '18%', bottom: '15%', width: '40%', zIndex: 8 }}
         >
           <motion.div
             animate={getAnimate('p')}
@@ -641,7 +901,7 @@ export default function InteractiveLoginCharacters({
           >
             <div className="relative w-full h-auto">
               <img
-                src="/images/characters/pillow_clean.png?v=6"
+                src="/images/characters/pillow_clean.png?v=7"
                 alt="JORIQUE Botanical Pillow"
                 className="w-full h-auto block select-none pointer-events-none drop-shadow-2xl"
               />
@@ -654,7 +914,7 @@ export default function InteractiveLoginCharacters({
                 {/* 3D Face Parallax Group */}
                 <motion.g style={{ x: pFaceOffX, y: pFaceOffY }}>
                   {/* Bold Cartoon Eyebrows */}
-                  <Brow x={535.0} y={370} emotion={currentEmotion} side="left"  sw={6.5} eyeOffY={pEyeOffY} browVariant="expressive" />
+                  <Brow x={535.0} y={370} emotion={currentEmotion} side="left" sw={6.5} eyeOffY={pEyeOffY} browVariant="expressive" />
                   <Brow x={666.0} y={370} emotion={currentEmotion} side="right" sw={6.5} eyeOffY={pEyeOffY} browVariant="expressive" />
 
                   {/* Bold Googly Eye Outer Sockets */}
@@ -763,13 +1023,112 @@ export default function InteractiveLoginCharacters({
         </div>
 
         {/* ═══════════════════════════════════════════════════════════════════
-            3. THE CLOUD COMFORTER (Front-Left)
+            5. THE PLUSH TOWEL STACK (Mid-Right)
+            FACE STYLE: Stack of two fluffy combed cotton towels with expressive
+            pearl-sheen eyes that follow cursor and blink, with soft blush!
+            ═══════════════════════════════════════════════════════════════════ */}
+        <div
+          style={{ ...floatStyle, position: 'absolute', left: '60%', bottom: '6%', width: '34%', zIndex: 12 }}
+        >
+          <motion.div
+            animate={getAnimate('t')}
+            style={bodyMotionStyle('50% 95%')}
+            transition={getTransition()}
+            className="w-full pointer-events-none select-none"
+          >
+            <div className="relative w-full h-auto">
+              <img
+                src="/images/characters/towel_clean.png?v=7"
+                alt="JORIQUE Plush Towels"
+                className="w-full h-auto block select-none pointer-events-none drop-shadow-xl"
+              />
+              <svg viewBox="0 0 1024 1024" className="absolute inset-0 w-full h-full pointer-events-none">
+                <defs>
+                  <clipPath id="t-top-left"><circle cx="418.0" cy="362.0" r="42" /></clipPath>
+                  <clipPath id="t-top-right"><circle cx="554.0" cy="361.0" r="42" /></clipPath>
+                  <clipPath id="t-bot-left"><circle cx="423.0" cy="650.0" r="40" /></clipPath>
+                  <clipPath id="t-bot-right"><circle cx="554.0" cy="650.0" r="40" /></clipPath>
+                </defs>
+
+                {/* 3D Face Parallax Group */}
+                <motion.g style={{ x: tFaceOffX, y: tFaceOffY }}>
+                  {/* TOP TOWEL: Animated Eyebrows */}
+                  <Brow x={418.0} y={308} emotion={currentEmotion} side="left" sw={6.0} eyeOffY={tEyeOffY} browVariant="expressive" />
+                  <Brow x={554.0} y={308} emotion={currentEmotion} side="right" sw={6.0} eyeOffY={tEyeOffY} browVariant="expressive" />
+
+                  {/* Top Towel Left Pupil */}
+                  <g clipPath="url(#t-top-left)">
+                    <motion.circle cx={tLx} cy={tLy} r={19.5} fill={B.black} />
+                    <motion.circle cx={tLhx} cy={tLhy} r={6.8} fill={B.pureWhite} opacity={0.96} />
+                    <motion.circle cx={tLx} cy={tLy} r={3.2} fill={B.pureWhite} opacity={0.65} style={{ x: 5, y: 5 }} />
+                    <motion.rect
+                      x={370} y={315} width={96} height={96} fill="#ECE4D8"
+                      style={{ scaleY: blinkMV, transformOrigin: '418px 320px' }}
+                    />
+                  </g>
+
+                  {/* Top Towel Right Pupil (or Wink during 'tease') */}
+                  {currentEmotion === 'tease' ? (
+                    <path d="M 536 352 L 562 363 L 536 374" fill="none" stroke={B.black} strokeWidth={5.5} strokeLinecap="round" strokeLinejoin="round" />
+                  ) : (
+                    <g clipPath="url(#t-top-right)">
+                      <motion.circle cx={tRx} cy={tRy} r={19.5} fill={B.black} />
+                      <motion.circle cx={tRhx} cy={tRhy} r={6.8} fill={B.pureWhite} opacity={0.96} />
+                      <motion.circle cx={tRx} cy={tRy} r={3.2} fill={B.pureWhite} opacity={0.65} style={{ x: 5, y: 5 }} />
+                      <motion.rect
+                        x={506} y={315} width={96} height={96} fill="#ECE4D8"
+                        style={{ scaleY: blinkMV, transformOrigin: '554px 320px' }}
+                      />
+                    </g>
+                  )}
+
+                  {/* Top Towel Soft Blush */}
+                  <Blush x={360} y={400} rx={22} ry={12} color={currentEmotion === 'shy' ? B.blushDeep : B.blushWarm} opacity={currentEmotion === 'shy' ? 0.6 : 0.3} isShy={currentEmotion === 'shy'} />
+                  <Blush x={612} y={400} rx={22} ry={12} color={currentEmotion === 'shy' ? B.blushDeep : B.blushWarm} opacity={currentEmotion === 'shy' ? 0.6 : 0.3} isShy={currentEmotion === 'shy'} />
+
+                  {/* BOTTOM TOWEL: Animated Eyebrows */}
+                  <Brow x={423.0} y={602} emotion={currentEmotion} side="left" sw={5.0} eyeOffY={tEyeOffY} browVariant="curious" yOffset={-6} />
+                  <Brow x={554.0} y={602} emotion={currentEmotion} side="right" sw={5.0} eyeOffY={tEyeOffY} browVariant="curious" yOffset={2} />
+
+                  {/* Bottom Towel Left Pupil */}
+                  <g clipPath="url(#t-bot-left)">
+                    <motion.circle cx={tbLx} cy={tbLy} r={18.0} fill={B.black} />
+                    <motion.circle cx={tbLhx} cy={tbLhy} r={6.0} fill={B.pureWhite} opacity={0.96} />
+                    <motion.circle cx={tbLx} cy={tbLy} r={3.0} fill={B.pureWhite} opacity={0.65} style={{ x: 4, y: 4 }} />
+                    <motion.rect
+                      x={375} y={605} width={96} height={96} fill="#E2D8CB"
+                      style={{ scaleY: blinkMV, transformOrigin: '423px 610px' }}
+                    />
+                  </g>
+
+                  {/* Bottom Towel Right Pupil */}
+                  <g clipPath="url(#t-bot-right)">
+                    <motion.circle cx={tbRx} cy={tbRy} r={18.0} fill={B.black} />
+                    <motion.circle cx={tbRhx} cy={tbRhy} r={6.0} fill={B.pureWhite} opacity={0.96} />
+                    <motion.circle cx={tbRx} cy={tbRy} r={3.0} fill={B.pureWhite} opacity={0.65} style={{ x: 4, y: 4 }} />
+                    <motion.rect
+                      x={506} y={605} width={96} height={96} fill="#E2D8CB"
+                      style={{ scaleY: blinkMV, transformOrigin: '554px 610px' }}
+                    />
+                  </g>
+
+                  {/* Bottom Towel Soft Blush */}
+                  <Blush x={365} y={685} rx={22} ry={12} color={currentEmotion === 'shy' ? B.blushDeep : B.blushWarm} opacity={currentEmotion === 'shy' ? 0.6 : 0.28} isShy={currentEmotion === 'shy'} />
+                  <Blush x={612} y={685} rx={22} ry={12} color={currentEmotion === 'shy' ? B.blushDeep : B.blushWarm} opacity={currentEmotion === 'shy' ? 0.6 : 0.28} isShy={currentEmotion === 'shy'} />
+                </motion.g>
+              </svg>
+            </div>
+          </motion.div>
+        </div>
+
+        {/* ═══════════════════════════════════════════════════════════════════
+            6. THE CLOUD COMFORTER (Front-Left)
             FACE STYLE: The Snuggly Sleeping Duvet! Blissful Closed Sleeping
             Smile Arcs ( ˘ ◡ ˘ ) with giant plush blush cheeks & content smile!
             (NO round googly eyeballs!)
             ═══════════════════════════════════════════════════════════════════ */}
         <div
-          style={{ ...floatStyle, position: 'absolute', left: '-4%', bottom: '0%', width: '50%', zIndex: 15 }}
+          style={{ ...floatStyle, position: 'absolute', left: '-6%', bottom: '0%', width: '48%', zIndex: 16 }}
         >
           <motion.div
             animate={getAnimate('co')}
@@ -779,7 +1138,7 @@ export default function InteractiveLoginCharacters({
           >
             <div className="relative w-full h-auto">
               <img
-                src="/images/characters/comforter_clean.png?v=6"
+                src="/images/characters/comforter_clean.png?v=7"
                 alt="JORIQUE Cloud Comforter"
                 className="w-full h-auto block select-none pointer-events-none drop-shadow-2xl"
               />
@@ -792,7 +1151,7 @@ export default function InteractiveLoginCharacters({
                 {/* 3D Face Parallax Group */}
                 <motion.g style={{ x: cFaceOffX, y: cFaceOffY }}>
                   {/* Friendly Thick Eyebrows */}
-                  <Brow x={727.5} y={346} emotion={currentEmotion} side="left"  sw={7.0} eyeOffY={cEyeOffY} browVariant="sleepy" />
+                  <Brow x={727.5} y={346} emotion={currentEmotion} side="left" sw={7.0} eyeOffY={cEyeOffY} browVariant="sleepy" />
                   <Brow x={847.0} y={336} emotion={currentEmotion} side="right" sw={7.0} eyeOffY={cEyeOffY} browVariant="sleepy" />
 
                   {/* ── Sockets: Warm Sepia Contours with clean bright sclera ── */}
@@ -885,13 +1244,13 @@ export default function InteractiveLoginCharacters({
         </div>
 
         {/* ═══════════════════════════════════════════════════════════════════
-            4. THE FLANGE CUSHION (Front-Right)
+            7. THE FLANGE CUSHION (Front-Right)
             FACE STYLE: Kawaii Anime Explorer! Four-Point Star Sparkle
             Eyes (✦), Inquisitive Asymmetrical Brows, Quirky Round "O"
             Mouth with Tiny Tooth & Golden Freckle Dots!
             ═══════════════════════════════════════════════════════════════════ */}
         <div
-          style={{ ...floatStyle, position: 'absolute', left: '44%', bottom: '0%', width: '38%', zIndex: 18 }}
+          style={{ ...floatStyle, position: 'absolute', left: '35%', bottom: '0%', width: '37%', zIndex: 18 }}
         >
           <motion.div
             animate={getAnimate('cu')}
@@ -901,7 +1260,7 @@ export default function InteractiveLoginCharacters({
           >
             <div className="relative w-full h-auto">
               <img
-                src="/images/characters/cushion_clean.png?v=6"
+                src="/images/characters/cushion_clean.png?v=7"
                 alt="JORIQUE Flange Cushion"
                 className="w-full h-auto block select-none pointer-events-none drop-shadow-2xl"
               />
@@ -914,7 +1273,7 @@ export default function InteractiveLoginCharacters({
                 {/* 3D Face Parallax Group */}
                 <motion.g style={{ x: cuFaceOffX, y: cuFaceOffY }}>
                   {/* Asymmetrical Inquisitive Eyebrows (Left raised high in curious wonder!) */}
-                  <Brow x={442.0} y={382} emotion={currentEmotion} side="left"  sw={7.0} eyeOffY={cuEyeOffY} browVariant="curious" yOffset={-14} />
+                  <Brow x={442.0} y={382} emotion={currentEmotion} side="left" sw={7.0} eyeOffY={cuEyeOffY} browVariant="curious" yOffset={-14} />
                   <Brow x={583.0} y={394} emotion={currentEmotion} side="right" sw={7.0} eyeOffY={cuEyeOffY} browVariant="curious" yOffset={2} />
 
                   {/* Sockets Outline */}
