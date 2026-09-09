@@ -58,13 +58,13 @@ export default function Signup() {
     <main className="min-h-screen bg-[#FDFBF7] dark:bg-[#0E0D0C] flex flex-col justify-center items-center px-4 sm:px-6 py-12 selection:bg-[#D4AF37]/30 selection:text-primary relative overflow-hidden font-sans">
 
       {/* Top Left Navigation Link */}
-      <Link
+      {/* <Link
         to="/"
         className="absolute top-6 left-6 sm:top-8 sm:left-8 flex items-center gap-2 text-xs font-semibold uppercase tracking-widest text-[#8A847D] hover:text-black dark:text-white/60 dark:hover:text-white transition-colors z-20"
       >
         <span className="text-base leading-none">←</span>
-        <span>Back to Boutique</span>
-      </Link>
+        <span></span>
+      </Link> */}
 
       {/* Main Dual-Panel Container */}
       <div className="w-full max-w-6xl grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-14 items-center justify-center my-auto py-6" style={{ minHeight: '80vh' }}>
