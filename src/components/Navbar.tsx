@@ -361,24 +361,14 @@ export default function Navbar({}: NavbarProps) {
                             </Link>
                           </>
                         ) : (
-                          <>
-                            <Link
-                              to="/login"
-                              onClick={() => setUserMenuOpen(false)}
-                              className="w-full flex items-center justify-center gap-2 px-3 py-2.5 text-xs font-bold uppercase tracking-wider text-white bg-primary dark:bg-[#D4AF37] dark:text-black rounded-xl transition-all shadow-xs hover:opacity-90"
-                            >
-                              <LogIn size={14} />
-                              <span>Sign In / Register</span>
-                            </Link>
-                            <Link
-                              to="/login?redirect=/dashboard?tab=orders"
-                              onClick={() => setUserMenuOpen(false)}
-                              className="w-full flex items-center gap-3 px-3 py-2 text-xs font-medium tracking-wide text-secondary dark:text-white/70 hover:text-primary dark:hover:text-[#D4AF37] hover:bg-cream dark:hover:bg-white/5 rounded-xl transition-colors duration-150"
-                            >
-                              <Package size={14} strokeWidth={1.5} className="text-[#C6A96B] dark:text-[#D4AF37]" />
-                              <span>Order History</span>
-                            </Link>
-                          </>
+                          <Link
+                            to="/login"
+                            onClick={() => setUserMenuOpen(false)}
+                            className="w-full flex items-center justify-center gap-2 px-3 py-2.5 text-xs font-bold uppercase tracking-wider text-white bg-primary dark:bg-[#D4AF37] dark:text-black rounded-xl transition-all shadow-xs hover:opacity-90"
+                          >
+                            <LogIn size={14} />
+                            <span>Sign In / Register</span>
+                          </Link>
                         )}
                       </div>
 
@@ -500,22 +490,13 @@ export default function Navbar({}: NavbarProps) {
                       </Link>
                     </>
                   ) : (
-                    <>
-                      <Link
-                        to="/login"
-                        onClick={() => setMobileOpen(false)}
-                        className="text-primary dark:text-white hover:underline flex items-center gap-2 font-semibold"
-                      >
-                        <LogIn size={15} /> Sign In / Register
-                      </Link>
-                      <Link
-                        to="/login?redirect=/dashboard?tab=orders"
-                        onClick={() => setMobileOpen(false)}
-                        className="text-primary dark:text-white hover:underline flex items-center gap-2"
-                      >
-                        <Package size={15} /> Order History
-                      </Link>
-                    </>
+                    <Link
+                      to="/login"
+                      onClick={() => setMobileOpen(false)}
+                      className="text-primary dark:text-white hover:underline flex items-center gap-2 font-semibold"
+                    >
+                      <LogIn size={15} /> Sign In / Register
+                    </Link>
                   )}
                   <Link
                     to="/about"
