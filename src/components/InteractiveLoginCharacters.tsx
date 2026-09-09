@@ -718,7 +718,7 @@ export default function InteractiveLoginCharacters({
             Delicate smiling eyes (with blink), fine needlework smile, peachy blush.
             ═══════════════════════════════════════════════════════════════════ */}
         <div
-          style={{ ...floatStyle, position: 'absolute', left: '30%', bottom: '33%', width: '38%', zIndex: 4 }}
+          style={{ ...floatStyle, position: 'absolute', left: '38%', bottom: '33%', width: '38%', zIndex: 4 }}
         >
           <motion.div
             animate={getAnimate('b')}
