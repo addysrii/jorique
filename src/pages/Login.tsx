@@ -150,10 +150,10 @@ export default function Login() {
       </Link>
 
       {/* Main Dual-Panel Container */}
-      <div className="w-full max-w-7xl grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-14 items-center justify-center my-auto py-6" style={{ minHeight: '80vh' }}>
+      <div className="w-full max-w-6xl grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-14 items-center justify-center my-auto py-6" style={{ minHeight: '80vh' }}>
 
         {/* LEFT COLUMN: Jorique Product Characters */}
-        <div className="lg:col-span-7 flex flex-col items-center justify-center order-2 lg:order-1 pt-4 lg:pt-0 relative w-full max-w-[620px] mx-auto">
+        <div className="lg:col-span-7 flex flex-col items-center justify-center order-2 lg:order-1 pt-4 lg:pt-0 relative w-full">
           {/* Brand decorative corner — gold top-right */}
           <div className="absolute top-0 right-0 w-28 h-28 pointer-events-none opacity-30"
           />
