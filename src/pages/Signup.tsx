@@ -67,10 +67,10 @@ export default function Signup() {
       </Link>
 
       {/* Main Dual-Panel Container */}
-      <div className="w-full max-w-6xl grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-14 items-center justify-center my-auto py-6" style={{ minHeight: '80vh' }}>
+      <div className="w-full max-w-7xl grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-14 items-center justify-center my-auto py-6" style={{ minHeight: '80vh' }}>
 
         {/* LEFT COLUMN: Jorique Interactive Characters Stage */}
-        <div className="lg:col-span-7 flex flex-col items-center justify-center order-2 lg:order-1 pt-4 lg:pt-0 relative w-full">
+        <div className="lg:col-span-7 flex flex-col items-center justify-center order-2 lg:order-1 pt-4 lg:pt-0 relative w-full max-w-[720px] mx-auto">
           <InteractiveLoginCharacters
             focusedField={focusedField}
             showPassword={showPassword}

@@ -308,9 +308,9 @@ export default function InteractiveLoginCharacters({
   // ── 3. Active Emotion Determination (Purely Driven by User Actions!) ─────────
   const isIdle = focusedField === 'none';
   const isEmail = focusedField === 'email';
-  const isPwdHidden = focusedField === 'password' && !showPassword;
-  const isPwdShown = focusedField === 'password' && showPassword;
-  const isCursorDriven = isIdle || isEmail;
+  const isPwdHidden = (focusedField === 'password' || (passwordLength > 0 && focusedField !== 'email')) && !showPassword;
+  const isPwdShown = (focusedField === 'password' || passwordLength > 0) && showPassword;
+  const isCursorDriven = (isIdle || isEmail) && !isPwdHidden && !isPwdShown;
 
   let currentEmotion: Emotion = 'happy';
 
@@ -322,14 +322,12 @@ export default function InteractiveLoginCharacters({
     // 2. USER CLICKED SUBMIT WITH EMPTY FIELDS -> ANGER / GRUMPY SCOWL! 😡
     // "Hey! You didn't even enter anything!" -> Comforter and Pillow scowl!
     currentEmotion = 'angry';
-  } else if (focusedField === 'password') {
-    if (showPassword) {
-      // 3. PASSWORD REVEALED (Eye toggled) -> SHOCKED PEEK!
-      currentEmotion = 'shocked';
-    } else {
-      // 4. TYPING SECRET PASSWORD -> SHYNESS & DISCRETION! 😳
-      currentEmotion = 'shy';
-    }
+  } else if (isPwdHidden) {
+    // 3. TYPING / ADDING SECRET PASSWORD -> LOOK AWAY DISCREETLY! 😳
+    currentEmotion = 'shy';
+  } else if (isPwdShown) {
+    // 4. PASSWORD REVEALED (Eye toggled) -> SHOCKED PEEK!
+    currentEmotion = 'shocked';
   } else if (hoverTarget === 'forgot') {
     // 5. HOVERING "Forgot password?" -> Playful teasing ("Did you really forget? 😜")
     currentEmotion = 'tease';
@@ -417,16 +415,16 @@ export default function InteractiveLoginCharacters({
         s: { rotate: 2, y: -2 },
       }[c];
     }
-    // 3. SHY: Secret password typing! Characters look away coyly / duck down!
+    // 3. SHY / LOOK AWAY: Secret password typing! All characters turn bodies & avert eyes far to the left away from password!
     if (isPwdHidden) {
       return {
-        k: { rotate: -16, x: -10, y: 6 },
-        p: { rotate: 0, y: 195 },
-        co: { rotate: -4, y: 12, scale: 0.94 },
-        cu: { rotate: 16, x: 8, y: 6 },
-        b: { rotate: -8, y: 15, scale: 0.96 },
-        t: { rotate: 14, x: 10, y: 14 },
-        s: { rotate: 14, x: 10, y: 10 },
+        k: { rotate: -14, x: -16, y: 6 },
+        p: { rotate: -12, x: -18, y: 14 },
+        co: { rotate: -6, x: -14, y: 8, scale: 0.96 },
+        cu: { rotate: -12, x: -16, y: 6 },
+        b: { rotate: -10, x: -14, y: 8, scale: 0.96 },
+        t: { rotate: -12, x: -16, y: 8 },
+        s: { rotate: -12, x: -16, y: 6 },
       }[c];
     }
     // 4. SHOCKED: Password revealed!
@@ -449,49 +447,49 @@ export default function InteractiveLoginCharacters({
   const kPupilOv =
     hasError ? { x: -5, y: 2 }
       : emptyAttempt ? { x: 0, y: 3 }
-        : currentEmotion === 'shy' ? { x: -8, y: 7 }
+        : currentEmotion === 'shy' ? { x: -14, y: 2 }
           : isPwdShown ? { x: 10, y: -2 }
             : undefined;
 
   const pPupilOv =
     hasError ? { x: -6, y: 4 }
       : emptyAttempt ? { x: 0, y: 4 }
-        : currentEmotion === 'shy' ? { x: 0, y: 16 }
+        : currentEmotion === 'shy' ? { x: -24, y: -4 }
           : isPwdShown ? { x: 18, y: 0 }
             : undefined;
 
   const cPupilOv =
     hasError ? { x: -6, y: 2 }
       : emptyAttempt ? { x: 0, y: 2 }
-        : currentEmotion === 'shy' ? { x: -14, y: 11 }
+        : currentEmotion === 'shy' ? { x: -22, y: 2 }
           : isPwdShown ? { x: 18, y: -2 }
             : undefined;
 
   const cuPupilOv =
     hasError ? { x: 12, y: -8 }
       : emptyAttempt ? { x: 0, y: 4 }
-        : currentEmotion === 'shy' ? { x: 20, y: -18 }
+        : currentEmotion === 'shy' ? { x: -24, y: -6 }
           : isPwdShown ? { x: 16, y: 0 }
             : undefined;
 
   const bPupilOv =
     hasError ? { x: -4, y: 2 }
       : emptyAttempt ? { x: 0, y: 3 }
-        : currentEmotion === 'shy' ? { x: -10, y: 8 }
+        : currentEmotion === 'shy' ? { x: -16, y: -2 }
           : isPwdShown ? { x: 14, y: -2 }
             : undefined;
 
   const tPupilOv =
     hasError ? { x: 10, y: -4 }
       : emptyAttempt ? { x: 0, y: 4 }
-        : currentEmotion === 'shy' ? { x: 16, y: 12 }
+        : currentEmotion === 'shy' ? { x: -22, y: 2 }
           : isPwdShown ? { x: 16, y: 0 }
             : undefined;
 
   const sPupilOv =
     hasError ? { x: -4, y: 2 }
       : emptyAttempt ? { x: 0, y: 3 }
-        : currentEmotion === 'shy' ? { x: 8, y: 6 }
+        : currentEmotion === 'shy' ? { x: -13, y: 0 }
           : isPwdShown ? { x: -10, y: -2 }
             : undefined;
 
@@ -597,7 +595,7 @@ export default function InteractiveLoginCharacters({
       {/* Main Character Stage */}
       <div
         ref={containerRef}
-        className="relative w-full aspect-[1/0.92] max-w-[620px] select-none flex items-end justify-center overflow-visible"
+        className="relative w-full aspect-[1/0.90] max-w-[720px] select-none flex items-end justify-center overflow-visible"
       >
 
         {/* ═══════════════════════════════════════════════════════════════════
@@ -606,7 +604,7 @@ export default function InteractiveLoginCharacters({
             Onyx Horn Buttons (NO white googly eye!) + Needlework Smirk
             ═══════════════════════════════════════════════════════════════════ */}
         <div
-          style={{ ...floatStyle, position: 'absolute', left: '-5%', bottom: '24%', width: '42%', zIndex: 5 }}
+          style={{ ...floatStyle, position: 'absolute', left: '-6%', bottom: '22%', width: '46%', zIndex: 5 }}
         >
           <motion.div
             animate={getAnimate('k')}
@@ -721,7 +719,7 @@ export default function InteractiveLoginCharacters({
             Delicate smiling eyes (with blink), fine needlework smile, peachy blush.
             ═══════════════════════════════════════════════════════════════════ */}
         <div
-          style={{ ...floatStyle, position: 'absolute', left: '29%', bottom: '26%', width: '42%', zIndex: 4 }}
+          style={{ ...floatStyle, position: 'absolute', left: '28%', bottom: '25%', width: '46%', zIndex: 4 }}
         >
           <motion.div
             animate={getAnimate('b')}
@@ -810,7 +808,7 @@ export default function InteractiveLoginCharacters({
             chic horn button eyes, subtle eyelid blink, fine eyebrows and smile!
             ═══════════════════════════════════════════════════════════════════ */}
         <div
-          style={{ ...floatStyle, position: 'absolute', left: '63%', bottom: '24%', width: '42%', zIndex: 5 }}
+          style={{ ...floatStyle, position: 'absolute', left: '62%', bottom: '22%', width: '46%', zIndex: 5 }}
         >
           <motion.div
             animate={getAnimate('s')}
@@ -891,7 +889,7 @@ export default function InteractiveLoginCharacters({
             Googly Eyes with bold black rim, single buck tooth, bouncy brows.
             ═══════════════════════════════════════════════════════════════════ */}
         <div
-          style={{ ...floatStyle, position: 'absolute', left: '14%', bottom: '13%', width: '47%', zIndex: 8 }}
+          style={{ ...floatStyle, position: 'absolute', left: '12%', bottom: '11%', width: '52%', zIndex: 8 }}
         >
           <motion.div
             animate={getAnimate('p')}
@@ -1028,7 +1026,7 @@ export default function InteractiveLoginCharacters({
             pearl-sheen eyes that follow cursor and blink, with soft blush!
             ═══════════════════════════════════════════════════════════════════ */}
         <div
-          style={{ ...floatStyle, position: 'absolute', left: '57%', bottom: '4%', width: '40%', zIndex: 12 }}
+          style={{ ...floatStyle, position: 'absolute', left: '56%', bottom: '3%', width: '45%', zIndex: 12 }}
         >
           <motion.div
             animate={getAnimate('t')}
@@ -1128,7 +1126,7 @@ export default function InteractiveLoginCharacters({
             (NO round googly eyeballs!)
             ═══════════════════════════════════════════════════════════════════ */}
         <div
-          style={{ ...floatStyle, position: 'absolute', left: '-8%', bottom: '0%', width: '55%', zIndex: 16 }}
+          style={{ ...floatStyle, position: 'absolute', left: '-9%', bottom: '0%', width: '60%', zIndex: 16 }}
         >
           <motion.div
             animate={getAnimate('co')}
@@ -1250,7 +1248,7 @@ export default function InteractiveLoginCharacters({
             Mouth with Tiny Tooth & Golden Freckle Dots!
             ═══════════════════════════════════════════════════════════════════ */}
         <div
-          style={{ ...floatStyle, position: 'absolute', left: '33%', bottom: '0%', width: '43%', zIndex: 18 }}
+          style={{ ...floatStyle, position: 'absolute', left: '31%', bottom: '0%', width: '48%', zIndex: 18 }}
         >
           <motion.div
             animate={getAnimate('cu')}
