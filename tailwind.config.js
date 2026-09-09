@@ -37,12 +37,13 @@ export default {
         'dark-teal': '#0E7A7D',
       },
       fontFamily: {
-        serif: ['"Cormorant Garamond"', 'Georgia', 'serif'],
+        serif: ['ui-serif', 'Georgia', 'Cambria', '"Times New Roman"', 'Times', 'serif'],
         times: ['"Times New Roman"', 'Times', 'Georgia', 'serif'],
         sans: ['"Manrope"', 'Inter', 'system-ui', 'sans-serif'],
-        heading: ['"Cormorant Garamond"', 'Georgia', 'serif'],
+        heading: ['ui-serif', 'Georgia', 'Cambria', '"Times New Roman"', 'Times', 'serif'],
         body: ['"Manrope"', 'Inter', 'system-ui', 'sans-serif'],
-        logo: ['"Cormorant Garamond"', 'Georgia', 'serif'],
+        logo: ['ui-serif', 'Georgia', 'Cambria', '"Times New Roman"', 'Times', 'serif'],
+        mainlogo: ['ui-serif', 'Georgia', 'Cambria', '"Times New Roman"', 'Times', 'serif'],
       },
       letterSpacing: {
         logo: '0.20em',

@@ -3,11 +3,15 @@ import type { Product, ProductResponse } from '../../types';
 
 // Transform database response to frontend Product type
 function toProduct(product: ProductResponse): Product {
+  const tagsList = Array.isArray(product.tags) ? product.tags : [];
+  const sizeFromTag = tagsList.find(t => t.toLowerCase().startsWith('size:') || t.toLowerCase().startsWith('sizes:'))?.split(':')[1]?.trim();
+
   return {
     id: product.id,
     sku: product.sku || '',
     name: product.name,
     category: product.category,
+    subcategory: product.subcategory || undefined,
     price: product.price,
     discount_price: product.discount_price || undefined,
     cost: product.cost || undefined,
@@ -15,10 +19,11 @@ function toProduct(product: ProductResponse): Product {
     supplier: product.supplier || '',
     description: product.description || '',
     images: Array.isArray(product.images) ? product.images : [],
-    tags: Array.isArray(product.tags) ? product.tags : [],
+    tags: tagsList,
     badge: product.badge || undefined,
     brand_id: product.brand_id || 'JORIQUE',
     year: product.year || new Date().getFullYear(),
+    size: product.size || sizeFromTag || undefined,
     created_at: product.created_at,
     updated_at: product.updated_at,
   };

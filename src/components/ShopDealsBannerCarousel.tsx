@@ -24,8 +24,7 @@ export interface DealBannerSlide {
   code?: string;
   ctaText: string;
   filterTarget?: string;
-  gradientBgLight: string;
-  gradientBgDark: string;
+  gradientClasses: string;
   accentColor: string;
 }
 
@@ -40,8 +39,7 @@ const DEFAULT_DEALS: DealBannerSlide[] = [
     code: 'ATELIER25',
     ctaText: 'Explore Bedding Deals',
     filterTarget: 'Bedding',
-    gradientBgLight: 'from-[#FAF6F0] via-[#F4EDE2] to-[#EFE4D3]',
-    gradientBgDark: 'from-[#1E1712] via-[#17120E] to-[#120E0B]',
+    gradientClasses: 'from-[#FAF6F0] via-[#F4EDE2] to-[#EFE4D3] dark:from-[#201813] dark:via-[#18130E] dark:to-[#120E0B]',
     accentColor: '#C6A96B',
   },
   {
@@ -54,8 +52,7 @@ const DEFAULT_DEALS: DealBannerSlide[] = [
     code: 'FREESHIP',
     ctaText: 'Discover Bestsellers',
     filterTarget: 'All',
-    gradientBgLight: 'from-[#F2F7F6] via-[#E8F1EF] to-[#DCECE9]',
-    gradientBgDark: 'from-[#121A1A] via-[#101616] to-[#0E1212]',
+    gradientClasses: 'from-[#F2F7F6] via-[#E8F1EF] to-[#DCECE9] dark:from-[#111C1C] dark:via-[#0F1717] dark:to-[#0D1212]',
     accentColor: '#0B5F61',
   },
   {
@@ -68,8 +65,7 @@ const DEFAULT_DEALS: DealBannerSlide[] = [
     code: 'JORIQUE500',
     ctaText: 'Shop All Offers',
     filterTarget: 'All',
-    gradientBgLight: 'from-[#FBF3F3] via-[#F7ECEC] to-[#EFE0E0]',
-    gradientBgDark: 'from-[#201314] via-[#180F10] to-[#120B0C]',
+    gradientClasses: 'from-[#FBF3F3] via-[#F7ECEC] to-[#EFE0E0] dark:from-[#221314] dark:via-[#1A0E0F] dark:to-[#130B0C]',
     accentColor: '#D4AF37',
   },
   {
@@ -81,8 +77,7 @@ const DEFAULT_DEALS: DealBannerSlide[] = [
     highlightText: 'No Minimum Spend Required',
     ctaText: 'View Catalog',
     filterTarget: 'All',
-    gradientBgLight: 'from-[#FDF8EE] via-[#F9F1DC] to-[#F2E7C6]',
-    gradientBgDark: 'from-[#201A10] via-[#18130B] to-[#130E07]',
+    gradientClasses: 'from-[#FDF8EE] via-[#F9F1DC] to-[#F2E7C6] dark:from-[#221B0F] dark:via-[#1A140A] dark:to-[#130E07]',
     accentColor: '#D97706',
   },
 ];
@@ -163,7 +158,7 @@ export default function ShopDealsBannerCarousel({
 
   return (
     <div
-      className={`relative w-full rounded-3xl overflow-hidden shadow-lg border border-border/70 dark:border-[#332922] select-none transition-all duration-500 ${className}`}
+      className={`relative w-full rounded-3xl overflow-hidden shadow-lg border border-border/70 dark:border-[#332922] bg-[#FAF6F0] dark:bg-[#1A1410] select-none transition-all duration-500 ${className}`}
       onMouseEnter={() => setIsPaused(true)}
       onMouseLeave={() => setIsPaused(false)}
       aria-label="Running Deals and Boutique Privileges"
@@ -178,7 +173,7 @@ export default function ShopDealsBannerCarousel({
             initial="enter"
             animate="center"
             exit="exit"
-            className={`absolute inset-0 w-full h-full bg-gradient-to-r ${currentDeal.gradientBgLight} dark:${currentDeal.gradientBgDark} transition-colors duration-700 flex flex-col justify-center px-6 sm:px-10 lg:px-14 py-6 sm:py-7`}
+            className={`absolute inset-0 w-full h-full bg-gradient-to-r ${currentDeal.gradientClasses} transition-colors duration-700 flex flex-col justify-center px-6 sm:px-10 lg:px-14 py-6 sm:py-7`}
           >
             {/* Ambient luxury light aura */}
             <div
@@ -192,13 +187,13 @@ export default function ShopDealsBannerCarousel({
               <div className="space-y-2 max-w-2xl">
                 {/* Badge & Highlight Tag */}
                 <div className="flex items-center gap-2.5 flex-wrap">
-                  <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/80 dark:bg-white/10 backdrop-blur-md border border-black/5 dark:border-white/10 text-[10px] font-bold tracking-[0.25em] uppercase text-primary dark:text-[#D4AF37] shadow-xs">
+                  <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/90 dark:bg-[#241C16] backdrop-blur-md border border-black/10 dark:border-[#D4AF37]/40 text-[10px] font-bold tracking-[0.25em] uppercase text-primary dark:text-[#D4AF37] shadow-xs">
                     {currentDeal.badgeIcon}
                     {currentDeal.badge}
                   </span>
 
                   {currentDeal.highlightText && (
-                    <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-emerald-500/10 dark:bg-emerald-400/15 border border-emerald-500/20 text-emerald-800 dark:text-emerald-300 text-[10px] font-semibold">
+                    <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-emerald-500/10 dark:bg-emerald-950/70 border border-emerald-500/20 dark:border-emerald-500/40 text-emerald-800 dark:text-emerald-300 text-[10px] font-semibold">
                       <Clock size={10} />
                       {currentDeal.highlightText}
                     </span>
@@ -206,12 +201,12 @@ export default function ShopDealsBannerCarousel({
                 </div>
 
                 {/* Title */}
-                <h3 className="text-lg sm:text-2xl lg:text-[26px] font-serif font-light text-primary dark:text-white leading-tight tracking-tight">
+                <h3 className="text-lg sm:text-2xl lg:text-[26px] font-serif font-medium text-primary dark:text-[#FAF7F2] leading-tight tracking-tight">
                   {currentDeal.title}
                 </h3>
 
                 {/* Subtitle */}
-                <p className="text-xs sm:text-sm text-secondary dark:text-white/70 font-light leading-relaxed line-clamp-2">
+                <p className="text-xs sm:text-sm text-secondary dark:text-[#DDD5C7] font-normal leading-relaxed line-clamp-2">
                   {currentDeal.subtitle}
                 </p>
               </div>
@@ -222,11 +217,11 @@ export default function ShopDealsBannerCarousel({
                   <button
                     onClick={(e) => handleCopy(e, currentDeal.code)}
                     title="Click to copy coupon code"
-                    className="inline-flex items-center gap-2 px-3.5 py-2.5 rounded-2xl bg-white dark:bg-[#201A16] border border-dashed border-[#C6A96B] dark:border-[#D4AF37]/60 text-xs font-mono font-bold text-primary dark:text-[#D4AF37] hover:scale-105 active:scale-95 transition-all shadow-xs group/code"
+                    className="inline-flex items-center gap-2 px-3.5 py-2.5 rounded-2xl bg-white dark:bg-[#1C1612] border border-dashed border-[#C6A96B] dark:border-[#D4AF37] text-xs font-mono font-bold text-primary dark:text-[#D4AF37] hover:scale-105 active:scale-95 transition-all shadow-xs group/code"
                   >
                     <Tag size={13} className="text-[#C6A96B] dark:text-[#D4AF37]" />
                     <span className="tracking-wider">{currentDeal.code}</span>
-                    <span className="ml-1 pl-2 border-l border-black/10 dark:border-white/10 text-[10px] font-sans font-medium text-secondary dark:text-white/60 group-hover/code:text-primary dark:group-hover/code:text-white flex items-center gap-1">
+                    <span className="ml-1 pl-2 border-l border-black/10 dark:border-white/10 text-[10px] font-sans font-medium text-secondary dark:text-[#E8DFD3]/80 group-hover/code:text-primary dark:group-hover/code:text-white flex items-center gap-1">
                       {copiedCode === currentDeal.code ? (
                         <>
                           <Check size={12} className="text-emerald-600 dark:text-emerald-400" />
@@ -244,7 +239,7 @@ export default function ShopDealsBannerCarousel({
 
                 <button
                   onClick={() => handleCtaClick(currentDeal.filterTarget)}
-                  className="inline-flex items-center gap-2 px-5 sm:px-6 py-2.5 sm:py-3 rounded-2xl bg-primary dark:bg-[#D4AF37] text-white dark:text-black text-xs font-bold uppercase tracking-widest hover:opacity-95 shadow-md hover:shadow-lg transition-all hover:scale-[1.02] active:scale-[0.98]"
+                  className="inline-flex items-center gap-2 px-5 sm:px-6 py-2.5 sm:py-3 rounded-2xl bg-primary dark:bg-[#D4AF37] text-white dark:text-[#120E0B] text-xs font-bold uppercase tracking-widest hover:opacity-95 shadow-md hover:shadow-lg transition-all hover:scale-[1.02] active:scale-[0.98]"
                 >
                   <span>{currentDeal.ctaText}</span>
                   <ArrowRight size={13} />
@@ -259,7 +254,7 @@ export default function ShopDealsBannerCarousel({
       <button
         onClick={prevSlide}
         aria-label="Previous deal"
-        className="absolute left-2.5 sm:left-4 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-white/70 dark:bg-black/40 backdrop-blur-md border border-black/5 dark:border-white/15 flex items-center justify-center text-primary dark:text-white hover:bg-white dark:hover:bg-black/70 hover:scale-110 active:scale-95 transition-all shadow-md z-20"
+        className="absolute left-2.5 sm:left-4 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-white/80 dark:bg-[#201813]/90 backdrop-blur-md border border-black/5 dark:border-white/15 flex items-center justify-center text-primary dark:text-[#FAF7F2] hover:bg-white dark:hover:bg-[#2C211A] hover:scale-110 active:scale-95 transition-all shadow-md z-20"
       >
         <ChevronLeft size={16} />
       </button>
@@ -267,13 +262,13 @@ export default function ShopDealsBannerCarousel({
       <button
         onClick={nextSlide}
         aria-label="Next deal"
-        className="absolute right-2.5 sm:right-4 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-white/70 dark:bg-black/40 backdrop-blur-md border border-black/5 dark:border-white/15 flex items-center justify-center text-primary dark:text-white hover:bg-white dark:hover:bg-black/70 hover:scale-110 active:scale-95 transition-all shadow-md z-20"
+        className="absolute right-2.5 sm:right-4 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-white/80 dark:bg-[#201813]/90 backdrop-blur-md border border-black/5 dark:border-white/15 flex items-center justify-center text-primary dark:text-[#FAF7F2] hover:bg-white dark:hover:bg-[#2C211A] hover:scale-110 active:scale-95 transition-all shadow-md z-20"
       >
         <ChevronRight size={16} />
       </button>
 
       {/* Dot Indicators */}
-      <div className="absolute bottom-2 sm:bottom-3 left-1/2 -translate-x-1/2 flex items-center gap-1.5 z-20 bg-black/10 dark:bg-black/30 backdrop-blur-xs px-2.5 py-1 rounded-full">
+      <div className="absolute bottom-2 sm:bottom-3 left-1/2 -translate-x-1/2 flex items-center gap-1.5 z-20 bg-black/10 dark:bg-black/50 border border-transparent dark:border-white/10 backdrop-blur-xs px-2.5 py-1 rounded-full">
         {DEFAULT_DEALS.map((deal, idx) => {
           const isActive = idx === currentIndex;
           return (
@@ -284,10 +279,11 @@ export default function ShopDealsBannerCarousel({
                 setCurrentIndex(idx);
               }}
               aria-label={`Go to slide ${idx + 1}`}
-              className={`h-1.5 rounded-full transition-all duration-300 ${isActive
+              className={`h-1.5 rounded-full transition-all duration-300 ${
+                isActive
                   ? 'w-6 bg-primary dark:bg-[#D4AF37]'
-                  : 'w-1.5 bg-black/30 dark:bg-white/30 hover:bg-black/60 dark:hover:bg-white/60'
-                }`}
+                  : 'w-1.5 bg-black/30 dark:bg-white/40 hover:bg-black/60 dark:hover:bg-white/80'
+              }`}
             />
           );
         })}

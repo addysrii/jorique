@@ -35,24 +35,11 @@
     font-feature-settings: 'lnum' 1, 'tnum' 1;
   }
 
-  /* JORIQUE Brand Spec: Logo in Cormorant Garamond Regular (weight: 400) */
-  .font-logo {
-    font-family: "DM Sans", Inter, system-ui, sans-serif;
-    font-weight: 400 !important;
-    /* Regular */
-    letter-spacing: 0.20em;
-  }
-
-  .font-times,
-  .price-font,
-  [data-font="times"] {
-    font-family: 'Times New Roman', Times, Georgia, serif;
-    font-variant-numeric: lining-nums tabular-nums;
-    font-feature-settings: 'lnum' 1, 'tnum' 1;
-  }
-
+  /* JORIQUE Brand Logo: Serif */
+  .font-logo,
   .font-mainlogo {
-    font-family: "DM Sans", Inter, system-ui, sans-serif;
+    font-family: ui-serif, Georgia, Cambria, "Times New Roman", Times, serif !important;
+    letter-spacing: 0.20em;
   }
 
   .tabular-nums,

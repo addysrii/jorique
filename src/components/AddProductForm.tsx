@@ -16,11 +16,15 @@ import {
   Plus,
   Trash2,
   Layers,
+  Hash,
+  Pipette,
+  SunMedium,
 } from 'lucide-react';
 import { Link, useSearchParams } from 'react-router-dom';
 import ProductPackagingLabel from './ProductPackagingLabel';
 import ProductDescriptionGrid from './ProductDescriptionGrid';
 import { supabase } from '../lib/supabase';
+import { generateLightingComparisonCard, isLightingComparisonImage } from '../lib/generateLightingComparison';
 import { createProductRequest } from '../lib/api';
 import { generateSKU, generateSerials } from '../lib/utils/product';
 import { useAuth } from '../context/AuthContext';
@@ -51,6 +55,9 @@ export interface CreatedBatchProduct {
   badge?: string;
   cost?: number;
   category?: string;
+  subcategory?: string;
+  size?: string;
+  tags?: string[];
   serials: string[];
 }
 
@@ -83,6 +90,8 @@ export default function AddProductForm() {
     badge?: string;
     cost?: number;
     category?: string;
+    subcategory?: string;
+    size?: string;
     sku?: string;
   }>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -94,6 +103,11 @@ export default function AddProductForm() {
   const [batchCreatedProducts, setBatchCreatedProducts] = useState<CreatedBatchProduct[]>([]);
   const [selectedBatchVariantIndex, setSelectedBatchVariantIndex] = useState<number | 'all'>('all');
   const [variantUploadLoading, setVariantUploadLoading] = useState<string | null>(null);
+
+  // Direct Hex Code addition inputs
+  const [hexInput, setHexInput] = useState('#C6A96B');
+  const [hexColorName, setHexColorName] = useState('');
+  const [hexSkuSuffix, setHexSkuSuffix] = useState('');
 
   // Dynamic categories & subcategories from Supabase
   const [dbCategories, setDbCategories] = useState<{ id: string; name: string; slug: string }[]>([]);
@@ -212,6 +226,7 @@ export default function AddProductForm() {
 
     try {
       const uploadedUrls: string[] = [];
+      const validFiles: File[] = [];
 
       for (const file of Array.from(files)) {
         if (file.size > 5 * 1024 * 1024) {
@@ -223,6 +238,8 @@ export default function AddProductForm() {
           setUploadError('Only image files are allowed');
           continue;
         }
+
+        validFiles.push(file);
 
         const fileExt = file.name.split('.').pop();
         const fileName = `${Date.now()}-${Math.random().toString(36).substring(2)}.${fileExt}`;
@@ -241,11 +258,74 @@ export default function AddProductForm() {
         uploadedUrls.push(publicUrl);
       }
 
+      // Automatically synthesize True-Color Lighting Comparison Card if not already present
+      let lightingCardUrl: string | null = null;
+      const alreadyHasLighting = [...images, ...uploadedUrls].some((u) => isLightingComparisonImage(u));
+
+      if (!alreadyHasLighting && validFiles.length > 0) {
+        try {
+          const primaryFile = validFiles[0];
+          const { file: lightingFile } = await generateLightingComparisonCard(primaryFile);
+
+          const cardFileName = `lighting-fidelity-${Date.now()}-${Math.random().toString(36).substring(2)}.jpg`;
+          const cardFilePath = `products/${cardFileName}`;
+
+          const { error: cardUploadErr } = await supabase.storage
+            .from('product-images')
+            .upload(cardFilePath, lightingFile);
+
+          if (!cardUploadErr) {
+            const { data: { publicUrl: cardPublicUrl } } = supabase.storage
+              .from('product-images')
+              .getPublicUrl(cardFilePath);
+            lightingCardUrl = cardPublicUrl;
+          }
+        } catch (cardErr) {
+          console.warn('Auto-generation of lighting fidelity card skipped:', cardErr);
+        }
+      }
+
       const updatedImages = [...images, ...uploadedUrls];
+      if (lightingCardUrl) {
+        updatedImages.push(lightingCardUrl);
+      }
       setImages(updatedImages);
       setValue('images', updatedImages);
     } catch (error) {
       setUploadError(error instanceof Error ? error.message : 'Error uploading image');
+    } finally {
+      setUploading(false);
+    }
+  };
+
+  const handleGenerateLightingCard = async (targetIndex = 0) => {
+    if (images.length === 0) return;
+    const baseSource = images[targetIndex] || images[0];
+    if (!baseSource) return;
+
+    setUploading(true);
+    setUploadError('');
+    try {
+      const { file: lightingFile } = await generateLightingComparisonCard(baseSource);
+      const cardFileName = `lighting-fidelity-${Date.now()}-${Math.random().toString(36).substring(2)}.jpg`;
+      const cardFilePath = `products/${cardFileName}`;
+
+      const { error: cardUploadErr } = await supabase.storage
+        .from('product-images')
+        .upload(cardFilePath, lightingFile);
+      if (cardUploadErr) throw cardUploadErr;
+
+      const { data: { publicUrl: cardPublicUrl } } = supabase.storage
+        .from('product-images')
+        .getPublicUrl(cardFilePath);
+
+      // Remove existing lighting card and append fresh one
+      const cleanList = images.filter((u) => !isLightingComparisonImage(u));
+      const updated = [...cleanList, cardPublicUrl];
+      setImages(updated);
+      setValue('images', updated);
+    } catch (err) {
+      setUploadError(err instanceof Error ? err.message : 'Failed to generate lighting comparison card');
     } finally {
       setUploading(false);
     }
@@ -310,6 +390,8 @@ export default function AddProductForm() {
     setColorVariants(prev => [...prev, newVariant]);
   };
 
+  const isValidHex = (code: string) => /^#([0-9A-Fa-f]{3}|[0-9A-Fa-f]{6})$/.test(code.trim());
+
   const addCustomColor = () => {
     const newVariant: ColorVariantItem = {
       id: `${Date.now()}-${Math.random().toString(36).substring(2, 7)}`,
@@ -320,6 +402,43 @@ export default function AddProductForm() {
       images: [],
     };
     setColorVariants(prev => [...prev, newVariant]);
+  };
+
+  const handleAddColorByHex = (e?: React.FormEvent) => {
+    if (e) e.preventDefault();
+    let raw = hexInput.trim();
+    if (!raw) raw = '#C6A96B';
+    if (!raw.startsWith('#')) raw = '#' + raw;
+
+    if (!isValidHex(raw)) {
+      alert('Please enter a valid 3-digit or 6-digit hex code (e.g. #D4AF37 or #1B2A4A).');
+      return;
+    }
+
+    if (raw.length === 4) {
+      raw = '#' + raw[1] + raw[1] + raw[2] + raw[2] + raw[3] + raw[3];
+    }
+    const finalHex = raw.toUpperCase();
+
+    const name = hexColorName.trim() || `Color ${colorVariants.length + 1}`;
+    let suffix = hexSkuSuffix.trim().toUpperCase();
+    if (!suffix) {
+      const clean = name.replace(/[^A-Za-z0-9]/g, '');
+      suffix = clean.length >= 3 ? clean.slice(0, 3).toUpperCase() : `C${colorVariants.length + 1}`;
+    }
+
+    const newVariant: ColorVariantItem = {
+      id: `${Date.now()}-${Math.random().toString(36).substring(2, 7)}`,
+      name,
+      hex: finalHex,
+      quantity: watch('quantity') || 1,
+      skuSuffix: suffix,
+      images: [],
+    };
+
+    setColorVariants(prev => [...prev, newVariant]);
+    setHexColorName('');
+    setHexSkuSuffix('');
   };
 
   const updateVariant = (id: string, updates: Partial<ColorVariantItem>) => {
@@ -335,8 +454,10 @@ export default function AddProductForm() {
     setVariantUploadLoading(variantId);
     try {
       const urls: string[] = [];
+      const validFiles: File[] = [];
       for (const file of Array.from(files)) {
         if (!file.type.startsWith('image/')) continue;
+        validFiles.push(file);
         const fileExt = file.name.split('.').pop();
         const fileName = `var-${Date.now()}-${Math.random().toString(36).substring(2)}.${fileExt}`;
         const filePath = `products/${fileName}`;
@@ -345,7 +466,34 @@ export default function AddProductForm() {
         const { data: { publicUrl } } = supabase.storage.from('product-images').getPublicUrl(filePath);
         urls.push(publicUrl);
       }
-      setColorVariants(prev => prev.map(v => v.id === variantId ? { ...v, images: [...v.images, ...urls] } : v));
+
+      // Auto-generate lighting comparison card for the variant
+      let variantLightingUrl: string | null = null;
+      if (validFiles.length > 0) {
+        try {
+          const { file: lightingFile } = await generateLightingComparisonCard(validFiles[0]);
+          const cardFileName = `lighting-fidelity-var-${Date.now()}-${Math.random().toString(36).substring(2)}.jpg`;
+          const cardFilePath = `products/${cardFileName}`;
+          const { error: cardUploadErr } = await supabase.storage
+            .from('product-images')
+            .upload(cardFilePath, lightingFile);
+          if (!cardUploadErr) {
+            const { data: { publicUrl: cardPublicUrl } } = supabase.storage
+              .from('product-images')
+              .getPublicUrl(cardFilePath);
+            variantLightingUrl = cardPublicUrl;
+          }
+        } catch (e) {
+          console.warn('Variant lighting card auto-generation skipped:', e);
+        }
+      }
+
+      setColorVariants(prev => prev.map(v => {
+        if (v.id !== variantId) return v;
+        const nextImages = [...v.images, ...urls];
+        if (variantLightingUrl) nextImages.push(variantLightingUrl);
+        return { ...v, images: nextImages };
+      }));
     } catch (err) {
       alert('Error uploading variant image: ' + (err as Error).message);
     } finally {
@@ -395,6 +543,9 @@ export default function AddProductForm() {
             variantSku = `${effectiveSku}-${vSuffix}`;
           }
 
+          const cleanSize = data.size?.trim() || '';
+          const sizeTags = cleanSize ? [`size:${cleanSize}`] : [];
+
           const variantProductData = {
             name: `${data.name.trim()} - ${variant.name.trim()}`,
             category: data.category,
@@ -404,7 +555,7 @@ export default function AddProductForm() {
             supplier: data.supplier || null,
             description: data.description || null,
             images: variant.images.length > 0 ? variant.images : (images.length > 0 ? images : []),
-            tags: [...tagsArray, variant.name.trim(), 'Colorway', 'Variant'],
+            tags: [...tagsArray, ...sizeTags, variant.name.trim(), 'Colorway', 'Variant', variant.hex.trim().toUpperCase()],
             discount_price: data.discount_price || null,
             year: data.year || new Date().getFullYear(),
             badge: data.badge || null,
@@ -427,10 +578,14 @@ export default function AddProductForm() {
             badge: data.badge,
             cost: data.cost,
             category: data.category,
+            subcategory: data.subcategory,
+            size: cleanSize,
+            tags: tagsArray,
             serials: vSerials,
           });
         }
 
+        const cleanSizeBatch = data.size?.trim() || '';
         setBatchCreatedProducts(createdItems);
         setGeneratedSerials(allSerialsCollected);
         setProductName(`${data.name} (${colorVariants.length} Colorways Batch)`);
@@ -440,6 +595,8 @@ export default function AddProductForm() {
           badge: data.badge,
           cost: data.cost,
           category: data.category,
+          subcategory: data.subcategory,
+          size: cleanSizeBatch,
           sku: createdItems[0]?.sku,
         });
         setIsSuccess(true);
@@ -456,6 +613,9 @@ export default function AddProductForm() {
       }
 
       // ── SINGLE PRODUCT CREATION ─────────────────────────────────────────────
+      const cleanSizeSingle = data.size?.trim() || '';
+      const sizeTagsSingle = cleanSizeSingle ? [`size:${cleanSizeSingle}`] : [];
+
       const productData = {
         name: data.name,
         category: data.category,
@@ -465,7 +625,7 @@ export default function AddProductForm() {
         supplier: data.supplier || null,
         description: data.description || null,
         images: images,
-        tags: tagsArray,
+        tags: [...tagsArray, ...sizeTagsSingle],
         discount_price: data.discount_price || null,
         year: data.year || new Date().getFullYear(),
         badge: data.badge || null,
@@ -490,6 +650,8 @@ export default function AddProductForm() {
         badge: data.badge,
         cost: data.cost,
         category: data.category,
+        subcategory: data.subcategory,
+        size: cleanSizeSingle,
         sku: result.data.product.sku,
       });
       setBatchCreatedProducts([]);
@@ -566,23 +728,56 @@ export default function AddProductForm() {
             )}
 
             {images.length > 0 && (
-              <div className="mt-4 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
-                {images.map((url, index) => (
-                  <div key={index} className="relative group rounded-xl overflow-hidden border border-border dark:border-[#2E2925] aspect-square">
-                    <img
-                      src={url}
-                      alt={`Product ${index + 1}`}
-                      className="w-full h-full object-cover"
-                    />
-                    <button
-                      type="button"
-                      onClick={() => removeImage(index)}
-                      className="absolute top-2 right-2 bg-red-500 text-white rounded-full p-1 hover:bg-red-600 transition-colors opacity-0 group-hover:opacity-100 shadow-md"
-                    >
-                      <X size={13} />
-                    </button>
-                  </div>
-                ))}
+              <div className="mt-4 space-y-3">
+                <div className="flex items-center justify-between flex-wrap gap-2">
+                  <span className="text-[11px] font-semibold uppercase tracking-wider text-secondary dark:text-white/60">
+                    Product Images ({images.length} added)
+                  </span>
+                  <button
+                    type="button"
+                    onClick={() => handleGenerateLightingCard(0)}
+                    disabled={uploading}
+                    className="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg bg-[#FAF8F5] dark:bg-white/5 border border-border dark:border-[#2E2925] text-[11px] font-bold text-primary dark:text-[#D4AF37] hover:bg-cream dark:hover:bg-white/10 transition-colors shadow-2xs cursor-pointer"
+                  >
+                    <SunMedium size={12} className="text-amber-500" />
+                    <span>Regenerate True-Color Lighting Card</span>
+                  </button>
+                </div>
+
+                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
+                  {images.map((url, index) => {
+                    const isLighting = isLightingComparisonImage(url);
+                    return (
+                      <div
+                        key={index}
+                        className={`relative group rounded-xl overflow-hidden border aspect-square ${
+                          isLighting
+                            ? 'border-amber-500/80 ring-2 ring-amber-500/30'
+                            : 'border-border dark:border-[#2E2925]'
+                        }`}
+                      >
+                        <img
+                          src={url}
+                          alt={`Product ${index + 1}`}
+                          className="w-full h-full object-cover"
+                        />
+                        {isLighting && (
+                          <div className="absolute bottom-0 inset-x-0 bg-black/80 backdrop-blur-xs px-2 py-1 flex items-center justify-center gap-1 text-[10px] font-bold text-amber-300">
+                            <SunMedium size={10} />
+                            <span>True-Color Card (Auto)</span>
+                          </div>
+                        )}
+                        <button
+                          type="button"
+                          onClick={() => removeImage(index)}
+                          className="absolute top-2 right-2 bg-red-500 text-white rounded-full p-1 hover:bg-red-600 transition-colors opacity-0 group-hover:opacity-100 shadow-md"
+                        >
+                          <X size={13} />
+                        </button>
+                      </div>
+                    );
+                  })}
+                </div>
               </div>
             )}
           </div>
@@ -630,31 +825,59 @@ export default function AddProductForm() {
               </select>
               {errors.category && <p className="mt-1 text-xs text-red-600 dark:text-red-400">{errors.category.message}</p>}
             </div>
-
-            {/* Subcategory — shown only when category is selected and has subs */}
-            {category && (
-              <div>
-                <label className="block text-xs font-semibold uppercase tracking-wider text-secondary dark:text-white/70 mb-1.5">
-                  Subcategory
-                  {filteredSubs.length === 0 && category && !loadingCats && (
-                    <span className="ml-2 normal-case font-normal text-secondary dark:text-white/40">(none defined — add via Categories tab)</span>
-                  )}
-                </label>
-                <select
-                  {...register('subcategory')}
-                  disabled={filteredSubs.length === 0 || loadingCats}
-                  className={`w-full rounded-xl border border-border dark:border-[#2E2925] bg-cream/30 dark:bg-[#100E0D] px-4 py-3 text-sm text-primary dark:text-white outline-none focus:border-primary dark:focus:border-[#D4AF37] transition-colors ${filteredSubs.length === 0 ? 'opacity-50 cursor-not-allowed' : ''}`}
-                >
-                  <option value="" className="dark:bg-[#1A1816]">
-                    {filteredSubs.length === 0 ? 'No subcategories for this category' : 'Select Subcategory (optional)'}
-                  </option>
-                  {filteredSubs.map(sub => (
-                    <option key={sub.id} value={sub.name} className="dark:bg-[#1A1816]">{sub.name}</option>
-                  ))}
-                </select>
-              </div>
-            )}
           </div>
+
+          {/* Subcategory & Size Inputs */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+              {category ? (
+                <div>
+                  <label className="block text-xs font-semibold uppercase tracking-wider text-secondary dark:text-white/70 mb-1.5">
+                    Subcategory
+                    {filteredSubs.length === 0 && category && !loadingCats && (
+                      <span className="ml-2 normal-case font-normal text-secondary dark:text-white/40">(none defined)</span>
+                    )}
+                  </label>
+                  <select
+                    {...register('subcategory')}
+                    disabled={filteredSubs.length === 0 || loadingCats}
+                    className={`w-full rounded-xl border border-border dark:border-[#2E2925] bg-cream/30 dark:bg-[#100E0D] px-4 py-3 text-sm text-primary dark:text-white outline-none focus:border-primary dark:focus:border-[#D4AF37] transition-colors ${filteredSubs.length === 0 ? 'opacity-50 cursor-not-allowed' : ''}`}
+                  >
+                    <option value="" className="dark:bg-[#1A1816]">
+                      {filteredSubs.length === 0 ? 'No subcategories for this category' : 'Select Subcategory (optional)'}
+                    </option>
+                    {filteredSubs.map(sub => (
+                      <option key={sub.id} value={sub.name} className="dark:bg-[#1A1816]">{sub.name}</option>
+                    ))}
+                  </select>
+                </div>
+              ) : null}
+
+              <div className={!category ? 'sm:col-span-2' : ''}>
+                <label className="block text-xs font-semibold uppercase tracking-wider text-secondary dark:text-white/70 mb-1.5 flex items-center justify-between">
+                  <span>Product Size / Dimensions</span>
+                  <span className="text-[10px] text-secondary dark:text-white/40 font-normal normal-case">Optional • Shown on label</span>
+                </label>
+                <input
+                  type="text"
+                  {...register('size')}
+                  placeholder="e.g. King (108 x 108 in), Double, Free Size, L"
+                  className="w-full rounded-xl border border-border dark:border-[#2E2925] bg-cream/30 dark:bg-[#100E0D] px-4 py-3 text-sm text-primary dark:text-white outline-none focus:border-primary dark:focus:border-[#D4AF37] transition-colors"
+                />
+                {/* Quick Size Preset Chips */}
+                <div className="flex flex-wrap gap-1.5 mt-2">
+                  {['King', 'Queen', 'Double', 'Single', 'Free Size', 'S', 'M', 'L', 'XL'].map(presetSize => (
+                    <button
+                      key={presetSize}
+                      type="button"
+                      onClick={() => setValue('size', presetSize, { shouldDirty: true })}
+                      className="px-2 py-0.5 rounded-lg text-[10px] font-semibold border border-border dark:border-[#2E2925] bg-white dark:bg-[#151311] hover:border-[#D4AF37] dark:hover:border-[#D4AF37] text-secondary dark:text-white/70 hover:text-primary transition-colors"
+                    >
+                      {presetSize}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-5">
             <div>
@@ -774,7 +997,7 @@ export default function AddProductForm() {
                         borderColor: bCol.border || 'rgba(0,0,0,0.1)',
                       }}
                     >
-                      ★ {watch('badge')}
+                      {watch('badge')}
                     </span>
                   </div>
                 );
@@ -789,14 +1012,14 @@ export default function AddProductForm() {
                 <div className="flex items-center gap-2">
                   <Palette size={16} className="text-[#D4AF37]" />
                   <span className="text-xs font-bold uppercase tracking-wider text-primary dark:text-white">
-                    Color Variants & Multi-Color Batch Creation
+                    Colour Variants & Multi-Colour Batch Creation
                   </span>
                   <span className="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-[#D4AF37]/20 text-[#A67C1E] dark:text-[#E5C158]">
-                    Time-Saver
+                    HEX Code Supported
                   </span>
                 </div>
                 <p className="text-xs text-secondary dark:text-white/60 mt-1">
-                  Upload multiple colorways (e.g., Midnight Navy, Emerald Green, Burgundy) at once. All variants inherit identical category, price, specs, and description with individual SKUs and stock.
+                  Add colorways via direct HEX codes (e.g., #1B2A4A, #D4AF37) or luxury presets. All variants inherit identical category, price, and description with individual SKUs and stock.
                 </p>
               </div>
 
@@ -864,6 +1087,116 @@ export default function AddProductForm() {
                   </div>
                 </div>
 
+                {/* Direct Hex Code Input Panel */}
+                <div className="p-3.5 rounded-xl border border-border/80 dark:border-[#2E2925] bg-white/70 dark:bg-[#141210] shadow-xs space-y-2.5">
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1">
+                    <label className="text-[11px] font-bold uppercase tracking-wider text-primary dark:text-white flex items-center gap-1.5">
+                      <Hash size={13} className="text-[#D4AF37]" />
+                      Add Colour by HEX Code:
+                    </label>
+                    <span className="text-[10px] text-secondary dark:text-white/40">
+                      Type/paste hex (e.g. #1B2A4A, #D4AF37) or pick visually
+                    </span>
+                  </div>
+
+                  <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2">
+                    {/* Visual Color Picker Swatch */}
+                    <div className="flex items-center gap-2">
+                      <label className="relative cursor-pointer group shrink-0" title="Click to open color picker">
+                        <input
+                          type="color"
+                          value={isValidHex(hexInput) ? hexInput : '#C6A96B'}
+                          onChange={(e) => setHexInput(e.target.value.toUpperCase())}
+                          className="sr-only"
+                        />
+                        <div
+                          className="w-9 h-9 rounded-xl border-2 border-white dark:border-[#2E2925] shadow-sm group-hover:scale-105 transition-transform flex items-center justify-center cursor-pointer overflow-hidden"
+                          style={{ backgroundColor: isValidHex(hexInput) ? hexInput : '#C6A96B' }}
+                        >
+                          <Pipette size={13} className="text-white drop-shadow mix-blend-difference opacity-80 group-hover:opacity-100" />
+                        </div>
+                      </label>
+
+                      {/* HEX Code text input */}
+                      <div className="relative w-32 shrink-0">
+                        <div className="absolute inset-y-0 left-0 pl-2.5 flex items-center pointer-events-none text-secondary dark:text-white/40 text-xs font-mono font-bold">
+                          #
+                        </div>
+                        <input
+                          type="text"
+                          value={hexInput.replace(/^#/, '')}
+                          onChange={(e) => {
+                            const raw = e.target.value.replace(/[^0-9A-Fa-f]/g, '').slice(0, 6);
+                            setHexInput('#' + raw.toUpperCase());
+                          }}
+                          onKeyDown={(e) => {
+                            if (e.key === 'Enter') {
+                              e.preventDefault();
+                              handleAddColorByHex();
+                            }
+                          }}
+                          placeholder="C6A96B"
+                          maxLength={6}
+                          className="w-full pl-6 pr-2 py-2 text-xs font-mono uppercase font-bold rounded-xl border border-border dark:border-[#2E2925] bg-cream/20 dark:bg-[#1A1816] text-primary dark:text-[#D4AF37] outline-none focus:border-[#D4AF37]"
+                        />
+                      </div>
+                    </div>
+
+                    {/* Color Name Input */}
+                    <div className="flex-1 min-w-[140px]">
+                      <input
+                        type="text"
+                        value={hexColorName}
+                        onChange={(e) => {
+                          const val = e.target.value;
+                          setHexColorName(val);
+                          if (!hexSkuSuffix && val) {
+                            const clean = val.replace(/[^A-Za-z0-9]/g, '');
+                            if (clean.length >= 3) {
+                              setHexSkuSuffix(clean.slice(0, 3).toUpperCase());
+                            }
+                          }
+                        }}
+                        onKeyDown={(e) => {
+                          if (e.key === 'Enter') {
+                            e.preventDefault();
+                            handleAddColorByHex();
+                          }
+                        }}
+                        placeholder="Colour Name (e.g. Royal Indigo)"
+                        className="w-full text-xs font-medium px-3 py-2 rounded-xl border border-border dark:border-[#2E2925] bg-cream/20 dark:bg-[#1A1816] text-primary dark:text-white outline-none focus:border-[#D4AF37]"
+                      />
+                    </div>
+
+                    {/* SKU Suffix */}
+                    <div className="w-24 shrink-0">
+                      <input
+                        type="text"
+                        value={hexSkuSuffix}
+                        onChange={(e) => setHexSkuSuffix(e.target.value.toUpperCase().slice(0, 4))}
+                        onKeyDown={(e) => {
+                          if (e.key === 'Enter') {
+                            e.preventDefault();
+                            handleAddColorByHex();
+                          }
+                        }}
+                        placeholder="Suffix"
+                        className="w-full text-xs font-mono uppercase font-bold px-2.5 py-2 rounded-xl border border-border dark:border-[#2E2925] bg-cream/20 dark:bg-[#1A1816] text-primary dark:text-[#D4AF37] outline-none focus:border-[#D4AF37]"
+                      />
+                    </div>
+
+                    {/* Add Color Button */}
+                    <button
+                      type="button"
+                      onClick={handleAddColorByHex}
+                      className="inline-flex items-center justify-center gap-1.5 px-4 py-2 rounded-xl text-xs font-bold bg-[#D4AF37] hover:bg-[#C29D2D] text-white shadow-xs transition-all active:scale-95 shrink-0"
+                    >
+                      <Plus size={14} />
+                      <span>Add Colour</span>
+                    </button>
+                  </div>
+                </div>
+
                 {/* Configured Variants List */}
                 <div className="space-y-3">
                   <div className="flex items-center justify-between text-xs font-semibold text-secondary dark:text-white/70">
@@ -875,7 +1208,7 @@ export default function AddProductForm() {
 
                   {colorVariants.length === 0 ? (
                     <div className="p-4 rounded-xl border border-dashed border-border dark:border-[#2E2925] text-center text-xs text-secondary dark:text-white/50">
-                      No colors added yet. Click any preset color above or add a custom color.
+                      No colours added yet. Add via HEX code above, click any preset, or add a custom color.
                     </div>
                   ) : (
                     colorVariants.map((variant) => (
@@ -883,24 +1216,37 @@ export default function AddProductForm() {
                         key={variant.id}
                         className="p-3.5 rounded-xl bg-white dark:bg-[#12100E] border border-border dark:border-[#2E2925] shadow-xs flex flex-col md:flex-row md:items-center gap-3 transition-all"
                       >
-                        {/* Swatch & Color Picker */}
+                        {/* Swatch & Color Picker & Editable HEX */}
                         <div className="flex items-center gap-2">
-                          <label className="relative cursor-pointer group">
+                          <label className="relative cursor-pointer group shrink-0" title="Click to pick colour visually">
                             <input
                               type="color"
-                              value={variant.hex}
-                              onChange={(e) => updateVariant(variant.id, { hex: e.target.value })}
+                              value={isValidHex(variant.hex) ? variant.hex : '#C6A96B'}
+                              onChange={(e) => updateVariant(variant.id, { hex: e.target.value.toUpperCase() })}
                               className="sr-only"
                             />
                             <div
-                              className="w-8 h-8 rounded-full border-2 border-white dark:border-[#2E2925] shadow-md group-hover:scale-110 transition-transform"
-                              style={{ backgroundColor: variant.hex }}
-                              title="Click to change color swatch"
+                              className="w-8 h-8 rounded-xl border-2 border-white dark:border-[#2E2925] shadow-md group-hover:scale-110 transition-transform cursor-pointer"
+                              style={{ backgroundColor: isValidHex(variant.hex) ? variant.hex : '#C6A96B' }}
                             />
                           </label>
-                          <span className="font-mono text-[11px] uppercase text-secondary dark:text-white/60">
-                            {variant.hex}
-                          </span>
+                          <div className="w-24 shrink-0">
+                            <label className="block text-[10px] uppercase font-semibold text-secondary dark:text-white/50 mb-0.5">
+                              HEX Code
+                            </label>
+                            <input
+                              type="text"
+                              value={variant.hex}
+                              onChange={(e) => {
+                                let val = e.target.value.trim();
+                                if (val && !val.startsWith('#')) val = '#' + val;
+                                updateVariant(variant.id, { hex: val.toUpperCase() });
+                              }}
+                              placeholder="#FFFFFF"
+                              maxLength={7}
+                              className="w-full font-mono uppercase text-xs font-bold px-2 py-1.5 rounded-lg border border-border dark:border-[#2E2925] bg-cream/20 dark:bg-[#1A1816] text-primary dark:text-[#D4AF37] outline-none focus:border-[#D4AF37]"
+                            />
+                          </div>
                         </div>
 
                         {/* Name Input */}
@@ -1453,8 +1799,8 @@ export default function AddProductForm() {
                         badge={item.badge || watch('badge')}
                         cost={item.cost}
                         category={item.category || watch('category') || 'BED SHEET (DOUBLE BED)'}
-                        collection={selectedLabelCollection}
-                        showChannels={labelShowChannels}
+                        subcategory={item.subcategory || watch('subcategory')}
+                        size={item.size || watch('size')}
                         showQR={labelShowQR}
                         className="shadow-md hover:shadow-lg transition-shadow"
                       />
@@ -1471,8 +1817,8 @@ export default function AddProductForm() {
                         badge={createdProductDetails.badge || watch('badge')}
                         cost={createdProductDetails.cost}
                         category={createdProductDetails.category || watch('category') || 'BED SHEET (DOUBLE BED)'}
-                        collection={selectedLabelCollection}
-                        showChannels={labelShowChannels}
+                        subcategory={createdProductDetails.subcategory || watch('subcategory')}
+                        size={createdProductDetails.size || watch('size')}
                         showQR={labelShowQR}
                         className="shadow-md hover:shadow-lg transition-shadow"
                       />

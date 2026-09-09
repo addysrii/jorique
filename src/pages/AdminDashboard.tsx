@@ -4,7 +4,7 @@ import {
   Loader2, PackageCheck, Users, WalletCards, Plus, Boxes, Trash2, 
   Layers, ShoppingCart, Gift, Star, Truck, Barcode as BarcodeIcon, Tag,
   Printer, CheckCircle2, AlertCircle, RefreshCw, Eye, Search, Filter, Hash,
-  Receipt, Ticket, MessageCircle, Send, X, ExternalLink
+  Receipt, Ticket, MessageCircle, Send, X, ExternalLink, Phone
 } from 'lucide-react';
 import { QRCodeSVG } from 'qrcode.react';
 import Navbar from '../components/Navbar';
@@ -93,6 +93,7 @@ export default function AdminDashboard() {
   const [labelShowChannels, setLabelShowChannels] = useState(true);
   const [labelShowQR, setLabelShowQR] = useState(true);
   const [labelCustomBadge, setLabelCustomBadge] = useState<string>('');
+  const [labelCustomSize, setLabelCustomSize] = useState<string>('');
 
   // WhatsApp Order Notification Modal
   const [whatsAppModalOrder, setWhatsAppModalOrder] = useState<OrderRow | null>(null);
@@ -136,11 +137,25 @@ export default function AdminDashboard() {
         if (reviewsData) setReviews(reviewsData as unknown as ReviewRow[]);
 
         // 5. Fetch Gift Claims
-        const { data: giftsData } = await supabase
-          .from('gift_redemption')
-          .select('*, serial:product_serials(serial_number), customer:profiles(email, full_name)')
-          .order('redeemed_at', { ascending: false });
-        if (giftsData) setGiftClaims(giftsData as unknown as GiftClaimRow[]);
+        try {
+          const { data: giftsData, error: giftsErr } = await supabase
+            .from('gift_redemption')
+            .select('*')
+            .order('redeemed_at', { ascending: false });
+
+          if (!giftsErr && giftsData) {
+            const enrichedGifts = giftsData.map((g: any) => {
+              const matchedSerial = serialsData?.find((s: any) => s.id === g.serial_id);
+              return {
+                ...g,
+                serial: g.serial || (matchedSerial ? { serial_number: matchedSerial.serial_number } : undefined),
+              };
+            });
+            setGiftClaims(enrichedGifts as unknown as GiftClaimRow[]);
+          }
+        } catch (giftErr) {
+          console.warn('Could not load gift redemptions:', giftErr);
+        }
 
       } catch (err) {
         console.error('Error fetching admin data:', err);
@@ -184,11 +199,31 @@ export default function AdminDashboard() {
     }
   };
 
+  // Extract size from product record, tags, or description
+  const extractProductSize = (product: Product): string => {
+    if (product.size) return product.size;
+    if (Array.isArray(product.tags)) {
+      const sizeTag = product.tags.find(t => t.toLowerCase().startsWith('size:') || t.toLowerCase().startsWith('sizes:'));
+      if (sizeTag) {
+        return sizeTag.split(':')[1]?.trim() || '';
+      }
+      const standardSizes = ['king', 'queen', 'double', 'single', 'free size', 's', 'm', 'l', 'xl', 'xxl'];
+      const matched = product.tags.find(t => standardSizes.includes(t.toLowerCase().trim()));
+      if (matched) return matched.trim();
+    }
+    if (product.description) {
+      const match = product.description.match(/^sizes?:\s*([^\r\n]+)/im);
+      if (match && match[1]) return match[1].trim();
+    }
+    return '';
+  };
+
   // Open Barcode label preview for a product
   const handleOpenBarcodeHub = async (product: Product) => {
     try {
       setSelectedProductForLabels(product);
       setLabelCustomBadge(product.badge || '');
+      setLabelCustomSize(extractProductSize(product));
       setLoadingLabels(true);
       const { data: pSerials } = await supabase
         .from('product_serials')
@@ -1213,10 +1248,22 @@ To ensure protection under our Return & Exchange Policy, please record a continu
                   <span className="text-[11px] font-bold uppercase tracking-wider text-secondary dark:text-white/60">Badge:</span>
                   <input
                     type="text"
-                    placeholder="e.g. Bestseller / 100% Cotton"
+                    placeholder="e.g. Bestseller"
                     value={labelCustomBadge}
                     onChange={(e) => setLabelCustomBadge(e.target.value)}
-                    className="bg-white dark:bg-[#1A1816] text-primary dark:text-white text-xs px-2 py-1 rounded border border-border dark:border-[#2E2925] w-36 outline-none font-semibold"
+                    className="bg-white dark:bg-[#1A1816] text-primary dark:text-white text-xs px-2 py-1 rounded border border-border dark:border-[#2E2925] w-32 outline-none font-semibold"
+                  />
+                </div>
+
+                {/* Size input */}
+                <div className="flex items-center gap-1.5 bg-cream/50 dark:bg-white/5 px-3 py-1 rounded-xl border border-border dark:border-[#2E2925]">
+                  <span className="text-[11px] font-bold uppercase tracking-wider text-secondary dark:text-white/60">Size:</span>
+                  <input
+                    type="text"
+                    placeholder="e.g. King, Double"
+                    value={labelCustomSize}
+                    onChange={(e) => setLabelCustomSize(e.target.value)}
+                    className="bg-white dark:bg-[#1A1816] text-primary dark:text-white text-xs px-2 py-1 rounded border border-border dark:border-[#2E2925] w-28 outline-none font-semibold"
                   />
                 </div>
 
@@ -1270,11 +1317,11 @@ To ensure protection under our Return & Exchange Policy, please record a continu
                       serialNumber={serial}
                       price={selectedProductForLabels.price}
                       discountPrice={selectedProductForLabels.discount_price}
-                      badge={labelCustomBadge}
+                      badge={labelCustomBadge || selectedProductForLabels.badge}
                       cost={selectedProductForLabels.cost}
                       category={selectedProductForLabels.category}
-                      collection={selectedLabelCollection}
-                      showChannels={labelShowChannels}
+                      subcategory={selectedProductForLabels.subcategory}
+                      size={labelCustomSize}
                       showQR={labelShowQR}
                       className="shadow-md hover:shadow-lg transition-shadow"
                     />

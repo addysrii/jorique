@@ -1,21 +1,21 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   ChevronLeft,
   ChevronRight,
   Maximize2,
   X,
-  Camera,
   ZoomIn,
+  SunMedium,
 } from 'lucide-react';
 import { getBadgeColors } from '../lib/constants/collections';
+import { generateLightingComparisonCard, isLightingComparisonImage } from '../lib/generateLightingComparison';
 
 interface ProductImageGalleryProps {
   images: string[];
   productName: string;
   badge?: string;
   discountPercentage?: number;
-  onOpenAR?: () => void;
 }
 
 export default function ProductImageGallery({
@@ -23,7 +23,6 @@ export default function ProductImageGallery({
   productName,
   badge,
   discountPercentage = 0,
-  onOpenAR,
 }: ProductImageGalleryProps) {
   const [activeIndex, setActiveIndex] = useState(0);
   const [isZoomed, setIsZoomed] = useState(false);
@@ -31,11 +30,43 @@ export default function ProductImageGallery({
   const [isLightboxOpen, setIsLightboxOpen] = useState(false);
   const imageContainerRef = useRef<HTMLDivElement | null>(null);
 
-  const safeImages = images && images.length > 0
-    ? images
-    : ['https://images.unsplash.com/photo-1522771739844-6a9f6d5f14af?q=80&w=1200'];
+  const [displayImages, setDisplayImages] = useState<string[]>(() => {
+    return images && images.length > 0 ? images : ['/Products/1.jpg'];
+  });
 
-  const currentImage = safeImages[activeIndex] || safeImages[0];
+  useEffect(() => {
+    let active = true;
+    const baseImages = images && images.length > 0 ? images : ['/Products/1.jpg'];
+    const hasLighting = baseImages.some((img) => isLightingComparisonImage(img));
+
+    if (hasLighting) {
+      setDisplayImages(baseImages);
+      return;
+    }
+
+    setDisplayImages(baseImages);
+
+    if (baseImages.length > 0) {
+      generateLightingComparisonCard(baseImages[0])
+        .then(({ dataUrl }) => {
+          if (active) {
+            setDisplayImages((prev) => {
+              if (prev.some((img) => isLightingComparisonImage(img))) return prev;
+              return [...prev, dataUrl];
+            });
+          }
+        })
+        .catch((err) => {
+          console.warn('Silent fallback for dynamic lighting synthesis:', err);
+        });
+    }
+
+    return () => {
+      active = false;
+    };
+  }, [images]);
+
+  const currentImage = displayImages[activeIndex] || displayImages[0];
 
   const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
     if (!imageContainerRef.current) return;
@@ -46,11 +77,11 @@ export default function ProductImageGallery({
   };
 
   const handleNext = () => {
-    setActiveIndex((prev) => (prev + 1) % safeImages.length);
+    setActiveIndex((prev) => (prev + 1) % displayImages.length);
   };
 
   const handlePrev = () => {
-    setActiveIndex((prev) => (prev - 1 + safeImages.length) % safeImages.length);
+    setActiveIndex((prev) => (prev - 1 + displayImages.length) % displayImages.length);
   };
 
   return (
@@ -61,39 +92,39 @@ export default function ProductImageGallery({
           <ZoomIn size={13} className="text-primary dark:text-[#D4AF37]" />
           Hover to magnify fabric weave & detail
         </span>
-
-        {onOpenAR && (
-          <button
-            type="button"
-            onClick={onOpenAR}
-            className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-cream dark:bg-white/10 text-primary dark:text-[#D4AF37] border border-primary/20 dark:border-[#D4AF37]/40 text-[11px] font-bold uppercase tracking-wider hover:bg-[#D4AF37] hover:text-black transition-all shadow-xs"
-          >
-            <Camera size={13} />
-            <span>View in Your Room (AR)</span>
-          </button>
-        )}
       </div>
 
       {/* Main Image Showcase with Smooth Magnifier Zoom */}
       <div className="flex flex-col-reverse lg:flex-row gap-3.5 items-start">
         
         {/* Vertical Thumbnails (Desktop) */}
-        {safeImages.length > 1 && (
+        {displayImages.length > 1 && (
           <div className="flex lg:flex-col gap-2.5 overflow-x-auto lg:overflow-y-auto max-h-[560px] pb-2 lg:pb-0 scrollbar-none shrink-0 w-full lg:w-20">
-            {safeImages.map((img, idx) => (
-              <button
-                key={idx}
-                type="button"
-                onClick={() => setActiveIndex(idx)}
-                className={`relative w-16 h-16 sm:w-20 sm:h-20 rounded-2xl overflow-hidden border-2 transition-all duration-200 shrink-0 shadow-xs ${
-                  activeIndex === idx
-                    ? 'border-primary dark:border-[#D4AF37] ring-2 ring-primary/20 dark:ring-[#D4AF37]/20 scale-102'
-                    : 'border-border dark:border-[#2E2925] opacity-70 hover:opacity-100 hover:border-primary/40'
-                }`}
-              >
-                <img src={img} alt="" className="w-full h-full object-cover" />
-              </button>
-            ))}
+            {displayImages.map((img, idx) => {
+              const isLighting = isLightingComparisonImage(img);
+              return (
+                <button
+                  key={idx}
+                  type="button"
+                  onClick={() => setActiveIndex(idx)}
+                  className={`relative w-16 h-16 sm:w-20 sm:h-20 rounded-2xl overflow-hidden border-2 transition-all duration-200 shrink-0 shadow-xs cursor-pointer ${
+                    activeIndex === idx
+                      ? 'border-primary dark:border-[#D4AF37] ring-2 ring-primary/20 dark:ring-[#D4AF37]/20 scale-102'
+                      : isLighting
+                      ? 'border-amber-500/60 opacity-85 hover:opacity-100'
+                      : 'border-border dark:border-[#2E2925] opacity-70 hover:opacity-100 hover:border-primary/40'
+                  }`}
+                >
+                  <img src={img} alt="" className="w-full h-full object-cover" />
+                  {isLighting && (
+                    <div className="absolute inset-x-0 bottom-0 bg-black/85 backdrop-blur-xs py-0.5 text-center text-[8.5px] font-bold text-amber-300 flex items-center justify-center gap-0.5 tracking-wider uppercase z-10">
+                      <SunMedium size={8} />
+                      <span>Lighting</span>
+                    </div>
+                  )}
+                </button>
+              );
+            })}
           </div>
         )}
 
@@ -124,6 +155,14 @@ export default function ProductImageGallery({
               />
             </AnimatePresence>
           </div>
+
+          {/* Calibrated Lighting Banner when active */}
+          {isLightingComparisonImage(currentImage) && (
+            <div className="absolute top-4 left-4 backdrop-blur-md bg-black/80 text-amber-300 border border-amber-400/40 text-[10px] font-bold tracking-widest uppercase px-3 py-1.5 rounded-full shadow-lg z-20 flex items-center gap-1.5">
+              <SunMedium size={12} className="text-amber-400" />
+              <span>True Color & Lighting Guide</span>
+            </div>
+          )}
 
           {/* Collection Badge */}
           {badge && (() => {
@@ -164,11 +203,11 @@ export default function ProductImageGallery({
 
           {/* Image Counter Pill */}
           <div className="absolute bottom-4 left-4 px-3 py-1 rounded-full bg-black/60 backdrop-blur-md text-white text-[11px] font-mono tracking-wider z-20 pointer-events-none">
-            {activeIndex + 1} / {safeImages.length}
+            {activeIndex + 1} / {displayImages.length}
           </div>
 
           {/* Left / Right Nav Arrows */}
-          {safeImages.length > 1 && (
+          {displayImages.length > 1 && (
             <div className="absolute inset-x-3 top-1/2 -translate-y-1/2 flex justify-between z-20 pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity">
               <button
                 type="button"
@@ -218,7 +257,7 @@ export default function ProductImageGallery({
             </button>
 
             {/* Navigation in Lightbox */}
-            {safeImages.length > 1 && (
+            {displayImages.length > 1 && (
               <>
                 <button
                   type="button"
@@ -226,7 +265,7 @@ export default function ProductImageGallery({
                     e.stopPropagation();
                     handlePrev();
                   }}
-                  className="absolute left-6 top-1/2 -translate-y-1/2 p-3.5 rounded-full bg-white/10 text-white hover:bg-white/25 transition-all z-30"
+                  className="absolute left-6 top-1/2 -translate-y-1/2 p-3.5 rounded-full bg-white/10 text-white hover:bg-white/25 transition-all z-30 cursor-pointer"
                   aria-label="Previous image"
                 >
                   <ChevronLeft size={24} />
@@ -237,7 +276,7 @@ export default function ProductImageGallery({
                     e.stopPropagation();
                     handleNext();
                   }}
-                  className="absolute right-6 top-1/2 -translate-y-1/2 p-3.5 rounded-full bg-white/10 text-white hover:bg-white/25 transition-all z-30"
+                  className="absolute right-6 top-1/2 -translate-y-1/2 p-3.5 rounded-full bg-white/10 text-white hover:bg-white/25 transition-all z-30 cursor-pointer"
                   aria-label="Next image"
                 >
                   <ChevronRight size={24} />
@@ -261,7 +300,7 @@ export default function ProductImageGallery({
 
               {/* Counter */}
               <div className="absolute bottom-4 left-1/2 -translate-x-1/2 px-4 py-1.5 rounded-full bg-black/70 backdrop-blur-md text-white text-xs font-mono">
-                {activeIndex + 1} / {safeImages.length}
+                {activeIndex + 1} / {displayImages.length}
               </div>
             </motion.div>
           </motion.div>

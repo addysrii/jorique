@@ -1,6 +1,6 @@
-import { useRef, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { ArrowLeft, CheckCircle, AlertCircle, Loader2, Sparkles, QrCode } from 'lucide-react';
+import { useEffect, useRef, useState } from 'react';
+import { useNavigate, useSearchParams } from 'react-router-dom';
+import { ArrowLeft, CheckCircle, AlertCircle, Loader2, Sparkles, QrCode, Search, Barcode } from 'lucide-react';
 import QRScanner from '../components/QRScanner';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
@@ -11,12 +11,22 @@ type ScanStatus = 'idle' | 'scanning' | 'validating' | 'success' | 'error' | 'cl
 
 export default function ScanPage() {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const [status, setStatus] = useState<ScanStatus>('idle');
   const [serialNumber, setSerialNumber] = useState<string>('');
+  const [manualSkuInput, setManualSkuInput] = useState<string>('');
   const [errorMessage, setErrorMessage] = useState<string>('');
   const [productName, setProductName] = useState<string>('');
   const activeRequestIdRef = useRef(0);
   const scanLockedRef = useRef(false);
+
+  // Auto-scan if serial param is in URL (e.g. from scanning the physical label QR code)
+  useEffect(() => {
+    const s = searchParams.get('serial');
+    if (s && status === 'idle' && !scanLockedRef.current) {
+      handleScanSuccess(s.trim().toUpperCase());
+    }
+  }, [searchParams]);
 
   const handleScanSuccess = async (serial: string) => {
     if (scanLockedRef.current) return;
@@ -133,6 +143,38 @@ export default function ScanPage() {
                     onClose={handleClose}
                   />
                 </div>
+
+                {/* Direct SKU / Barcode Manual Entry */}
+                <div className="mt-5 pt-4 border-t border-border dark:border-[#2E2925] text-center">
+                  <p className="text-[11px] font-semibold text-secondary dark:text-white/60 mb-2 uppercase tracking-wider flex items-center justify-center gap-1.5">
+                    <Barcode size={14} className="text-[#D4AF37]" />
+                    <span>Or Scan / Enter SKU Barcode Number</span>
+                  </p>
+                  <form
+                    onSubmit={(e) => {
+                      e.preventDefault();
+                      if (manualSkuInput.trim()) {
+                        handleScanSuccess(manualSkuInput.trim().toUpperCase());
+                      }
+                    }}
+                    className="flex gap-2"
+                  >
+                    <input
+                      type="text"
+                      placeholder="e.g. JR-LUX-WU-001-0001"
+                      value={manualSkuInput}
+                      onChange={(e) => setManualSkuInput(e.target.value)}
+                      className="flex-1 px-3 py-2 bg-cream/40 dark:bg-white/5 border border-border dark:border-[#2E2925] rounded-xl text-xs font-mono uppercase tracking-wider text-primary dark:text-white focus:outline-none focus:border-primary dark:focus:border-[#D4AF37]"
+                    />
+                    <button
+                      type="submit"
+                      disabled={!manualSkuInput.trim()}
+                      className="px-4 py-2 bg-primary dark:bg-[#D4AF37] text-white dark:text-black text-xs font-bold uppercase tracking-wider rounded-xl hover:opacity-90 disabled:opacity-50 transition-all shrink-0"
+                    >
+                      Verify
+                    </button>
+                  </form>
+                </div>
               </>
             )}
 
@@ -149,13 +191,13 @@ export default function ScanPage() {
                   className="text-base font-medium text-primary dark:text-white mb-1"
                   style={{ transform: 'translateZ(25px)' }}
                 >
-                  Verifying Cryptographic Tag
+                  Verifying Unit Authenticity
                 </h3>
                 <p
-                  className="text-xs text-secondary dark:text-white/60 font-mono"
+                  className="text-xs text-primary dark:text-[#D4AF37] font-mono font-bold tracking-wider"
                   style={{ transform: 'translateZ(15px)' }}
                 >
-                  {serialNumber}
+                  SKU / SERIAL: {serialNumber}
                 </p>
               </div>
             )}
@@ -175,8 +217,14 @@ export default function ScanPage() {
                 >
                   Certified Genuine Product
                 </h2>
+                <div
+                  className="my-3 px-4 py-2 bg-cream/60 dark:bg-white/5 border border-border dark:border-[#2E2925] rounded-xl font-mono text-xs sm:text-sm text-primary dark:text-[#D4AF37] font-bold tracking-wider"
+                  style={{ transform: 'translateZ(25px)' }}
+                >
+                  SKU / SERIAL: {serialNumber}
+                </div>
                 <p
-                  className="text-xs text-secondary dark:text-white/70 max-w-xs mb-3"
+                  className="text-xs text-secondary dark:text-white/70 max-w-xs mb-3 font-serif"
                   style={{ transform: 'translateZ(20px)' }}
                 >
                   {productName || 'Your product has been validated in the JORIQUE registry.'}
@@ -235,13 +283,22 @@ export default function ScanPage() {
                   className="text-base font-medium text-primary dark:text-white mb-1"
                   style={{ transform: 'translateZ(30px)' }}
                 >
-                  Gift Voucher Already Claimed
+                  Authentic JORIQUE Product Verified
                 </h2>
+                <div
+                  className="my-2.5 px-4 py-1.5 bg-cream/60 dark:bg-white/5 border border-border dark:border-[#2E2925] rounded-xl font-mono text-xs text-primary dark:text-[#D4AF37] font-bold tracking-wider"
+                  style={{ transform: 'translateZ(25px)' }}
+                >
+                  SKU / SERIAL: {serialNumber}
+                </div>
+                <p className="text-xs font-semibold text-primary dark:text-white max-w-xs mb-1">
+                  {productName}
+                </p>
                 <p
                   className="text-xs text-secondary dark:text-white/70 max-w-xs mb-6 leading-relaxed"
                   style={{ transform: 'translateZ(20px)' }}
                 >
-                  The complimentary gift reward for this product unit ({productName}) has already been redeemed.
+                  The complimentary gift reward for this product unit has already been redeemed.
                 </p>
                 <button
                   onClick={handleRetry}

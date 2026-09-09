@@ -226,7 +226,7 @@ export default function AdminProductModifyButton({ product, onProductUpdated }: 
                             borderColor: 'rgba(0,0,0,0.1)',
                           }}
                         >
-                          ★ {formData.badge}
+                          {formData.badge}
                         </span>
                       </div>
                     );

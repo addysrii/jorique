@@ -15,12 +15,14 @@ export interface Product {
   features?: string[];
   inStock?: boolean;
   badge?: string;
+  size?: string;
 }
 
 export interface ProductFormValues {
   name: string;
   category: string;
   subcategory?: string;
+  size?: string;
   price: number;
   discount_price?: number;
   cost?: number;

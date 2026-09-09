@@ -1,9 +1,8 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Heart, ShoppingBag, MessageCircle, Camera } from 'lucide-react';
+import { Heart, ShoppingBag, MessageCircle } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { Product } from '../types';
-import ViewInYourRoomModal from './ViewInYourRoomModal';
 import { useCart } from '../context/CartContext';
 import { getBadgeColors } from '../lib/constants/collections';
 
@@ -14,7 +13,6 @@ interface ProductCardProps {
 
 export default function ProductCard({ product, index = 0 }: ProductCardProps) {
   const [wishlisted, setWishlisted] = useState(false);
-  const [isArOpen, setIsArOpen] = useState(false);
   const { addToCart, buyNow } = useCart();
 
   // Handle different image formats
@@ -65,20 +63,8 @@ export default function ProductCard({ product, index = 0 }: ProductCardProps) {
             );
           })()}
 
-          {/* Floating AR Studio & Wishlist Buttons */}
-          <div className="absolute top-3.5 right-3.5 flex items-center gap-1.5 z-30 opacity-0 group-hover:opacity-100 transition-all duration-300">
-            <button
-              onClick={(e) => {
-                e.preventDefault();
-                e.stopPropagation();
-                setIsArOpen(true);
-              }}
-              title="View in Your Room (AR)"
-              className="p-2 bg-[#100E0D]/90 text-[#D4AF37] border border-[#D4AF37]/40 backdrop-blur-md rounded-full shadow-lg hover:bg-[#D4AF37] hover:text-black transition-all duration-300 hover:scale-110"
-            >
-              <Camera size={14} strokeWidth={2} />
-            </button>
-
+          {/* Floating Wishlist Button */}
+          <div className="absolute top-3.5 right-3.5 z-30 opacity-0 group-hover:opacity-100 transition-all duration-300">
             <button
               onClick={(e) => {
                 e.preventDefault();
@@ -149,8 +135,6 @@ export default function ProductCard({ product, index = 0 }: ProductCardProps) {
           )}
         </div>
       </Link>
-
-      <ViewInYourRoomModal product={product} isOpen={isArOpen} onClose={() => setIsArOpen(false)} />
     </motion.div>
   );
 }

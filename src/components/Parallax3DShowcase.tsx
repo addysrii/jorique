@@ -6,7 +6,6 @@ import {
   ArrowRight,
   ChevronLeft,
   ChevronRight,
-  Camera,
   Check,
   Eye,
   Table as TableIcon,
@@ -16,7 +15,6 @@ import { productService } from '../lib/api/products';
 import { Product } from '../types';
 import { useCart } from '../context/CartContext';
 import { getBadgeColors } from '../lib/constants/collections';
-import ViewInYourRoomModal from './ViewInYourRoomModal';
 import { parseProductDescription } from './ProductDescriptionTable';
 
 interface CategoryRow {
@@ -85,10 +83,8 @@ function normalizeCategory(cat: string): { key: string; label: string; tagline: 
 // ---------------------------------------------------------
 function FullWidthCategoryCarousel({
   category,
-  onOpenAR,
 }: {
   category: CategoryRow;
-  onOpenAR: (product: Product) => void;
 }) {
   const { addToCart } = useCart();
   const [activeIndex, setActiveIndex] = useState(0);
@@ -389,24 +385,8 @@ function FullWidthCategoryCarousel({
                     )}
                   </div>
 
-                  {/* Bottom Overlay: AR Studio Pill & Image Dots */}
-                  <div className="relative z-10 flex items-end justify-between gap-3 pt-24">
-                    {/* Floating AR Studio Button with Pulsing Radar Ring */}
-                    <motion.button
-                      whileHover={{ scale: 1.06 }}
-                      whileTap={{ scale: 0.95 }}
-                      onClick={(e) => {
-                        e.preventDefault();
-                        e.stopPropagation();
-                        onOpenAR(currentProduct);
-                      }}
-                      title="View in Your Room (AR Studio)"
-                      className="px-4 py-2 rounded-full bg-black/85 hover:bg-[#D4AF37] text-white hover:text-black text-xs font-semibold backdrop-blur-md border border-[#D4AF37]/50 shadow-xl flex items-center gap-2 transition-all cursor-pointer group/ar"
-                    >
-                      <Camera size={14} className="text-[#D4AF37] group-hover/ar:text-black transition-colors" />
-                      <span className="tracking-wider uppercase text-[10px] font-bold">AR Room Studio</span>
-                    </motion.button>
-
+                  {/* Bottom Overlay: Multi-Image Dots */}
+                  <div className="relative z-10 flex items-end justify-end gap-3 pt-24">
                     {/* Multi-Image Thumbnail Switcher */}
                     {images.length > 1 && (
                       <div className="flex items-center gap-1.5 p-1.5 rounded-full bg-black/65 backdrop-blur-md border border-white/20 shadow-lg">
@@ -690,7 +670,6 @@ function FullWidthCategoryCarousel({
 // ---------------------------------------------------------
 export default function Parallax3DShowcase() {
   const [allProducts, setAllProducts] = useState<Product[]>([]);
-  const [arProduct, setArProduct] = useState<Product | null>(null);
 
   useEffect(() => {
     async function loadRealProducts() {
@@ -779,21 +758,11 @@ export default function Parallax3DShowcase() {
             <FullWidthCategoryCarousel
               key={category.key}
               category={category}
-              onOpenAR={(prod) => setArProduct(prod)}
             />
           ))}
         </div>
 
       </div>
-
-      {/* AR Studio Modal */}
-      {arProduct && (
-        <ViewInYourRoomModal
-          product={arProduct}
-          isOpen={!!arProduct}
-          onClose={() => setArProduct(null)}
-        />
-      )}
     </section>
   );
 }

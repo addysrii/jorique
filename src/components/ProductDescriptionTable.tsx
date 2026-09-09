@@ -12,6 +12,7 @@ interface ProductDescriptionTableProps {
   } | null;
   className?: string;
   showTitle?: boolean;
+  showCare?: boolean;
 }
 
 interface ParsedDescription {
@@ -98,6 +99,7 @@ export default function ProductDescriptionTable({
   selectedSize,
   className = '',
   showTitle = true,
+  showCare = false,
 }: ProductDescriptionTableProps) {
   const parsed = useMemo(() => {
     return parseProductDescription(description || product?.description);
@@ -131,6 +133,12 @@ export default function ProductDescriptionTable({
         list.push({
           key: 'Availability',
           value: product.inStock !== false ? 'Ready to Ship (In Stock)' : 'Made to Order (Pre-Order)',
+        });
+      }
+      if (!existingKeys.has('lighting') && !existingKeys.has('color calibration')) {
+        list.push({
+          key: 'Color Fidelity',
+          value: 'Calibrated Studio Daylight (Warm • Neutral • Cold Guide in Gallery)',
         });
       }
     }
@@ -206,8 +214,8 @@ export default function ProductDescriptionTable({
         </div>
       )}
 
-      {/* Tabular Care & Maintenance Instructions */}
-      {parsed.care.length > 0 && (
+      {/* Tabular Care & Maintenance Instructions (Only rendered if showCare is explicitly enabled) */}
+      {showCare && parsed.care.length > 0 && (
         <div className="overflow-hidden rounded-xl border border-border/80 dark:border-[#2E2925] bg-white dark:bg-[#161412] shadow-2xs mt-3">
           <div className="bg-[#FAF7F2] dark:bg-[#1F1C19] px-3.5 sm:px-4 py-2.5 border-b border-border/80 dark:border-[#2E2925] flex items-center gap-2">
             <RefreshCw size={13} className="text-[#C6A96B] dark:text-[#D4AF37]" />

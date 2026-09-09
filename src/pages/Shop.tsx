@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Filter, Search, X, Sparkles } from 'lucide-react';
 import Navbar from '../components/Navbar';
@@ -11,14 +12,25 @@ import ShopDealsBannerCarousel from '../components/ShopDealsBannerCarousel';
 import { supabase } from '../lib/supabase';
 
 export default function Shop() {
+  const [searchParams, setSearchParams] = useSearchParams();
+  const categoryParam = searchParams.get('category');
+
   const [products, setProducts] = useState<Product[]>([]);
   const [filteredProducts, setFilteredProducts] = useState<Product[]>([]);
   const [categories, setCategories] = useState<string[]>(['All']);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [selectedCategory, setSelectedCategory] = useState('All');
+  const [selectedCategory, setSelectedCategory] = useState(categoryParam || 'All');
   const [searchQuery, setSearchQuery] = useState('');
   const [showMobileFilters, setShowMobileFilters] = useState(false);
+
+  useEffect(() => {
+    if (categoryParam) {
+      setSelectedCategory(categoryParam);
+    } else {
+      setSelectedCategory('All');
+    }
+  }, [categoryParam]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -74,6 +86,12 @@ export default function Shop() {
 
   const handleCategoryChange = (category: string) => {
     setSelectedCategory(category);
+    if (category === 'All') {
+      searchParams.delete('category');
+      setSearchParams(searchParams, { replace: true });
+    } else {
+      setSearchParams({ category }, { replace: true });
+    }
     setShowMobileFilters(false);
   };
 

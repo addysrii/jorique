@@ -24,8 +24,8 @@ import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import ProductCard from '../components/ProductCard';
 import ProductImageGallery from '../components/ProductImageGallery';
-import ViewInYourRoomModal from '../components/ViewInYourRoomModal';
 import SizeGuideModal from '../components/SizeGuideModal';
+import ColorDisclaimerSection from '../components/ColorDisclaimerSection';
 import ProductDescriptionTable, { parseProductDescription } from '../components/ProductDescriptionTable';
 import { productService } from '../lib/api/products';
 import { Product } from '../types';
@@ -282,8 +282,16 @@ function getColorInfo(product: Product | null | undefined): { colorName: string;
     }
   }
 
-  // 3. Check tags
+  // 3. Check tags for direct hex or named colors
   if (product.tags && Array.isArray(product.tags)) {
+    const directHexTag = product.tags.find(t => /^#[0-9A-Fa-f]{6}$/.test(t.trim()));
+    if (directHexTag) {
+      const colorTitle = product.name && product.name.includes(' - ')
+        ? product.name.split(' - ')[1].trim()
+        : 'Signature Shade';
+      return { colorName: colorTitle, colorHex: directHexTag.trim().toUpperCase() };
+    }
+
     for (const tag of product.tags) {
       const lower = tag.toLowerCase().trim();
       if (COLOR_HEX_MAP[lower]) {
@@ -312,7 +320,6 @@ export default function ProductDetails() {
   const [availableSizes, setAvailableSizes] = useState<SizeOption[]>([]);
   const [selectedSize, setSelectedSize] = useState<SizeOption | null>(null);
   const [isSizeGuideOpen, setIsSizeGuideOpen] = useState(false);
-  const [isArOpen, setIsArOpen] = useState(false);
 
   // Accordion Toggles
   const [openAccordions, setOpenAccordions] = useState<Record<string, boolean>>({
@@ -516,7 +523,6 @@ export default function ProductDetails() {
                 productName={product.name}
                 badge={product.badge}
                 discountPercentage={discountPercentage}
-                onOpenAR={() => setIsArOpen(true)}
               />
             </div>
 
@@ -558,12 +564,12 @@ export default function ProductDetails() {
                 </div>
 
                 {/* Signature Stoa Paris UPI Callout */}
-                <div className="flex items-center gap-2 p-2.5 rounded-xl bg-amber-500/10 dark:bg-amber-500/15 border border-amber-500/30 text-xs text-primary dark:text-white">
+                {/* <div className="flex items-center gap-2 p-2.5 rounded-xl bg-amber-500/10 dark:bg-amber-500/15 border border-amber-500/30 text-xs text-primary dark:text-white">
                   <Zap size={14} className="text-amber-600 dark:text-amber-400 shrink-0" />
                   <span>
                     UPI & Card Orders get it for <strong className="font-times font-bold text-[#851C25] dark:text-[#D4AF37] tabular-nums">₹{upiInstantPrice.toLocaleString('en-IN')}</strong> (Extra 10% Off)
                   </span>
-                </div>
+                </div> */}
               </div>
 
               {/* Sibling Colorways Swatches (Stoa Paris Swatch System) */}
@@ -654,8 +660,8 @@ export default function ProductDetails() {
                           type="button"
                           onClick={() => setSelectedSize(size)}
                           className={`p-3 rounded-2xl border text-left transition-all ${isSelected
-                              ? 'border-primary dark:border-[#D4AF37] bg-primary/5 dark:bg-[#D4AF37]/10 ring-2 ring-primary/20 dark:ring-[#D4AF37]/20'
-                              : 'border-border dark:border-[#2E2925] bg-white dark:bg-[#1A1816] hover:border-primary/40 dark:hover:border-white/30'
+                            ? 'border-primary dark:border-[#D4AF37] bg-primary/5 dark:bg-[#D4AF37]/10 ring-2 ring-primary/20 dark:ring-[#D4AF37]/20'
+                            : 'border-border dark:border-[#2E2925] bg-white dark:bg-[#1A1816] hover:border-primary/40 dark:hover:border-white/30'
                             }`}
                         >
                           <p className={`text-xs font-bold leading-tight ${isSelected ? 'text-primary dark:text-[#D4AF37]' : 'text-primary dark:text-white'}`}>
@@ -1062,6 +1068,9 @@ export default function ProductDetails() {
           </div>
         </section>
 
+        {/* COLOUR DISCLAIMER SECTION WITH MULTI-DEVICE MOCKUPS */}
+        <ColorDisclaimerSection images={product.images} productName={product.name} />
+
         {/* CUSTOMER REVIEWS & RATINGS SECTION */}
         <section id="reviews-section" className="py-14 lg:py-20 max-w-6xl mx-auto px-6 lg:px-12">
           <div className="text-center max-w-2xl mx-auto mb-10 space-y-2">
@@ -1173,12 +1182,6 @@ export default function ProductDetails() {
         isOpen={isSizeGuideOpen}
         onClose={() => setIsSizeGuideOpen(false)}
         category={product.category}
-      />
-
-      <ViewInYourRoomModal
-        product={product}
-        isOpen={isArOpen}
-        onClose={() => setIsArOpen(false)}
       />
 
       <Footer />

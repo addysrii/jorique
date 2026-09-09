@@ -18,6 +18,7 @@ export interface Product {
   year?: number;
   features?: string[];
   inStock?: boolean;
+  size?: string;
   created_at?: string;
   updated_at?: string;
 }
@@ -41,6 +42,7 @@ export interface ProductResponse {
   year?: number;
   features?: string[];
   inStock?: boolean;
+  size?: string;
   created_at?: string;
   updated_at?: string;
 }
@@ -49,6 +51,7 @@ export interface ProductFormValues {
   name: string;
   category: string;
   subcategory?: string;
+  size?: string;
   price: number;
   discount_price?: number;
   cost?: number;
