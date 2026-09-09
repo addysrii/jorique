@@ -67,10 +67,10 @@ export default function Signup() {
       </Link>
 
       {/* Main Dual-Panel Container */}
-      <div className="w-full max-w-5xl grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center justify-center my-auto py-6" style={{ minHeight: '80vh' }}>
+      <div className="w-full max-w-6xl grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-14 items-center justify-center my-auto py-6" style={{ minHeight: '80vh' }}>
 
         {/* LEFT COLUMN: Jorique Interactive Characters Stage */}
-        <div className="lg:col-span-6 flex flex-col items-center justify-center order-2 lg:order-1 pt-4 lg:pt-0 relative">
+        <div className="lg:col-span-7 flex flex-col items-center justify-center order-2 lg:order-1 pt-4 lg:pt-0 relative w-full">
           <InteractiveLoginCharacters
             focusedField={focusedField}
             showPassword={showPassword}
@@ -84,7 +84,7 @@ export default function Signup() {
         </div>
 
         {/* RIGHT COLUMN: Modern Crisp White Signup Card */}
-        <div className="lg:col-span-6 w-full max-w-md mx-auto order-1 lg:order-2">
+        <div className="lg:col-span-5 w-full max-w-md mx-auto order-1 lg:order-2">
           <div className="bg-white dark:bg-[#1A1816] rounded-[32px] p-8 sm:p-10 shadow-2xl border border-black/5 dark:border-white/5 relative">
 
             {/* Top Emblem Logo */}
