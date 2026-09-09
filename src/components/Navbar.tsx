@@ -159,7 +159,16 @@ export default function Navbar({}: NavbarProps) {
           <div className="flex items-center justify-between h-16 lg:h-20">
             
             {/* Logo */}
-            <Link to="/" className="flex-shrink-0 group flex flex-col items-center">
+            <Link
+              to="/"
+              onClick={() => {
+                if (location.pathname === '/') {
+                  window.scrollTo({ top: 0, behavior: 'smooth' });
+                }
+              }}
+              aria-label="JORIQUE Home"
+              className="flex-shrink-0 group flex flex-col items-center cursor-pointer"
+            >
               <span
                 className={`font-mainlogo text-2xl tracking-[0.20em] uppercase transition-colors duration-300 ${
                   transparent ? 'text-white' : 'text-primary dark:text-[#FCFAF7]'
@@ -174,23 +183,8 @@ export default function Navbar({}: NavbarProps) {
               />
             </Link>
 
-            {/* Desktop Nav: Home + All Categories */}
+            {/* Desktop Nav: Categories */}
             <nav className="hidden md:flex items-center gap-5 lg:gap-8 flex-wrap">
-              <Link
-                to="/"
-                className={`text-xs font-semibold tracking-widest uppercase transition-colors duration-200 relative group py-1 ${
-                  transparent
-                    ? 'text-white/90 hover:text-white'
-                    : 'text-secondary dark:text-white/70 hover:text-primary dark:hover:text-[#D4AF37]'
-                } ${location.pathname === '/' ? (transparent ? 'text-white' : 'text-primary dark:text-[#D4AF37]') : ''}`}
-              >
-                Home
-                <span
-                  className={`absolute -bottom-0.5 left-0 h-0.5 transition-all duration-300 ${
-                    transparent ? 'bg-white' : 'bg-primary dark:bg-[#D4AF37]'
-                  } ${location.pathname === '/' ? 'w-full' : 'w-0 group-hover:w-full'}`}
-                />
-              </Link>
 
               {categories.map((cat) => {
                 const activeCatParam = searchParams.get('category');
@@ -439,16 +433,8 @@ export default function Navbar({}: NavbarProps) {
             className="fixed inset-0 z-40 bg-white dark:bg-[#100E0D] pt-24 px-6 flex flex-col justify-between pb-8 md:hidden"
           >
             <div className="flex flex-col gap-5 overflow-y-auto max-h-[72vh] pr-2">
-              <Link
-                to="/"
-                onClick={() => setMobileOpen(false)}
-                className="text-2xl font-light tracking-wide text-primary dark:text-white hover:text-secondary transition-colors"
-              >
-                Home
-              </Link>
-
               {/* Categories */}
-              <div className="pt-2 border-t border-border/60 dark:border-[#2E2925] space-y-3">
+              <div className="pt-1 space-y-3">
                 <span className="text-[10px] font-bold uppercase tracking-[0.25em] text-secondary/60 dark:text-white/40 block">
                   Categories
                 </span>
