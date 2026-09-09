@@ -133,12 +133,12 @@ export default function ColorDisclaimerSection({
             
             {/* 1. Center Studio Display Screen (1.0x Full Lifestyle View) */}
             <div
-              className="absolute overflow-hidden rounded-[6px]"
+              className="absolute overflow-hidden rounded-[4px]"
               style={{
-                left: '39.101%',
-                top: '10.872%',
-                width: '44.663%',
-                height: '56.399%',
+                left: '32.697%',
+                top: '10.646%',
+                width: '51.573%',
+                height: '56.501%',
                 zIndex: 1,
               }}
             >
@@ -157,12 +157,12 @@ export default function ColorDisclaimerSection({
 
             {/* 2. Left MacBook Pro Screen (1.20x Laptop Perspective) */}
             <div
-              className="absolute overflow-hidden rounded-[8px]"
+              className="absolute overflow-hidden rounded-[6px]"
               style={{
-                left: '14.775%',
-                top: '48.131%',
-                width: '31.180%',
-                height: '39.864%',
+                left: '14.382%',
+                top: '44.394%',
+                width: '31.517%',
+                height: '43.715%',
                 zIndex: 2,
               }}
             >
@@ -181,12 +181,12 @@ export default function ColorDisclaimerSection({
 
             {/* 3. Right iPad Pro Screen (1.45x Texture Focus Zoom) */}
             <div
-              className="absolute overflow-hidden rounded-[14px]"
+              className="absolute overflow-hidden rounded-[10px]"
               style={{
                 left: '77.921%',
-                top: '42.356%',
-                width: '16.629%',
-                height: '44.168%',
+                top: '42.129%',
+                width: '16.685%',
+                height: '48.131%',
                 zIndex: 2,
               }}
             >
