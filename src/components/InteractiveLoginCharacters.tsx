@@ -418,7 +418,7 @@ export default function InteractiveLoginCharacters({
     if (isPwdUnhidden) {
       return {
         k: { rotate: -20, x: -16, y: 8 },
-        p: { rotate: 0, y: 200 },
+        p: { rotate: 0, y: 220 },
         co: { rotate: -8, x: -10, y: 14, scale: 0.93 },
         cu: { rotate: -12, x: -10, y: 6 },
         b: { rotate: -12, x: -10, y: 16, scale: 0.95 },
@@ -430,7 +430,7 @@ export default function InteractiveLoginCharacters({
     if (isPwdHidden) {
       return {
         k: { rotate: -16, x: -10, y: 6 },
-        p: { rotate: 0, y: 195 },
+        p: { rotate: 0, y: 220 },
         co: { rotate: -5, x: -6, y: 12, scale: 0.94 },
         cu: { rotate: -10, x: -8, y: 6 },
         b: { rotate: -8, x: -6, y: 15, scale: 0.96 },
@@ -603,7 +603,7 @@ export default function InteractiveLoginCharacters({
             Onyx Horn Buttons (NO white googly eye!) + Needlework Smirk
             ═══════════════════════════════════════════════════════════════════ */}
         <div
-          style={{ ...floatStyle, position: 'absolute', left: '-5%', bottom: '24%', width: '42%', zIndex: 5 }}
+          style={{ ...floatStyle, position: 'absolute', left: '-5%', bottom: '25%', width: '40%', zIndex: 5 }}
         >
           <motion.div
             animate={getAnimate('k')}
@@ -718,7 +718,7 @@ export default function InteractiveLoginCharacters({
             Delicate smiling eyes (with blink), fine needlework smile, peachy blush.
             ═══════════════════════════════════════════════════════════════════ */}
         <div
-          style={{ ...floatStyle, position: 'absolute', left: '29%', bottom: '26%', width: '42%', zIndex: 4 }}
+          style={{ ...floatStyle, position: 'absolute', left: '30%', bottom: '33%', width: '38%', zIndex: 4 }}
         >
           <motion.div
             animate={getAnimate('b')}
@@ -807,7 +807,7 @@ export default function InteractiveLoginCharacters({
             chic horn button eyes, subtle eyelid blink, fine eyebrows and smile!
             ═══════════════════════════════════════════════════════════════════ */}
         <div
-          style={{ ...floatStyle, position: 'absolute', left: '63%', bottom: '24%', width: '42%', zIndex: 5 }}
+          style={{ ...floatStyle, position: 'absolute', left: '64%', bottom: '25%', width: '40%', zIndex: 5 }}
         >
           <motion.div
             animate={getAnimate('s')}
@@ -888,7 +888,7 @@ export default function InteractiveLoginCharacters({
             Googly Eyes with bold black rim, single buck tooth, bouncy brows.
             ═══════════════════════════════════════════════════════════════════ */}
         <div
-          style={{ ...floatStyle, position: 'absolute', left: '14%', bottom: '13%', width: '47%', zIndex: 8 }}
+          style={{ ...floatStyle, position: 'absolute', left: '15%', bottom: '26%', width: '45%', zIndex: 9 }}
         >
           <motion.div
             animate={getAnimate('p')}
@@ -1025,7 +1025,7 @@ export default function InteractiveLoginCharacters({
             pearl-sheen eyes that follow cursor and blink, with soft blush!
             ═══════════════════════════════════════════════════════════════════ */}
         <div
-          style={{ ...floatStyle, position: 'absolute', left: '57%', bottom: '4%', width: '40%', zIndex: 12 }}
+          style={{ ...floatStyle, position: 'absolute', left: '58%', bottom: '3%', width: '38%', zIndex: 12 }}
         >
           <motion.div
             animate={getAnimate('t')}
@@ -1125,7 +1125,7 @@ export default function InteractiveLoginCharacters({
             (NO round googly eyeballs!)
             ═══════════════════════════════════════════════════════════════════ */}
         <div
-          style={{ ...floatStyle, position: 'absolute', left: '-8%', bottom: '0%', width: '55%', zIndex: 16 }}
+          style={{ ...floatStyle, position: 'absolute', left: '-7%', bottom: '0%', width: '51%', zIndex: 16 }}
         >
           <motion.div
             animate={getAnimate('co')}
@@ -1247,7 +1247,7 @@ export default function InteractiveLoginCharacters({
             Mouth with Tiny Tooth & Golden Freckle Dots!
             ═══════════════════════════════════════════════════════════════════ */}
         <div
-          style={{ ...floatStyle, position: 'absolute', left: '33%', bottom: '0%', width: '43%', zIndex: 18 }}
+          style={{ ...floatStyle, position: 'absolute', left: '36%', bottom: '0%', width: '39%', zIndex: 18 }}
         >
           <motion.div
             animate={getAnimate('cu')}
