@@ -80,6 +80,8 @@ export default function WhatsAppCheckoutModal() {
       await orderService.createOrder({
         order_number: generatedOrderNum,
         total: subtotal,
+        customer_id: user?.id,
+        customer_email: user?.email,
         items: cart.map((item) => ({
           product_id: item.product.id,
           sku: item.product.sku,
