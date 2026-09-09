@@ -66,7 +66,7 @@ export default function ColorDisclaimerSection({
             </h3>
 
             <p className="text-xs sm:text-sm text-secondary dark:text-white/80 leading-relaxed font-sans font-light max-w-2xl">
-              We photograph our collections under calibrated 5500K studio daylight to reproduce tones accurately. However, fabric luster and subtle undertones will naturally adapt across Apple Retina, OLED, True Tone calibrations, and ambient room lighting.
+              Colour Disclaimer: Actual product colour may vary slightly from the images due to differences in Display color tone, camera settings, lighting conditions, and image editing.
             </p>
           </div>
 
@@ -81,11 +81,10 @@ export default function ColorDisclaimerSection({
               <button
                 type="button"
                 onClick={() => setActiveMode('studio')}
-                className={`flex flex-col items-center justify-center p-2 rounded-xl border text-xs font-semibold transition-all ${
-                  activeMode === 'studio'
-                    ? 'bg-white dark:bg-[#25211E] border-[#C6A96B] text-primary dark:text-[#D4AF37] shadow-xs'
-                    : 'bg-cream/40 dark:bg-white/5 border-transparent text-secondary dark:text-white/60 hover:bg-cream dark:hover:bg-white/10'
-                }`}
+                className={`flex flex-col items-center justify-center p-2 rounded-xl border text-xs font-semibold transition-all ${activeMode === 'studio'
+                  ? 'bg-white dark:bg-[#25211E] border-[#C6A96B] text-primary dark:text-[#D4AF37] shadow-xs'
+                  : 'bg-cream/40 dark:bg-white/5 border-transparent text-secondary dark:text-white/60 hover:bg-cream dark:hover:bg-white/10'
+                  }`}
               >
                 <SunMedium size={14} className="mb-1 text-amber-500" />
                 <span className="text-[10px] leading-tight">Studio Daylight</span>
@@ -96,11 +95,10 @@ export default function ColorDisclaimerSection({
               <button
                 type="button"
                 onClick={() => setActiveMode('warm')}
-                className={`flex flex-col items-center justify-center p-2 rounded-xl border text-xs font-semibold transition-all ${
-                  activeMode === 'warm'
-                    ? 'bg-white dark:bg-[#25211E] border-[#C6A96B] text-primary dark:text-[#D4AF37] shadow-xs'
-                    : 'bg-cream/40 dark:bg-white/5 border-transparent text-secondary dark:text-white/60 hover:bg-cream dark:hover:bg-white/10'
-                }`}
+                className={`flex flex-col items-center justify-center p-2 rounded-xl border text-xs font-semibold transition-all ${activeMode === 'warm'
+                  ? 'bg-white dark:bg-[#25211E] border-[#C6A96B] text-primary dark:text-[#D4AF37] shadow-xs'
+                  : 'bg-cream/40 dark:bg-white/5 border-transparent text-secondary dark:text-white/60 hover:bg-cream dark:hover:bg-white/10'
+                  }`}
               >
                 <Lamp size={14} className="mb-1 text-orange-500" />
                 <span className="text-[10px] leading-tight">Warm Indoor</span>
@@ -111,11 +109,10 @@ export default function ColorDisclaimerSection({
               <button
                 type="button"
                 onClick={() => setActiveMode('vibrant')}
-                className={`flex flex-col items-center justify-center p-2 rounded-xl border text-xs font-semibold transition-all ${
-                  activeMode === 'vibrant'
-                    ? 'bg-white dark:bg-[#25211E] border-[#C6A96B] text-primary dark:text-[#D4AF37] shadow-xs'
-                    : 'bg-cream/40 dark:bg-white/5 border-transparent text-secondary dark:text-white/60 hover:bg-cream dark:hover:bg-white/10'
-                }`}
+                className={`flex flex-col items-center justify-center p-2 rounded-xl border text-xs font-semibold transition-all ${activeMode === 'vibrant'
+                  ? 'bg-white dark:bg-[#25211E] border-[#C6A96B] text-primary dark:text-[#D4AF37] shadow-xs'
+                  : 'bg-cream/40 dark:bg-white/5 border-transparent text-secondary dark:text-white/60 hover:bg-cream dark:hover:bg-white/10'
+                  }`}
               >
                 <Sparkle size={14} className="mb-1 text-purple-500" />
                 <span className="text-[10px] leading-tight">Vibrant OLED</span>
@@ -127,18 +124,18 @@ export default function ColorDisclaimerSection({
 
         {/* BOTTOM SECTION: Transparent Apple Hardware Multi-Screen Showcase */}
         <div className="relative z-10 w-full max-w-5xl mx-auto flex flex-col items-center select-none pt-2">
-          
+
           {/* Panoramic Device Frame Container (Matching exact 1780x883 proportion of user's image) */}
           <div className="relative w-full aspect-[1780/883] drop-shadow-xl">
-            
+
             {/* 1. Center Studio Display Screen (1.0x Full Lifestyle View) */}
             <div
-              className="absolute overflow-hidden rounded-[4px]"
+              className="absolute overflow-hidden"
               style={{
-                left: '32.697%',
-                top: '10.646%',
-                width: '51.573%',
-                height: '56.501%',
+                left: '31.91%',
+                top: '9.06%',
+                width: '52.70%',
+                height: '60.02%',
                 zIndex: 1,
               }}
             >
@@ -157,12 +154,12 @@ export default function ColorDisclaimerSection({
 
             {/* 2. Left MacBook Pro Screen (1.20x Laptop Perspective) */}
             <div
-              className="absolute overflow-hidden rounded-[6px]"
+              className="absolute overflow-hidden"
               style={{
-                left: '11.124%',
-                top: '44.394%',
-                width: '34.831%',
-                height: '43.715%',
+                left: '10.67%',
+                top: '43.15%',
+                width: '35.84%',
+                height: '46.55%',
                 zIndex: 2,
               }}
             >
@@ -181,12 +178,12 @@ export default function ColorDisclaimerSection({
 
             {/* 3. Right iPad Pro Screen (1.45x Texture Focus Zoom) */}
             <div
-              className="absolute overflow-hidden rounded-[10px]"
+              className="absolute overflow-hidden"
               style={{
-                left: '77.921%',
-                top: '42.129%',
-                width: '16.685%',
-                height: '48.131%',
+                left: '77.13%',
+                top: '40.66%',
+                width: '18.20%',
+                height: '51.08%',
                 zIndex: 2,
               }}
             >
@@ -212,7 +209,7 @@ export default function ColorDisclaimerSection({
           </div>
 
           {/* Micro Caption Showing Device Scale & Role */}
-          <div className="flex flex-wrap items-center justify-center gap-2 sm:gap-4 mt-6 text-[11px] font-medium text-secondary/80 dark:text-white/60">
+          {/* <div className="flex flex-wrap items-center justify-center gap-2 sm:gap-4 mt-6 text-[11px] font-medium text-secondary/80 dark:text-white/60">
             <span className="flex items-center gap-1">
               <Monitor size={12} className="text-[#C6A96B] dark:text-[#D4AF37]" /> Studio Display (1.0× Wide)
             </span>
@@ -224,7 +221,7 @@ export default function ColorDisclaimerSection({
             <span className="flex items-center gap-1">
               <Tablet size={12} className="text-[#C6A96B] dark:text-[#D4AF37]" /> iPad Pro (1.45× Texture Focus)
             </span>
-          </div>
+          </div> */}
 
         </div>
       </motion.div>
