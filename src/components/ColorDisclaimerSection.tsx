@@ -55,132 +55,153 @@ export default function ColorDisclaimerSection({
 
         <div className="relative z-10 grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
           
-          {/* LEFT: Precision SVG Mockup Canvas (Zero Distortion, Mathematical Proportions) */}
-          <div className="lg:col-span-7 flex flex-col items-center justify-center">
-            
-            <div className="relative w-full max-w-[560px] mx-auto aspect-square select-none flex items-center justify-center">
-              <svg
-                viewBox="0 0 640 640"
-                className="w-full h-full drop-shadow-2xl overflow-visible"
-                style={{ shapeRendering: 'geometricPrecision' }}
+          {/* LEFT: Precision Multi-Device Showcase (Zero Distortion, Apple-grade realism) */}
+          <div className="lg:col-span-7 flex flex-col items-center justify-center p-2 sm:p-4">
+            <div className="relative w-full max-w-[620px] aspect-[16/11] sm:aspect-[16/10] flex items-end justify-center select-none">
+              
+              {/* 1. LARGE LAPTOP (Center-Stage - 85% width) */}
+              <motion.div
+                initial={{ opacity: 0, y: 15 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.5 }}
+                className="relative w-[84%] sm:w-[86%] mb-3 z-10"
               >
-                <defs>
-                  {/* Monitor Screen Clip */}
-                  <clipPath id="monClip">
-                    <rect x="120" y="143" width="406" height="285" rx="4" ry="4" />
-                  </clipPath>
+                {/* Laptop Display Lid */}
+                <div className="rounded-t-2xl sm:rounded-t-3xl bg-[#1a1a1a] p-2 sm:p-2.5 shadow-[0_20px_50px_rgba(0,0,0,0.35)] border border-neutral-700/80 ring-1 ring-black/80">
+                  {/* Webcam & Ambient Sensor */}
+                  <div className="flex items-center justify-center gap-1.5 mb-1 sm:mb-1.5">
+                    <div className="w-1.5 h-1.5 rounded-full bg-[#0a0a0a] border border-neutral-600 ring-1 ring-neutral-800" />
+                    <div className="w-1 h-1 rounded-full bg-[#152238] opacity-60" />
+                  </div>
 
-                  {/* Phone Screen Clip */}
-                  <clipPath id="phoneClip">
-                    <rect x="506" y="349" width="89" height="150" rx="9" ry="9" />
-                  </clipPath>
-
-                  {/* Enlarged Tablet Screen Clip */}
-                  <clipPath id="tabClip">
-                    <rect x="40" y="295" width="137" height="191" rx="8" ry="8" />
-                  </clipPath>
-                </defs>
-
-                {/* 1. Desktop Monitor Screen (Wide View - 1.0x, preserved aspect ratio) */}
-                <g clipPath="url(#monClip)">
-                  <image
-                    href={displayImage}
-                    x="120"
-                    y="143"
-                    width="406"
-                    height="285"
-                    preserveAspectRatio="xMidYMid slice"
-                    style={{
-                      filter: getFilter('monitor'),
-                      transition: 'filter 0.5s ease',
-                    }}
-                  />
-                  {/* Subtle Screen Glass Glare */}
-                  <rect
-                    x="120"
-                    y="143"
-                    width="406"
-                    height="285"
-                    fill="url(#screenGlare)"
-                    opacity="0.12"
-                    pointerEvents="none"
-                  />
-                </g>
-
-                {/* 2. Phone Screen (1.45x Zoom, perfectly preserved aspect ratio) */}
-                <g clipPath="url(#phoneClip)">
-                  <g transform="scale(1.45)" style={{ transformOrigin: '550px 424px', transition: 'transform 0.5s ease' }}>
-                    <image
-                      href={displayImage}
-                      x="506"
-                      y="349"
-                      width="89"
-                      height="150"
-                      preserveAspectRatio="xMidYMid slice"
+                  {/* Screen Content (16:10 Wide Aspect Ratio - 1.0x Full Perspective) */}
+                  <div className="relative aspect-[16/10] rounded-md sm:rounded-lg overflow-hidden bg-neutral-900 shadow-inner">
+                    <img
+                      src={displayImage}
+                      alt={`${productName} on Desktop Monitor`}
+                      className="w-full h-full object-cover transition-all duration-500"
                       style={{
-                        filter: getFilter('phone'),
-                        transition: 'filter 0.5s ease',
+                        filter: getFilter('monitor'),
                       }}
                     />
-                  </g>
-                </g>
+                    {/* Realistic Screen Glare */}
+                    <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-transparent to-white/10 pointer-events-none" />
+                    
+                    {/* Screen corner badge */}
+                    <div className="absolute top-2 right-2 px-2 py-0.5 rounded-full bg-black/60 backdrop-blur-md border border-white/10 text-[9px] font-mono text-white/80">
+                      1.0× Wide
+                    </div>
+                  </div>
+                </div>
 
-                {/* 3. Base Hardware Frame (iMac, Phone Bezel, Keyboard, Desk) */}
-                <image
-                  href="/images/device-base-frame.png"
-                  x="0"
-                  y="0"
-                  width="640"
-                  height="640"
-                  pointerEvents="none"
-                />
+                {/* Open MacBook Aluminum Base & Keyboard Deck */}
+                <div className="relative w-[104%] -left-[2%] h-8 sm:h-12 bg-gradient-to-b from-[#e3e3e3] via-[#d5d5d5] to-[#b0b0b0] dark:from-[#2c2a29] dark:via-[#22201e] dark:to-[#161514] rounded-b-xl sm:rounded-b-2xl shadow-2xl border-t border-white/80 dark:border-white/15 px-4 sm:px-6 pt-1 sm:pt-1.5 overflow-hidden">
+                  {/* Keyboard Well */}
+                  <div className="w-[84%] h-3.5 sm:h-5 mx-auto bg-[#141414] dark:bg-[#0a0a0a] rounded-t-xs rounded-b-sm shadow-inner flex flex-col justify-center px-1">
+                    <div className="grid grid-cols-12 gap-0.5 sm:gap-1 h-2.5 sm:h-3.5 opacity-75">
+                      {[...Array(24)].map((_, i) => (
+                        <div key={i} className="bg-[#282828] dark:bg-[#1a1a1a] rounded-[1px] shadow-xs" />
+                      ))}
+                    </div>
+                  </div>
 
-                {/* 4. Enlarged Left-Hand Tablet: Screen (1.20x Zoom, preserved aspect ratio) */}
-                <g clipPath="url(#tabClip)">
-                  <g transform="scale(1.20)" style={{ transformOrigin: '108px 390px', transition: 'transform 0.5s ease' }}>
-                    <image
-                      href={displayImage}
-                      x="40"
-                      y="295"
-                      width="137"
-                      height="191"
-                      preserveAspectRatio="xMidYMid slice"
+                  {/* Glass Trackpad */}
+                  <div className="w-12 sm:w-16 h-2 sm:h-2.5 mx-auto mt-0.5 sm:mt-1 border border-black/15 dark:border-white/10 rounded-[2px] bg-black/5 dark:bg-white/5" />
+
+                  {/* Front Lip Display Opener Scoop */}
+                  <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-14 sm:w-20 h-1 bg-[#888] dark:bg-[#080808] rounded-t-sm" />
+                </div>
+
+                {/* Grounding Desk Shadow */}
+                <div className="w-[96%] h-3.5 mx-auto bg-black/30 dark:bg-black/80 blur-md rounded-full mt-[-2px]" />
+              </motion.div>
+
+              {/* 2. ENLARGED LEFT-HAND TABLET (Enlarged size as requested, 1.35x Texture Zoom) */}
+              <motion.div
+                initial={{ opacity: 0, x: -20, y: 15 }}
+                whileInView={{ opacity: 1, x: 0, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.5, delay: 0.1 }}
+                className="absolute left-0 sm:left-1 bottom-0 w-[30%] sm:w-[32%] max-w-[210px] z-20"
+              >
+                <div className="relative rounded-[18px] sm:rounded-[24px] bg-[#1a1a1a] p-1.5 sm:p-2 shadow-[0_20px_45px_rgba(0,0,0,0.55)] border border-neutral-700/80 ring-1 ring-black/80">
+                  {/* Tablet Front Camera */}
+                  <div className="w-1.5 h-1.5 rounded-full bg-[#0a0a0a] border border-neutral-600 mx-auto mb-1 opacity-80" />
+
+                  {/* Tablet Screen (3:4 Ratio - 1.35x Fabric Zoom) */}
+                  <div className="relative aspect-[3/4] rounded-[12px] sm:rounded-[18px] overflow-hidden bg-neutral-900 shadow-inner">
+                    <img
+                      src={displayImage}
+                      alt={`${productName} on Tablet`}
+                      className="w-full h-full object-cover transition-all duration-500 scale-[1.35] origin-center"
                       style={{
                         filter: getFilter('tablet'),
-                        transition: 'filter 0.5s ease',
                       }}
                     />
-                  </g>
-                </g>
+                    {/* Glass Reflection */}
+                    <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-transparent to-white/15 pointer-events-none" />
+                    
+                    {/* Micro Zoom Badge */}
+                    <div className="absolute top-1.5 left-1.5 px-1.5 py-0.5 rounded-full bg-black/60 backdrop-blur-md border border-white/10 text-[8px] font-mono text-white/90">
+                      1.35× Texture
+                    </div>
+                  </div>
+                </div>
+              </motion.div>
 
-                {/* 5. Enlarged Left-Hand Tablet: Hardware Frame on Top */}
-                <image
-                  href="/images/tablet-device.png"
-                  x="30"
-                  y="275"
-                  width="160"
-                  height="255"
-                  pointerEvents="none"
-                  style={{ filter: 'drop-shadow(0 14px 20px rgba(0,0,0,0.35))' }}
-                />
-              </svg>
+              {/* 3. RIGHT-HAND COMPACT SMARTPHONE (1.75x Macro Zoom) */}
+              <motion.div
+                initial={{ opacity: 0, x: 20, y: 15 }}
+                whileInView={{ opacity: 1, x: 0, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.5, delay: 0.15 }}
+                className="absolute right-0 sm:right-1 bottom-0 w-[18%] sm:w-[19%] max-w-[125px] z-20"
+              >
+                <div className="relative rounded-[18px] sm:rounded-[24px] bg-[#121212] p-1 sm:p-1.5 shadow-[0_18px_40px_rgba(0,0,0,0.55)] border border-neutral-700/80 ring-1 ring-black/80">
+                  {/* Dynamic Island / Speaker */}
+                  <div className="absolute top-1.5 sm:top-2 left-1/2 -translate-x-1/2 w-5 sm:w-7 h-1 sm:h-1.5 bg-black rounded-full z-30 shadow-xs border border-white/10" />
+
+                  {/* Phone Screen (9:19.5 Aspect Ratio - 1.75x Macro Thread Zoom) */}
+                  <div className="relative aspect-[9/19.5] rounded-[14px] sm:rounded-[20px] overflow-hidden bg-neutral-900 shadow-inner">
+                    <img
+                      src={displayImage}
+                      alt={`${productName} on Smartphone`}
+                      className="w-full h-full object-cover transition-all duration-500 scale-[1.75] origin-center"
+                      style={{
+                        filter: getFilter('phone'),
+                      }}
+                    />
+                    {/* Glass Glare */}
+                    <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-transparent to-white/20 pointer-events-none" />
+
+                    {/* Micro Zoom Badge */}
+                    <div className="absolute bottom-3 left-1/2 -translate-x-1/2 px-1.5 py-0.5 rounded-full bg-black/70 backdrop-blur-md border border-white/15 text-[7px] font-mono text-white/90 whitespace-nowrap">
+                      1.75× Macro
+                    </div>
+                  </div>
+
+                  {/* Home Indicator */}
+                  <div className="w-5 sm:w-7 h-0.5 bg-white/40 rounded-full mx-auto mt-0.5" />
+                </div>
+              </motion.div>
+
             </div>
 
-            {/* Micro Caption Showing Device Scale Levels */}
-            <div className="flex flex-wrap items-center justify-center gap-2 sm:gap-3 mt-3 text-[11px] font-medium text-secondary/75 dark:text-white/50">
+            {/* Micro Caption Showing Scale Levels & Zero-Distortion Verification */}
+            <div className="flex flex-wrap items-center justify-center gap-2 sm:gap-3 mt-4 text-[11px] font-medium text-secondary/80 dark:text-white/60">
               <span className="flex items-center gap-1">
                 <Monitor size={12} className="text-[#C6A96B] dark:text-[#D4AF37]" /> Desktop (1.0× Wide)
               </span>
               <span>•</span>
               <span className="flex items-center gap-1">
-                <Tablet size={12} className="text-[#C6A96B] dark:text-[#D4AF37]" /> Tablet (1.20× Mid)
+                <Tablet size={12} className="text-[#C6A96B] dark:text-[#D4AF37]" /> Left Tablet (1.35× Texture)
               </span>
               <span>•</span>
               <span className="flex items-center gap-1">
-                <Smartphone size={12} className="text-[#C6A96B] dark:text-[#D4AF37]" /> Mobile (1.45× Detail)
+                <Smartphone size={12} className="text-[#C6A96B] dark:text-[#D4AF37]" /> Mobile (1.75× Macro)
               </span>
             </div>
-
           </div>
 
           {/* RIGHT: Typography, Explanation & Interactive Lighting Modes */}
