@@ -5,6 +5,7 @@ import QRScanner from '../components/QRScanner';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import Parallax3DCard from '../components/Parallax3DCard';
+import SEO from '../components/SEO';
 import { validateSerial } from '../lib/api/products';
 
 type ScanStatus = 'idle' | 'scanning' | 'validating' | 'success' | 'error' | 'claimed';
@@ -92,6 +93,11 @@ export default function ScanPage() {
 
   return (
     <div className="min-h-screen bg-background dark:bg-[#100E0D] text-primary dark:text-[#F5F2EB] transition-colors duration-300 overflow-hidden">
+      <SEO
+        title="Product Authenticity & QR Verification | JORIQUE"
+        description="Verify the genuine origin and craftsmanship of your JORIQUE textile product using our encrypted serial authentication system."
+        canonical="https://jorique.in/scan"
+      />
       <Navbar />
       
       <main className="max-w-lg mx-auto px-4 py-8 pt-28">

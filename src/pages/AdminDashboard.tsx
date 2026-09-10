@@ -10,6 +10,7 @@ import { QRCodeSVG } from 'qrcode.react';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import Barcode128 from '../components/Barcode128';
+import SEO from '../components/SEO';
 import ProductPackagingLabel from '../components/ProductPackagingLabel';
 import { useAuth } from '../context/AuthContext';
 import { dashboardRequest, sendOrderWhatsAppNotificationRequest } from '../lib/api';
@@ -383,6 +384,10 @@ To ensure protection under our Return & Exchange Policy, please record a continu
 
   return (
     <div className="min-h-screen bg-[#F8F7F5] dark:bg-[#100E0D] text-primary dark:text-[#F5F2EB] transition-colors duration-300">
+      <SEO
+        title="Atelier Management Suite | JORIQUE OS"
+        noindex={true}
+      />
       <Navbar />
 
       <main className="pt-28 pb-24 px-6 lg:px-12">

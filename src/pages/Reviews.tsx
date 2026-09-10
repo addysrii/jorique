@@ -4,6 +4,7 @@ import { Star, Check, X, Filter, MessageSquare, ArrowUpDown, Sparkles, Loader2 }
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import Parallax3DCard from '../components/Parallax3DCard';
+import SEO from '../components/SEO';
 import { getAllReviews, productService } from '../lib/api/products';
 import { Product } from '../types';
 
@@ -164,6 +165,11 @@ export default function Reviews() {
 
   return (
     <div className="min-h-screen bg-background dark:bg-[#100E0D] text-primary dark:text-[#F5F2EB] transition-colors duration-300">
+      <SEO
+        title="Client Impressions & Verified Reviews | JORIQUE Luxury Living"
+        description="Read genuine reviews, customer feedback, and styling experiences with JORIQUE luxury bedsheets, artisanal cushions, and heirloom textiles."
+        canonical="https://jorique.in/reviews"
+      />
       <Navbar />
 
       {/* Header Section */}

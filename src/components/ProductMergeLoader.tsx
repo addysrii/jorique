@@ -42,19 +42,19 @@ export default function ProductMergeLoader({
 
     const tMerge = setTimeout(() => {
       setPhase('merge');
-    }, 1800);
+    }, 1150);
 
     const tLogo = setTimeout(() => {
       setPhase('logo');
-    }, 3200);
+    }, 1950);
 
     const tComplete = setTimeout(() => {
       setPhase('complete');
       setIsExiting(true);
       if (onComplete) {
-        setTimeout(onComplete, 600);
+        setTimeout(onComplete, 450);
       }
-    }, 3200 + autoExitDelay + 1600);
+    }, 1950 + autoExitDelay + 450);
 
     return () => {
       clearTimeout(tMerge);
@@ -77,7 +77,7 @@ export default function ProductMergeLoader({
           key="product-merge-loader"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          exit={{ opacity: 0, transition: { duration: 0.6, ease: [0.22, 1, 0.36, 1] } }}
+          exit={{ opacity: 0, transition: { duration: 0.45, ease: [0.22, 1, 0.36, 1] } }}
           className="fixed inset-0 z-[99999] flex flex-col items-center justify-center overflow-hidden bg-[#FBF8F2] select-none"
 
 
@@ -92,18 +92,7 @@ export default function ProductMergeLoader({
           />
 
           {/* Decorative Corner Filigree Stars (✦) */}
-          <div className="absolute top-8 left-8 text-[#C6A96B] text-xl opacity-40 font-serif select-none pointer-events-none">
-            ✦
-          </div>
-          <div className="absolute top-8 right-8 text-[#C6A96B] text-xl opacity-40 font-serif select-none pointer-events-none">
-            ✦
-          </div>
-          <div className="absolute bottom-8 left-8 text-[#C6A96B] text-xl opacity-40 font-serif select-none pointer-events-none">
-            ✦
-          </div>
-          <div className="absolute bottom-8 right-8 text-[#C6A96B] text-xl opacity-40 font-serif select-none pointer-events-none">
-            ✦
-          </div>
+
 
           {/* Skip Button */}
           {showSkip && (
@@ -162,14 +151,14 @@ export default function ProductMergeLoader({
                       transition={
                         isMerged
                           ? {
-                            duration: 1.25,
+                            duration: 0.8,
                             ease: [0.65, 0, 0.35, 1],
-                            delay: (3 - Math.abs(prod.centerOffset)) * 0.04,
+                            delay: (3 - Math.abs(prod.centerOffset)) * 0.025,
                           }
                           : {
-                            duration: 0.85,
+                            duration: 0.55,
                             ease: [0.22, 1, 0.36, 1],
-                            delay: index * 0.1,
+                            delay: index * 0.06,
                           }
                       }
                       style={{
@@ -194,8 +183,8 @@ export default function ProductMergeLoader({
                         initial={{ opacity: 0, y: 6 }}
                         animate={
                           phase === 'ingress'
-                            ? { opacity: 1, y: 0, transition: { delay: index * 0.1 + 0.3, duration: 0.6 } }
-                            : { opacity: 0, y: -8, transition: { duration: 0.3 } }
+                            ? { opacity: 1, y: 0, transition: { delay: index * 0.06 + 0.18, duration: 0.4 } }
+                            : { opacity: 0, y: -8, transition: { duration: 0.25 } }
                         }
                       >
                         <span className="text-[8px] sm:text-[9px] md:text-[10px] font-sans font-medium tracking-[0.25em] text-[#7A7168] dark:text-[#9A9188] uppercase whitespace-nowrap block">
@@ -220,12 +209,12 @@ export default function ProductMergeLoader({
                         ? {
                           scale: [0, 1.4, 0.9],
                           opacity: [0, 0.95, 0.45],
-                          transition: { delay: 0.7, duration: 0.8, ease: 'easeOut' },
+                          transition: { delay: 0.4, duration: 0.55, ease: 'easeOut' },
                         }
                         : {
                           scale: 2.2,
                           opacity: 0,
-                          transition: { duration: 0.9, ease: 'easeOut' },
+                          transition: { duration: 0.6, ease: 'easeOut' },
                         }
                     }
                     className="absolute z-20 pointer-events-none w-36 h-36 rounded-full"
@@ -247,24 +236,24 @@ export default function ProductMergeLoader({
               {(phase === 'logo' || phase === 'complete') && (
                 <motion.div
                   key="jorique-logo-container"
-                  initial={{ opacity: 0, scale: 0.92, y: 15 }}
+                  initial={{ opacity: 0, scale: 0.94, y: 12 }}
                   animate={{ opacity: 1, scale: 1, y: 0 }}
-                  transition={{ duration: 1.1, ease: [0.16, 1, 0.3, 1] }}
+                  transition={{ duration: 0.75, ease: [0.16, 1, 0.3, 1] }}
                   className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none z-30"
                 >
                   {/* Outer Glow Halo */}
                   <motion.div
                     initial={{ opacity: 0, scale: 0.8 }}
                     animate={{ opacity: [0, 0.3, 0.15], scale: [0.8, 1.2, 1.0] }}
-                    transition={{ duration: 1.6, ease: 'easeOut' }}
+                    transition={{ duration: 1.0, ease: 'easeOut' }}
                     className="absolute w-80 sm:w-96 h-48 rounded-full bg-[#D4AF37]/25 blur-3xl pointer-events-none"
                   />
 
                   {/* Main JORIQUE Wordmark */}
                   <motion.h1
-                    initial={{ letterSpacing: '0.15em', opacity: 0, y: 10 }}
+                    initial={{ letterSpacing: '0.18em', opacity: 0, y: 8 }}
                     animate={{ letterSpacing: '0.28em', opacity: 1, y: 0 }}
-                    transition={{ duration: 1.3, ease: [0.16, 1, 0.3, 1] }}
+                    transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
                     className="font-serif text-4xl sm:text-6xl md:text-7xl font-light text-[#231C16] tracking-[0.28em] uppercase relative select-none"
                   >
                     JORIQUE
@@ -274,7 +263,7 @@ export default function ProductMergeLoader({
                   <motion.div
                     initial={{ scaleX: 0, opacity: 0 }}
                     animate={{ scaleX: 1, opacity: 1 }}
-                    transition={{ duration: 0.9, delay: 0.3, ease: [0.16, 1, 0.3, 1] }}
+                    transition={{ duration: 0.6, delay: 0.18, ease: [0.16, 1, 0.3, 1] }}
                     className="h-[1.5px] w-48 sm:w-72 md:w-80 mt-3 sm:mt-4 bg-gradient-to-r from-transparent via-[#C6A96B] to-transparent origin-center"
                   />
 
@@ -282,7 +271,7 @@ export default function ProductMergeLoader({
                   <motion.p
                     initial={{ opacity: 0, y: 8 }}
                     animate={{ opacity: 0.85, y: 0 }}
-                    transition={{ duration: 0.8, delay: 0.5, ease: 'easeOut' }}
+                    transition={{ duration: 0.55, delay: 0.32, ease: 'easeOut' }}
                     className="font-serif italic text-xs sm:text-sm md:text-base text-[#6F665D] tracking-[0.16em] mt-3 sm:mt-4 text-center select-none"
                   >
                     Where Comfort Meets Design
@@ -297,11 +286,7 @@ export default function ProductMergeLoader({
           </div>
 
           {/* Footer Sub-indicator */}
-          <div className="absolute bottom-8 flex flex-col items-center pointer-events-none opacity-50">
-            <span className="text-[9px] tracking-[0.3em] uppercase text-[#8A8177] font-mono">
-              The Luxury Atelier
-            </span>
-          </div>
+
 
         </motion.div>
       )}

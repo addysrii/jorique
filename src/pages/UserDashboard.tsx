@@ -23,6 +23,7 @@ import {
 } from 'lucide-react';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
+import SEO from '../components/SEO';
 import { useAuth } from '../context/AuthContext';
 import { dashboardRequest } from '../lib/api';
 import { orderService, StoredOrder } from '../lib/api/orders';
@@ -180,6 +181,11 @@ export default function UserDashboard() {
 
   return (
     <div className="min-h-screen bg-background dark:bg-[#100E0D] text-primary dark:text-[#F5F2EB] transition-colors duration-300">
+      <SEO
+        title="Client Atelier & Order Sanctuary | JORIQUE"
+        description="Private patron account dashboard for order tracking, bespoke inquiries, and shipping status."
+        noindex={true}
+      />
       <Navbar />
 
       <main className="pt-28 pb-24 px-4 sm:px-6 lg:px-12">

@@ -3,6 +3,7 @@ import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { AlertCircle, Loader2, ShieldCheck, ArrowLeft } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import InteractiveLoginCharacters from '../components/InteractiveLoginCharacters';
+import SEO from '../components/SEO';
 
 export default function VerifyOtp() {
   const { verifyOtp } = useAuth();
@@ -46,6 +47,11 @@ export default function VerifyOtp() {
 
   return (
     <main className="min-h-screen bg-[#FDFBF7] dark:bg-[#0E0D0C] flex flex-col justify-center items-center px-4 sm:px-6 py-12 selection:bg-[#D4AF37]/30 selection:text-primary relative overflow-hidden font-sans">
+      <SEO
+        title="Security Verification | JORIQUE"
+        description="Verify your one-time authentication passcode to access your JORIQUE account."
+        noindex={true}
+      />
 
       {/* Main Dual-Panel Container */}
       <div className="w-full max-w-6xl grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-14 items-center justify-center my-auto py-6" style={{ minHeight: '80vh' }}>

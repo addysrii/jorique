@@ -3,6 +3,7 @@ import { Link, Navigate, useNavigate, useLocation } from 'react-router-dom';
 import { AlertCircle, Eye, EyeOff, Loader2 } from 'lucide-react';
 import InteractiveLoginCharacters from '../components/InteractiveLoginCharacters';
 import GoogleAuthButton from '../components/GoogleAuthButton';
+import SEO from '../components/SEO';
 import { useAuth } from '../context/AuthContext';
 import type { AppUser } from '../types';
 
@@ -56,6 +57,11 @@ export default function Signup() {
 
   return (
     <main className="min-h-screen bg-[#FDFBF7] dark:bg-[#0E0D0C] flex flex-col justify-center items-center px-4 sm:px-6 py-12 selection:bg-[#D4AF37]/30 selection:text-primary relative overflow-hidden font-sans">
+      <SEO
+        title="Create an Atelier Account | JORIQUE"
+        description="Join JORIQUE to enjoy bespoke concierge recommendations, priority order fulfillment, and personalized textile collections."
+        noindex={true}
+      />
 
       {/* Top Left Navigation Link */}
       {/* <Link

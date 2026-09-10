@@ -195,11 +195,10 @@ export default function ProductDescriptionTable({
               {finalSpecs.map((row, idx) => (
                 <tr
                   key={idx}
-                  className={`transition-colors ${
-                    idx % 2 === 0
-                      ? 'bg-transparent'
-                      : 'bg-[#FAF8F5]/60 dark:bg-white/[0.02]'
-                  } hover:bg-cream/50 dark:hover:bg-white/[0.04]`}
+                  className={`transition-colors ${idx % 2 === 0
+                    ? 'bg-transparent'
+                    : 'bg-[#FAF8F5]/60 dark:bg-white/[0.02]'
+                    } hover:bg-cream/50 dark:hover:bg-white/[0.04]`}
                 >
                   <td className="py-2.5 px-3.5 sm:px-4 font-medium text-secondary dark:text-white/70 align-top tracking-wide">
                     {row.key}
@@ -228,9 +227,8 @@ export default function ProductDescriptionTable({
               {parsed.care.map((item, idx) => (
                 <tr
                   key={idx}
-                  className={`transition-colors ${
-                    idx % 2 === 0 ? 'bg-transparent' : 'bg-[#FAF8F5]/60 dark:bg-white/[0.02]'
-                  } hover:bg-cream/40 dark:hover:bg-white/[0.04]`}
+                  className={`transition-colors ${idx % 2 === 0 ? 'bg-transparent' : 'bg-[#FAF8F5]/60 dark:bg-white/[0.02]'
+                    } hover:bg-cream/40 dark:hover:bg-white/[0.04]`}
                 >
                   <td className="py-2 px-3 sm:px-4 text-[10px] font-mono font-bold text-[#C6A96B] dark:text-[#D4AF37] w-8 text-center align-top">
                     {String(idx + 1).padStart(2, '0')}
@@ -246,7 +244,7 @@ export default function ProductDescriptionTable({
       )}
 
       {/* Colour / Product Disclaimer */}
-      {parsed.disclaimer && (
+      {/* {parsed.disclaimer && (
         <div className="p-3 rounded-xl bg-amber-500/5 dark:bg-amber-500/10 border border-amber-500/20 text-xs text-secondary dark:text-white/70 leading-relaxed flex items-start gap-2">
           <Info size={14} className="text-amber-600 dark:text-amber-400 mt-0.5 shrink-0" />
           <div>
@@ -256,7 +254,7 @@ export default function ProductDescriptionTable({
             <span>{parsed.disclaimer}</span>
           </div>
         </div>
-      )}
+      )} */}
     </div>
   );
 }

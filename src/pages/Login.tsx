@@ -3,6 +3,7 @@ import { Link, Navigate, useLocation, useNavigate } from 'react-router-dom';
 import { AlertCircle, Eye, EyeOff, Loader2, Sparkles, MessageCircle, Phone, ArrowRight, RotateCw, CheckCircle2, ExternalLink } from 'lucide-react';
 import InteractiveLoginCharacters from '../components/InteractiveLoginCharacters';
 import GoogleAuthButton from '../components/GoogleAuthButton';
+import SEO from '../components/SEO';
 import { useAuth } from '../context/AuthContext';
 
 export default function Login() {
@@ -141,6 +142,11 @@ export default function Login() {
 
   return (
     <main className="min-h-screen bg-[#F5EDE3] dark:bg-[#12100E] text-[#1A1A1A] dark:text-[#FCFAF7] flex items-center justify-center p-4 sm:p-8 transition-colors duration-300">
+      <SEO
+        title="Client Sign In | JORIQUE"
+        description="Access your bespoke JORIQUE client portal, view order tracking, and manage your wishlist."
+        noindex={true}
+      />
       {/* Top Left Floating Brand Link */}
       <Link
         to="/"

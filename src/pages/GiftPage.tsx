@@ -4,6 +4,7 @@ import { Loader2, Gift, CheckCircle, XCircle, Sparkles, Copy } from 'lucide-reac
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import Parallax3DCard from '../components/Parallax3DCard';
+import SEO from '../components/SEO';
 import { claimGift } from '../lib/api/products';
 
 const GiftPage = () => {
@@ -45,6 +46,11 @@ const GiftPage = () => {
 
   return (
     <div className="min-h-screen bg-background dark:bg-[#100E0D] text-primary dark:text-[#F5F2EB] flex flex-col justify-between overflow-hidden transition-colors duration-300">
+      <SEO
+        title="Exclusive Gift Experience | JORIQUE Atelier"
+        description="Claim your complimentary luxury gift or bespoke reward with your authentic JORIQUE verification code."
+        canonical="https://jorique.in/gift"
+      />
       <Navbar />
 
       <main className="flex-1 flex items-center justify-center p-6 pt-32 pb-20">

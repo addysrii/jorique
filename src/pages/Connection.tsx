@@ -22,6 +22,7 @@ import {
 } from 'lucide-react';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
+import SEO from '../components/SEO';
 
 export default function Connection() {
   const [copied, setCopied] = useState(false);
@@ -113,6 +114,11 @@ END:VCARD`;
 
   return (
     <div className="min-h-screen bg-[#FDFBF7] dark:bg-[#100E0D] text-primary dark:text-[#F5F2EB] flex flex-col justify-between font-sans selection:bg-[#2C2623] selection:text-white transition-colors duration-300">
+      <SEO
+        title="Connect With Our Concierge Atelier | JORIQUE"
+        description="Reach the JORIQUE client care concierge for bespoke orders, gifting consultations, customer support, and styling inquiries."
+        canonical="https://jorique.in/connect"
+      />
       <Navbar />
 
       <main className="flex-grow flex items-center justify-center px-4 py-8 pt-28 sm:py-16">

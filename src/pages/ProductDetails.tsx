@@ -27,6 +27,7 @@ import ProductImageGallery from '../components/ProductImageGallery';
 import SizeGuideModal from '../components/SizeGuideModal';
 import ColorDisclaimerSection from '../components/ColorDisclaimerSection';
 import ProductDescriptionTable, { parseProductDescription } from '../components/ProductDescriptionTable';
+import SEO from '../components/SEO';
 import { productService } from '../lib/api/products';
 import { Product } from '../types';
 import { useCart } from '../context/CartContext';
@@ -481,8 +482,45 @@ export default function ProductDetails() {
     discount_price: currentPrice,
   };
 
+  const productImageUrl = product.images && product.images.length > 0
+    ? (product.images[0].startsWith('http') ? product.images[0] : `https://jorique.in${product.images[0]}`)
+    : 'https://jorique.in/images/hero.png';
+
+  const productCleanDescription = product.description
+    ? product.description.replace(/[\r\n]+/g, ' ').slice(0, 160)
+    : `Experience the heirloom craftsmanship of the ${product.name} by JORIQUE.`;
+
+  const productStructuredData = {
+    '@context': 'https://schema.org/',
+    '@type': 'Product',
+    name: product.name,
+    image: product.images && product.images.length > 0 ? product.images : [productImageUrl],
+    description: product.description || productCleanDescription,
+    sku: product.sku || product.id,
+    brand: {
+      '@type': 'Brand',
+      name: 'JORIQUE'
+    },
+    offers: {
+      '@type': 'Offer',
+      url: `https://jorique.in/product/${product.id}`,
+      priceCurrency: 'INR',
+      price: currentPrice,
+      availability: (product.quantity && product.quantity > 0) ? 'https://schema.org/InStock' : 'https://schema.org/InStock',
+      itemCondition: 'https://schema.org/NewCondition'
+    }
+  };
+
   return (
     <div className="min-h-screen bg-background dark:bg-[#100E0D] text-primary dark:text-[#F5F2EB] transition-colors duration-300">
+      <SEO
+        title={`${product.name} | JORIQUE Luxury Home & Living`}
+        description={productCleanDescription}
+        canonical={`https://jorique.in/product/${product.id}`}
+        image={productImageUrl}
+        type="product"
+        structuredData={productStructuredData}
+      />
       <Navbar />
 
       <div className="pt-20 lg:pt-24">
@@ -837,38 +875,8 @@ export default function ProductDetails() {
               <div className="border-t border-border dark:border-[#2E2925] pt-4 divide-y divide-border dark:divide-[#2E2925]">
 
                 {/* 1. Product Features Highlight Grid */}
-                <div className="py-4">
-                  <button
-                    onClick={() => toggleAccordion('features')}
-                    className="w-full flex items-center justify-between text-left group"
-                  >
-                    <span className="flex items-center gap-2.5 text-sm font-semibold tracking-wide text-primary dark:text-white group-hover:text-[#D4AF37] transition-colors">
-                      <Sparkles size={16} className="text-[#D4AF37]" />
-                      Product Features & Benefits
-                    </span>
-                    <ChevronDown
-                      size={18}
-                      className={`text-secondary transition-transform duration-200 ${openAccordions.features ? 'rotate-180' : ''
-                        }`}
-                    />
-                  </button>
-
-                  <AnimatePresence>
-                    {openAccordions.features && (
-                      <motion.div
-                        initial={{ opacity: 0, height: 0 }}
-                        animate={{ opacity: 1, height: 'auto' }}
-                        exit={{ opacity: 0, height: 0 }}
-                        transition={{ duration: 0.25 }}
-                        className="overflow-hidden pt-4"
-                      >
-                        <div className="p-5 rounded-2xl bg-cream/35 dark:bg-white/5 border border-border/70 dark:border-[#2E2925] text-center text-xs text-secondary dark:text-white/60">
-                          Content to be added
-                        </div>
-                      </motion.div>
-                    )}
-                  </AnimatePresence>
-                </div>
+                {/* 
+                 */}
 
                 {/* 2. Product Details & Specifications (Tabular Format) */}
                 <div className="py-4">
@@ -1034,7 +1042,7 @@ export default function ProductDetails() {
         </div>
 
         {/* ATMOSPHERIC EDITORIAL SHOWCASE (Stoa Paris Signature Full-Width Section) */}
-        <section className="my-16 lg:my-24 py-16 lg:py-24 bg-cream/40 dark:bg-[#151311] border-y border-border/80 dark:border-[#2E2925] overflow-hidden">
+        {/* <section className="my-16 lg:my-24 py-16 lg:py-24 bg-cream/40 dark:bg-[#151311] border-y border-border/80 dark:border-[#2E2925] overflow-hidden">
           <div className="max-w-6xl mx-auto px-6 lg:px-12">
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-14 items-center">
               <div className="lg:col-span-6 space-y-6">
@@ -1059,20 +1067,20 @@ export default function ProductDetails() {
                     className="w-full h-full object-cover"
                   />
                 </div>
-                {/* Micro Ambient Note */}
+                
                 <p className="text-[11px] text-secondary/70 dark:text-white/50 text-center mt-3 italic">
                   * Fabric sheen and golden hues adapt gracefully to warm ambient bedroom lighting.
                 </p>
               </div>
             </div>
           </div>
-        </section>
+        </section> */}
 
         {/* COLOUR DISCLAIMER SECTION WITH MULTI-DEVICE MOCKUPS */}
         <ColorDisclaimerSection images={product.images} productName={product.name} />
 
         {/* CUSTOMER REVIEWS & RATINGS SECTION */}
-        <section id="reviews-section" className="py-14 lg:py-20 max-w-6xl mx-auto px-6 lg:px-12">
+        {/* <section id="reviews-section" className="py-14 lg:py-20 max-w-6xl mx-auto px-6 lg:px-12">
           <div className="text-center max-w-2xl mx-auto mb-10 space-y-2">
             <span className="text-[11px] font-bold uppercase tracking-[0.25em] text-[#851C25] dark:text-[#D4AF37]">
               Customer Experiences
@@ -1095,7 +1103,7 @@ export default function ProductDetails() {
               </Link>
             </div>
           </div>
-        </section>
+        </section> */}
 
         {/* RELATED PRODUCTS SECTION */}
         {relatedProducts.length > 0 && (

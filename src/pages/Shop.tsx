@@ -8,7 +8,7 @@ import ProductCard from '../components/ProductCard';
 import { productService } from '../lib/api/products';
 import { Product } from '../types';
 import ShopDealsBannerCarousel from '../components/ShopDealsBannerCarousel';
-
+import SEO from '../components/SEO';
 import { supabase } from '../lib/supabase';
 
 export default function Shop() {
@@ -117,8 +117,49 @@ export default function Shop() {
     );
   }
 
+  const pageTitle =
+    selectedCategory && selectedCategory !== 'All'
+      ? `${selectedCategory} Collection | JORIQUE Luxury Essentials`
+      : 'Shop Luxury Bed Linens, Cushions, Apparel & Bath | JORIQUE';
+
+  const pageDescription =
+    selectedCategory && selectedCategory !== 'All'
+      ? `Explore JORIQUE's luxury handcrafted ${selectedCategory} collection made from heirloom natural fibers.`
+      : 'Explore JORIQUE’s curated collection of luxury bedsheets, artisanal cushions, plush cloud towels, and tailored apparel.';
+
+  const shopStructuredData = {
+    '@context': 'https://schema.org',
+    '@type': 'CollectionPage',
+    name: pageTitle,
+    description: pageDescription,
+    url: 'https://jorique.in/shop',
+    breadcrumb: {
+      '@type': 'BreadcrumbList',
+      itemListElement: [
+        {
+          '@type': 'ListItem',
+          position: 1,
+          name: 'Home',
+          item: 'https://jorique.in/'
+        },
+        {
+          '@type': 'ListItem',
+          position: 2,
+          name: 'Shop',
+          item: 'https://jorique.in/shop'
+        }
+      ]
+    }
+  };
+
   return (
     <div className="min-h-screen bg-background dark:bg-[#100E0D] text-primary dark:text-[#F5F2EB] transition-colors duration-300">
+      <SEO
+        title={pageTitle}
+        description={pageDescription}
+        canonical="https://jorique.in/shop"
+        structuredData={shopStructuredData}
+      />
       <Navbar />
 
       <div className="pt-20 lg:pt-24">

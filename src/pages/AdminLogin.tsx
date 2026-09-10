@@ -16,6 +16,7 @@ import {
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useAuth } from '../context/AuthContext';
+import SEO from '../components/SEO';
 
 export default function AdminLogin() {
   const { signIn, user, signOut } = useAuth();
@@ -72,6 +73,10 @@ export default function AdminLogin() {
 
   return (
     <main className="min-h-screen bg-[#0A0908] text-[#FAF8F5] flex flex-col items-center justify-center p-4 sm:p-6 relative overflow-hidden selection:bg-[#D4AF37]/30 selection:text-[#D4AF37]">
+      <SEO
+        title="Admin Sign In | JORIQUE Atelier"
+        noindex={true}
+      />
       {/* Ambient Luxury Dark Backdrop with Gilded Glows */}
       <div
         className="absolute -top-40 left-1/2 -translate-x-1/2 w-[900px] h-[500px] rounded-full blur-[160px] pointer-events-none opacity-25"

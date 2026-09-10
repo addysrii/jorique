@@ -1,6 +1,18 @@
 User-agent: *
 Allow: /
+Allow: /shop
+Allow: /product/
+Allow: /about
+Allow: /reviews
+Allow: /connect
+Allow: /return-policy
+Allow: /gift
+Allow: /scan
 Disallow: /admin
 Disallow: /dashboard
+Disallow: /login
+Disallow: /signup
+Disallow: /verify-otp
+Disallow: /api/
 
 Sitemap: https://jorique.in/sitemap.xml

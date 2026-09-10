@@ -13,6 +13,7 @@ import AtelierParallaxThemes from '../components/AtelierParallaxThemes';
 import PopOutProductDeck from '../components/PopOutProductDeck';
 import CraftsmanshipHeritageSection from '../components/CraftsmanshipHeritageSection';
 import HandcraftedFloralBackground, { HandcraftedFloralDivider } from '../components/HandcraftedFloralBackground';
+import SEO from '../components/SEO';
 import { productService } from '../lib/api/products';
 import { Product } from '../types';
 
@@ -112,8 +113,43 @@ export default function Home() {
     );
   }
 
+  const homeStructuredData = {
+    '@context': 'https://schema.org',
+    '@graph': [
+      {
+        '@type': 'Organization',
+        '@id': 'https://jorique.in/#organization',
+        name: 'JORIQUE',
+        url: 'https://jorique.in/',
+        logo: 'https://jorique.in/favicon.svg',
+        description: 'Heirloom-quality organic linen, luxury bedsheets, plush towels, and tailored essentials crafted for modern sanctuaries.',
+        sameAs: []
+      },
+      {
+        '@type': 'WebSite',
+        '@id': 'https://jorique.in/#website',
+        url: 'https://jorique.in/',
+        name: 'JORIQUE',
+        publisher: { '@id': 'https://jorique.in/#organization' },
+        potentialAction: {
+          '@type': 'SearchAction',
+          target: 'https://jorique.in/shop?search={search_term_string}',
+          'query-input': 'required name=search_term_string'
+        }
+      }
+    ]
+  };
+
   return (
     <div className="min-h-screen bg-background dark:bg-[#14100D] text-primary dark:text-[#FCFAF7] overflow-hidden transition-colors duration-300">
+      <SEO
+        title="JORIQUE — Where Comfort Meets Design | Luxury Home Textiles & Apparel"
+        description="Discover heirloom-quality organic linen, luxury bedsheets, plush towels, and tailored apparel thoughtfully crafted for modern sanctuaries."
+        keywords="JORIQUE, luxury bedding, organic linen, designer bedsheets, mulberry silk, Egyptian cotton, home textiles, everyday luxury India"
+        canonical="https://jorique.in/"
+        image="/images/hero.png"
+        structuredData={homeStructuredData}
+      />
       <Navbar />
 
       {/* 🌸 Handcrafted Artisanal Floral & Botanical Background Tapestry */}
