@@ -1,4 +1,4 @@
-import { useEffect, lazy, Suspense } from 'react';
+import { useEffect, useState, lazy, Suspense } from 'react';
 import { BrowserRouter, Routes, Route, useLocation, Navigate } from 'react-router-dom';
 import { AnimatePresence, motion } from 'framer-motion';
 import { AuthProvider } from './context/AuthContext';
@@ -9,6 +9,7 @@ import WhatsAppCheckoutModal from './components/WhatsAppCheckoutModal';
 import ErrorBoundary from './components/ErrorBoundary';
 import ProtectedRoute from './components/ProtectedRoute';
 import HandcraftedFloralBackground from './components/HandcraftedFloralBackground';
+import ProductMergeLoader from './components/ProductMergeLoader';
 import Home from './pages/Home';
 
 // Lazy-loaded routes for performance & code splitting
@@ -31,14 +32,29 @@ const GiftPage = lazy(() => import('./pages/GiftPage'));
 const ReturnPolicy = lazy(() => import('./pages/ReturnPolicy'));
 
 function PageLoader() {
-  return (
-    <div className="min-h-screen bg-background dark:bg-[#100E0D] flex flex-col items-center justify-center transition-colors duration-300">
-      <div className="w-10 h-10 border-2 border-[#3F3A36] dark:border-[#D4AF37] border-t-transparent rounded-full animate-spin mb-4" />
-      <p className="text-[10px] uppercase font-semibold tracking-[0.3em] text-[#8D867F] dark:text-[#D4AF37]">
-        JORIQUE
-      </p>
-    </div>
-  );
+  return <ProductMergeLoader autoExitDelay={600} showSkip={true} />;
+}
+
+function InitialIntroLoader() {
+  const [showIntro, setShowIntro] = useState(() => {
+    // Show intro once per session, or allow explicit replay
+    return !sessionStorage.getItem('jorique_intro_seen');
+  });
+
+  useEffect(() => {
+    const handleReplay = () => setShowIntro(true);
+    window.addEventListener('jorique:replay-intro', handleReplay);
+    return () => window.removeEventListener('jorique:replay-intro', handleReplay);
+  }, []);
+
+  const handleComplete = () => {
+    sessionStorage.setItem('jorique_intro_seen', 'true');
+    setShowIntro(false);
+  };
+
+  if (!showIntro) return null;
+
+  return <ProductMergeLoader onComplete={handleComplete} autoExitDelay={1000} showSkip={true} />;
 }
 
 function ScrollToTop() {
@@ -280,6 +296,7 @@ export default function App() {
         <AuthProvider>
           <CartProvider>
             <BrowserRouter>
+              <InitialIntroLoader />
               <ScrollToTop />
               <GlobalBackground />
               <AnimatedRoutes />

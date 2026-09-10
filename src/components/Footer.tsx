@@ -62,10 +62,21 @@ export default function Footer() {
           <p className="text-xs text-secondary dark:text-white/50 tracking-wide">
             &copy; {new Date().getFullYear()} JORIQUE. All rights reserved.
           </p>
-          <p className="text-xs text-secondary/60 dark:text-white/40 tracking-wide">
-            Where Comfort Meets Design
-            
-          </p>
+          <div className="flex items-center gap-6">
+            <button
+              type="button"
+              onClick={() => {
+                sessionStorage.removeItem('jorique_intro_seen');
+                window.dispatchEvent(new CustomEvent('jorique:replay-intro'));
+              }}
+              className="text-xs text-[#C6A96B] hover:text-[#D4AF37] dark:text-[#C6A96B] dark:hover:text-[#D4AF37] font-medium tracking-wider flex items-center gap-1.5 transition-colors cursor-pointer"
+            >
+              <span>✦</span> Replay Brand Intro
+            </button>
+            <p className="text-xs text-secondary/60 dark:text-white/40 tracking-wide">
+              Where Comfort Meets Design
+            </p>
+          </div>
         </div>
       </div>
     </footer>
