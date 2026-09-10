@@ -80,15 +80,15 @@ export default function ProductMergeLoader({
           exit={{ opacity: 0, transition: { duration: 0.6, ease: [0.22, 1, 0.36, 1] } }}
           className="fixed inset-0 z-[99999] flex flex-col items-center justify-center overflow-hidden bg-[#FBF8F2] select-none"
 
-          
+
         >
           {/* Subtle Ambient Radial Golden Warmth */}
           <div
             className="absolute inset-0 pointer-events-none"
-            style={{
-              background:
-                'radial-gradient(ellipse 70% 60% at 50% 50%, rgba(212, 175, 55, 0.12) 0%, rgba(198, 169, 107, 0.06) 45%, transparent 75%)',
-            }}
+          // style={{
+          //   background:
+          //     'radial-gradient(ellipse 70% 60% at 50% 50%, rgba(212, 175, 55, 0.12) 0%, rgba(198, 169, 107, 0.06) 45%, transparent 75%)',
+          // }}
           />
 
           {/* Decorative Corner Filigree Stars (✦) */}
@@ -140,7 +140,7 @@ export default function ProductMergeLoader({
                     <motion.div
                       key={prod.id}
                       className="relative flex flex-col items-center justify-end z-10"
-                      initial={{ opacity: 0, y: 35, scale: 0.9 }}
+                      initial={{ opacity: 0, y: 35, }}
                       animate={
                         isMerged
                           ? {
@@ -149,7 +149,7 @@ export default function ProductMergeLoader({
                             y: 0,
                             scale: 0.35,
                             opacity: 0,
-                            filter: 'blur(10px) brightness(1.7)',
+                            filter: 'brightness(1.7)',
                           }
                           : {
                             opacity: 1,
@@ -177,14 +177,14 @@ export default function ProductMergeLoader({
                       }}
                     >
                       {/* Product Cutout Wrapper */}
-                      <div className="relative flex items-center justify-center w-14 sm:w-20 md:w-28 lg:w-32 h-20 sm:h-28 md:h-36 lg:h-40">
+                      <div className="relative flex items-center justify-center w-14 sm:w-20 md:w-28 lg:w-32 h-28 sm:h-28 md:h-36 lg:h-48">
                         {/* Soft pedestal shadow */}
-                        <div className="absolute -bottom-2 w-4/5 h-3 bg-black/10 rounded-full blur-sm pointer-events-none" />
+                        <div className="absolute -bottom-2 w-4/5 h-12  rounded-full  pointer-events-none" />
 
                         <img
                           src={prod.src}
                           alt={prod.name}
-                          className="max-w-full max-h-full object-contain pointer-events-none select-none drop-shadow-md transition-transform"
+                          className="max-w-full max-h-full object-contain pointer-events-none select-none  transition-transform"
                         />
                       </div>
 
@@ -288,15 +288,8 @@ export default function ProductMergeLoader({
                     Where Comfort Meets Design
                   </motion.p>
 
-                  {/* Micro Golden Sparkle Accent */}
-                  <motion.div
-                    initial={{ scale: 0, rotate: -45 }}
-                    animate={{ scale: [0, 1.2, 1], rotate: [0, 90, 0] }}
-                    transition={{ duration: 1.0, delay: 0.7, ease: 'easeOut' }}
-                    className="mt-4 text-[#C6A96B] text-xs font-serif"
-                  >
-                    ✦
-                  </motion.div>
+
+
                 </motion.div>
               )}
             </AnimatePresence>
