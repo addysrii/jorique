@@ -7,13 +7,19 @@ export default {
       colors: {
         // JORIQUE Official 60-25-10-5 Brand Palette
         'warm-ivory': '#F5EDE3',  // 60% Dominant Base / Primary Background
-        'brand-ivory': '#F5EDE3',
+        // JORIQUE Specification Colors
         'brand-beige': '#F5EDE3',
-        'brand-black': '#1A1A1A',  // 25% Structure, Typography & Contrasts
-        'brand-gold': '#C6A96B',   // 10% Luxury Accents, Borders & Details
-        'deep-teal': '#0B5F61',    // 5% Special Elements & Standout Moments
-        'brand-teal': '#0B5F61',
+        'brand-ivory': '#FCFAF7',
+        'brand-gold': '#C6A96B',
+        'brand-black': '#1A1A1A',
         'brand-stone': '#8A847D',
+
+        // Specific Collection Colors
+        'collection-essential': '#7A8B72',
+        'collection-signature': '#243B64',
+        'collection-luxe': '#641F2D',
+        'collection-souvenir': '#B9787D',
+        'collection-hospitality': '#4B5563',
 
         background: '#F5EDE3',
         primary: '#1A1A1A',
@@ -26,7 +32,7 @@ export default {
         ivory: '#FCFAF7',
         'warm-white': '#FAF7F2',
 
-        // Dark Mode Luxury Palette (Smoked Walnut & Aged Teak)
+        // Dark Mode Luxury Palette
         'dark-bg': '#14100D',
         'dark-surface': '#1C1613',
         'dark-card': '#251E19',
@@ -37,13 +43,13 @@ export default {
         'dark-teal': '#0E7A7D',
       },
       fontFamily: {
-        serif: ['ui-serif', 'Georgia', 'Cambria', '"Times New Roman"', 'Times', 'serif'],
-        times: ['"Times New Roman"', 'Times', 'Georgia', 'serif'],
+        serif: ['"Cormorant Garamond"', 'ui-serif', 'Georgia', 'serif'],
+        times: ['"Cormorant Garamond"', '"Times New Roman"', 'serif'],
         sans: ['"Manrope"', 'Inter', 'system-ui', 'sans-serif'],
-        heading: ['ui-serif', 'Georgia', 'Cambria', '"Times New Roman"', 'Times', 'serif'],
+        heading: ['"Cormorant Garamond"', 'serif'],
         body: ['"Manrope"', 'Inter', 'system-ui', 'sans-serif'],
-        logo: ['ui-serif', 'Georgia', 'Cambria', '"Times New Roman"', 'Times', 'serif'],
-        mainlogo: ['ui-serif', 'Georgia', 'Cambria', '"Times New Roman"', 'Times', 'serif'],
+        logo: ['"Cormorant Garamond"', 'serif'],
+        mainlogo: ['"Cormorant Garamond"', 'serif'],
       },
       letterSpacing: {
         logo: '0.20em',
