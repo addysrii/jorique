@@ -148,7 +148,7 @@ export default function Navbar({}: NavbarProps) {
       <motion.header
         className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
           transparent
-            ? 'bg-transparent'
+            ? 'bg-black/35 backdrop-blur-md border-b border-white/10 shadow-xs'
             : 'bg-white/95 dark:bg-[#12100E]/95 backdrop-blur-md border-b border-border dark:border-[#2E2925] shadow-sm'
         }`}
         initial={{ y: -80 }}
