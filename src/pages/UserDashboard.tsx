@@ -215,11 +215,10 @@ export default function UserDashboard() {
           <div className="flex items-center gap-2 sm:gap-3 border-b border-border dark:border-[#2E2925] overflow-x-auto pb-px">
             <button
               onClick={() => setActiveTab('overview')}
-              className={`flex items-center gap-2 px-4 py-3 text-xs font-bold uppercase tracking-wider transition-all border-b-2 cursor-pointer ${
-                activeTab === 'overview'
-                  ? 'border-primary dark:border-[#D4AF37] text-primary dark:text-[#D4AF37]'
-                  : 'border-transparent text-secondary dark:text-white/60 hover:text-primary dark:hover:text-white'
-              }`}
+              className={`flex items-center gap-2 px-4 py-3 text-xs font-bold uppercase tracking-wider transition-all border-b-2 cursor-pointer ${activeTab === 'overview'
+                ? 'border-primary dark:border-[#D4AF37] text-primary dark:text-[#D4AF37]'
+                : 'border-transparent text-secondary dark:text-white/60 hover:text-primary dark:hover:text-white'
+                }`}
             >
               <User size={14} />
               <span>Overview</span>
@@ -227,11 +226,10 @@ export default function UserDashboard() {
 
             <button
               onClick={() => setActiveTab('orders')}
-              className={`flex items-center gap-2 px-4 py-3 text-xs font-bold uppercase tracking-wider transition-all border-b-2 cursor-pointer ${
-                activeTab === 'orders'
-                  ? 'border-primary dark:border-[#D4AF37] text-primary dark:text-[#D4AF37]'
-                  : 'border-transparent text-secondary dark:text-white/60 hover:text-primary dark:hover:text-white'
-              }`}
+              className={`flex items-center gap-2 px-4 py-3 text-xs font-bold uppercase tracking-wider transition-all border-b-2 cursor-pointer ${activeTab === 'orders'
+                ? 'border-primary dark:border-[#D4AF37] text-primary dark:text-[#D4AF37]'
+                : 'border-transparent text-secondary dark:text-white/60 hover:text-primary dark:hover:text-white'
+                }`}
             >
               <Package size={14} />
               <span>Order History</span>
@@ -244,11 +242,10 @@ export default function UserDashboard() {
 
             <button
               onClick={() => setActiveTab('privileges')}
-              className={`flex items-center gap-2 px-4 py-3 text-xs font-bold uppercase tracking-wider transition-all border-b-2 cursor-pointer ${
-                activeTab === 'privileges'
-                  ? 'border-primary dark:border-[#D4AF37] text-primary dark:text-[#D4AF37]'
-                  : 'border-transparent text-secondary dark:text-white/60 hover:text-primary dark:hover:text-white'
-              }`}
+              className={`flex items-center gap-2 px-4 py-3 text-xs font-bold uppercase tracking-wider transition-all border-b-2 cursor-pointer ${activeTab === 'privileges'
+                ? 'border-primary dark:border-[#D4AF37] text-primary dark:text-[#D4AF37]'
+                : 'border-transparent text-secondary dark:text-white/60 hover:text-primary dark:hover:text-white'
+                }`}
             >
               <Star size={14} />
               <span>Member Privileges</span>
@@ -281,14 +278,14 @@ export default function UserDashboard() {
                         </p>
                       </div>
 
-                      <div className="bg-white dark:bg-[#1A1816] border border-border dark:border-[#2E2925] rounded-2xl p-5 shadow-xs">
+                      {/* <div className="bg-white dark:bg-[#1A1816] border border-border dark:border-[#2E2925] rounded-2xl p-5 shadow-xs">
                         <p className="text-[10px] font-bold tracking-widest uppercase text-secondary dark:text-white/60 mb-2">
                           Client Tier
                         </p>
                         <p className="text-xl sm:text-2xl font-light text-[#C6A96B] dark:text-[#D4AF37]">
                           Patron
                         </p>
-                      </div>
+                      </div> */}
 
                       <div className="col-span-2 sm:col-span-1 bg-white dark:bg-[#1A1816] border border-border dark:border-[#2E2925] rounded-2xl p-5 shadow-xs">
                         <p className="text-[10px] font-bold tracking-widest uppercase text-secondary dark:text-white/60 mb-2">
@@ -325,7 +322,7 @@ export default function UserDashboard() {
                             to="/shop"
                             className="inline-block text-xs font-bold uppercase tracking-wider text-[#C6A96B] dark:text-[#D4AF37] hover:underline"
                           >
-                            Browse Linen & Suits Collection →
+                            Browse Our Collections →
                           </Link>
                         </div>
                       ) : (
@@ -436,11 +433,10 @@ export default function UserDashboard() {
                         <button
                           key={f.id}
                           onClick={() => setOrderFilter(f.id)}
-                          className={`px-3 py-1.5 rounded-xl text-xs font-semibold whitespace-nowrap transition-all cursor-pointer ${
-                            orderFilter === f.id
-                              ? 'bg-primary dark:bg-[#D4AF37] text-white dark:text-black shadow-xs'
-                              : 'bg-cream/40 dark:bg-white/5 text-secondary dark:text-white/70 hover:bg-cream dark:hover:bg-white/10'
-                          }`}
+                          className={`px-3 py-1.5 rounded-xl text-xs font-semibold whitespace-nowrap transition-all cursor-pointer ${orderFilter === f.id
+                            ? 'bg-primary dark:bg-[#D4AF37] text-white dark:text-black shadow-xs'
+                            : 'bg-cream/40 dark:bg-white/5 text-secondary dark:text-white/70 hover:bg-cream dark:hover:bg-white/10'
+                            }`}
                         >
                           {f.label}
                         </button>
