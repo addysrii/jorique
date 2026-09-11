@@ -237,11 +237,11 @@ export default function ProductExhibitionSection() {
               <span>THE JORIQUE EXHIBITION</span>
             </div>
 
-            <h2 className="font-serif text-3xl sm:text-5xl lg:text-6xl font-normal tracking-tight text-primary dark:text-white leading-[1.1]">
+            <h2 className="font-serif font-medium text-3xl sm:text-5xl lg:text-6xl tracking-tight text-primary dark:text-white leading-[1.1]">
               Exhibition of Tactile Form & Craft
             </h2>
 
-            <p className="text-xs sm:text-sm text-secondary dark:text-white/70 font-light leading-relaxed max-w-xl">
+            <p className="text-xs sm:text-sm text-secondary dark:text-white/70 font-normal leading-relaxed max-w-xl">
               An atelier curation of our finest weaves, architectural silhouettes, and everyday luxuries — displayed across Essential, Signature, and Luxe collections.
             </p>
           </div>
@@ -352,12 +352,12 @@ export default function ProductExhibitionSection() {
                     </div>
 
                     <Link to={`/product/${exhibit.sku || exhibit.id}`} className="block group-hover:text-[#851C25] dark:group-hover:text-[#C6A96B] transition-colors">
-                      <h3 className="font-serif text-lg sm:text-xl font-normal text-primary dark:text-white leading-snug line-clamp-2">
+                      <h3 className="font-serif font-semibold product-title text-lg sm:text-xl text-primary dark:text-white leading-snug line-clamp-2">
                         {exhibit.name}
                       </h3>
                     </Link>
 
-                    <p className="text-xs text-secondary dark:text-white/60 font-light line-clamp-1">
+                    <p className="text-xs text-secondary dark:text-white/60 font-normal line-clamp-1">
                       {exhibit.weaveDetail}
                     </p>
                   </div>

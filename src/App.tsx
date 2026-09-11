@@ -8,7 +8,6 @@ import CartDrawer from './components/CartDrawer';
 import WhatsAppCheckoutModal from './components/WhatsAppCheckoutModal';
 import ErrorBoundary from './components/ErrorBoundary';
 import ProtectedRoute from './components/ProtectedRoute';
-import HandcraftedFloralBackground from './components/HandcraftedFloralBackground';
 import ProductMergeLoader from './components/ProductMergeLoader';
 import Home from './pages/Home';
 
@@ -282,13 +281,6 @@ function AnimatedRoutes() {
   );
 }
 
-function GlobalBackground() {
-  const { pathname } = useLocation();
-  const isHome = pathname === '/' || pathname === '/home';
-  if (isHome) return null; // Home has its full-variant background with floating petals
-  return <HandcraftedFloralBackground variant="subtle" showFloatingPetals={false} />;
-}
-
 export default function App() {
   return (
     <ErrorBoundary>
@@ -298,7 +290,6 @@ export default function App() {
             <BrowserRouter>
               <InitialIntroLoader />
               <ScrollToTop />
-              <GlobalBackground />
               <AnimatedRoutes />
               <CartDrawer />
               <WhatsAppCheckoutModal />

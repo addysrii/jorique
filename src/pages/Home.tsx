@@ -2,7 +2,6 @@ import React from 'react';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import SEO from '../components/SEO';
-import HandcraftedFloralBackground from '../components/HandcraftedFloralBackground';
 
 // Flagship 3-Column Core Collections Hero & Philosophy Bar (Essential • Signature • Luxe)
 import FlagshipCollectionsHero from '../components/home/FlagshipCollectionsHero';
@@ -64,9 +63,6 @@ export default function Home() {
       {/* Top Navbar with Collections, About, The JORIQUE Experience, Contact, Search, Bag & COMFORT LIVES HERE */}
       <Navbar />
 
-      {/* Artisanal Floral & Botanical Background Tapestry */}
-      <HandcraftedFloralBackground variant="subtle" showFloatingPetals={false} />
-
       {/* ─────────────────────────────────────────────────────────────
           1. FLAGSHIP 3-COLUMN CORE COLLECTIONS HERO & PHILOSOPHY BAR
           (Essential • Signature • Luxe)
@@ -85,7 +81,7 @@ export default function Home() {
           3. 3D ISOMETRIC ATELIER CATALOGUE LOOKBOOK
           Exact Match to User Reference Mockup with 3D Page Flip Animation
       ───────────────────────────────────────────────────────────── */}
-      <Isometric3DCatalogue />
+      {/* <Isometric3DCatalogue /> */}
 
       {/* ─────────────────────────────────────────────────────────────
           4. PRODUCT EXHIBITION SALON

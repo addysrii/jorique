@@ -254,7 +254,7 @@ export default function ProductMergeLoader({
                     initial={{ letterSpacing: '0.18em', opacity: 0, y: 8 }}
                     animate={{ letterSpacing: '0.28em', opacity: 1, y: 0 }}
                     transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
-                    className="font-serif text-4xl sm:text-6xl md:text-7xl font-light text-[#231C16] tracking-[0.28em] uppercase relative select-none"
+                    className="font-mainlogo text-4xl sm:text-6xl md:text-7xl font-light text-[#231C16] tracking-[0.28em] uppercase relative select-none"
                   >
                     JORIQUE
                   </motion.h1>

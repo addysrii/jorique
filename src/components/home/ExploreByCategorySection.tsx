@@ -12,138 +12,88 @@ interface CategoryItem {
   previewTierNote: string;
 }
 
-const CATEGORIES: CategoryItem[] = [
+const categories = [
   {
-    id: 'bedding',
-    name: 'BEDDING',
-    description: 'Comfort designed for the spaces where the day begins and ends.',
-    link: '/shop?category=Bedsheet',
-    image: '/Products/2.jpg',
-    previewTierNote: 'Available in Essential • Signature • Luxe',
+    title: "Bed Sheets",
+    subtitle: "Ultra-soft cottons & dobby weaves",
+    image: "/images/luxury-products/bedsheet_clean.png",
+    link: "/shop?category=Bedsheet",
+    tag: "Signature Bedding"
   },
   {
-    id: 'cushion-covers',
-    name: 'CUSHION COVERS',
-    description: 'Thoughtful details that change the character of a room.',
-    link: '/shop?category=Pillow',
-    image: '/Products/1.jpg',
-    previewTierNote: 'Available in Essential • Signature • Luxe',
+    title: " Cushion Covers",
+    subtitle: "Handwoven textures & rich tones",
+    image: "/images/luxury-products/cushion_clean.png",
+    link: "/shop?category=Cushion+Cover",
+    tag: "Artisanal Living"
   },
   {
-    id: 'towels',
-    name: 'TOWELS',
-    description: 'Everyday rituals, elevated through texture and detail.',
-    link: '/shop?category=Towel',
-    image: '/images/luxury-products/towel_clean.png',
-    previewTierNote: 'Available in Essential • Signature • Luxe',
+    title: "Suits",
+    subtitle: "Crisp shirts & structured suiting",
+    image: "/images/luxury-products/suit_clean.png",
+    link: "/shop?category=Suits",
+    tag: "Modern Wardrobe"
   },
   {
-    id: 'table-linen',
-    name: 'TABLE LINEN',
-    description: 'Considered pieces for tables, gatherings and everyday moments.',
-    link: '/shop?category=Table%20Linen',
-    image: '/Products/4.jpg',
-    previewTierNote: 'Available in Essential • Signature • Luxe',
-  },
-  {
-    id: 'womens-suits',
-    name: "WOMEN'S SUITS",
-    description: 'Timeless comfort with thoughtful design and refined detail.',
-    link: '/shop?category=Suits',
-    image: '/Products/3.jpg',
-    previewTierNote: 'Available in Essential • Signature • Luxe',
-  },
+    title: "Towels",
+    subtitle: "High-absorbency cloud towels",
+    image: "/images/luxury-products/towel_clean.png",
+    link: "/shop?category=Towel",
+    tag: "Daily Rituals"
+  }
 ];
 
 export default function ExploreByCategorySection() {
   const [hoveredCategory, setHoveredCategory] = useState<string | null>(null);
 
   return (
-    <section className="py-20 sm:py-28 lg:py-36 px-4 sm:px-6 lg:px-12 bg-[#F5EDE3] dark:bg-[#14100D] text-primary dark:text-[#FCFAF7] transition-colors duration-500">
-      <div className="max-w-6xl mx-auto space-y-12 sm:space-y-16">
-        
-        {/* Section Header */}
-        <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 border-b border-[#E8DFD3] dark:border-[#2E2925] pb-8">
-          <div className="space-y-3 max-w-xl">
-            <span className="text-[11px] font-mono tracking-[0.3em] uppercase text-secondary dark:text-[#C6A96B] block">
-              05 — EXPLORE BY CATEGORY
+    <section className="py-20 lg:py-28 px-6">
+      <div className="max-w-6xl mx-auto space-y-12">
+        <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 border-b border-[#E8E1D5] dark:border-[#2E2925] pb-6">
+          <div>
+            <span className="text-[11px] font-bold uppercase tracking-[0.3em] text-[#851C25] dark:text-[#D4AF37]">
+              The Portfolio
             </span>
-            <h2 className="font-serif text-3xl sm:text-5xl font-medium tracking-tight text-primary dark:text-white">
-              Shop by Living Need
+            <h2 className="font-serif text-2xl sm:text-4xl font-normal text-[#1A1816] dark:text-white mt-1">
+              Explore The Collections
             </h2>
-            <p className="text-xs sm:text-sm text-secondary dark:text-white/70 font-light leading-relaxed">
-              Find exactly what your home calls for. Each category is meticulously loomed across our three tiers of refinement.
-            </p>
           </div>
-
-          <div className="hidden sm:flex items-center gap-2 text-[11px] font-mono tracking-wider uppercase text-secondary dark:text-[#C6A96B]/80 pb-1">
-            <span>Essential</span>
-            <span>→</span>
-            <span>Signature</span>
-            <span>→</span>
-            <span>Luxe</span>
-          </div>
+          <Link to="/shop" className="group inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-widest text-[#851C25] dark:text-[#D4AF37]">
+            <span>View Entire Catalogue</span>
+            <ArrowRight size={14} className="group-hover:translate-x-1 transition-transform" />
+          </Link>
         </div>
 
-        {/* Editorial Category Table / Rows */}
-        <div className="divide-y divide-[#E8DFD3] dark:divide-[#2E2925] border-y border-[#E8DFD3] dark:border-[#2E2925]">
-          {CATEGORIES.map((cat, idx) => (
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          {categories.map((cat, idx) => (
             <Link
-              key={cat.id}
+              key={idx}
               to={cat.link}
-              onMouseEnter={() => setHoveredCategory(cat.id)}
-              onMouseLeave={() => setHoveredCategory(null)}
-              className="group block py-6 sm:py-8 lg:py-10 transition-colors duration-300 hover:bg-white/40 dark:hover:bg-white/[0.02] px-3 sm:px-6 rounded-2xl cursor-pointer"
+              className="group relative rounded-3xl p-6 bg-white/70 dark:bg-white/5 border border-[#E8E1D5] dark:border-[#2E2925] hover:border-[#C6A96B] transition-all duration-300 flex flex-col items-center text-center shadow-xs hover:shadow-lg"
             >
-              <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 lg:gap-8">
-                
-                {/* Left: Category Title & Index */}
-                <div className="md:w-1/3 flex items-baseline gap-4">
-                  <span className="text-[10px] sm:text-xs font-mono tracking-widest text-[#8A847D]/70 dark:text-white/40">
-                    0{idx + 1}
-                  </span>
-                  <h3 className="font-serif text-xl sm:text-2xl lg:text-3xl font-medium tracking-wide text-primary dark:text-white group-hover:text-[#851C25] dark:group-hover:text-[#C6A96B] transition-colors duration-300">
-                    {cat.name}
-                  </h3>
-                </div>
+              {/* <span className="absolute top-4 left-4 text-[9px] font-mono tracking-widest uppercase text-[#8A8177] dark:text-white/40">
+                {cat.tag}
+              </span> */}
 
-                {/* Middle: Editorial Description */}
-                <div className="md:w-1/2">
-                  <p className="text-xs sm:text-sm text-secondary dark:text-white/70 font-light leading-relaxed group-hover:text-primary dark:group-hover:text-white/90 transition-colors duration-200">
-                    {cat.description}
-                  </p>
-                  <span className="text-[10px] font-mono tracking-wider text-[#8A847D] dark:text-[#C6A96B]/70 uppercase block mt-1">
-                    {cat.previewTierNote}
-                  </span>
-                </div>
+              <div className="w-full h-44 sm:h-48 my-4 flex items-center justify-center overflow-hidden">
+                <img
+                  src={cat.image}
+                  alt={cat.title}
+                  className="max-h-full max-w-full object-contain group-hover:scale-108 transition-transform duration-500 pointer-events-none select-none drop-shadow-sm"
+                />
+              </div>
 
-                {/* Right: CTA */}
-                <div className="md:w-1/6 flex items-center justify-start md:justify-end gap-2 text-xs font-semibold uppercase tracking-[0.2em] text-primary dark:text-white group-hover:text-[#851C25] dark:group-hover:text-[#C6A96B] transition-colors">
-                  <span className="border-b border-current pb-0.5">EXPLORE</span>
-                  <ArrowRight
-                    size={14}
-                    className="transform group-hover:translate-x-1.5 transition-transform duration-300"
-                  />
-                </div>
-
+              <div className="space-y-1 w-full pt-2 border-t border-[#E8E1D5]/70 dark:border-[#2E2925]/70">
+                <h3 className="font-serif text-base text-[#1A1816] dark:text-white group-hover:text-[#851C25] dark:group-hover:text-[#D4AF37] transition-colors">
+                  {cat.title}
+                </h3>
+                {/* <p className="text-[11px] text-[#7A7168] dark:text-white/60 font-light">
+                  {cat.subtitle}
+                </p> */}
               </div>
             </Link>
           ))}
         </div>
-
-        {/* Product Architecture Note */}
-        <div className="p-6 rounded-2xl bg-white/50 dark:bg-white/5 border border-[#E8DFD3] dark:border-[#332922] flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs text-secondary dark:text-white/70 font-light">
-          <p>
-            <strong className="font-semibold text-primary dark:text-white">Product Architecture:</strong> Every category page allows seamless filtering between Essential, Signature, and Luxe collections.
-          </p>
-          <Link
-            to="/shop"
-            className="text-[11px] font-mono uppercase tracking-widest text-[#851C25] dark:text-[#C6A96B] hover:underline font-medium shrink-0"
-          >
-            Browse All Categories →
-          </Link>
-        </div>
-
       </div>
     </section>
   );

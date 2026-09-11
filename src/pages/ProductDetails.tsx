@@ -578,7 +578,7 @@ export default function ProductDetails() {
                   </span>
                 </div>
 
-                <h1 className="text-2xl sm:text-3xl lg:text-4xl font-serif font-light text-primary dark:text-white leading-tight">
+                <h1 className="text-2xl sm:text-3xl lg:text-4xl font-serif font-semibold product-title text-primary dark:text-white leading-tight">
                   {product.name}
                 </h1>
               </div>
@@ -1119,7 +1119,7 @@ export default function ProductDetails() {
                 <p className="text-xs font-medium tracking-[0.3em] uppercase text-secondary dark:text-[#D4AF37] mb-2">
                   Complete The Collection
                 </p>
-                <h2 className="text-2xl sm:text-3xl font-serif font-light text-primary dark:text-white tracking-wide">
+                <h2 className="text-2xl sm:text-3xl font-serif font-medium text-primary dark:text-white tracking-wide">
                   You Might Also Admire
                 </h2>
               </motion.div>

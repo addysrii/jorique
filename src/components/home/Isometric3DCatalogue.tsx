@@ -202,10 +202,10 @@ function LeftPageView({
           <span>{spread.leftPage.categoryLabel}</span>
           <span className="text-white/50">{spread.collectionTier}</span>
         </div>
-        <h3 className="font-serif text-lg sm:text-2xl font-normal leading-snug text-white line-clamp-1">
+        <h3 className="font-serif text-lg sm:text-2xl font-medium leading-snug text-white line-clamp-1">
           {spread.leftPage.headline}
         </h3>
-        <p className="text-[11px] sm:text-xs text-white/70 font-light leading-relaxed line-clamp-2 sm:line-clamp-none">
+        <p className="text-[11px] sm:text-xs text-white/70 font-normal leading-relaxed line-clamp-2 sm:line-clamp-none">
           {spread.leftPage.description}
         </p>
       </div>
@@ -294,7 +294,7 @@ function RightPageView({
       {/* Right Page Header: Logo & Overview */}
       <div className="space-y-2 pb-3 border-b border-[#E8DFD3] relative z-10">
         <div className="flex items-center justify-between">
-          <span className="font-serif text-2xl sm:text-3xl font-normal tracking-[0.18em] uppercase text-primary">
+          <span className="font-serif font-logo font-normal text-2xl sm:text-3xl tracking-[0.18em] uppercase text-primary">
             JORIQUE
           </span>
           <span className="text-[10px] font-mono font-bold tracking-widest uppercase text-[#851C25]">
@@ -302,10 +302,10 @@ function RightPageView({
           </span>
         </div>
 
-        <h4 className="font-serif text-base sm:text-xl font-normal leading-snug text-primary line-clamp-1">
+        <h4 className="font-serif font-semibold product-title text-base sm:text-xl leading-snug text-primary line-clamp-1">
           {spread.rightPage.productTitle}
         </h4>
-        <p className="text-[11px] sm:text-xs text-secondary font-light leading-relaxed line-clamp-2">
+        <p className="text-[11px] sm:text-xs text-secondary font-normal leading-relaxed line-clamp-2">
           {spread.rightPage.overview}
         </p>
       </div>
@@ -342,7 +342,7 @@ function RightPageView({
               <h5 className="text-[11px] font-semibold text-primary truncate leading-tight">
                 {step.title}
               </h5>
-              <p className="text-[10px] text-secondary truncate font-light">
+              <p className="text-[10px] text-secondary truncate font-normal">
                 {step.desc}
               </p>
             </div>
@@ -551,11 +551,11 @@ export default function Isometric3DCatalogue() {
             <span>ATELIER CATALOGUE PUBLICATION</span>
           </div>
 
-          <h2 className="font-serif text-3xl sm:text-5xl lg:text-6xl font-normal tracking-tight text-primary dark:text-white leading-[1.12]">
+          <h2 className="font-serif font-medium text-3xl sm:text-5xl lg:text-6xl tracking-tight text-primary dark:text-white leading-[1.12]">
             The Atelier Lookbook
           </h2>
 
-          <p className="text-xs sm:text-sm md:text-base text-secondary dark:text-white/70 font-light max-w-lg mx-auto leading-relaxed">
+          <p className="text-xs sm:text-sm md:text-base text-secondary dark:text-white/70 font-normal max-w-lg mx-auto leading-relaxed">
             Showcasing original JORIQUE creations fetched directly from our atelier database. Flip through each chapter to discover authentic weaves, hand-finished motifs, and direct curations.
           </p>
         </div>

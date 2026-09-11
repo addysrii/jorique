@@ -40,20 +40,20 @@ export default function FlagshipDuoBeyond() {
               JORIQUE
             </span>
 
-            <h2 className="font-serif text-4xl sm:text-5xl lg:text-6xl font-normal tracking-tight text-white leading-none">
+            <h2 className="font-serif text-4xl sm:text-5xl lg:text-6xl font-medium tracking-tight text-white leading-none">
               Souvenir
             </h2>
 
             <div className="pt-2 space-y-0.5">
-              <p className="font-serif text-base sm:text-lg lg:text-xl font-normal text-white/95 leading-tight">
+              <p className="font-serif text-base sm:text-lg lg:text-xl font-semibold brand-tagline text-white/95 leading-tight">
                 Thoughtful pieces
               </p>
-              <p className="font-serif text-base sm:text-lg lg:text-xl font-normal text-white/95 leading-tight">
+              <p className="font-serif text-base sm:text-lg lg:text-xl font-semibold brand-tagline text-white/95 leading-tight">
                 for meaningful moments.
               </p>
             </div>
 
-            <p className="font-sans text-xs sm:text-[13px] text-white/80 font-light leading-relaxed max-w-sm pt-2">
+            <p className="font-sans text-xs sm:text-[13px] text-white/80 font-normal leading-relaxed max-w-sm pt-2">
               Keepsakes, gifting solutions and travel-friendly textiles — made to carry comfort wherever life takes you.
             </p>
 
@@ -71,7 +71,7 @@ export default function FlagshipDuoBeyond() {
           {/* Bottom Left Index */}
           <div className="relative z-10 p-6 sm:p-10 lg:p-12 pointer-events-none">
             <span className="text-[10px] font-mono tracking-[0.2em] uppercase text-white/70">
-              01 ✦ SOUVENIR
+              SOUVENIR
             </span>
           </div>
         </div>
@@ -103,20 +103,20 @@ export default function FlagshipDuoBeyond() {
               JORIQUE
             </span>
 
-            <h2 className="font-serif text-4xl sm:text-5xl lg:text-6xl font-normal tracking-tight text-white leading-none">
+            <h2 className="font-serif text-4xl sm:text-5xl lg:text-6xl font-medium tracking-tight text-white leading-none">
               Hospitality
             </h2>
 
             <div className="pt-2 space-y-0.5">
-              <p className="font-serif text-base sm:text-lg lg:text-xl font-normal text-white/95 leading-tight">
+              <p className="font-serif text-base sm:text-lg lg:text-xl font-semibold brand-tagline text-white/95 leading-tight">
                 Designed for spaces
               </p>
-              <p className="font-serif text-base sm:text-lg lg:text-xl font-normal text-white/95 leading-tight">
+              <p className="font-serif text-base sm:text-lg lg:text-xl font-semibold brand-tagline text-white/95 leading-tight">
                 that welcome.
               </p>
             </div>
 
-            <p className="font-sans text-xs sm:text-[13px] text-white/80 font-light leading-relaxed max-w-sm pt-2">
+            <p className="font-sans text-xs sm:text-[13px] text-white/80 font-normal leading-relaxed max-w-sm pt-2">
               Premium textile solutions for hotels, resorts and hospitality spaces. Durable, elegant and made to leave a lasting impression.
             </p>
 
@@ -134,7 +134,7 @@ export default function FlagshipDuoBeyond() {
           {/* Bottom Right Corner Tag: SPACES PEOPLE REMEMBER */}
           <div className="relative z-10 p-6 sm:p-10 lg:p-12 flex items-end justify-between">
             <span className="text-[10px] font-mono tracking-[0.2em] uppercase text-white/70">
-              02 ✦ HOSPITALITY
+              HOSPITALITY
             </span>
 
             <div className="text-right">

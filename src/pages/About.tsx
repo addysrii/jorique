@@ -1,13 +1,13 @@
 import React, { useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { 
-  Sparkles, 
-  ArrowRight, 
-  Feather, 
-  Layers, 
-  HeartHandshake, 
-  ShieldCheck, 
-  Compass, 
+import {
+  Sparkles,
+  ArrowRight,
+  Feather,
+  Layers,
+  HeartHandshake,
+  ShieldCheck,
+  Compass,
   ShoppingBag,
   Sparkle
 } from 'lucide-react';
@@ -43,28 +43,28 @@ export default function About() {
 
   const categories = [
     {
-      title: "Luxury Bed Linens",
+      title: "Bed Sheets",
       subtitle: "Ultra-soft cottons & dobby weaves",
       image: "/images/luxury-products/bedsheet_clean.png",
       link: "/shop?category=bedsheets",
       tag: "Signature Bedding"
     },
     {
-      title: "Curated Cushions",
+      title: " Cushion Covers",
       subtitle: "Handwoven textures & rich tones",
       image: "/images/luxury-products/cushion_clean.png",
       link: "/shop?category=cushions",
       tag: "Artisanal Living"
     },
     {
-      title: "Tailored Apparel",
+      title: "Suits",
       subtitle: "Crisp shirts & structured suiting",
       image: "/images/luxury-products/suit_clean.png",
       link: "/shop?category=apparel",
       tag: "Modern Wardrobe"
     },
     {
-      title: "Plush Bath Linens",
+      title: "Table Runners",
       subtitle: "High-absorbency cloud towels",
       image: "/images/luxury-products/towel_clean.png",
       link: "/shop?category=towels",
@@ -128,8 +128,8 @@ export default function About() {
             variants={fadeInVariants}
             className="text-sm sm:text-base lg:text-lg text-[#665D55] dark:text-white/70 max-w-2xl mx-auto font-light leading-relaxed"
           >
-            JORIQUE is your destination for premium everyday essentials. We unite luxury home linens, 
-            tailored apparel, and sensorial living into a singular, cohesive aesthetic—where comfort, 
+            JORIQUE is your destination for premium everyday essentials. We unite luxury home linens,
+            tailored apparel, and sensorial living into a singular, cohesive aesthetic—where comfort,
             smart design, and Indian artisanship meet without compromise.
           </motion.p>
 
@@ -179,7 +179,7 @@ export default function About() {
       <section id="heritage-story" className="py-20 lg:py-28 px-6 bg-white/60 dark:bg-[#151311]/60 border-y border-[#E8E1D5] dark:border-[#2E2925]">
         <div className="max-w-6xl mx-auto">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-center">
-            
+
             {/* Left Narrative Column */}
             <motion.div
               initial={{ opacity: 0, x: -30 }}
@@ -200,20 +200,20 @@ export default function About() {
 
               <div className="space-y-4 text-sm sm:text-base text-[#5A524A] dark:text-white/75 font-light leading-relaxed">
                 <p>
-                  JORIQUE was born from an enduring admiration for India’s timeless textile traditions. 
-                  Across generations, weaving and handloom techniques have transformed humble raw cotton 
-                  and rich natural fibers into woven poetry. We celebrate this mastery by bringing handwoven 
+                  JORIQUE was born from an enduring admiration for India’s timeless textile traditions.
+                  Across generations, weaving and handloom techniques have transformed humble raw cotton
+                  and rich natural fibers into woven poetry. We celebrate this mastery by bringing handwoven
                   textures, authentic weaves, and thoughtful details into modern, contemporary homes.
                 </p>
                 <p>
-                  Each bedsheet, cushion cover, and textile reflects generations of artisanship—craft traditions 
-                  passed down and reimagined into luxurious linens for your sanctuary. Our apparel carries 
-                  the exact same ethos: from breathable bath towels to finely structured shirts and suits, 
+                  Each bedsheet, cushion cover, and textile reflects generations of artisanship—craft traditions
+                  passed down and reimagined into luxurious linens for your sanctuary. Our apparel carries
+                  the exact same ethos: from breathable bath towels to finely structured shirts and suits,
                   every piece is created with deliberate attention to detail and tactile comfort.
                 </p>
                 <p>
-                  Our collections celebrate familiar textures and motifs in a fresh, understated light. 
-                  We embrace natural fibers and rich earthy palettes inspired by the subcontinent’s landscape—whether 
+                  Our collections celebrate familiar textures and motifs in a fresh, understated light.
+                  We embrace natural fibers and rich earthy palettes inspired by the subcontinent’s landscape—whether
                   it is a subtle chai-spice print or an intricate dobby weave, authentic craftsmanship shines through every fold.
                 </p>
               </div>
@@ -283,7 +283,7 @@ export default function About() {
               Elegance Made Essential
             </h2>
             <p className="text-xs sm:text-sm text-[#665D55] dark:text-white/70 font-light leading-relaxed">
-              We curate an elegantly pared-back collection where form intuitively meets function. Every item 
+              We curate an elegantly pared-back collection where form intuitively meets function. Every item
               is designed to be both undeniably beautiful and deeply practical in your daily rituals.
             </p>
           </div>
@@ -305,7 +305,7 @@ export default function About() {
                   Form Meets Function
                 </h3>
                 <p className="text-xs sm:text-sm text-[#665D55] dark:text-white/70 font-light leading-relaxed">
-                  No excess, no superficial ornament. Each piece is refined down to clean silhouettes, 
+                  No excess, no superficial ornament. Each piece is refined down to clean silhouettes,
                   comfortable seams, and durable weaves that withstand daily washing and wear.
                 </p>
               </div>
@@ -332,7 +332,7 @@ export default function About() {
                   Sensory Comfort
                 </h3>
                 <p className="text-xs sm:text-sm text-[#665D55] dark:text-white/70 font-light leading-relaxed">
-                  Imagine opening a box to find ultra-soft sheets in calming earthen hues, or stepping into 
+                  Imagine opening a box to find ultra-soft sheets in calming earthen hues, or stepping into
                   apparel whose fabric feels as good against the skin as it looks in the mirror.
                 </p>
               </div>
@@ -359,7 +359,7 @@ export default function About() {
                   Unified Living
                 </h3>
                 <p className="text-xs sm:text-sm text-[#665D55] dark:text-white/70 font-light leading-relaxed">
-                  A seamless continuum from your bedroom to your personal wardrobe. JORIQUE curates everything 
+                  A seamless continuum from your bedroom to your personal wardrobe. JORIQUE curates everything
                   you touch every single day under one harmonious, trusted design language.
                 </p>
               </div>
@@ -398,7 +398,7 @@ export default function About() {
                 Artisanal Integrity
               </h3>
               <p className="text-xs text-[#665D55] dark:text-white/70 leading-relaxed font-light">
-                We honor the master weavers, artisans, and tailors across India. We preserve heritage 
+                We honor the master weavers, artisans, and tailors across India. We preserve heritage
                 dobby, handloom, and print traditions while adapting them to modern lifestyles.
               </p>
             </div>
@@ -409,7 +409,7 @@ export default function About() {
                 Honest Materials
               </h3>
               <p className="text-xs text-[#665D55] dark:text-white/70 leading-relaxed font-light">
-                No synthetic shortcuts. We source natural cottons, linen blends, and skin-friendly dyes 
+                No synthetic shortcuts. We source natural cottons, linen blends, and skin-friendly dyes
                 to ensure exceptional breathability, softness, and skin comfort through all seasons.
               </p>
             </div>
@@ -420,7 +420,7 @@ export default function About() {
                 Quiet Luxury For All Days
               </h3>
               <p className="text-xs text-[#665D55] dark:text-white/70 leading-relaxed font-light">
-                True luxury is not reserved for special occasions; it belongs in your morning coffee, 
+                True luxury is not reserved for special occasions; it belongs in your morning coffee,
                 your nightly rest, and your everyday wardrobe without costing an exorbitant fortune.
               </p>
             </div>
@@ -455,9 +455,9 @@ export default function About() {
                 to={cat.link}
                 className="group relative rounded-3xl p-6 bg-white/70 dark:bg-white/5 border border-[#E8E1D5] dark:border-[#2E2925] hover:border-[#C6A96B] transition-all duration-300 flex flex-col items-center text-center shadow-xs hover:shadow-lg"
               >
-                <span className="absolute top-4 left-4 text-[9px] font-mono tracking-widest uppercase text-[#8A8177] dark:text-white/40">
+                {/* <span className="absolute top-4 left-4 text-[9px] font-mono tracking-widest uppercase text-[#8A8177] dark:text-white/40">
                   {cat.tag}
-                </span>
+                </span> */}
 
                 <div className="w-full h-44 sm:h-48 my-4 flex items-center justify-center overflow-hidden">
                   <img
@@ -471,9 +471,9 @@ export default function About() {
                   <h3 className="font-serif text-base text-[#1A1816] dark:text-white group-hover:text-[#851C25] dark:group-hover:text-[#D4AF37] transition-colors">
                     {cat.title}
                   </h3>
-                  <p className="text-[11px] text-[#7A7168] dark:text-white/60 font-light">
+                  {/* <p className="text-[11px] text-[#7A7168] dark:text-white/60 font-light">
                     {cat.subtitle}
-                  </p>
+                  </p> */}
                 </div>
               </Link>
             ))}

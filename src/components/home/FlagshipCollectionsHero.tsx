@@ -72,7 +72,7 @@ const COLUMNS: CollectionColumn[] = [
 export default function FlagshipCollectionsHero() {
   return (
     <section className="relative w-full bg-[#FAF7F2] dark:bg-[#100E0D] text-primary dark:text-[#FCFAF7] transition-colors duration-500 overflow-hidden pt-16 lg:pt-20">
-      
+
       {/* ─────────────────────────────────────────────────────────────
           1. THREE FULL-HEIGHT EDITORIAL HERO PANELS (Side by Side)
       ───────────────────────────────────────────────────────────── */}
@@ -103,7 +103,7 @@ export default function FlagshipCollectionsHero() {
 
             {/* Top Row: Brand & Main Titles + Corner Tag */}
             <div className="relative z-10 p-6 sm:p-8 lg:p-10 flex items-start justify-between gap-4">
-              
+
               {/* Left Content Block */}
               <div className="max-w-md space-y-2">
                 <motion.span
@@ -119,21 +119,21 @@ export default function FlagshipCollectionsHero() {
                   initial={{ opacity: 0, y: 15 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.7, delay: 0.15 * idx }}
-                  className="font-serif text-4xl sm:text-5xl lg:text-6xl font-normal tracking-tight text-white leading-none"
+                  className="font-serif text-4xl sm:text-5xl lg:text-6xl font-medium tracking-tight text-white leading-none"
                 >
                   {col.name}
                 </motion.h2>
 
                 <div className="pt-2 space-y-0.5">
-                  <p className="font-serif text-base sm:text-lg lg:text-xl font-normal text-white/95 leading-tight">
+                  <p className="font-serif text-base sm:text-lg lg:text-xl font-semibold brand-tagline text-white/95 leading-tight">
                     {col.headlineLine1}
                   </p>
-                  <p className="font-serif text-base sm:text-lg lg:text-xl font-normal text-white/95 leading-tight">
+                  <p className="font-serif text-base sm:text-lg lg:text-xl font-semibold brand-tagline text-white/95 leading-tight">
                     {col.headlineLine2}
                   </p>
                 </div>
 
-                <p className="font-sans text-xs sm:text-[13px] text-white/80 font-light leading-relaxed max-w-sm pt-2">
+                <p className="font-sans text-xs sm:text-[13px] text-white/80 font-normal leading-relaxed max-w-sm pt-2">
                   {col.description}
                 </p>
 
@@ -167,8 +167,8 @@ export default function FlagshipCollectionsHero() {
             {/* Bottom Spacer/Indicator for balanced proportion */}
             <div className="relative z-10 p-6 sm:p-8 lg:p-10 pointer-events-none">
               <div className="flex items-center justify-between text-[10px] font-mono tracking-[0.2em] uppercase text-white/70">
-                <span className="opacity-70">0{idx + 1}</span>
-                <span className="opacity-70">✦</span>
+                {/* <span className="opacity-70">0{idx + 1}</span>
+                <span className="opacity-70">✦</span> */}
               </div>
             </div>
 
@@ -182,7 +182,7 @@ export default function FlagshipCollectionsHero() {
       ───────────────────────────────────────────────────────────── */}
       <div className="w-full border-t border-b border-[#E8DFD3] dark:border-[#2E2925] bg-[#FAF7F2] dark:bg-[#100E0D] px-6 sm:px-10 lg:px-16 py-8 sm:py-10">
         <div className="max-w-[1440px] mx-auto grid grid-cols-1 lg:grid-cols-12 items-center gap-6 lg:gap-8">
-          
+
           {/* Left: — MORE THAN PRODUCTS */}
           <div className="lg:col-span-3 flex items-center gap-3">
             <span className="w-8 h-[1px] bg-[#8A847D]/60 dark:bg-[#C6A96B]/60" />
@@ -193,10 +193,10 @@ export default function FlagshipCollectionsHero() {
 
           {/* Center: Comfort is a feeling. And a more beautiful way of living. */}
           <div className="lg:col-span-6 text-center space-y-1">
-            <h3 className="font-serif text-2xl sm:text-3xl lg:text-4xl font-normal text-primary dark:text-[#FCFAF7] tracking-tight leading-tight">
+            <h3 className="font-serif text-2xl sm:text-3xl lg:text-4xl font-medium text-primary dark:text-[#FCFAF7] tracking-tight leading-tight">
               Comfort is a feeling.
             </h3>
-            <p className="font-serif italic text-2xl sm:text-3xl lg:text-4xl font-normal text-[#8A847D] dark:text-[#C6A96B] leading-tight">
+            <p className="font-serif italic text-2xl sm:text-3xl lg:text-4xl font-semibold brand-tagline text-[#8A847D] dark:text-[#C6A96B] leading-tight">
               And a more beautiful way of living.
             </p>
           </div>

@@ -14,11 +14,11 @@ export default function Footer() {
           <div className="space-y-1">
             <Link
               to="/"
-              className="font-serif text-2xl lg:text-3xl tracking-[0.20em] uppercase text-primary dark:text-[#FCFAF7] font-normal"
+              className="font-mainlogo text-2xl lg:text-3xl tracking-[0.20em] uppercase text-primary dark:text-[#FCFAF7] font-normal"
             >
               JORIQUE
             </Link>
-            <p className="font-serif italic text-sm text-[#8A847D] dark:text-[#C6A96B]">
+            <p className="font-serif italic text-sm font-semibold brand-tagline text-[#8A847D] dark:text-[#C6A96B]">
               Where Comfort Meets Design
             </p>
           </div>

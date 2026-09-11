@@ -343,7 +343,7 @@ END:VCARD`;
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.1 }}
-                className="text-xs sm:text-sm md:text-base text-primary dark:text-[#D4AF37] italic tracking-wide text-center"
+                className="font-serif font-semibold brand-tagline text-xs sm:text-sm md:text-base text-primary dark:text-[#D4AF37] italic tracking-wide text-center"
               >
                 Where Comfort Meets Design
               </motion.p>
@@ -352,7 +352,7 @@ END:VCARD`;
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.15 }}
-                className="text-xs md:text-sm text-secondary dark:text-white/60 max-w-xs sm:max-w-sm mx-auto font-light leading-relaxed text-center mt-3"
+                className="font-sans font-normal text-xs md:text-sm text-secondary dark:text-white/60 max-w-xs sm:max-w-sm mx-auto leading-relaxed text-center mt-3"
               >
                 Thoughtfully crafted home textiles for a beautiful everyday.
               </motion.p>
@@ -411,13 +411,13 @@ END:VCARD`;
               <div className="sm:col-span-8 flex flex-wrap items-center justify-around gap-3 pt-3 sm:pt-0 sm:pl-4 text-left sm:text-center">
                 <a
                   href="tel:+919919388211"
-                  className="text-xs sm:text-sm font-semibold text-primary dark:text-white hover:text-[#D4AF37] transition-colors block"
+                  className="text-xs sm:text-sm font-medium contact-detail text-primary dark:text-white hover:text-[#D4AF37] transition-colors block"
                 >
                   +91 99193 88211
                 </a>
                 <a
                   href="tel:+918840196009"
-                  className="text-xs sm:text-sm font-semibold text-primary dark:text-white hover:text-[#D4AF37] transition-colors block"
+                  className="text-xs sm:text-sm font-medium contact-detail text-primary dark:text-white hover:text-[#D4AF37] transition-colors block"
                 >
                   +91 88401 96009
                 </a>
@@ -425,7 +425,7 @@ END:VCARD`;
                   href="https://wa.me/919026260421"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-xs sm:text-sm font-semibold text-primary dark:text-white hover:text-[#D4AF37] transition-colors block"
+                  className="text-xs sm:text-sm font-medium contact-detail text-primary dark:text-white hover:text-[#D4AF37] transition-colors block"
                 >
                   +91 90262 60421
                 </a>

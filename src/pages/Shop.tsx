@@ -18,9 +18,11 @@ export default function Shop() {
   const [products, setProducts] = useState<Product[]>([]);
   const [filteredProducts, setFilteredProducts] = useState<Product[]>([]);
   const [categories, setCategories] = useState<string[]>(['All']);
+  const [badges, setBadges] = useState<string[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [selectedCategory, setSelectedCategory] = useState(categoryParam || 'All');
+  const [selectedBadge, setSelectedBadge] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
   const [showMobileFilters, setShowMobileFilters] = useState(false);
 
@@ -51,6 +53,12 @@ export default function Shop() {
         const prodCatNames = prodData.map((p) => p.category).filter(Boolean);
         const uniqueCats = Array.from(new Set([...dbCatNames, ...prodCatNames]));
         setCategories(['All', ...uniqueCats]);
+
+        // Derive unique product badges
+        const uniqueBadges = Array.from(
+          new Set(prodData.map((p) => p.badge).filter((b): b is string => !!b))
+        );
+        setBadges(uniqueBadges);
       } catch (err) {
         console.error('Error fetching shop data:', err);
         setError('Failed to load products');
@@ -62,13 +70,20 @@ export default function Shop() {
     fetchData();
   }, []);
 
-  // Filter products when category or search changes
+  // Filter products when category, badge or search changes
   useEffect(() => {
     let filtered = products;
 
     // Apply category filter
     if (selectedCategory !== 'All') {
       filtered = filtered.filter(p => p.category === selectedCategory);
+    }
+
+    // Apply badge filter
+    if (selectedBadge) {
+      filtered = filtered.filter(
+        p => p.badge && p.badge.toLowerCase() === selectedBadge.toLowerCase()
+      );
     }
 
     // Apply search filter
@@ -82,16 +97,22 @@ export default function Shop() {
     }
 
     setFilteredProducts(filtered);
-  }, [selectedCategory, searchQuery, products]);
+  }, [selectedCategory, selectedBadge, searchQuery, products]);
 
   const handleCategoryChange = (category: string) => {
     setSelectedCategory(category);
+    setSelectedBadge(null); // clear badge when switching category
     if (category === 'All') {
       searchParams.delete('category');
       setSearchParams(searchParams, { replace: true });
     } else {
       setSearchParams({ category }, { replace: true });
     }
+    setShowMobileFilters(false);
+  };
+
+  const handleBadgeToggle = (badge: string) => {
+    setSelectedBadge(prev => (prev === badge ? null : badge));
     setShowMobileFilters(false);
   };
 
@@ -237,27 +258,33 @@ export default function Shop() {
               )}
             </div>
 
-            {/* 3D Category Pills - Desktop */}
-            <div className="hidden lg:flex items-center gap-2 bg-transparent p-1.5 rounded-2xl border border-border dark:border-[#2E2925]">
-              {categories.map((category) => {
-                const isSelected = selectedCategory === category;
+            {/* Badge Chips - Desktop */}
+            <div className="hidden lg:flex items-center gap-2 flex-wrap">
+              {badges.map((badge) => {
+                const isActive = selectedBadge === badge;
                 return (
                   <button
-                    key={category}
-                    onClick={() => handleCategoryChange(category)}
-                    className={`px-5 py-2 text-xs font-semibold uppercase tracking-wider rounded-xl transition-all duration-200 relative ${isSelected
-                      ? 'text-white dark:text-black shadow-md'
-                      : 'text-secondary dark:text-white/60 hover:text-primary dark:hover:text-white hover:bg-white/40 dark:hover:bg-white/5'
-                      }`}
+                    key={badge}
+                    id={`badge-filter-${badge.toLowerCase().replace(/\s+/g, '-')}`}
+                    onClick={() => handleBadgeToggle(badge)}
+                    className={`relative inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-[11px] font-bold tracking-[0.1em] transition-all duration-200 border ${
+                      isActive
+                        ? 'border-transparent text-white dark:text-[#100E0D] shadow-lg shadow-[#851C25]/20 dark:shadow-[#D4AF37]/20'
+                        : 'border-[#E0D8CE] dark:border-white/10 bg-white/60 dark:bg-white/5 text-[#5C5248] dark:text-white/60 hover:border-[#851C25]/40 dark:hover:border-[#D4AF37]/40 hover:text-[#851C25] dark:hover:text-[#D4AF37]'
+                    }`}
                   >
-                    {isSelected && (
+                    {isActive && (
                       <motion.div
-                        layoutId="activeShopCategory"
-                        className="absolute inset-0 bg-primary dark:bg-[#D4AF37] rounded-xl"
-                        transition={{ type: 'spring', stiffness: 380, damping: 30 }}
+                        layoutId="activeShopBadge"
+                        className="absolute inset-0 rounded-full bg-gradient-to-r from-[#851C25] to-[#A0222C] dark:from-[#D4AF37] dark:to-[#C09A30]"
+                        transition={{ type: 'spring', stiffness: 420, damping: 32 }}
                       />
                     )}
-                    <span className="relative z-10">{category}</span>
+                    <span className={`relative z-10 text-[10px] ${isActive ? 'opacity-100' : 'opacity-40'}`}>✦</span>
+                    <span className="relative z-10 uppercase">{badge}</span>
+                    {isActive && (
+                      <span className="relative z-10 text-[10px] opacity-70">✕</span>
+                    )}
                   </button>
                 );
               })}
@@ -269,7 +296,7 @@ export default function Shop() {
               className="lg:hidden flex items-center justify-between gap-2 px-5 py-3 bg-white dark:bg-[#1A1816] border border-border dark:border-[#2E2925] rounded-2xl text-sm shadow-sm"
             >
               <span className="flex items-center gap-2 text-primary dark:text-white">
-                <Filter size={15} /> Filter: <strong className="text-primary dark:text-[#D4AF37]">{selectedCategory}</strong>
+                <Filter size={15} /> Filter: <strong className="text-[#851C25] dark:text-[#D4AF37]">{selectedBadge ?? 'All'}</strong>
               </span>
             </button>
           </div>
@@ -283,21 +310,24 @@ export default function Shop() {
                 exit={{ opacity: 0, height: 0 }}
                 className="lg:hidden flex flex-wrap gap-2 mb-8 pb-6 border-b border-border dark:border-[#2E2925]"
               >
-                {categories.map((category) => (
+                {badges.map((badge) => (
                   <button
-                    key={category}
-                    onClick={() => handleCategoryChange(category)}
-                    className={`px-4 py-2 text-xs font-semibold uppercase tracking-wider rounded-xl transition-all duration-200 ${selectedCategory === category
-                      ? 'bg-primary dark:bg-[#D4AF37] text-white dark:text-black shadow-md'
-                      : 'bg-cream dark:bg-white/5 text-secondary dark:text-white/70 hover:bg-cream/80'
-                      }`}
+                    key={badge}
+                    onClick={() => handleBadgeToggle(badge)}
+                    className={`inline-flex items-center gap-1.5 px-4 py-2 text-xs font-bold uppercase tracking-wider rounded-xl transition-all duration-200 ${
+                      selectedBadge === badge
+                        ? 'bg-gradient-to-r from-[#851C25] to-[#A0222C] dark:from-[#D4AF37] dark:to-[#C09A30] text-white dark:text-black shadow-md'
+                        : 'bg-white/60 dark:bg-white/5 text-[#851C25] dark:text-[#D4AF37]/80 border border-[#E0D8CE] dark:border-white/10 hover:border-[#851C25]/40'
+                    }`}
                   >
-                    {category}
+                    <span className="text-[10px]">✦</span>
+                    {badge}
                   </button>
                 ))}
               </motion.div>
             )}
           </AnimatePresence>
+
 
           {/* Results Count & Grid Anchor */}
           <div id="shop-catalog-grid" className="flex items-center justify-between mb-8 scroll-mt-24">
