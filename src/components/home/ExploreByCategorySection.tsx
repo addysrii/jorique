@@ -40,6 +40,13 @@ const categories = [
     image: "/images/luxury-products/towel_clean.png",
     link: "/shop?category=Towel",
     tag: "Daily Rituals"
+  },
+  {
+    title: "Table Runners",
+    subtitle: "High-absorbency cloud towels",
+    image: "/images/luxury-products/Table Runner.png",
+    link: "/shop?category=Table%20Runner",
+    tag: "Daily Rituals"
   }
 ];
 
@@ -64,7 +71,7 @@ export default function ExploreByCategorySection() {
           </Link>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-6">
           {categories.map((cat, idx) => (
             <Link
               key={idx}

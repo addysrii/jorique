@@ -29,7 +29,7 @@ export interface BadgeItem {
 const COLOR_PRESETS = [
   { bg: '#7A8B72', text: '#F5EDE3', name: 'Sage (Essential)' },
   { bg: '#243B64', text: '#F5EDE3', name: 'Royal Blue (Signature)' },
-  { bg: '#0B5F61', text: '#F5EDE3', name: 'Deep Teal (Luxe)' },
+  { bg: '#641F2D', text: '#F5EDE3', name: 'Burgundy (Luxe)' },
   { bg: '#B9787D', text: '#1A1A1A', name: 'Dusty Rose (Souvenir)' },
   { bg: '#4B5563', text: '#FFFFFF', name: 'Slate (Hospitality)' },
   { bg: '#D4AF37', text: '#1A1208', name: 'Gold' },

@@ -267,11 +267,10 @@ export default function Shop() {
                     key={badge}
                     id={`badge-filter-${badge.toLowerCase().replace(/\s+/g, '-')}`}
                     onClick={() => handleBadgeToggle(badge)}
-                    className={`relative inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-[11px] font-bold tracking-[0.1em] transition-all duration-200 border ${
-                      isActive
+                    className={`relative inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-[11px] font-bold tracking-[0.1em] transition-all duration-200 border ${isActive
                         ? 'border-transparent text-white dark:text-[#100E0D] shadow-lg shadow-[#0B5F61]/20 dark:shadow-[#D4AF37]/20'
                         : 'border-[#E0D8CE] dark:border-white/10 bg-white/60 dark:bg-white/5 text-[#5C5248] dark:text-white/60 hover:border-[#0B5F61]/40 dark:hover:border-[#D4AF37]/40 hover:text-[#0B5F61] dark:hover:text-[#D4AF37]'
-                    }`}
+                      }`}
                   >
                     {isActive && (
                       <motion.div
@@ -314,13 +313,12 @@ export default function Shop() {
                   <button
                     key={badge}
                     onClick={() => handleBadgeToggle(badge)}
-                    className={`inline-flex items-center gap-1.5 px-4 py-2 text-xs font-bold uppercase tracking-wider rounded-xl transition-all duration-200 ${
-                      selectedBadge === badge
+                    className={`inline-flex items-center gap-1.5 px-4 py-2 text-xs font-bold uppercase tracking-wider rounded-xl transition-all duration-200 ${selectedBadge === badge
                         ? 'bg-gradient-to-r from-[#0B5F61] to-[#0E7A7D] dark:from-[#D4AF37] dark:to-[#C09A30] text-white dark:text-black shadow-md'
                         : 'bg-white/60 dark:bg-white/5 text-[#0B5F61] dark:text-[#D4AF37]/80 border border-[#E0D8CE] dark:border-white/10 hover:border-[#0B5F61]/40'
-                    }`}
+                      }`}
                   >
-                    <span className="text-[10px]">✦</span>
+
                     {badge}
                   </button>
                 ))}

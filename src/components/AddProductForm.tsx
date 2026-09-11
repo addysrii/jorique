@@ -959,7 +959,7 @@ export default function AddProductForm() {
                 <optgroup label="Official Brand Collections" className="dark:bg-[#1A1816]">
                   <option value="JORIQUE Essential" className="dark:bg-[#1A1816]">JORIQUE Essential (Sage #7A8B72)</option>
                   <option value="JORIQUE Signature" className="dark:bg-[#1A1816]">JORIQUE Signature (Royal Blue #243B64)</option>
-                  <option value="JORIQUE Luxe" className="dark:bg-[#1A1816]">JORIQUE Luxe (Deep Teal #0B5F61)</option>
+                  <option value="JORIQUE Luxe" className="dark:bg-[#1A1816]">JORIQUE Luxe (Burgundy #641F2D)</option>
                   <option value="JORIQUE Souvenir" className="dark:bg-[#1A1816]">JORIQUE Souvenir (Dusty Rose #B9787D)</option>
                   <option value="JORIQUE Hospitality" className="dark:bg-[#1A1816]">JORIQUE Hospitality (Slate #4B5563)</option>
                 </optgroup>
@@ -967,7 +967,7 @@ export default function AddProductForm() {
                 <optgroup label="Storefront Status Badges" className="dark:bg-[#1A1816]">
                   <option value="NEW" className="dark:bg-[#1A1816]">New (Sage)</option>
                   <option value="FEATURED" className="dark:bg-[#1A1816]">Featured (Royal Blue)</option>
-                  <option value="BEST SELLER" className="dark:bg-[#1A1816]">Best Seller (Deep Teal)</option>
+                  <option value="BEST SELLER" className="dark:bg-[#1A1816]">Best Seller (Burgundy)</option>
                   <option value="LIMITED" className="dark:bg-[#1A1816]">Limited Edition (Dusty Rose)</option>
                 </optgroup>
                 {/* 3. Custom Database Badges if any */}

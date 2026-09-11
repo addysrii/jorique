@@ -56,8 +56,8 @@ export default function JoriqueWaySection() {
         </motion.div>
 
         {/* ── Staggered word-by-word serif headline ── */}
-        <div className="mb-12 lg:mb-16 overflow-hidden">
-          <div className="flex flex-wrap gap-x-5 gap-y-1">
+        <div className="mb-12 lg:mb-16 overflow-hidden pb-4 pt-1">
+          <div className="flex flex-wrap gap-x-5 gap-y-2 pb-2">
             {words.map((word, i) => (
               <motion.span
                 key={word}
@@ -68,12 +68,13 @@ export default function JoriqueWaySection() {
                   ease: [0.16, 1, 0.3, 1],
                   delay: 0.08 + i * 0.1,
                 }}
-                className={`font-serif leading-[1.08] tracking-tight text-[#1A1A1A] dark:text-white inline-block ${i === 0
+                className={`font-serif leading-[1.2] tracking-tight text-[#1A1A1A] dark:text-white inline-block pb-3 ${
+                  i === 0
                     ? 'text-5xl sm:text-7xl lg:text-8xl'
                     : i === 1
                       ? 'text-5xl sm:text-7xl lg:text-8xl italic text-[#8A8177] dark:text-white/40'
                       : 'text-5xl sm:text-7xl lg:text-8xl'
-                  }`}
+                }`}
               >
                 {word}
               </motion.span>

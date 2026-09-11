@@ -18,7 +18,7 @@ export default {
         // Specific Collection Colors
         'collection-essential': '#7A8B72',
         'collection-signature': '#243B64',
-        'collection-luxe': '#0B5F61',       // updated to official teal
+        'collection-luxe': '#641F2D',       // Burgundy Wine
         'collection-souvenir': '#B9787D',
         'collection-hospitality': '#4B5563',
 

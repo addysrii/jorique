@@ -96,9 +96,9 @@ const TIERS: TierItem[] = [
     description:
       'Our ultimate expression of tactile opulence. Tailored for presidential suites and connoisseurs of fine living, JORIQUE Luxe combines high-density mulberry silk borders with velvet touches and 800+ thread count liquid sateen for an unforgettable tactile caress.',
     colorName: 'Burgundy & Champagne Gilt',
-    accentColor: '#0B5F61',
-    badgeBg: 'rgba(133, 28, 37, 0.12)',
-    badgeText: '#0B5F61',
+    accentColor: '#641F2D',
+    badgeBg: 'rgba(100, 31, 45, 0.15)',
+    badgeText: '#641F2D',
     image: '/Products/5.jpg',
     productCutout: '/images/luxury-products/cushion_clean.png',
     specs: [
@@ -108,7 +108,7 @@ const TIERS: TierItem[] = [
       { label: 'Finishing', val: 'Calendered Luster' },
     ],
     swatches: [
-      { name: 'Velvet Wine', hex: '#0B5F61' },
+      { name: 'Velvet Wine', hex: '#641F2D' },
       { name: 'Champagne Gilt', hex: '#C6A96B' },
       { name: 'Deep Obsidian', hex: '#1C1917' },
     ],

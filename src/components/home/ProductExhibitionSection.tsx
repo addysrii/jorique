@@ -53,7 +53,7 @@ const FALLBACK_EXHIBITS: CuratedExhibit[] = [
     category: 'Suits',
     collectionTier: 'luxe',
     tierLabel: 'Luxe',
-    tierColor: '#0B5F61',
+    tierColor: '#641F2D',
     price: 4299,
     image: '/images/collections/signature.jpg',
     weaveDetail: 'Couture Mulberry Silk • Liquid Sheen Finish',
@@ -101,7 +101,7 @@ const FALLBACK_EXHIBITS: CuratedExhibit[] = [
     category: 'Bedsheet',
     collectionTier: 'luxe',
     tierLabel: 'Luxe',
-    tierColor: '#0B5F61',
+    tierColor: '#641F2D',
     price: 6499,
     image: '/images/collections/luxe.jpg',
     weaveDetail: '800 Thread Count Liquid Mirror Sateen',
@@ -153,7 +153,7 @@ export default function ProductExhibitionSection() {
             } else if (skuUpper.includes('LUX') || skuUpper.includes('LUXE') || p.price > 4000) {
               tier = 'luxe';
               tierLabel = 'Luxe';
-              tierColor = '#0B5F61';
+              tierColor = '#641F2D';
             }
 
             const img = (Array.isArray(p.images) && p.images.length > 0 && p.images[0])
@@ -232,7 +232,7 @@ export default function ProductExhibitionSection() {
         {/* Exhibition Header */}
         <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-8 border-b border-[#E8DFD3] dark:border-[#2E2925] pb-10">
           <div className="space-y-4 max-w-2xl">
-            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/80 dark:bg-white/5 border border-[#C6A96B]/30 text-[#0B5F61] dark:text-[#D4AF37] text-[10px] sm:text-[11px] font-mono tracking-[0.3em] uppercase shadow-xs">
+            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/80 dark:bg-white/5 border border-[#C6A96B]/30 text-[#641F2D] dark:text-[#D4AF37] text-[10px] sm:text-[11px] font-mono tracking-[0.3em] uppercase shadow-xs">
               <Sparkles size={12} className="text-[#C6A96B]" />
               <span>THE JORIQUE EXHIBITION</span>
             </div>
@@ -259,7 +259,7 @@ export default function ProductExhibitionSection() {
             </span>
             <span>•</span>
             <span className="flex items-center gap-1.5">
-              <span className="w-2.5 h-2.5 rounded-full bg-[#0B5F61]" />
+              <span className="w-2.5 h-2.5 rounded-full bg-[#641F2D]" />
               <span>Luxe</span>
             </span>
           </div>

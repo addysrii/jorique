@@ -26,7 +26,7 @@ interface NavbarProps {
   wishlistCount?: number;
 }
 
-export default function Navbar({}: NavbarProps) {
+export default function Navbar({ }: NavbarProps) {
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [userMenuOpen, setUserMenuOpen] = useState(false);
@@ -146,18 +146,17 @@ export default function Navbar({}: NavbarProps) {
   return (
     <>
       <motion.header
-        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
-          transparent
-            ? 'bg-black/35 backdrop-blur-md border-b border-white/10 shadow-xs'
-            : 'bg-white/95 dark:bg-[#12100E]/95 backdrop-blur-md border-b border-border dark:border-[#2E2925] shadow-sm'
-        }`}
+        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${transparent
+          ? 'bg-black/35 backdrop-blur-md border-b border-white/10 shadow-xs'
+          : 'bg-white/95 dark:bg-[#12100E]/95 backdrop-blur-md border-b border-border dark:border-[#2E2925] shadow-sm'
+          }`}
         initial={{ y: -80 }}
         animate={{ y: 0 }}
         transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
       >
         <div className="max-w-7xl mx-auto px-6 lg:px-12">
           <div className="flex items-center justify-between h-16 lg:h-20">
-            
+
             {/* Logo */}
             <Link
               to="/"
@@ -170,16 +169,14 @@ export default function Navbar({}: NavbarProps) {
               className="flex-shrink-0 group flex flex-col items-center cursor-pointer"
             >
               <span
-                className={`font-mainlogo text-2xl tracking-[0.20em] uppercase transition-colors duration-300 ${
-                  transparent ? 'text-white' : 'text-primary dark:text-[#FCFAF7]'
-                }`}
+                className={`font-mainlogo text-2xl tracking-[0.20em] uppercase transition-colors duration-300 ${transparent ? 'text-white' : 'text-primary dark:text-[#FCFAF7]'
+                  }`}
               >
                 JORIQUE
               </span>
               <span
-                className={`h-[1px] w-full mt-[-1px] transition-all duration-300 ${
-                  transparent ? 'bg-white/40' : 'bg-[#1A1A1A]/30 dark:bg-[#C6A96B]/50'
-                } scale-x-75 group-hover:scale-x-100`}
+                className={`h-[1px] w-full mt-[-1px] transition-all duration-300 ${transparent ? 'bg-white/40' : 'bg-[#1A1A1A]/30 dark:bg-[#C6A96B]/50'
+                  } scale-x-75 group-hover:scale-x-100`}
               />
             </Link>
 
@@ -196,17 +193,15 @@ export default function Navbar({}: NavbarProps) {
                   <Link
                     key={cat}
                     to={`/shop?category=${encodeURIComponent(cat)}`}
-                    className={`text-xs font-semibold tracking-widest uppercase transition-colors duration-200 relative group py-1 ${
-                      transparent
-                        ? 'text-white/90 hover:text-white'
-                        : 'text-secondary dark:text-white/70 hover:text-primary dark:hover:text-[#D4AF37]'
-                    } ${isCatActive ? (transparent ? 'text-white' : 'text-primary dark:text-[#D4AF37]') : ''}`}
+                    className={`text-xs font-semibold tracking-widest uppercase transition-colors duration-200 relative group py-1 ${transparent
+                      ? 'text-white/90 hover:text-white'
+                      : 'text-secondary dark:text-white/70 hover:text-primary dark:hover:text-[#D4AF37]'
+                      } ${isCatActive ? (transparent ? 'text-white' : 'text-primary dark:text-[#D4AF37]') : ''}`}
                   >
                     {cat}
                     <span
-                      className={`absolute -bottom-0.5 left-0 h-0.5 transition-all duration-300 ${
-                        transparent ? 'bg-white' : 'bg-primary dark:bg-[#D4AF37]'
-                      } ${isCatActive ? 'w-full' : 'w-0 group-hover:w-full'}`}
+                      className={`absolute -bottom-0.5 left-0 h-0.5 transition-all duration-300 ${transparent ? 'bg-white' : 'bg-primary dark:bg-[#D4AF37]'
+                        } ${isCatActive ? 'w-full' : 'w-0 group-hover:w-full'}`}
                     />
                   </Link>
                 );
@@ -217,14 +212,13 @@ export default function Navbar({}: NavbarProps) {
             <div className="flex items-center gap-3 lg:gap-4">
 
               {/* Theme Switcher Button */}
-              <button
+              {/* <button
                 onClick={toggleTheme}
                 aria-label={`Switch to ${theme === 'dark' ? 'Light' : 'Dark'} Mode`}
-                className={`p-2 rounded-xl border transition-all duration-300 cursor-pointer ${
-                  transparent
+                className={`p-2 rounded-xl border transition-all duration-300 cursor-pointer ${transparent
                     ? 'border-white/20 bg-white/10 text-white hover:bg-white/20'
                     : 'border-border dark:border-[#2E2925] bg-cream/40 dark:bg-white/5 text-primary dark:text-[#D4AF37] hover:scale-105'
-                }`}
+                  }`}
               >
                 <AnimatePresence mode="wait" initial={false}>
                   {theme === 'dark' ? (
@@ -249,17 +243,16 @@ export default function Navbar({}: NavbarProps) {
                     </motion.div>
                   )}
                 </AnimatePresence>
-              </button>
+              </button> */}
 
               {/* Shopping Bag / Cart Button */}
               <button
                 onClick={() => setIsCartOpen(true)}
                 aria-label="Shopping Bag"
-                className={`relative p-2 rounded-xl transition-colors duration-200 cursor-pointer ${
-                  transparent
-                    ? 'text-white/90 hover:text-white'
-                    : 'text-secondary dark:text-white/80 hover:text-primary dark:hover:text-[#D4AF37]'
-                }`}
+                className={`relative p-2 rounded-xl transition-colors duration-200 cursor-pointer ${transparent
+                  ? 'text-white/90 hover:text-white'
+                  : 'text-secondary dark:text-white/80 hover:text-primary dark:hover:text-[#D4AF37]'
+                  }`}
               >
                 <ShoppingBag size={18} strokeWidth={1.5} />
                 {cartCount > 0 && (
@@ -275,16 +268,14 @@ export default function Navbar({}: NavbarProps) {
                   <button
                     onClick={handleAccountClick}
                     aria-label="Account menu"
-                    className={`flex items-center gap-1.5 p-1 rounded-full transition-colors duration-200 cursor-pointer ${
-                      transparent ? 'text-white/90 hover:text-white' : 'text-secondary dark:text-white/80 hover:text-primary'
-                    }`}
+                    className={`flex items-center gap-1.5 p-1 rounded-full transition-colors duration-200 cursor-pointer ${transparent ? 'text-white/90 hover:text-white' : 'text-secondary dark:text-white/80 hover:text-primary'
+                      }`}
                   >
                     <span
-                      className={`w-7 h-7 rounded-full flex items-center justify-center text-xs font-semibold tracking-wider ${
-                        transparent
-                          ? 'bg-white/20 text-white'
-                          : 'bg-primary dark:bg-[#D4AF37] text-white dark:text-black'
-                      }`}
+                      className={`w-7 h-7 rounded-full flex items-center justify-center text-xs font-semibold tracking-wider ${transparent
+                        ? 'bg-white/20 text-white'
+                        : 'bg-primary dark:bg-[#D4AF37] text-white dark:text-black'
+                        }`}
                     >
                       {initials}
                     </span>
@@ -298,11 +289,10 @@ export default function Navbar({}: NavbarProps) {
                   <button
                     onClick={handleAccountClick}
                     aria-label="Profile and About menu"
-                    className={`p-2 rounded-xl transition-colors duration-200 cursor-pointer ${
-                      transparent
-                        ? 'text-white/90 hover:text-white'
-                        : 'text-secondary dark:text-white/80 hover:text-primary dark:hover:text-[#D4AF37]'
-                    }`}
+                    className={`p-2 rounded-xl transition-colors duration-200 cursor-pointer ${transparent
+                      ? 'text-white/90 hover:text-white'
+                      : 'text-secondary dark:text-white/80 hover:text-primary dark:hover:text-[#D4AF37]'
+                      }`}
                   >
                     <User size={18} strokeWidth={1.5} />
                   </button>
@@ -410,9 +400,8 @@ export default function Navbar({}: NavbarProps) {
               <button
                 onClick={() => setMobileOpen((v) => !v)}
                 aria-label="Toggle navigation"
-                className={`md:hidden p-2 rounded-xl transition-colors duration-200 cursor-pointer ${
-                  transparent ? 'text-white' : 'text-primary dark:text-white'
-                }`}
+                className={`md:hidden p-2 rounded-xl transition-colors duration-200 cursor-pointer ${transparent ? 'text-white' : 'text-primary dark:text-white'
+                  }`}
               >
                 {mobileOpen ? <X size={20} /> : <Menu size={20} />}
               </button>

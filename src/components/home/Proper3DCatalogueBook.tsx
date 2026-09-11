@@ -154,7 +154,7 @@ const CATALOGUE_SPREADS: CatalogueSpread[] = [
     spreadIndex: 2,
     title: 'Mulberry Silk & Liquid Sateen',
     collection: 'JORIQUE Luxe',
-    tierColor: '#0B5F61',
+    tierColor: '#641F2D',
     leftPage: {
       plateNumber: 'PLATE 03',
       image: '/images/collections/luxe.jpg',
@@ -175,7 +175,7 @@ const CATALOGUE_SPREADS: CatalogueSpread[] = [
         { label: 'Setting', val: 'Presidential Penthouse' },
       ],
       swatches: [
-        { name: 'Deep Teal', hex: '#0B5F61' },
+        { name: 'Burgundy Wine', hex: '#641F2D' },
         { name: 'Champagne Gilt', hex: '#C6A96B' },
         { name: 'Deep Obsidian', hex: '#1C1917' },
       ],

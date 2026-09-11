@@ -103,7 +103,7 @@ function productToSpread(product: Product, index: number): IsometricSpread {
     tierColor = '#243B64';
   } else if (skuUpper.includes('LUX') || skuUpper.includes('RAW SILK') || product.price > 4000) {
     collectionTier = 'JORIQUE Luxe';
-    tierColor = '#0B5F61';
+    tierColor = '#641F2D';
   } else if (product.category?.toLowerCase() === 'bedsheet') {
     collectionTier = 'JORIQUE Living';
     tierColor = '#3A4D39';

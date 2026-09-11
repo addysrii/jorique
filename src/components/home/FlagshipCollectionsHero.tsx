@@ -40,7 +40,7 @@ const COLUMNS: CollectionColumn[] = [
     brand: 'JORIQUE',
     name: 'Signature',
     headlineLine1: 'Refined comfort,',
-    headlineLine2: 'distinctive living.',
+    headlineLine2: 'distinctive design.',
     description:
       'A curated collection for those who appreciate finer details. Elevated textiles and apparel for a more considered way of life.',
     ctaText: 'EXPLORE SIGNATURE',
@@ -56,15 +56,15 @@ const COLUMNS: CollectionColumn[] = [
     brand: 'JORIQUE',
     name: 'Luxe',
     headlineLine1: 'Elevated comfort,',
-    headlineLine2: 'Exceptional living.',
+    headlineLine2: 'exceptional detail.',
     description:
       'Our most luxurious collection, crafted for those who seek the extraordinary in everyday life.',
     ctaText: 'EXPLORE LUXE',
     cornerTagLines: ['SPACES', 'PEOPLE', 'LOVE'],
     image: '/images/collections/luxe.jpg',
-    accentHex: '#0B5F61',
+    accentHex: '#641F2D',
     gradientTop:
-      'linear-gradient(to bottom, rgba(11, 95, 97, 0.94) 0%, rgba(11, 95, 97, 0.82) 28%, rgba(11, 95, 97, 0.35) 55%, transparent 80%)',
+      'linear-gradient(to bottom, rgba(72, 19, 28, 0.94) 0%, rgba(72, 19, 28, 0.82) 28%, rgba(72, 19, 28, 0.35) 55%, transparent 80%)',
     link: '/shop?collection=luxe',
   },
 ];
