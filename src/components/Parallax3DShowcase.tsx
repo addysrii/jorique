@@ -378,7 +378,7 @@ function FullWidthCategoryCarousel({
                         initial={{ opacity: 0, scale: 0.7 }}
                         animate={{ opacity: 1, scale: 1 }}
                         transition={{ delay: 0.15, type: 'spring' }}
-                        className="inline-flex items-center px-3 py-1 rounded-full bg-[#8E1B24] text-white text-[10px] font-bold tracking-wider uppercase shadow-lg border border-white/20"
+                        className="inline-flex items-center px-3 py-1 rounded-full bg-[#0B5F61] text-white text-[10px] font-bold tracking-wider uppercase shadow-lg border border-white/20"
                       >
                         {discountPercent}% OFF
                       </motion.span>

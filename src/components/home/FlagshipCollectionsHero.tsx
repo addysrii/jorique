@@ -62,9 +62,9 @@ const COLUMNS: CollectionColumn[] = [
     ctaText: 'EXPLORE LUXE',
     cornerTagLines: ['SPACES', 'PEOPLE', 'LOVE'],
     image: '/images/collections/luxe.jpg',
-    accentHex: '#641F2D',
+    accentHex: '#0B5F61',
     gradientTop:
-      'linear-gradient(to bottom, rgba(72, 19, 28, 0.94) 0%, rgba(72, 19, 28, 0.82) 28%, rgba(72, 19, 28, 0.35) 55%, transparent 80%)',
+      'linear-gradient(to bottom, rgba(11, 95, 97, 0.94) 0%, rgba(11, 95, 97, 0.82) 28%, rgba(11, 95, 97, 0.35) 55%, transparent 80%)',
     link: '/shop?collection=luxe',
   },
 ];

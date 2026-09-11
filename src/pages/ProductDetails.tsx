@@ -28,6 +28,7 @@ import SizeGuideModal from '../components/SizeGuideModal';
 import ColorDisclaimerSection from '../components/ColorDisclaimerSection';
 import ProductDescriptionTable, { parseProductDescription } from '../components/ProductDescriptionTable';
 import SEO from '../components/SEO';
+import LoadingMasterpiece from '../components/LoadingMasterpiece';
 import { productService } from '../lib/api/products';
 import { Product } from '../types';
 import { useCart } from '../context/CartContext';
@@ -435,12 +436,7 @@ export default function ProductDetails() {
   };
 
   if (loading) {
-    return (
-      <div className="min-h-screen bg-background dark:bg-[#100E0D] text-primary dark:text-[#F5F2EB] flex flex-col items-center justify-center gap-4">
-        <div className="w-10 h-10 border-2 border-primary dark:border-[#D4AF37] border-t-transparent rounded-full animate-spin"></div>
-        <p className="text-xs tracking-widest uppercase text-secondary dark:text-white/60">Loading Masterpiece...</p>
-      </div>
-    );
+    return <LoadingMasterpiece />;
   }
 
   if (error || !product) {

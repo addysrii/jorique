@@ -193,14 +193,14 @@ export default function AdminProductModifyButton({ product, onProductUpdated }: 
                     <optgroup label="Brand Collections">
                       <option value="JORIQUE Essential">JORIQUE Essential (Sage #7A8B72)</option>
                       <option value="JORIQUE Signature">JORIQUE Signature (Royal Blue #243B64)</option>
-                      <option value="JORIQUE Luxe">JORIQUE Luxe (Burgundy #641F2D)</option>
+                      <option value="JORIQUE Luxe">JORIQUE Luxe (Deep Teal #0B5F61)</option>
                       <option value="JORIQUE Souvenir">JORIQUE Souvenir (Dusty Rose #B9787D)</option>
                       <option value="JORIQUE Hospitality">JORIQUE Hospitality (Slate #4B5563)</option>
                     </optgroup>
                     <optgroup label="Storefront Badges">
                       <option value="NEW">New (Sage)</option>
                       <option value="FEATURED">Featured (Royal Blue)</option>
-                      <option value="BEST SELLER">Best Seller (Burgundy)</option>
+                      <option value="BEST SELLER">Best Seller (Deep Teal)</option>
                       <option value="LIMITED">Limited Edition (Dusty Rose)</option>
                     </optgroup>
                     {dbBadges.length > 0 && (

@@ -21,7 +21,7 @@ export default function ComingSoon() {
   };
 
   return (
-    <div className="min-h-screen bg-[#FDFBF7] dark:bg-[#100E0D] text-primary dark:text-[#F5F2EB] flex flex-col justify-between selection:bg-[#C5B49D] selection:text-white font-sans relative overflow-hidden transition-colors duration-300">
+    <div className="min-h-screen bg-[#F5EDE3] dark:bg-[#100E0D] text-primary dark:text-[#F5F2EB] flex flex-col justify-between selection:bg-[#C6A96B]/30 selection:text-primary font-sans relative overflow-hidden transition-colors duration-300">
       {/* Background Soft Glows */}
       <div className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-radial from-[#EBE0D2]/50 dark:from-[#D4AF37]/10 via-transparent to-transparent pointer-events-none blur-3xl -z-10" />
       <div className="absolute bottom-0 right-0 w-[400px] h-[400px] bg-radial from-[#E5D7C4]/30 dark:from-[#C4A482]/10 to-transparent pointer-events-none blur-3xl -z-10" />

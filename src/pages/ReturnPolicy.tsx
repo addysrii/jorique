@@ -62,7 +62,7 @@ export default function ReturnPolicy() {
   };
 
   return (
-    <div className="min-h-screen bg-[#FAF8F5] dark:bg-[#0D0B0A] text-primary dark:text-[#F5F2EB] transition-colors duration-300 font-sans selection:bg-[#0B5F61]/20 dark:selection:bg-[#D4AF37]/30 selection:text-[#0B5F61] dark:selection:text-[#D4AF37]">
+    <div className="min-h-screen bg-[#F5EDE3] dark:bg-[#0D0B0A] text-primary dark:text-[#F5F2EB] transition-colors duration-300 font-sans selection:bg-[#0B5F61]/20 dark:selection:bg-[#D4AF37]/30 selection:text-[#0B5F61] dark:selection:text-[#D4AF37]">
       <SEO
         title="Complimentary Returns & White-Glove Care Policy | JORIQUE"
         description="Learn about JORIQUE’s transparent 7-day return policy, exchange guidelines, quality guarantee, and doorstep collection service across India."

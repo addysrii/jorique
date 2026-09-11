@@ -1,0 +1,69 @@
+import { useState, useEffect } from 'react';
+import { motion } from 'framer-motion';
+
+export default function LoadingMasterpiece() {
+  // Step cycles: 1 -> 2 -> 3 -> 1 -> 2 -> 3
+  const [activeStep, setActiveStep] = useState<1 | 2 | 3>(1);
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setActiveStep((prev) => (prev === 3 ? 1 : ((prev + 1) as 1 | 2 | 3)));
+    }, 450);
+
+    return () => clearInterval(timer);
+  }, []);
+
+  return (
+    <div className="min-h-screen bg-[#F5EDE3] dark:bg-[#100E0D] text-[#1A1A1A] dark:text-[#FCFAF7] flex flex-col items-center justify-center gap-5 selection:bg-[#C6A96B]/30 transition-colors duration-500 select-none">
+      {/* Single Revolving Circle of Black Color */}
+      <div className="w-10 h-10 rounded-full border-2 border-black/15 border-t-black dark:border-white/20 dark:border-t-white animate-spin [animation-duration:0.85s]" />
+
+      {/* "LOADING" in CAPSLOCK with Sequential Blinking Dots */}
+      <div className="flex items-center font-mono mt-1">
+        <span className="text-xs sm:text-sm font-semibold tracking-[0.35em] uppercase text-[#1A1A1A] dark:text-[#FCFAF7]">
+          LOADING
+        </span>
+
+        {/* Sequential Dots Container */}
+        <div className="flex items-center gap-1.5 ml-2.5 w-12">
+          {[1, 2, 3].map((dotIndex) => {
+            const isVisible = activeStep >= dotIndex;
+            const isCurrentlyBlinking = activeStep === dotIndex;
+
+            return (
+              <motion.span
+                key={dotIndex}
+                initial={false}
+                animate={
+                  isVisible
+                    ? isCurrentlyBlinking
+                      ? {
+                          opacity: [0.25, 1, 0.25, 1],
+                          scale: [0.85, 1.35, 1],
+                        }
+                      : {
+                          opacity: 1,
+                          scale: 1,
+                        }
+                    : {
+                        opacity: 0,
+                        scale: 0.5,
+                      }
+                }
+                transition={{
+                  duration: 0.4,
+                  ease: 'easeInOut',
+                }}
+                className={`inline-block w-1.5 h-1.5 rounded-full ${
+                  isCurrentlyBlinking
+                    ? 'bg-black dark:bg-white shadow-[0_0_6px_rgba(0,0,0,0.4)] dark:shadow-[0_0_6px_rgba(255,255,255,0.6)]'
+                    : 'bg-black/80 dark:bg-white/80'
+                }`}
+              />
+            );
+          })}
+        </div>
+      </div>
+    </div>
+  );
+}

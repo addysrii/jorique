@@ -68,7 +68,7 @@ export default function JoriqueWaySection() {
                   ease: [0.16, 1, 0.3, 1],
                   delay: 0.08 + i * 0.1,
                 }}
-                className={`font-serif leading-[1.08] tracking-tight text-[#1A1816] dark:text-white inline-block ${i === 0
+                className={`font-serif leading-[1.08] tracking-tight text-[#1A1A1A] dark:text-white inline-block ${i === 0
                     ? 'text-5xl sm:text-7xl lg:text-8xl'
                     : i === 1
                       ? 'text-5xl sm:text-7xl lg:text-8xl italic text-[#8A8177] dark:text-white/40'

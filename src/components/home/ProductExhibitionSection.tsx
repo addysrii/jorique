@@ -53,7 +53,7 @@ const FALLBACK_EXHIBITS: CuratedExhibit[] = [
     category: 'Suits',
     collectionTier: 'luxe',
     tierLabel: 'Luxe',
-    tierColor: '#641F2D',
+    tierColor: '#0B5F61',
     price: 4299,
     image: '/images/collections/signature.jpg',
     weaveDetail: 'Couture Mulberry Silk • Liquid Sheen Finish',
@@ -101,7 +101,7 @@ const FALLBACK_EXHIBITS: CuratedExhibit[] = [
     category: 'Bedsheet',
     collectionTier: 'luxe',
     tierLabel: 'Luxe',
-    tierColor: '#641F2D',
+    tierColor: '#0B5F61',
     price: 6499,
     image: '/images/collections/luxe.jpg',
     weaveDetail: '800 Thread Count Liquid Mirror Sateen',
@@ -153,7 +153,7 @@ export default function ProductExhibitionSection() {
             } else if (skuUpper.includes('LUX') || skuUpper.includes('LUXE') || p.price > 4000) {
               tier = 'luxe';
               tierLabel = 'Luxe';
-              tierColor = '#641F2D';
+              tierColor = '#0B5F61';
             }
 
             const img = (Array.isArray(p.images) && p.images.length > 0 && p.images[0])
@@ -259,7 +259,7 @@ export default function ProductExhibitionSection() {
             </span>
             <span>•</span>
             <span className="flex items-center gap-1.5">
-              <span className="w-2.5 h-2.5 rounded-full bg-[#641F2D]" />
+              <span className="w-2.5 h-2.5 rounded-full bg-[#0B5F61]" />
               <span>Luxe</span>
             </span>
           </div>

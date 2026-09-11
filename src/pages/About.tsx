@@ -73,7 +73,7 @@ export default function About() {
   ];
 
   return (
-    <div className="min-h-screen bg-[#FBF8F2] dark:bg-[#100E0D] text-[#231C16] dark:text-[#F5F2EB] transition-colors duration-300 selection:bg-[#C6A96B]/20">
+    <div className="min-h-screen bg-[#F5EDE3] dark:bg-[#100E0D] text-primary dark:text-[#F5F2EB] transition-colors duration-300 selection:bg-[#C6A96B]/20">
       <SEO
         title="About JORIQUE | Where Comfort Meets Design — Luxury Everyday Essentials"
         description="JORIQUE is a premium Indian lifestyle brand offering beautifully designed everyday essentials—from luxurious home linens to refined apparel and fragrances—blending comfort and style."
@@ -508,7 +508,7 @@ export default function About() {
 
           <div className="pt-4 flex flex-col sm:flex-row items-center justify-center gap-4">
             <Link to="/shop">
-              <button className="inline-flex items-center gap-2.5 bg-[#0B5F61] hover:bg-[#68131B] text-white dark:bg-[#D4AF37] dark:hover:bg-[#E5C158] dark:text-[#100E0D] px-8 py-4 rounded-full text-xs font-bold uppercase tracking-[0.25em] transition-all duration-300 shadow-lg hover:shadow-xl cursor-pointer">
+              <button className="inline-flex items-center gap-2.5 bg-[#0B5F61] hover:bg-[#0E7A7D] text-white dark:bg-[#D4AF37] dark:hover:bg-[#E5C158] dark:text-[#100E0D] px-8 py-4 rounded-full text-xs font-bold uppercase tracking-[0.25em] transition-all duration-300 shadow-lg hover:shadow-xl cursor-pointer">
                 <ShoppingBag size={14} />
                 <span>Explore The Collection</span>
               </button>
