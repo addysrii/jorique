@@ -80,7 +80,7 @@ export default function AdminLogin() {
       {/* Ambient Luxury Dark Backdrop with Gilded Glows */}
       <div
         className="absolute -top-40 left-1/2 -translate-x-1/2 w-[900px] h-[500px] rounded-full blur-[160px] pointer-events-none opacity-25"
-        style={{ background: 'radial-gradient(circle, #D4AF37 0%, #851C25 45%, transparent 70%)' }}
+        style={{ background: 'radial-gradient(circle, #D4AF37 0%, #0B5F61 45%, transparent 70%)' }}
       />
       <div
         className="absolute -bottom-40 right-10 w-[600px] h-[400px] rounded-full blur-[140px] pointer-events-none opacity-15"

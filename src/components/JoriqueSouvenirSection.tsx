@@ -50,7 +50,7 @@ export default function JoriqueSouvenirSection() {
         {/* Header Block */}
         <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-8 border-b border-[#E8DFD3] dark:border-[#332922] pb-8">
           <div className="max-w-2xl space-y-3">
-            <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-white/80 dark:bg-white/5 border border-[#C6A96B]/30 text-[#851C25] dark:text-[#D4AF37] text-[10px] sm:text-[11px] font-bold tracking-[0.3em] uppercase shadow-xs">
+            <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-white/80 dark:bg-white/5 border border-[#C6A96B]/30 text-[#0B5F61] dark:text-[#D4AF37] text-[10px] sm:text-[11px] font-bold tracking-[0.3em] uppercase shadow-xs">
               <Gift size={12} className="text-[#C6A96B]" />
               The Gifting & Keepsake Atelier
             </div>
@@ -59,7 +59,7 @@ export default function JoriqueSouvenirSection() {
               JORIQUE Souvenir
             </h2>
 
-            <p className="font-serif italic text-base sm:text-lg text-[#851C25] dark:text-[#C6A96B] font-light">
+            <p className="font-serif italic text-base sm:text-lg text-[#0B5F61] dark:text-[#C6A96B] font-light">
               “Artisanal gift editions and keepsake bespoke treasures.”
             </p>
 
@@ -72,7 +72,7 @@ export default function JoriqueSouvenirSection() {
           {/* Quick Actions */}
           <div className="flex flex-wrap items-center gap-3">
             <Link to="/gift">
-              <button className="group inline-flex items-center gap-2.5 px-7 py-3.5 rounded-full bg-[#1A1A1A] hover:bg-[#851C25] dark:bg-[#C6A96B] dark:hover:bg-[#E5C158] text-white dark:text-black font-semibold text-xs uppercase tracking-[0.2em] transition-all duration-300 shadow-md hover:shadow-lg cursor-pointer">
+              <button className="group inline-flex items-center gap-2.5 px-7 py-3.5 rounded-full bg-[#1A1A1A] hover:bg-[#0B5F61] dark:bg-[#C6A96B] dark:hover:bg-[#E5C158] text-white dark:text-black font-semibold text-xs uppercase tracking-[0.2em] transition-all duration-300 shadow-md hover:shadow-lg cursor-pointer">
                 <Gift size={14} />
                 <span>Explore Gifting Atelier</span>
                 <ArrowRight size={14} className="group-hover:translate-x-1 transition-transform" />
@@ -109,7 +109,7 @@ export default function JoriqueSouvenirSection() {
                 </p>
               </div>
 
-              <div className="pt-4 border-t border-[#E8DFD3] dark:border-[#332922] flex items-center gap-1.5 text-[10px] font-mono tracking-wider uppercase text-[#851C25] dark:text-[#C6A96B]">
+              <div className="pt-4 border-t border-[#E8DFD3] dark:border-[#332922] flex items-center gap-1.5 text-[10px] font-mono tracking-wider uppercase text-[#0B5F61] dark:text-[#C6A96B]">
                 <Sparkle size={10} />
                 <span>Heirloom Keepsake</span>
               </div>
@@ -125,7 +125,7 @@ export default function JoriqueSouvenirSection() {
               Connect with our master gifting curator for bespoke ribbons, custom seals, and bespoke fragrance creation.
             </span>
           </div>
-          <span className="text-[11px] font-mono text-[#851C25] dark:text-[#C6A96B] uppercase tracking-widest shrink-0 font-medium">
+          <span className="text-[11px] font-mono text-[#0B5F61] dark:text-[#C6A96B] uppercase tracking-widest shrink-0 font-medium">
             Handcrafted With Care
           </span>
         </div>

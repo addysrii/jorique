@@ -52,7 +52,7 @@ const PARALLAX_THEMES: ParallaxTheme[] = [
     lightingTemp: '2400K Candlelit Amber',
     lightingIcon: 'candle',
     accentColor: '#D4AF37',
-    accentSecondary: '#851C25',
+    accentSecondary: '#0B5F61',
     bgGradientLight: 'from-[#FAF6EF] via-[#F4EDE1] to-[#EFE4D2]',
     bgGradientDark: 'from-[#141210] via-[#1B1815] to-[#0D0C0B]',
     image: '/Products/1.jpg',
@@ -62,7 +62,7 @@ const PARALLAX_THEMES: ParallaxTheme[] = [
     swatches: [
       { name: 'Obsidian Black', hex: '#1C1917' },
       { name: 'Imperial Gold', hex: '#D4AF37' },
-      { name: 'Deep Crimson', hex: '#851C25' },
+      { name: 'Deep Crimson', hex: '#0B5F61' },
     ],
     specs: [
       { label: 'Weave', value: 'Liquid Sateen' },

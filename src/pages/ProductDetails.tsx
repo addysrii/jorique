@@ -595,7 +595,7 @@ export default function ProductDetails() {
                     </span>
                   )}
                   {discountPercentage > 0 && (
-                    <span className="text-xs font-times font-bold text-white bg-[#851C25] px-2.5 py-0.5 rounded-full uppercase tracking-wider tabular-nums">
+                    <span className="text-xs font-times font-bold text-white bg-[#0B5F61] px-2.5 py-0.5 rounded-full uppercase tracking-wider tabular-nums">
                       {discountPercentage}% OFF
                     </span>
                   )}
@@ -605,7 +605,7 @@ export default function ProductDetails() {
                 {/* <div className="flex items-center gap-2 p-2.5 rounded-xl bg-amber-500/10 dark:bg-amber-500/15 border border-amber-500/30 text-xs text-primary dark:text-white">
                   <Zap size={14} className="text-amber-600 dark:text-amber-400 shrink-0" />
                   <span>
-                    UPI & Card Orders get it for <strong className="font-times font-bold text-[#851C25] dark:text-[#D4AF37] tabular-nums">₹{upiInstantPrice.toLocaleString('en-IN')}</strong> (Extra 10% Off)
+                    UPI & Card Orders get it for <strong className="font-times font-bold text-[#0B5F61] dark:text-[#D4AF37] tabular-nums">₹{upiInstantPrice.toLocaleString('en-IN')}</strong> (Extra 10% Off)
                   </span>
                 </div> */}
               </div>
@@ -1024,7 +1024,7 @@ export default function ProductDetails() {
                         <div className="pt-2">
                           <Link
                             to="/return-policy"
-                            className="inline-flex items-center gap-1.5 font-bold text-[#851C25] dark:text-[#D4AF37] hover:underline"
+                            className="inline-flex items-center gap-1.5 font-bold text-[#0B5F61] dark:text-[#D4AF37] hover:underline"
                           >
                             <span>Read Full Return & Exchange Policy</span>
                             <span>→</span>
@@ -1047,7 +1047,7 @@ export default function ProductDetails() {
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-14 items-center">
               <div className="lg:col-span-6 space-y-6">
                 <div>
-                  <span className="text-[11px] font-bold uppercase tracking-[0.3em] text-[#851C25] dark:text-[#D4AF37] block mb-2">
+                  <span className="text-[11px] font-bold uppercase tracking-[0.3em] text-[#0B5F61] dark:text-[#D4AF37] block mb-2">
                     {product.category || 'Collection'} Spotlight
                   </span>
                   <h2 className="text-3xl sm:text-4xl font-serif font-light text-primary dark:text-white leading-tight">
@@ -1082,7 +1082,7 @@ export default function ProductDetails() {
         {/* CUSTOMER REVIEWS & RATINGS SECTION */}
         {/* <section id="reviews-section" className="py-14 lg:py-20 max-w-6xl mx-auto px-6 lg:px-12">
           <div className="text-center max-w-2xl mx-auto mb-10 space-y-2">
-            <span className="text-[11px] font-bold uppercase tracking-[0.25em] text-[#851C25] dark:text-[#D4AF37]">
+            <span className="text-[11px] font-bold uppercase tracking-[0.25em] text-[#0B5F61] dark:text-[#D4AF37]">
               Customer Experiences
             </span>
             <h2 className="text-2xl sm:text-3xl font-serif font-light text-primary dark:text-white">

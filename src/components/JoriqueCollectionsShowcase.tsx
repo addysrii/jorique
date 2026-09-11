@@ -96,9 +96,9 @@ const TIERS: TierItem[] = [
     description:
       'Our ultimate expression of tactile opulence. Tailored for presidential suites and connoisseurs of fine living, JORIQUE Luxe combines high-density mulberry silk borders with velvet touches and 800+ thread count liquid sateen for an unforgettable tactile caress.',
     colorName: 'Burgundy & Champagne Gilt',
-    accentColor: '#851C25',
+    accentColor: '#0B5F61',
     badgeBg: 'rgba(133, 28, 37, 0.12)',
-    badgeText: '#851C25',
+    badgeText: '#0B5F61',
     image: '/Products/5.jpg',
     productCutout: '/images/luxury-products/cushion_clean.png',
     specs: [
@@ -108,7 +108,7 @@ const TIERS: TierItem[] = [
       { label: 'Finishing', val: 'Calendered Luster' },
     ],
     swatches: [
-      { name: 'Velvet Wine', hex: '#851C25' },
+      { name: 'Velvet Wine', hex: '#0B5F61' },
       { name: 'Champagne Gilt', hex: '#C6A96B' },
       { name: 'Deep Obsidian', hex: '#1C1917' },
     ],
@@ -154,7 +154,7 @@ export default function JoriqueCollectionsShowcase() {
 
         {/* ── SECTION HEADER ── */}
         <div className="text-center max-w-3xl mx-auto space-y-3">
-          <div className="inline-flex items-center gap-2.5 px-4 py-1.5 rounded-full bg-white/80 dark:bg-white/5 border border-[#C6A96B]/30 backdrop-blur-md text-[#851C25] dark:text-[#D4AF37] text-[10px] sm:text-[11px] font-bold tracking-[0.3em] uppercase shadow-xs">
+          <div className="inline-flex items-center gap-2.5 px-4 py-1.5 rounded-full bg-white/80 dark:bg-white/5 border border-[#C6A96B]/30 backdrop-blur-md text-[#0B5F61] dark:text-[#D4AF37] text-[10px] sm:text-[11px] font-bold tracking-[0.3em] uppercase shadow-xs">
             <Sparkles size={12} className="text-[#C6A96B]" />
             The Three Atelier Tiers
           </div>
@@ -257,7 +257,7 @@ export default function JoriqueCollectionsShowcase() {
                     {activeTier.title}
                   </h3>
 
-                  <p className="font-serif italic text-base sm:text-lg lg:text-xl text-[#851C25] dark:text-[#C6A96B] font-light leading-relaxed">
+                  <p className="font-serif italic text-base sm:text-lg lg:text-xl text-[#0B5F61] dark:text-[#C6A96B] font-light leading-relaxed">
                     “{activeTier.tagline}”
                   </p>
                 </div>
@@ -305,7 +305,7 @@ export default function JoriqueCollectionsShowcase() {
                   </div>
 
                   <Link to={activeTier.link}>
-                    <button className="group inline-flex items-center gap-2.5 px-7 py-3.5 rounded-full bg-[#1A1A1A] hover:bg-[#851C25] dark:bg-[#C6A96B] dark:hover:bg-[#E5C158] text-white dark:text-black font-semibold text-xs uppercase tracking-[0.2em] transition-all duration-300 shadow-md hover:shadow-lg cursor-pointer">
+                    <button className="group inline-flex items-center gap-2.5 px-7 py-3.5 rounded-full bg-[#1A1A1A] hover:bg-[#0B5F61] dark:bg-[#C6A96B] dark:hover:bg-[#E5C158] text-white dark:text-black font-semibold text-xs uppercase tracking-[0.2em] transition-all duration-300 shadow-md hover:shadow-lg cursor-pointer">
                       <span>Explore {activeTier.shortSubtitle}</span>
                       <ArrowRight size={14} className="group-hover:translate-x-1 transition-transform" />
                     </button>

@@ -182,7 +182,7 @@ export default function ProductDescriptionTable({
         <div className="overflow-hidden rounded-xl border border-border/80 dark:border-[#2E2925] bg-white dark:bg-[#161412] shadow-2xs">
           <table className="w-full text-left border-collapse text-xs">
             <thead>
-              <tr className="bg-[#FAF7F2] dark:bg-[#1F1C19] border-b border-border/80 dark:border-[#2E2925]">
+              <tr className="bg-[#F5EDE3] dark:bg-[#1F1C19] border-b border-border/80 dark:border-[#2E2925]">
                 <th className="py-2.5 px-3.5 sm:px-4 font-bold text-[10px] uppercase tracking-[0.16em] text-secondary/80 dark:text-[#D4AF37] w-2/5 sm:w-1/3">
                   Specification
                 </th>
@@ -216,7 +216,7 @@ export default function ProductDescriptionTable({
       {/* Tabular Care & Maintenance Instructions (Only rendered if showCare is explicitly enabled) */}
       {showCare && parsed.care.length > 0 && (
         <div className="overflow-hidden rounded-xl border border-border/80 dark:border-[#2E2925] bg-white dark:bg-[#161412] shadow-2xs mt-3">
-          <div className="bg-[#FAF7F2] dark:bg-[#1F1C19] px-3.5 sm:px-4 py-2.5 border-b border-border/80 dark:border-[#2E2925] flex items-center gap-2">
+          <div className="bg-[#F5EDE3] dark:bg-[#1F1C19] px-3.5 sm:px-4 py-2.5 border-b border-border/80 dark:border-[#2E2925] flex items-center gap-2">
             <RefreshCw size={13} className="text-[#C6A96B] dark:text-[#D4AF37]" />
             <span className="text-[10px] uppercase font-bold tracking-[0.16em] text-secondary/90 dark:text-[#D4AF37]">
               Care & Handling Instructions

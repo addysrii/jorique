@@ -62,7 +62,7 @@ export default function ReturnPolicy() {
   };
 
   return (
-    <div className="min-h-screen bg-[#FAF8F5] dark:bg-[#0D0B0A] text-primary dark:text-[#F5F2EB] transition-colors duration-300 font-sans selection:bg-[#851C25]/20 dark:selection:bg-[#D4AF37]/30 selection:text-[#851C25] dark:selection:text-[#D4AF37]">
+    <div className="min-h-screen bg-[#FAF8F5] dark:bg-[#0D0B0A] text-primary dark:text-[#F5F2EB] transition-colors duration-300 font-sans selection:bg-[#0B5F61]/20 dark:selection:bg-[#D4AF37]/30 selection:text-[#0B5F61] dark:selection:text-[#D4AF37]">
       <SEO
         title="Complimentary Returns & White-Glove Care Policy | JORIQUE"
         description="Learn about JORIQUE’s transparent 7-day return policy, exchange guidelines, quality guarantee, and doorstep collection service across India."
@@ -74,11 +74,11 @@ export default function ReturnPolicy() {
       <header className="relative pt-28 sm:pt-36 pb-16 sm:pb-20 border-b border-border dark:border-[#2E2925] overflow-hidden bg-cream/40 dark:bg-[#12100E]">
         <div
           className="absolute -top-32 left-1/2 -translate-x-1/2 w-[800px] h-[400px] rounded-full blur-[140px] pointer-events-none opacity-30 dark:opacity-20"
-          style={{ background: 'radial-gradient(circle, #D4AF37 0%, #851C25 60%, transparent 80%)' }}
+          style={{ background: 'radial-gradient(circle, #D4AF37 0%, #0B5F61 60%, transparent 80%)' }}
         />
 
         <div className="max-w-5xl mx-auto px-6 lg:px-12 text-center relative z-10 space-y-4">
-          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white dark:bg-white/5 border border-border dark:border-white/10 text-xs font-bold uppercase tracking-[0.25em] text-[#851C25] dark:text-[#D4AF37]">
+          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white dark:bg-white/5 border border-border dark:border-white/10 text-xs font-bold uppercase tracking-[0.25em] text-[#0B5F61] dark:text-[#D4AF37]">
             <ShieldCheck size={13} />
             <span>Policy Guidelines</span>
           </div>
@@ -110,7 +110,7 @@ export default function ReturnPolicy() {
         {/* 1. SCOPE */}
         <section className="space-y-4">
           <div className="flex items-center gap-3">
-            <span className="w-7 h-7 rounded-full bg-primary/10 dark:bg-white/10 flex items-center justify-center text-xs font-bold text-[#851C25] dark:text-[#D4AF37]">
+            <span className="w-7 h-7 rounded-full bg-primary/10 dark:bg-white/10 flex items-center justify-center text-xs font-bold text-[#0B5F61] dark:text-[#D4AF37]">
               01
             </span>
             <h2 className="text-xl sm:text-2xl font-serif font-semibold text-primary dark:text-white">
@@ -133,7 +133,7 @@ export default function ReturnPolicy() {
         {/* 2. CORE RETURN & EXCHANGE RULE */}
         <section className="space-y-4">
           <div className="flex items-center gap-3">
-            <span className="w-7 h-7 rounded-full bg-primary/10 dark:bg-white/10 flex items-center justify-center text-xs font-bold text-[#851C25] dark:text-[#D4AF37]">
+            <span className="w-7 h-7 rounded-full bg-primary/10 dark:bg-white/10 flex items-center justify-center text-xs font-bold text-[#0B5F61] dark:text-[#D4AF37]">
               02
             </span>
             <h2 className="text-xl sm:text-2xl font-serif font-semibold text-primary dark:text-white">
@@ -166,12 +166,12 @@ export default function ReturnPolicy() {
         {/* 3. MANDATORY 360° UNBOXING VIDEO */}
         <section className="space-y-4">
           <div className="flex items-center gap-3">
-            <span className="w-7 h-7 rounded-full bg-primary/10 dark:bg-white/10 flex items-center justify-center text-xs font-bold text-[#851C25] dark:text-[#D4AF37]">
+            <span className="w-7 h-7 rounded-full bg-primary/10 dark:bg-white/10 flex items-center justify-center text-xs font-bold text-[#0B5F61] dark:text-[#D4AF37]">
               03
             </span>
             <h2 className="text-xl sm:text-2xl font-serif font-semibold text-primary dark:text-white flex items-center gap-2">
               <span>Mandatory 360° Unboxing Video</span>
-              <span className="text-[10px] uppercase font-bold px-2 py-0.5 rounded-full bg-[#851C25] text-white tracking-wider">
+              <span className="text-[10px] uppercase font-bold px-2 py-0.5 rounded-full bg-[#0B5F61] text-white tracking-wider">
                 Required
               </span>
             </h2>
@@ -179,7 +179,7 @@ export default function ReturnPolicy() {
 
           <div className="p-6 sm:p-8 rounded-2xl bg-white dark:bg-[#161412] border border-border/80 dark:border-[#2E2925] space-y-4 text-xs sm:text-sm text-secondary dark:text-white/70 leading-relaxed">
             <div className="flex items-start gap-3">
-              <Video size={20} className="text-[#851C25] dark:text-[#D4AF37] shrink-0 mt-0.5" />
+              <Video size={20} className="text-[#0B5F61] dark:text-[#D4AF37] shrink-0 mt-0.5" />
               <div>
                 <p className="font-semibold text-primary dark:text-white mb-1">
                   A complete, continuous 360° opening video is strictly mandatory for any defect, damage, or wrong-item claim.
@@ -215,7 +215,7 @@ export default function ReturnPolicy() {
         {/* 4. CLAIM TIMELINE & CONDITIONS */}
         <section className="space-y-4">
           <div className="flex items-center gap-3">
-            <span className="w-7 h-7 rounded-full bg-primary/10 dark:bg-white/10 flex items-center justify-center text-xs font-bold text-[#851C25] dark:text-[#D4AF37]">
+            <span className="w-7 h-7 rounded-full bg-primary/10 dark:bg-white/10 flex items-center justify-center text-xs font-bold text-[#0B5F61] dark:text-[#D4AF37]">
               04
             </span>
             <h2 className="text-xl sm:text-2xl font-serif font-semibold text-primary dark:text-white">
@@ -224,7 +224,7 @@ export default function ReturnPolicy() {
           </div>
           <div className="p-6 rounded-2xl bg-white dark:bg-[#161412] border border-border/80 dark:border-[#2E2925] text-xs sm:text-sm text-secondary dark:text-white/70 space-y-3 leading-relaxed">
             <p className="flex items-center gap-2 font-medium text-primary dark:text-white">
-              <Clock size={16} className="text-[#851C25] dark:text-[#D4AF37]" />
+              <Clock size={16} className="text-[#0B5F61] dark:text-[#D4AF37]" />
               Claims must be registered within <strong>48 hours</strong> of doorstep delivery confirmation.
             </p>
             <p>
@@ -236,7 +236,7 @@ export default function ReturnPolicy() {
         {/* 5. STEP-BY-STEP CLAIM PROCESS */}
         <section className="space-y-4">
           <div className="flex items-center gap-3">
-            <span className="w-7 h-7 rounded-full bg-primary/10 dark:bg-white/10 flex items-center justify-center text-xs font-bold text-[#851C25] dark:text-[#D4AF37]">
+            <span className="w-7 h-7 rounded-full bg-primary/10 dark:bg-white/10 flex items-center justify-center text-xs font-bold text-[#0B5F61] dark:text-[#D4AF37]">
               05
             </span>
             <h2 className="text-xl sm:text-2xl font-serif font-semibold text-primary dark:text-white">
@@ -245,17 +245,17 @@ export default function ReturnPolicy() {
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
             <div className="p-5 rounded-2xl bg-white dark:bg-[#161412] border border-border/80 dark:border-[#2E2925] space-y-2">
-              <div className="w-8 h-8 rounded-lg bg-primary/10 dark:bg-white/10 flex items-center justify-center text-xs font-bold text-[#851C25] dark:text-[#D4AF37]">
+              <div className="w-8 h-8 rounded-lg bg-primary/10 dark:bg-white/10 flex items-center justify-center text-xs font-bold text-[#0B5F61] dark:text-[#D4AF37]">
                 1
               </div>
               <h3 className="font-bold text-primary dark:text-white text-sm">Submit Evidence</h3>
               <p className="text-xs text-secondary dark:text-white/70 leading-relaxed">
-                Email <a href="mailto:care@jorique.in" className="text-[#851C25] dark:text-[#D4AF37] underline">care@jorique.in</a> with your Order ID, detailed description, high-res photos, and complete 360° unboxing video.
+                Email <a href="mailto:care@jorique.in" className="text-[#0B5F61] dark:text-[#D4AF37] underline">care@jorique.in</a> with your Order ID, detailed description, high-res photos, and complete 360° unboxing video.
               </p>
             </div>
 
             <div className="p-5 rounded-2xl bg-white dark:bg-[#161412] border border-border/80 dark:border-[#2E2925] space-y-2">
-              <div className="w-8 h-8 rounded-lg bg-primary/10 dark:bg-white/10 flex items-center justify-center text-xs font-bold text-[#851C25] dark:text-[#D4AF37]">
+              <div className="w-8 h-8 rounded-lg bg-primary/10 dark:bg-white/10 flex items-center justify-center text-xs font-bold text-[#0B5F61] dark:text-[#D4AF37]">
                 2
               </div>
               <h3 className="font-bold text-primary dark:text-white text-sm">Quality Verification</h3>
@@ -265,7 +265,7 @@ export default function ReturnPolicy() {
             </div>
 
             <div className="p-5 rounded-2xl bg-white dark:bg-[#161412] border border-border/80 dark:border-[#2E2925] space-y-2">
-              <div className="w-8 h-8 rounded-lg bg-primary/10 dark:bg-white/10 flex items-center justify-center text-xs font-bold text-[#851C25] dark:text-[#D4AF37]">
+              <div className="w-8 h-8 rounded-lg bg-primary/10 dark:bg-white/10 flex items-center justify-center text-xs font-bold text-[#0B5F61] dark:text-[#D4AF37]">
                 3
               </div>
               <h3 className="font-bold text-primary dark:text-white text-sm">Exchange Resolution</h3>
@@ -279,7 +279,7 @@ export default function ReturnPolicy() {
         {/* 6. CUSTOMIZED / PERSONALIZED CREATIONS */}
         <section className="space-y-4">
           <div className="flex items-center gap-3">
-            <span className="w-7 h-7 rounded-full bg-primary/10 dark:bg-white/10 flex items-center justify-center text-xs font-bold text-[#851C25] dark:text-[#D4AF37]">
+            <span className="w-7 h-7 rounded-full bg-primary/10 dark:bg-white/10 flex items-center justify-center text-xs font-bold text-[#0B5F61] dark:text-[#D4AF37]">
               06
             </span>
             <h2 className="text-xl sm:text-2xl font-serif font-semibold text-primary dark:text-white">
@@ -299,7 +299,7 @@ export default function ReturnPolicy() {
         {/* 7. EXCLUSIONS */}
         <section className="space-y-4">
           <div className="flex items-center gap-3">
-            <span className="w-7 h-7 rounded-full bg-primary/10 dark:bg-white/10 flex items-center justify-center text-xs font-bold text-[#851C25] dark:text-[#D4AF37]">
+            <span className="w-7 h-7 rounded-full bg-primary/10 dark:bg-white/10 flex items-center justify-center text-xs font-bold text-[#0B5F61] dark:text-[#D4AF37]">
               07
             </span>
             <h2 className="text-xl sm:text-2xl font-serif font-semibold text-primary dark:text-white">
@@ -319,7 +319,7 @@ export default function ReturnPolicy() {
         {/* 8. SHIPPING & DELIVERY TIMELINES */}
         <section className="space-y-4">
           <div className="flex items-center gap-3">
-            <span className="w-7 h-7 rounded-full bg-primary/10 dark:bg-white/10 flex items-center justify-center text-xs font-bold text-[#851C25] dark:text-[#D4AF37]">
+            <span className="w-7 h-7 rounded-full bg-primary/10 dark:bg-white/10 flex items-center justify-center text-xs font-bold text-[#0B5F61] dark:text-[#D4AF37]">
               08
             </span>
             <h2 className="text-xl sm:text-2xl font-serif font-semibold text-primary dark:text-white">
@@ -359,7 +359,7 @@ export default function ReturnPolicy() {
           <div>
             <a
               href="mailto:care@jorique.in"
-              className="inline-flex items-center gap-2 py-3 px-8 rounded-full bg-primary hover:bg-[#851C25] dark:bg-[#D4AF37] dark:hover:bg-[#B89628] text-white dark:text-black text-xs font-bold uppercase tracking-widest transition-all shadow-md"
+              className="inline-flex items-center gap-2 py-3 px-8 rounded-full bg-primary hover:bg-[#0B5F61] dark:bg-[#D4AF37] dark:hover:bg-[#B89628] text-white dark:text-black text-xs font-bold uppercase tracking-widest transition-all shadow-md"
             >
               <Mail size={15} />
               <span>care@jorique.in</span>
@@ -370,7 +370,7 @@ export default function ReturnPolicy() {
         {/* 10. FREQUENTLY ASKED QUESTIONS */}
         <section className="space-y-6 pt-4">
           <div className="text-center space-y-2">
-            <span className="text-[11px] font-bold uppercase tracking-[0.25em] text-[#851C25] dark:text-[#D4AF37]">
+            <span className="text-[11px] font-bold uppercase tracking-[0.25em] text-[#0B5F61] dark:text-[#D4AF37]">
               Common Inquiries
             </span>
             <h2 className="text-2xl sm:text-3xl font-serif font-light text-primary dark:text-white">

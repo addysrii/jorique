@@ -51,14 +51,14 @@ export default function ExploreByCategorySection() {
       <div className="max-w-6xl mx-auto space-y-12">
         <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 border-b border-[#E8E1D5] dark:border-[#2E2925] pb-6">
           <div>
-            <span className="text-[11px] font-bold uppercase tracking-[0.3em] text-[#851C25] dark:text-[#D4AF37]">
+            <span className="text-[11px] font-bold uppercase tracking-[0.3em] text-[#0B5F61] dark:text-[#D4AF37]">
               The Portfolio
             </span>
             <h2 className="font-serif text-2xl sm:text-4xl font-normal text-[#1A1816] dark:text-white mt-1">
               Explore The Collections
             </h2>
           </div>
-          <Link to="/shop" className="group inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-widest text-[#851C25] dark:text-[#D4AF37]">
+          <Link to="/shop" className="group inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-widest text-[#0B5F61] dark:text-[#D4AF37]">
             <span>View Entire Catalogue</span>
             <ArrowRight size={14} className="group-hover:translate-x-1 transition-transform" />
           </Link>
@@ -84,7 +84,7 @@ export default function ExploreByCategorySection() {
               </div>
 
               <div className="space-y-1 w-full pt-2 border-t border-[#E8E1D5]/70 dark:border-[#2E2925]/70">
-                <h3 className="font-serif text-base text-[#1A1816] dark:text-white group-hover:text-[#851C25] dark:group-hover:text-[#D4AF37] transition-colors">
+                <h3 className="font-serif text-base text-[#1A1816] dark:text-white group-hover:text-[#0B5F61] dark:group-hover:text-[#D4AF37] transition-colors">
                   {cat.title}
                 </h3>
                 {/* <p className="text-[11px] text-[#7A7168] dark:text-white/60 font-light">

@@ -178,7 +178,7 @@ const CATALOGUE_PAGES: CataloguePage[] = [
       { label: 'Dimension', val: '18 x 18 in • Mitered Edge' },
     ],
     swatches: [
-      { name: 'Warm Cream', hex: '#FAF7F2' },
+      { name: 'Warm Cream', hex: '#F5EDE3' },
       { name: 'Antique Gold', hex: '#C6A96B' },
       { name: 'Forest Olive', hex: '#4A553F' },
     ],
@@ -302,7 +302,7 @@ export default function EditorialBookletCatalogue() {
         
         {/* Header Block */}
         <div className="text-center max-w-3xl mx-auto space-y-3">
-          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/80 dark:bg-white/5 border border-[#C6A96B]/30 text-[#851C25] dark:text-[#D4AF37] text-[10px] sm:text-[11px] font-mono tracking-[0.3em] uppercase shadow-xs">
+          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/80 dark:bg-white/5 border border-[#C6A96B]/30 text-[#0B5F61] dark:text-[#D4AF37] text-[10px] sm:text-[11px] font-mono tracking-[0.3em] uppercase shadow-xs">
             <BookOpen size={13} className="text-[#C6A96B]" />
             <span>JORIQUE ATELIER LOOKBOOK • VOL. 2026</span>
           </div>
@@ -322,7 +322,7 @@ export default function EditorialBookletCatalogue() {
         <div className="relative max-w-5xl mx-auto">
           
           {/* Real Hardcover Book Shadow Drop & Table Perspective */}
-          <div className="relative rounded-[28px] sm:rounded-[36px] bg-[#FAF7F2] dark:bg-[#181412] p-2 sm:p-4 shadow-[0_30px_70px_-15px_rgba(0,0,0,0.35)] dark:shadow-[0_35px_80px_-20px_rgba(0,0,0,0.8)] border border-[#E8DFD3] dark:border-[#332922]">
+          <div className="relative rounded-[28px] sm:rounded-[36px] bg-[#F5EDE3] dark:bg-[#181412] p-2 sm:p-4 shadow-[0_30px_70px_-15px_rgba(0,0,0,0.35)] dark:shadow-[0_35px_80px_-20px_rgba(0,0,0,0.8)] border border-[#E8DFD3] dark:border-[#332922]">
             
             {/* Leather Hardcover Border Bevel */}
             <div className="relative rounded-[22px] sm:rounded-[30px] bg-[#F7F3EB] dark:bg-[#1C1714] p-2 sm:p-6 lg:p-8 overflow-hidden">
@@ -437,7 +437,7 @@ export default function EditorialBookletCatalogue() {
                         {currentItem.specs.map((spec, sIdx) => (
                           <div
                             key={sIdx}
-                            className="p-2.5 rounded-xl bg-[#FAF7F2] dark:bg-[#1C1714] border border-[#E8DFD3] dark:border-[#332922]"
+                            className="p-2.5 rounded-xl bg-[#F5EDE3] dark:bg-[#1C1714] border border-[#E8DFD3] dark:border-[#332922]"
                           >
                             <span className="text-[9px] font-mono uppercase tracking-widest text-secondary dark:text-white/50 block">
                               {spec.label}
@@ -494,7 +494,7 @@ export default function EditorialBookletCatalogue() {
                       {/* Curate to Bag Button */}
                       <button
                         onClick={handleQuickAdd}
-                        className="flex-1 sm:flex-none px-5 py-3 rounded-full bg-[#1A1A1A] hover:bg-[#851C25] dark:bg-[#C6A96B] dark:hover:bg-[#E5C158] text-white dark:text-black text-xs font-semibold uppercase tracking-[0.2em] transition-all duration-300 shadow-md flex items-center justify-center gap-2 cursor-pointer"
+                        className="flex-1 sm:flex-none px-5 py-3 rounded-full bg-[#1A1A1A] hover:bg-[#0B5F61] dark:bg-[#C6A96B] dark:hover:bg-[#E5C158] text-white dark:text-black text-xs font-semibold uppercase tracking-[0.2em] transition-all duration-300 shadow-md flex items-center justify-center gap-2 cursor-pointer"
                       >
                         {addedSku === currentItem.sku ? (
                           <>

@@ -225,14 +225,14 @@ export default function ProductExhibitionSection() {
   return (
     <section 
       id="exhibition" 
-      className="py-24 sm:py-32 lg:py-40 px-4 sm:px-6 lg:px-12 bg-[#FAF7F2] dark:bg-[#100E0D] text-primary dark:text-[#FCFAF7] transition-colors duration-500 border-t border-[#E8DFD3] dark:border-[#2E2925]"
+      className="py-24 sm:py-32 lg:py-40 px-4 sm:px-6 lg:px-12 bg-[#F5EDE3] dark:bg-[#100E0D] text-primary dark:text-[#FCFAF7] transition-colors duration-500 border-t border-[#E8DFD3] dark:border-[#2E2925]"
     >
       <div className="max-w-[1440px] mx-auto space-y-12 sm:space-y-16">
         
         {/* Exhibition Header */}
         <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-8 border-b border-[#E8DFD3] dark:border-[#2E2925] pb-10">
           <div className="space-y-4 max-w-2xl">
-            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/80 dark:bg-white/5 border border-[#C6A96B]/30 text-[#851C25] dark:text-[#D4AF37] text-[10px] sm:text-[11px] font-mono tracking-[0.3em] uppercase shadow-xs">
+            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/80 dark:bg-white/5 border border-[#C6A96B]/30 text-[#0B5F61] dark:text-[#D4AF37] text-[10px] sm:text-[11px] font-mono tracking-[0.3em] uppercase shadow-xs">
               <Sparkles size={12} className="text-[#C6A96B]" />
               <span>THE JORIQUE EXHIBITION</span>
             </div>
@@ -331,7 +331,7 @@ export default function ProductExhibitionSection() {
                   >
                     <Heart
                       size={14}
-                      className={wishlist[exhibit.id] ? 'fill-[#851C25] text-[#851C25]' : 'text-current'}
+                      className={wishlist[exhibit.id] ? 'fill-[#0B5F61] text-[#0B5F61]' : 'text-current'}
                     />
                   </button>
 
@@ -351,7 +351,7 @@ export default function ProductExhibitionSection() {
                       <span className="text-[#C6A96B] font-semibold">{exhibit.sku}</span>
                     </div>
 
-                    <Link to={`/product/${exhibit.sku || exhibit.id}`} className="block group-hover:text-[#851C25] dark:group-hover:text-[#C6A96B] transition-colors">
+                    <Link to={`/product/${exhibit.sku || exhibit.id}`} className="block group-hover:text-[#0B5F61] dark:group-hover:text-[#C6A96B] transition-colors">
                       <h3 className="font-serif font-semibold product-title text-lg sm:text-xl text-primary dark:text-white leading-snug line-clamp-2">
                         {exhibit.name}
                       </h3>
@@ -409,7 +409,7 @@ export default function ProductExhibitionSection() {
         {/* Bottom Callout: Explore Full Archive */}
         <div className="pt-8 text-center">
           <Link to="/shop">
-            <button className="group inline-flex items-center gap-3 px-8 sm:px-10 py-4 rounded-full bg-[#1A1A1A] hover:bg-[#851C25] dark:bg-[#C6A96B] dark:hover:bg-[#E5C158] text-white dark:text-black text-xs font-semibold uppercase tracking-[0.25em] transition-all duration-300 shadow-xl cursor-pointer">
+            <button className="group inline-flex items-center gap-3 px-8 sm:px-10 py-4 rounded-full bg-[#1A1A1A] hover:bg-[#0B5F61] dark:bg-[#C6A96B] dark:hover:bg-[#E5C158] text-white dark:text-black text-xs font-semibold uppercase tracking-[0.25em] transition-all duration-300 shadow-xl cursor-pointer">
               <span>EXPLORE COMPLETE ATELIER ARCHIVE</span>
               <ArrowRight size={14} className="transform group-hover:translate-x-1.5 transition-transform duration-300" />
             </button>

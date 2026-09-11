@@ -43,7 +43,7 @@ export default function JoriqueHospitalitySection() {
   ];
 
   return (
-    <section className="py-20 lg:py-28 px-4 sm:px-6 lg:px-10 bg-[#FAF7F2] dark:bg-[#14100D] text-primary dark:text-[#FCFAF7] relative overflow-hidden border-t border-[#E8DFD3] dark:border-[#2E2925] transition-colors duration-500">
+    <section className="py-20 lg:py-28 px-4 sm:px-6 lg:px-10 bg-[#F5EDE3] dark:bg-[#14100D] text-primary dark:text-[#FCFAF7] relative overflow-hidden border-t border-[#E8DFD3] dark:border-[#2E2925] transition-colors duration-500">
       {/* Subtle Ambient Gold Glow */}
       <div className="absolute top-0 right-1/4 w-[500px] h-[350px] bg-radial from-[#C6A96B]/10 via-transparent to-transparent blur-3xl pointer-events-none" />
 
@@ -52,7 +52,7 @@ export default function JoriqueHospitalitySection() {
         {/* Header Block */}
         <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-8 border-b border-[#E8DFD3] dark:border-[#332922] pb-8">
           <div className="max-w-2xl space-y-3">
-            <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-white/80 dark:bg-white/5 border border-[#C6A96B]/30 text-[#851C25] dark:text-[#D4AF37] text-[10px] sm:text-[11px] font-bold tracking-[0.3em] uppercase shadow-xs">
+            <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-white/80 dark:bg-white/5 border border-[#C6A96B]/30 text-[#0B5F61] dark:text-[#D4AF37] text-[10px] sm:text-[11px] font-bold tracking-[0.3em] uppercase shadow-xs">
               <Building2 size={12} className="text-[#C6A96B]" />
               Institutional & Hospitality Atelier
             </div>
@@ -61,7 +61,7 @@ export default function JoriqueHospitalitySection() {
               JORIQUE Hospitality
             </h2>
 
-            <p className="font-serif italic text-base sm:text-lg text-[#851C25] dark:text-[#C6A96B] font-light">
+            <p className="font-serif italic text-base sm:text-lg text-[#0B5F61] dark:text-[#C6A96B] font-light">
               “Commercial-grade luxury suites & boutique hotel collections.”
             </p>
 
@@ -78,7 +78,7 @@ export default function JoriqueHospitalitySection() {
               href={whatsappUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-2.5 px-7 py-3.5 rounded-full bg-[#1A1A1A] hover:bg-[#851C25] dark:bg-[#C6A96B] dark:hover:bg-[#E5C158] text-white dark:text-black font-semibold text-xs uppercase tracking-[0.2em] transition-all duration-300 shadow-md hover:shadow-lg cursor-pointer"
+              className="inline-flex items-center gap-2.5 px-7 py-3.5 rounded-full bg-[#1A1A1A] hover:bg-[#0B5F61] dark:bg-[#C6A96B] dark:hover:bg-[#E5C158] text-white dark:text-black font-semibold text-xs uppercase tracking-[0.2em] transition-all duration-300 shadow-md hover:shadow-lg cursor-pointer"
             >
               <MessageCircle size={15} />
               <span>Request Hospitality Dossier</span>
@@ -115,7 +115,7 @@ export default function JoriqueHospitalitySection() {
                 </p>
               </div>
 
-              <div className="pt-4 border-t border-[#E8DFD3] dark:border-[#332922] flex items-center gap-1.5 text-[10px] font-mono tracking-wider uppercase text-[#851C25] dark:text-[#C6A96B]">
+              <div className="pt-4 border-t border-[#E8DFD3] dark:border-[#332922] flex items-center gap-1.5 text-[10px] font-mono tracking-wider uppercase text-[#0B5F61] dark:text-[#C6A96B]">
                 <CheckCircle2 size={11} />
                 <span>Hospitality Standard</span>
               </div>
@@ -131,7 +131,7 @@ export default function JoriqueHospitalitySection() {
               Available across King, Queen, California King, and custom European/Asian hospitality dimensions.
             </span>
           </div>
-          <span className="text-[11px] font-mono text-[#851C25] dark:text-[#C6A96B] uppercase tracking-widest shrink-0 font-medium">
+          <span className="text-[11px] font-mono text-[#0B5F61] dark:text-[#C6A96B] uppercase tracking-widest shrink-0 font-medium">
             Worldwide White-Glove Dispatch
           </span>
         </div>

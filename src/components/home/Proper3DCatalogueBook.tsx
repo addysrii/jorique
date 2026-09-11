@@ -320,7 +320,7 @@ export default function Proper3DCatalogueBook() {
         
         {/* Section Title Header */}
         <div className="text-center max-w-2xl mx-auto space-y-3">
-          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/80 dark:bg-white/5 border border-[#C6A96B]/30 text-[#851C25] dark:text-[#D4AF37] text-[10px] sm:text-[11px] font-mono tracking-[0.3em] uppercase shadow-xs">
+          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/80 dark:bg-white/5 border border-[#C6A96B]/30 text-[#0B5F61] dark:text-[#D4AF37] text-[10px] sm:text-[11px] font-mono tracking-[0.3em] uppercase shadow-xs">
             <BookOpen size={13} className="text-[#C6A96B]" />
             <span>INTERACTIVE ATELIER CATALOGUE</span>
           </div>
@@ -425,7 +425,7 @@ export default function Proper3DCatalogueBook() {
               </div>
 
               {/* ── RIGHT FACING PAGE: SPECIFICATION DOSSIER ── */}
-              <div className="relative p-6 sm:p-8 lg:p-10 flex flex-col justify-between bg-[#FAF7F2] dark:bg-[#161210]">
+              <div className="relative p-6 sm:p-8 lg:p-10 flex flex-col justify-between bg-[#F5EDE3] dark:bg-[#161210]">
                 
                 {/* Right Header */}
                 <div className="flex items-center justify-between pb-3 border-b border-[#E8DFD3] dark:border-[#2E2925] text-[10px] font-mono tracking-[0.25em] uppercase text-secondary dark:text-white/50">
@@ -436,7 +436,7 @@ export default function Proper3DCatalogueBook() {
                 {/* Product Title & Fabric Narrative */}
                 <div className="space-y-4 my-auto">
                   <div className="space-y-1">
-                    <span className="text-[10px] font-mono tracking-widest uppercase text-[#851C25] dark:text-[#C6A96B] font-bold block">
+                    <span className="text-[10px] font-mono tracking-widest uppercase text-[#0B5F61] dark:text-[#C6A96B] font-bold block">
                       {spread.rightPage.badge}
                     </span>
                     <h3 className="font-serif text-2xl sm:text-3xl lg:text-4xl font-normal text-primary dark:text-white tracking-tight leading-snug">
@@ -510,7 +510,7 @@ export default function Proper3DCatalogueBook() {
                   <div className="flex items-center gap-2">
                     <button
                       onClick={handleQuickAdd}
-                      className="px-5 py-2.5 rounded-full bg-[#1A1A1A] hover:bg-[#851C25] dark:bg-[#C6A96B] dark:hover:bg-[#E5C158] text-white dark:text-black text-xs font-semibold uppercase tracking-[0.18em] transition-all duration-300 shadow-md flex items-center gap-2 cursor-pointer"
+                      className="px-5 py-2.5 rounded-full bg-[#1A1A1A] hover:bg-[#0B5F61] dark:bg-[#C6A96B] dark:hover:bg-[#E5C158] text-white dark:text-black text-xs font-semibold uppercase tracking-[0.18em] transition-all duration-300 shadow-md flex items-center gap-2 cursor-pointer"
                     >
                       {addedSku === spread.rightPage.sku ? (
                         <>
@@ -575,7 +575,7 @@ export default function Proper3DCatalogueBook() {
                     {/* Front Face of Turning Page (Shows current right page content) */}
                     <div
                       style={{ backfaceVisibility: 'hidden' }}
-                      className="absolute inset-0 bg-[#FAF7F2] dark:bg-[#161210] p-8 border-l border-[#E8DFD3] dark:border-[#332922] shadow-2xl"
+                      className="absolute inset-0 bg-[#F5EDE3] dark:bg-[#161210] p-8 border-l border-[#E8DFD3] dark:border-[#332922] shadow-2xl"
                     >
                       <div className="w-full h-full flex flex-col justify-between opacity-80">
                         <div className="text-[10px] font-mono tracking-widest text-[#8A847D] uppercase">

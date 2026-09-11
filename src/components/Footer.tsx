@@ -7,7 +7,7 @@ export default function Footer() {
     encodeURIComponent('Hello JORIQUE Concierge, I would like to inquire about your collections.');
 
   return (
-    <footer className="bg-[#FAF7F2] dark:bg-[#100E0D] border-t border-[#E8DFD3] dark:border-[#2E2925] transition-colors duration-300">
+    <footer className="bg-[#F5EDE3] dark:bg-[#100E0D] border-t border-[#E8DFD3] dark:border-[#2E2925] transition-colors duration-300">
       <div className="max-w-7xl mx-auto px-6 lg:px-12 py-14 lg:py-16 space-y-12">
         {/* Top Header Row */}
         <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6 pb-8 border-b border-[#E8DFD3] dark:border-[#2E2925]">
@@ -106,7 +106,7 @@ export default function Footer() {
                 sessionStorage.removeItem('jorique_intro_seen');
                 window.dispatchEvent(new CustomEvent('jorique:replay-intro'));
               }}
-              className="text-xs text-[#C6A96B] hover:text-[#851C25] dark:hover:text-[#E5C158] font-medium tracking-wider flex items-center gap-1.5 transition-colors cursor-pointer"
+              className="text-xs text-[#C6A96B] hover:text-[#0B5F61] dark:hover:text-[#E5C158] font-medium tracking-wider flex items-center gap-1.5 transition-colors cursor-pointer"
             >
               <span>✦</span> Replay Brand Intro
             </button>

@@ -5,7 +5,7 @@ import { Link } from 'react-router-dom';
 
 export default function FlagshipDuoBeyond() {
   return (
-    <div className="w-full bg-[#FAF7F2] dark:bg-[#100E0D] text-primary dark:text-[#FCFAF7] transition-colors duration-500 overflow-hidden">
+    <div className="w-full bg-[#F5EDE3] dark:bg-[#100E0D] text-primary dark:text-[#FCFAF7] transition-colors duration-500 overflow-hidden">
 
       {/* ─────────────────────────────────────────────────────────────
           1. TWO SIDE-BY-SIDE PANELS: SOUVENIR & HOSPITALITY
@@ -152,7 +152,7 @@ export default function FlagshipDuoBeyond() {
           2. SIGNATURE BRAND STRIP (Immediately beneath the 2 panels)
           JORIQUE — Where Comfort Meets Design | Socials | A MORE CONSCIOUS TOMORROW —
       ───────────────────────────────────────────────────────────── */}
-      {/* <div className="w-full border-t border-b border-[#E8DFD3] dark:border-[#2E2925] bg-[#FAF7F2] dark:bg-[#100E0D] px-6 sm:px-10 lg:px-16 py-6">
+      {/* <div className="w-full border-t border-b border-[#E8DFD3] dark:border-[#2E2925] bg-[#F5EDE3] dark:bg-[#100E0D] px-6 sm:px-10 lg:px-16 py-6">
         <div className="max-w-[1440px] mx-auto flex flex-col md:flex-row items-center justify-between gap-6">
 
 

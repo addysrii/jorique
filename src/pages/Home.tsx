@@ -51,7 +51,7 @@ export default function Home() {
   };
 
   return (
-    <div className="min-h-screen bg-[#FAF7F2] dark:bg-[#100E0D] text-primary dark:text-[#FCFAF7] overflow-hidden transition-colors duration-500 selection:bg-[#C6A96B]/30">
+    <div className="min-h-screen bg-[#F5EDE3] dark:bg-[#100E0D] text-primary dark:text-[#FCFAF7] overflow-hidden transition-colors duration-500 selection:bg-[#C6A96B]/30">
       <SEO
         title="JORIQUE — Where Comfort Meets Design | Luxury Home Textiles & Apparel"
         description="Discover heirloom-quality organic linen, luxury bedsheets, plush towels, and tailored essentials thoughtfully crafted for modern sanctuaries."

@@ -255,7 +255,7 @@ Please confirm this order and advise on delivery timeline. Thank you!`;
                 <Link
                   to="/return-policy"
                   target="_blank"
-                  className="inline-flex items-center gap-1 text-[11px] font-bold text-[#851C25] dark:text-[#D4AF37] hover:underline pt-1"
+                  className="inline-flex items-center gap-1 text-[11px] font-bold text-[#0B5F61] dark:text-[#D4AF37] hover:underline pt-1"
                 >
                   <span>Review Return & Exchange Policy</span>
                   <ArrowRight size={12} />
@@ -526,7 +526,7 @@ Please confirm this order and advise on delivery timeline. Thank you!`;
                 <Link
                   to="/return-policy"
                   target="_blank"
-                  className="text-[#851C25] dark:text-[#D4AF37] underline font-medium hover:opacity-80"
+                  className="text-[#0B5F61] dark:text-[#D4AF37] underline font-medium hover:opacity-80"
                 >
                   Return & Exchange Policy
                 </Link>

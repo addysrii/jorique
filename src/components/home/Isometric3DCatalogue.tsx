@@ -297,7 +297,7 @@ function RightPageView({
           <span className="font-serif font-logo font-normal text-2xl sm:text-3xl tracking-[0.18em] uppercase text-primary">
             JORIQUE
           </span>
-          <span className="text-[10px] font-mono font-bold tracking-widest uppercase text-[#851C25]">
+          <span className="text-[10px] font-mono font-bold tracking-widest uppercase text-[#0B5F61]">
             {spread.rightPage.sku}
           </span>
         </div>
@@ -319,7 +319,7 @@ function RightPageView({
           <Link
             to={`/product/${productTarget}`}
             onClick={(e) => e.stopPropagation()}
-            className="inline-flex items-center gap-1 text-[10px] font-mono uppercase tracking-wider text-[#851C25] hover:underline"
+            className="inline-flex items-center gap-1 text-[10px] font-mono uppercase tracking-wider text-[#0B5F61] hover:underline"
           >
             <span>Details</span>
             <ExternalLink size={10} />
@@ -377,7 +377,7 @@ function RightPageView({
 
           <button
             onClick={onAdd}
-            className="px-4 py-2 rounded-full bg-[#1A1A1A] hover:bg-[#851C25] text-white text-[10px] sm:text-[11px] font-semibold tracking-wider uppercase transition-all duration-300 flex items-center gap-1.5 shadow-md cursor-pointer"
+            className="px-4 py-2 rounded-full bg-[#1A1A1A] hover:bg-[#0B5F61] text-white text-[10px] sm:text-[11px] font-semibold tracking-wider uppercase transition-all duration-300 flex items-center gap-1.5 shadow-md cursor-pointer"
           >
             {isAdded ? (
               <>
@@ -413,7 +413,7 @@ function RightPageView({
           title="Turn to next page"
         >
           <div className="absolute bottom-0 right-0 w-0 h-0 border-solid border-b-[38px] border-l-[38px] border-b-[#DDD5CA] border-l-transparent drop-shadow-md group-hover/dogear:border-b-[48px] group-hover/dogear:border-l-[48px] transition-all duration-300">
-            <div className="absolute -bottom-8 -right-3 text-[7px] font-mono tracking-tighter text-[#851C25] font-bold uppercase rotate-45 pointer-events-none">
+            <div className="absolute -bottom-8 -right-3 text-[7px] font-mono tracking-tighter text-[#0B5F61] font-bold uppercase rotate-45 pointer-events-none">
               FLIP
             </div>
           </div>
@@ -540,13 +540,13 @@ export default function Isometric3DCatalogue() {
   return (
     <section
       id="isometric-catalogue"
-      className="py-20 sm:py-28 lg:py-36 px-4 sm:px-6 lg:px-12 bg-[#FAF7F2] dark:bg-[#100E0D] text-primary dark:text-[#FCFAF7] transition-colors duration-500 overflow-hidden relative border-t border-[#E8DFD3] dark:border-[#2E2925]"
+      className="py-20 sm:py-28 lg:py-36 px-4 sm:px-6 lg:px-12 bg-[#F5EDE3] dark:bg-[#100E0D] text-primary dark:text-[#FCFAF7] transition-colors duration-500 overflow-hidden relative border-t border-[#E8DFD3] dark:border-[#2E2925]"
     >
       <div className="max-w-[1300px] mx-auto space-y-10 sm:space-y-14 relative z-10">
         
         {/* Section Headline */}
         <div className="text-center max-w-2xl mx-auto space-y-3">
-          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/80 dark:bg-white/5 border border-[#C6A96B]/30 text-[#851C25] dark:text-[#D4AF37] text-[10px] sm:text-[11px] font-mono tracking-[0.3em] uppercase shadow-xs">
+          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/80 dark:bg-white/5 border border-[#C6A96B]/30 text-[#0B5F61] dark:text-[#D4AF37] text-[10px] sm:text-[11px] font-mono tracking-[0.3em] uppercase shadow-xs">
             <BookOpen size={13} className="text-[#C6A96B]" />
             <span>ATELIER CATALOGUE PUBLICATION</span>
           </div>
@@ -565,7 +565,7 @@ export default function Isometric3DCatalogue() {
         ───────────────────────────────────────────────────────────── */}
         {loading && (
           <div className="max-w-5xl mx-auto py-16 flex flex-col items-center justify-center space-y-4">
-            <Loader2 className="w-8 h-8 animate-spin text-[#851C25] dark:text-[#D4AF37]" />
+            <Loader2 className="w-8 h-8 animate-spin text-[#0B5F61] dark:text-[#D4AF37]" />
             <span className="text-xs font-mono uppercase tracking-widest text-secondary dark:text-white/60">
               Loading Atelier Catalogue from Backend...
             </span>
@@ -850,7 +850,7 @@ export default function Isometric3DCatalogue() {
                 onClick={() => setAutoRotate(!autoRotate)}
                 className="inline-flex items-center gap-2 px-3.5 py-2 rounded-full bg-white/80 dark:bg-white/5 border border-[#E8DFD3] dark:border-[#332922] text-xs font-mono tracking-wider uppercase text-secondary dark:text-white/70 hover:text-primary transition-colors cursor-pointer"
               >
-                {autoRotate ? <Pause size={13} className="text-[#851C25]" /> : <Play size={13} />}
+                {autoRotate ? <Pause size={13} className="text-[#0B5F61]" /> : <Play size={13} />}
                 <span>{autoRotate ? 'Pause' : 'Auto-Play'}</span>
               </button>
             </div>
@@ -901,7 +901,7 @@ export default function Isometric3DCatalogue() {
               <button
                 onClick={handlePrev}
                 disabled={isTurning || totalSpreads <= 1}
-                className="inline-flex items-center gap-1 px-4 py-2 rounded-full bg-white dark:bg-[#1A1816] border border-[#E8DFD3] dark:border-[#332922] text-xs font-mono tracking-wider uppercase text-primary dark:text-white hover:bg-[#851C25] hover:text-white hover:border-[#851C25] transition-all cursor-pointer disabled:opacity-40 shadow-xs"
+                className="inline-flex items-center gap-1 px-4 py-2 rounded-full bg-white dark:bg-[#1A1816] border border-[#E8DFD3] dark:border-[#332922] text-xs font-mono tracking-wider uppercase text-primary dark:text-white hover:bg-[#0B5F61] hover:text-white hover:border-[#0B5F61] transition-all cursor-pointer disabled:opacity-40 shadow-xs"
               >
                 <ChevronLeft size={14} />
                 <span>Turn Left</span>
@@ -910,7 +910,7 @@ export default function Isometric3DCatalogue() {
               <button
                 onClick={handleNext}
                 disabled={isTurning || totalSpreads <= 1}
-                className="inline-flex items-center gap-1 px-4 py-2 rounded-full bg-primary dark:bg-white text-white dark:text-primary hover:bg-[#851C25] dark:hover:bg-[#851C25] dark:hover:text-white text-xs font-mono tracking-wider uppercase transition-all cursor-pointer disabled:opacity-40 shadow-sm"
+                className="inline-flex items-center gap-1 px-4 py-2 rounded-full bg-primary dark:bg-white text-white dark:text-primary hover:bg-[#0B5F61] dark:hover:bg-[#0B5F61] dark:hover:text-white text-xs font-mono tracking-wider uppercase transition-all cursor-pointer disabled:opacity-40 shadow-sm"
               >
                 <span>Turn Right</span>
                 <ChevronRight size={14} />

@@ -183,7 +183,7 @@ export default function CartDrawer() {
                 <Link
                   to="/return-policy"
                   onClick={() => setIsCartOpen(false)}
-                  className="text-[#851C25] dark:text-[#D4AF37] underline hover:opacity-80"
+                  className="text-[#0B5F61] dark:text-[#D4AF37] underline hover:opacity-80"
                 >
                   Return Policy
                 </Link>

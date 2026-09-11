@@ -183,7 +183,7 @@ export default function ProductImageGallery({
 
           {/* Discount Badge */}
           {discountPercentage > 0 && (
-            <div className="absolute top-4 right-4 bg-[#851C25] text-white text-[10px] font-bold tracking-widest uppercase px-3.5 py-1.5 rounded-full shadow-md z-20 pointer-events-none">
+            <div className="absolute top-4 right-4 bg-[#0B5F61] text-white text-[10px] font-bold tracking-widest uppercase px-3.5 py-1.5 rounded-full shadow-md z-20 pointer-events-none">
               {discountPercentage}% OFF
             </div>
           )}

@@ -53,13 +53,13 @@ export default function ProductPackagingLabel({
 
   return (
     <div
-      className={`relative w-full max-w-[560px] mx-auto select-none rounded-[24px] p-2 sm:p-2.5 border border-[#C5AE82] shadow-xl bg-[#FAF7F2] text-[#11312D] print:shadow-none print:m-0 print:break-inside-avoid ${className}`}
+      className={`relative w-full max-w-[560px] mx-auto select-none rounded-[24px] p-2 sm:p-2.5 border border-[#C5AE82] shadow-xl bg-[#F5EDE3] text-[#11312D] print:shadow-none print:m-0 print:break-inside-avoid ${className}`}
       style={{
         boxShadow: '0 12px 35px rgba(0,0,0,0.08), 0 2px 6px rgba(0,0,0,0.04)',
       }}
     >
       {/* ── Inner Inset Fine Gold Frame ── */}
-      <div className="relative border border-[#D0BD97] rounded-[18px] overflow-hidden bg-[#FAF7F2] flex flex-col justify-between">
+      <div className="relative border border-[#D0BD97] rounded-[18px] overflow-hidden bg-[#F5EDE3] flex flex-col justify-between">
         
         {/* ── Main Content Area ── */}
         <div className="p-4 sm:p-5 flex flex-col justify-between">
@@ -135,7 +135,7 @@ export default function ProductPackagingLabel({
           <div className="grid grid-cols-1 sm:grid-cols-12 gap-2.5 items-stretch">
             
             {/* Price Box - Dedicated & Spacious (No Overflow!) */}
-            <div className="sm:col-span-5 border border-[#CBB58F] rounded-xl p-3 bg-[#FAF7F2] shadow-xs flex flex-col items-center justify-center text-center">
+            <div className="sm:col-span-5 border border-[#CBB58F] rounded-xl p-3 bg-[#F5EDE3] shadow-xs flex flex-col items-center justify-center text-center">
               <span className="block text-[8px] sm:text-[8.5px] font-bold uppercase tracking-[0.18em] font-sans text-[#9E8254]">
                 MAXIMUM RETAIL PRICE
               </span>

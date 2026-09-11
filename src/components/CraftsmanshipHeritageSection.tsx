@@ -67,7 +67,7 @@ const CRAFT_PILLARS: CraftPillar[] = [
   },
   {
     id: 'inspection',
-    icon: <ShieldCheck className="w-6 h-6 text-[#851C25] dark:text-[#F87171]" />,
+    icon: <ShieldCheck className="w-6 h-6 text-[#0B5F61] dark:text-[#F87171]" />,
     metric: '48 HRS',
     metricLabel: 'Priority Video Claim Verification',
     title: 'Pre-Dispatch Inspection & Video Guarantee',
@@ -80,7 +80,7 @@ const CRAFT_PILLARS: CraftPillar[] = [
       'Tamper-evident luxury boutique security seal',
       'Dedicated concierge replacement within 48 hours of claim',
     ],
-    gradient: 'from-[#851C25]/10 via-[#F5EDE3]/40 to-transparent dark:from-[#851C25]/15 dark:via-[#1A1816] dark:to-transparent',
+    gradient: 'from-[#0B5F61]/10 via-[#F5EDE3]/40 to-transparent dark:from-[#0B5F61]/15 dark:via-[#1A1816] dark:to-transparent',
   },
   {
     id: 'tailoring',
@@ -138,7 +138,7 @@ export default function CraftsmanshipHeritageSection() {
   const [activeTab, setActiveTab] = useState<'pillars' | 'comparison' | 'guarantee'>('pillars');
 
   return (
-    <section className="py-20 lg:py-28 px-4 sm:px-6 lg:px-12 bg-[#FAF7F2]/85 dark:bg-[#12100E]/90 backdrop-blur-xs border-t border-border/80 dark:border-[#2E2925] transition-colors duration-300 relative overflow-hidden">
+    <section className="py-20 lg:py-28 px-4 sm:px-6 lg:px-12 bg-[#F5EDE3]/85 dark:bg-[#12100E]/90 backdrop-blur-xs border-t border-border/80 dark:border-[#2E2925] transition-colors duration-300 relative overflow-hidden">
       {/* Subtle Ambient Brand Glows */}
       <div
         className="absolute top-1/4 -left-40 w-96 h-96 rounded-full pointer-events-none opacity-20 blur-3xl"
@@ -379,7 +379,7 @@ export default function CraftsmanshipHeritageSection() {
                 ].map((item) => (
                   <div
                     key={item.step}
-                    className="p-5 rounded-2xl bg-[#FAF7F2] dark:bg-[#201D1B] border border-border/70 dark:border-white/10 space-y-2 relative"
+                    className="p-5 rounded-2xl bg-[#F5EDE3] dark:bg-[#201D1B] border border-border/70 dark:border-white/10 space-y-2 relative"
                   >
                     <span className="font-times text-2xl font-bold text-[#C6A96B] block">
                       {item.step}

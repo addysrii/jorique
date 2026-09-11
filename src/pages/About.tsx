@@ -95,7 +95,7 @@ export default function About() {
             initial="hidden"
             animate="visible"
             variants={fadeInVariants}
-            className="inline-flex items-center gap-2.5 px-4 py-1.5 rounded-full bg-white/70 dark:bg-white/5 border border-[#C6A96B]/30 backdrop-blur-md text-[#851C25] dark:text-[#D4AF37] text-[10px] sm:text-[11px] font-semibold tracking-[0.3em] uppercase shadow-xs"
+            className="inline-flex items-center gap-2.5 px-4 py-1.5 rounded-full bg-white/70 dark:bg-white/5 border border-[#C6A96B]/30 backdrop-blur-md text-[#0B5F61] dark:text-[#D4AF37] text-[10px] sm:text-[11px] font-semibold tracking-[0.3em] uppercase shadow-xs"
           >
             <Sparkles size={13} className="text-[#C6A96B]" />
             The JORIQUE Narrative
@@ -109,7 +109,7 @@ export default function About() {
             className="font-serif text-3xl sm:text-5xl lg:text-6xl font-normal tracking-tight text-[#1A1816] dark:text-white leading-[1.15]"
           >
             Everything You Need, <br className="hidden sm:inline" />
-            <span className="italic font-light text-[#851C25] dark:text-[#E5C158]">Beautifully.</span>
+            <span className="italic font-light text-[#0B5F61] dark:text-[#E5C158]">Beautifully.</span>
           </motion.h1>
 
           {/* Golden Sub-filigree divider */}
@@ -141,7 +141,7 @@ export default function About() {
             className="flex flex-wrap items-center justify-center gap-4 pt-4"
           >
             <Link to="/shop">
-              <button className="group inline-flex items-center gap-2.5 bg-[#231C16] hover:bg-[#851C25] dark:bg-[#D4AF37] dark:hover:bg-[#E5C158] text-white dark:text-[#100E0D] px-7 py-3.5 rounded-full text-xs font-semibold tracking-[0.2em] uppercase transition-all duration-300 shadow-md hover:shadow-lg cursor-pointer">
+              <button className="group inline-flex items-center gap-2.5 bg-[#231C16] hover:bg-[#0B5F61] dark:bg-[#D4AF37] dark:hover:bg-[#E5C158] text-white dark:text-[#100E0D] px-7 py-3.5 rounded-full text-xs font-semibold tracking-[0.2em] uppercase transition-all duration-300 shadow-md hover:shadow-lg cursor-pointer">
                 <span>Shop Collection</span>
                 <ArrowRight size={14} className="group-hover:translate-x-1 transition-transform" />
               </button>
@@ -189,7 +189,7 @@ export default function About() {
               className="lg:col-span-7 space-y-6"
             >
               <div className="space-y-2">
-                <span className="text-[11px] font-bold uppercase tracking-[0.3em] text-[#851C25] dark:text-[#D4AF37] block">
+                <span className="text-[11px] font-bold uppercase tracking-[0.3em] text-[#0B5F61] dark:text-[#D4AF37] block">
                   Chapter I • Artisanal Origin
                 </span>
                 <h2 className="font-serif text-2xl sm:text-4xl font-normal text-[#1A1816] dark:text-white leading-snug">
@@ -253,11 +253,11 @@ export default function About() {
 
                   <div className="grid grid-cols-2 gap-3 pt-4 border-t border-[#C6A96B]/20 text-left">
                     <div className="p-3 rounded-xl bg-white/50 dark:bg-white/5">
-                      <span className="text-[10px] font-mono tracking-widest uppercase text-[#851C25] dark:text-[#D4AF37] block font-semibold">100%</span>
+                      <span className="text-[10px] font-mono tracking-widest uppercase text-[#0B5F61] dark:text-[#D4AF37] block font-semibold">100%</span>
                       <span className="text-[11px] text-[#4A423B] dark:text-white/80 font-medium">Breathable Cotton</span>
                     </div>
                     <div className="p-3 rounded-xl bg-white/50 dark:bg-white/5">
-                      <span className="text-[10px] font-mono tracking-widest uppercase text-[#851C25] dark:text-[#D4AF37] block font-semibold">Subtle</span>
+                      <span className="text-[10px] font-mono tracking-widest uppercase text-[#0B5F61] dark:text-[#D4AF37] block font-semibold">Subtle</span>
                       <span className="text-[11px] text-[#4A423B] dark:text-white/80 font-medium">Dobby & Weaves</span>
                     </div>
                   </div>
@@ -276,7 +276,7 @@ export default function About() {
       <section className="py-20 lg:py-28 px-6">
         <div className="max-w-5xl mx-auto space-y-16">
           <div className="text-center max-w-2xl mx-auto space-y-3">
-            <span className="text-[11px] font-bold uppercase tracking-[0.3em] text-[#851C25] dark:text-[#D4AF37]">
+            <span className="text-[11px] font-bold uppercase tracking-[0.3em] text-[#0B5F61] dark:text-[#D4AF37]">
               Chapter II • Modern Philosophy
             </span>
             <h2 className="font-serif text-3xl sm:text-4xl font-normal text-[#1A1816] dark:text-white">
@@ -380,7 +380,7 @@ export default function About() {
       <section className="py-20 lg:py-28 px-6 bg-[#F5EFE4]/60 dark:bg-[#151311]/80 border-t border-[#E8E1D5] dark:border-[#2E2925]">
         <div className="max-w-5xl mx-auto space-y-14">
           <div className="text-center max-w-xl mx-auto space-y-3">
-            <span className="text-[11px] font-bold uppercase tracking-[0.3em] text-[#851C25] dark:text-[#D4AF37]">
+            <span className="text-[11px] font-bold uppercase tracking-[0.3em] text-[#0B5F61] dark:text-[#D4AF37]">
               Our Guiding Principles
             </span>
             <h2 className="font-serif text-3xl sm:text-4xl font-normal text-[#1A1816] dark:text-white">
@@ -435,14 +435,14 @@ export default function About() {
         <div className="max-w-6xl mx-auto space-y-12">
           <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 border-b border-[#E8E1D5] dark:border-[#2E2925] pb-6">
             <div>
-              <span className="text-[11px] font-bold uppercase tracking-[0.3em] text-[#851C25] dark:text-[#D4AF37]">
+              <span className="text-[11px] font-bold uppercase tracking-[0.3em] text-[#0B5F61] dark:text-[#D4AF37]">
                 The Portfolio
               </span>
               <h2 className="font-serif text-2xl sm:text-4xl font-normal text-[#1A1816] dark:text-white mt-1">
                 Explore The Collections
               </h2>
             </div>
-            <Link to="/shop" className="group inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-widest text-[#851C25] dark:text-[#D4AF37]">
+            <Link to="/shop" className="group inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-widest text-[#0B5F61] dark:text-[#D4AF37]">
               <span>View Entire Catalogue</span>
               <ArrowRight size={14} className="group-hover:translate-x-1 transition-transform" />
             </Link>
@@ -468,7 +468,7 @@ export default function About() {
                 </div>
 
                 <div className="space-y-1 w-full pt-2 border-t border-[#E8E1D5]/70 dark:border-[#2E2925]/70">
-                  <h3 className="font-serif text-base text-[#1A1816] dark:text-white group-hover:text-[#851C25] dark:group-hover:text-[#D4AF37] transition-colors">
+                  <h3 className="font-serif text-base text-[#1A1816] dark:text-white group-hover:text-[#0B5F61] dark:group-hover:text-[#D4AF37] transition-colors">
                     {cat.title}
                   </h3>
                   {/* <p className="text-[11px] text-[#7A7168] dark:text-white/60 font-light">
@@ -508,7 +508,7 @@ export default function About() {
 
           <div className="pt-4 flex flex-col sm:flex-row items-center justify-center gap-4">
             <Link to="/shop">
-              <button className="inline-flex items-center gap-2.5 bg-[#851C25] hover:bg-[#68131B] text-white dark:bg-[#D4AF37] dark:hover:bg-[#E5C158] dark:text-[#100E0D] px-8 py-4 rounded-full text-xs font-bold uppercase tracking-[0.25em] transition-all duration-300 shadow-lg hover:shadow-xl cursor-pointer">
+              <button className="inline-flex items-center gap-2.5 bg-[#0B5F61] hover:bg-[#68131B] text-white dark:bg-[#D4AF37] dark:hover:bg-[#E5C158] dark:text-[#100E0D] px-8 py-4 rounded-full text-xs font-bold uppercase tracking-[0.25em] transition-all duration-300 shadow-lg hover:shadow-xl cursor-pointer">
                 <ShoppingBag size={14} />
                 <span>Explore The Collection</span>
               </button>

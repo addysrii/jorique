@@ -7,7 +7,7 @@ export default function JoriqueExperienceSection() {
   return (
     <section 
       id="experience"
-      className="py-20 sm:py-28 lg:py-36 px-4 sm:px-6 lg:px-12 bg-[#FAF7F2] dark:bg-[#100E0D] text-primary dark:text-[#FCFAF7] relative overflow-hidden transition-colors duration-500 border-t border-[#E8DFD3] dark:border-[#2E2925]"
+      className="py-20 sm:py-28 lg:py-36 px-4 sm:px-6 lg:px-12 bg-[#F5EDE3] dark:bg-[#100E0D] text-primary dark:text-[#FCFAF7] relative overflow-hidden transition-colors duration-500 border-t border-[#E8DFD3] dark:border-[#2E2925]"
     >
       <div className="max-w-7xl mx-auto space-y-12 sm:space-y-16">
         
@@ -17,7 +17,7 @@ export default function JoriqueExperienceSection() {
             initial={{ opacity: 0, y: 15 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/80 dark:bg-white/5 border border-[#C6A96B]/30 text-[#851C25] dark:text-[#D4AF37] text-[10px] sm:text-[11px] font-mono tracking-[0.3em] uppercase shadow-xs"
+            className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/80 dark:bg-white/5 border border-[#C6A96B]/30 text-[#0B5F61] dark:text-[#D4AF37] text-[10px] sm:text-[11px] font-mono tracking-[0.3em] uppercase shadow-xs"
           >
             <Sparkles size={11} className="text-[#C6A96B]" />
             <span>THE JORIQUE EXPERIENCE</span>
@@ -31,7 +31,7 @@ export default function JoriqueExperienceSection() {
             className="font-serif text-3xl sm:text-5xl lg:text-6xl font-normal tracking-tight text-primary dark:text-white leading-[1.15]"
           >
             Comfort isn't something you simply buy.{' '}
-            <span className="italic block text-[#851C25] dark:text-[#C6A96B]">
+            <span className="italic block text-[#0B5F61] dark:text-[#C6A96B]">
               It's something you live with.
             </span>
           </motion.h2>
@@ -89,7 +89,7 @@ export default function JoriqueExperienceSection() {
             <motion.button
               whileHover={{ scale: 1.03 }}
               whileTap={{ scale: 0.98 }}
-              className="inline-flex items-center gap-3 px-8 sm:px-10 py-4 rounded-full bg-[#1A1A1A] hover:bg-[#851C25] dark:bg-[#C6A96B] dark:hover:bg-[#E5C158] text-white dark:text-black font-semibold text-xs uppercase tracking-[0.25em] transition-all duration-300 shadow-xl cursor-pointer"
+              className="inline-flex items-center gap-3 px-8 sm:px-10 py-4 rounded-full bg-[#1A1A1A] hover:bg-[#0B5F61] dark:bg-[#C6A96B] dark:hover:bg-[#E5C158] text-white dark:text-black font-semibold text-xs uppercase tracking-[0.25em] transition-all duration-300 shadow-xl cursor-pointer"
             >
               <span>DISCOVER THE JORIQUE EXPERIENCE</span>
               <ArrowRight size={14} />

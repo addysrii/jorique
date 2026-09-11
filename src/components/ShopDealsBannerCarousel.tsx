@@ -58,7 +58,7 @@ const DEFAULT_DEALS: DealBannerSlide[] = [
   {
     id: 'deal-3',
     badge: 'Content to be added',
-    badgeIcon: <Percent size={12} className="text-[#851C25] dark:text-[#F87171]" />,
+    badgeIcon: <Percent size={12} className="text-[#0B5F61] dark:text-[#F87171]" />,
     title: 'Content to be added',
     subtitle: 'Content to be added',
     highlightText: 'Min. cart value ₹2,499',
@@ -201,7 +201,7 @@ export default function ShopDealsBannerCarousel({
                 </div>
 
                 {/* Title */}
-                <h3 className="text-lg sm:text-2xl lg:text-[26px] font-serif font-medium text-primary dark:text-[#FAF7F2] leading-tight tracking-tight">
+                <h3 className="text-lg sm:text-2xl lg:text-[26px] font-serif font-medium text-primary dark:text-[#F5EDE3] leading-tight tracking-tight">
                   {currentDeal.title}
                 </h3>
 
@@ -254,7 +254,7 @@ export default function ShopDealsBannerCarousel({
       <button
         onClick={prevSlide}
         aria-label="Previous deal"
-        className="absolute left-2.5 sm:left-4 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-white/80 dark:bg-[#201813]/90 backdrop-blur-md border border-black/5 dark:border-white/15 flex items-center justify-center text-primary dark:text-[#FAF7F2] hover:bg-white dark:hover:bg-[#2C211A] hover:scale-110 active:scale-95 transition-all shadow-md z-20"
+        className="absolute left-2.5 sm:left-4 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-white/80 dark:bg-[#201813]/90 backdrop-blur-md border border-black/5 dark:border-white/15 flex items-center justify-center text-primary dark:text-[#F5EDE3] hover:bg-white dark:hover:bg-[#2C211A] hover:scale-110 active:scale-95 transition-all shadow-md z-20"
       >
         <ChevronLeft size={16} />
       </button>
@@ -262,7 +262,7 @@ export default function ShopDealsBannerCarousel({
       <button
         onClick={nextSlide}
         aria-label="Next deal"
-        className="absolute right-2.5 sm:right-4 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-white/80 dark:bg-[#201813]/90 backdrop-blur-md border border-black/5 dark:border-white/15 flex items-center justify-center text-primary dark:text-[#FAF7F2] hover:bg-white dark:hover:bg-[#2C211A] hover:scale-110 active:scale-95 transition-all shadow-md z-20"
+        className="absolute right-2.5 sm:right-4 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-white/80 dark:bg-[#201813]/90 backdrop-blur-md border border-black/5 dark:border-white/15 flex items-center justify-center text-primary dark:text-[#F5EDE3] hover:bg-white dark:hover:bg-[#2C211A] hover:scale-110 active:scale-95 transition-all shadow-md z-20"
       >
         <ChevronRight size={16} />
       </button>

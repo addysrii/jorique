@@ -48,7 +48,7 @@ export default function JoriqueWaySection() {
           transition={{ duration: 0.6 }}
           className="flex items-center gap-4 mb-12 lg:mb-16"
         >
-          <span className="text-[10px] font-mono tracking-[0.35em] uppercase text-[#851C25] dark:text-[#D4AF37]">
+          <span className="text-[10px] font-mono tracking-[0.35em] uppercase text-[#0B5F61] dark:text-[#D4AF37]">
             The Jorique Way
           </span>
           <div className="flex-1 h-px bg-[#C6A96B]/40 dark:bg-[#D4AF37]/25" />
@@ -98,11 +98,11 @@ export default function JoriqueWaySection() {
           <div className="flex lg:justify-end">
             <Link
               to="/about"
-              className="group inline-flex items-center gap-3 text-[11px] font-bold uppercase tracking-[0.25em] text-[#851C25] dark:text-[#D4AF37]"
+              className="group inline-flex items-center gap-3 text-[11px] font-bold uppercase tracking-[0.25em] text-[#0B5F61] dark:text-[#D4AF37]"
             >
               <span className="relative">
                 Discover the Jorique Way
-                <span className="absolute -bottom-0.5 left-0 w-0 group-hover:w-full h-px bg-[#851C25] dark:bg-[#D4AF37] transition-all duration-300" />
+                <span className="absolute -bottom-0.5 left-0 w-0 group-hover:w-full h-px bg-[#0B5F61] dark:bg-[#D4AF37] transition-all duration-300" />
               </span>
               <ArrowRight size={14} className="group-hover:translate-x-1.5 transition-transform duration-250" />
             </Link>

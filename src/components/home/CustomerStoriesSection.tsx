@@ -27,7 +27,7 @@ export default function CustomerStoriesSection() {
   const roleOrTag = 'Verified Purchase';
 
   return (
-    <section className="py-20 sm:py-28 lg:py-36 px-4 sm:px-6 lg:px-12 bg-[#FAF7F2] dark:bg-[#100E0D] text-primary dark:text-[#FCFAF7] transition-colors duration-500 border-t border-[#E8DFD3] dark:border-[#2E2925]">
+    <section className="py-20 sm:py-28 lg:py-36 px-4 sm:px-6 lg:px-12 bg-[#F5EDE3] dark:bg-[#100E0D] text-primary dark:text-[#FCFAF7] transition-colors duration-500 border-t border-[#E8DFD3] dark:border-[#2E2925]">
       <div className="max-w-4xl mx-auto text-center space-y-8 sm:space-y-10">
         
         {/* Header Tag */}
@@ -77,7 +77,7 @@ export default function CustomerStoriesSection() {
         {/* View All Reviews CTA */}
         <div className="pt-2">
           <Link to="/reviews">
-            <button className="inline-flex items-center gap-2.5 text-xs font-semibold uppercase tracking-[0.2em] text-primary dark:text-white hover:text-[#851C25] dark:hover:text-[#C6A96B] transition-colors border-b border-current pb-1 cursor-pointer">
+            <button className="inline-flex items-center gap-2.5 text-xs font-semibold uppercase tracking-[0.2em] text-primary dark:text-white hover:text-[#0B5F61] dark:hover:text-[#C6A96B] transition-colors border-b border-current pb-1 cursor-pointer">
               <span>VIEW ALL REVIEWS</span>
               <ArrowRight size={13} />
             </button>

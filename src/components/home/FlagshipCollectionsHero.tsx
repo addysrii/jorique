@@ -71,7 +71,7 @@ const COLUMNS: CollectionColumn[] = [
 
 export default function FlagshipCollectionsHero() {
   return (
-    <section className="relative w-full bg-[#FAF7F2] dark:bg-[#100E0D] text-primary dark:text-[#FCFAF7] transition-colors duration-500 overflow-hidden pt-16 lg:pt-20">
+    <section className="relative w-full bg-[#F5EDE3] dark:bg-[#100E0D] text-primary dark:text-[#FCFAF7] transition-colors duration-500 overflow-hidden pt-16 lg:pt-20">
 
       {/* ─────────────────────────────────────────────────────────────
           1. THREE FULL-HEIGHT EDITORIAL HERO PANELS (Side by Side)
@@ -180,7 +180,7 @@ export default function FlagshipCollectionsHero() {
           2. THE EDITORIAL PHILOSOPHY BAR (Directly beneath the 3 columns)
           "Comfort is a feeling. And a more beautiful way of living."
       ───────────────────────────────────────────────────────────── */}
-      <div className="w-full border-t border-b border-[#E8DFD3] dark:border-[#2E2925] bg-[#FAF7F2] dark:bg-[#100E0D] px-6 sm:px-10 lg:px-16 py-8 sm:py-10">
+      <div className="w-full border-t border-b border-[#E8DFD3] dark:border-[#2E2925] bg-[#F5EDE3] dark:bg-[#100E0D] px-6 sm:px-10 lg:px-16 py-8 sm:py-10">
         <div className="max-w-[1440px] mx-auto grid grid-cols-1 lg:grid-cols-12 items-center gap-6 lg:gap-8">
 
           {/* Left: — MORE THAN PRODUCTS */}

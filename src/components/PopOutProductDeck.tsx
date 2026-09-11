@@ -490,7 +490,7 @@ export default function PopOutProductDeck() {
   };
 
   return (
-    <section className="relative py-20 sm:py-28 overflow-hidden bg-[#FAF7F2] dark:bg-[#0D0B0A] transition-colors duration-500">
+    <section className="relative py-20 sm:py-28 overflow-hidden bg-[#F5EDE3] dark:bg-[#0D0B0A] transition-colors duration-500">
       {/* Dynamic Ambient Glow morphing to active product palette */}
       <motion.div
         className="absolute -top-36 left-1/2 -translate-x-1/2 w-[1100px] h-[600px] rounded-full blur-[150px] pointer-events-none opacity-45 dark:opacity-40 transition-colors duration-700"
@@ -501,7 +501,7 @@ export default function PopOutProductDeck() {
         
         {/* Section Header with Presentation Mode Badge */}
         <div className="text-center max-w-2xl mx-auto mb-10 sm:mb-14 space-y-3">
-          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-cream dark:bg-white/5 border border-border dark:border-white/10 text-xs font-bold uppercase tracking-[0.25em] text-[#851C25] dark:text-[#D4AF37]">
+          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-cream dark:bg-white/5 border border-border dark:border-white/10 text-xs font-bold uppercase tracking-[0.25em] text-[#0B5F61] dark:text-[#D4AF37]">
             <Layers size={13} />
             <span>Keynote 3D Pop-Out Presentation</span>
           </div>
@@ -790,7 +790,7 @@ export default function PopOutProductDeck() {
                   {/* Pill Tag */}
                   <div className="pt-1.5">
                     <span className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-cream dark:bg-white/5 border border-border/80 dark:border-white/10 text-[11px] font-bold tracking-wider uppercase text-primary dark:text-white/90">
-                      <ShieldCheck size={12} className="text-[#851C25] dark:text-[#D4AF37]" />
+                      <ShieldCheck size={12} className="text-[#0B5F61] dark:text-[#D4AF37]" />
                       {activeProduct.tag}
                     </span>
                   </div>
@@ -825,7 +825,7 @@ export default function PopOutProductDeck() {
 
                 <Link
                   to={activeProduct.id.includes('-') ? `/product/${activeProduct.id}` : '/shop'}
-                  className="flex-1 py-3 px-6 rounded-full bg-primary hover:bg-[#851C25] dark:bg-[#D4AF37] dark:hover:bg-[#B89628] text-white dark:text-black text-xs font-bold uppercase tracking-wider transition-all flex items-center justify-center gap-2 shadow-md group"
+                  className="flex-1 py-3 px-6 rounded-full bg-primary hover:bg-[#0B5F61] dark:bg-[#D4AF37] dark:hover:bg-[#B89628] text-white dark:text-black text-xs font-bold uppercase tracking-wider transition-all flex items-center justify-center gap-2 shadow-md group"
                 >
                   <span>Acquire Masterpiece</span>
                   <ArrowRight size={14} className="transition-transform group-hover:translate-x-1" />
@@ -863,7 +863,7 @@ export default function PopOutProductDeck() {
             onClick={() => setStageMode(stageMode === 'standard' ? 'cinematic' : 'standard')}
             className={`px-3.5 py-1.5 rounded-full text-[11px] font-semibold tracking-wider uppercase transition-all flex items-center gap-1.5 border ${
               stageMode === 'cinematic'
-                ? 'bg-[#851C25] text-white border-[#851C25] dark:bg-[#D4AF37] dark:text-black dark:border-[#D4AF37]'
+                ? 'bg-[#0B5F61] text-white border-[#0B5F61] dark:bg-[#D4AF37] dark:text-black dark:border-[#D4AF37]'
                 : 'bg-white dark:bg-white/5 text-secondary dark:text-white/70 border-border dark:border-white/10 hover:border-primary'
             }`}
           >
