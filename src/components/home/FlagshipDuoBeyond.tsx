@@ -70,9 +70,7 @@ export default function FlagshipDuoBeyond() {
 
           {/* Bottom Left Index */}
           <div className="relative z-10 p-6 sm:p-10 lg:p-12 pointer-events-none">
-            <span className="text-[10px] font-mono tracking-[0.2em] uppercase text-white/70">
-              SOUVENIR
-            </span>
+          
           </div>
         </div>
 
@@ -132,10 +130,8 @@ export default function FlagshipDuoBeyond() {
           </div>
 
           {/* Bottom Right Corner Tag: SPACES PEOPLE REMEMBER */}
-          <div className="relative z-10 p-6 sm:p-10 lg:p-12 flex items-end justify-between">
-            <span className="text-[10px] font-mono tracking-[0.2em] uppercase text-white/70">
-              HOSPITALITY
-            </span>
+          {/* <div className="relative z-10 p-6 sm:p-10 lg:p-12 flex items-end justify-between">
+            
 
             <div className="text-right">
               {['SPACES', 'PEOPLE', 'REMEMBER'].map((word, wIdx) => (
@@ -147,7 +143,7 @@ export default function FlagshipDuoBeyond() {
                 </span>
               ))}
             </div>
-          </div>
+          </div> */}
         </div>
 
       </div>

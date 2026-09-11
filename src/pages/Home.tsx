@@ -17,6 +17,7 @@ import ProductExhibitionSection from '../components/home/ProductExhibitionSectio
 
 // Homepage Discovery Sections
 import ExploreByCategorySection from '../components/home/ExploreByCategorySection';
+import JoriqueWaySection from '../components/home/JoriqueWaySection';
 import JoriqueExperienceSection from '../components/home/JoriqueExperienceSection';
 import CustomerStoriesSection from '../components/home/CustomerStoriesSection';
 
@@ -88,6 +89,12 @@ export default function Home() {
           Curated Exhibition of Tactile Form & Craft with Category Wings
       ───────────────────────────────────────────────────────────── */}
       {/* <ProductExhibitionSection /> */}
+
+      {/* ─────────────────────────────────────────────────────────────
+          5a. THE JORIQUE WAY — Philosophy / about teaser
+          "Crafted for beautiful living"
+      ───────────────────────────────────────────────────────────── */}
+      <JoriqueWaySection />
 
       {/* ─────────────────────────────────────────────────────────────
           5. EXPLORE BY CATEGORY
