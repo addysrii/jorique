@@ -157,3 +157,95 @@ export function getBadgeColors(badgeText?: string): { bg: string; text: string; 
 
   return { bg: '#7A8B72', text: '#F5EDE3', border: 'rgba(245, 237, 227, 0.35)' };
 }
+
+export const CORE_BRAND_COLLECTIONS = [
+  {
+    id: 'essential',
+    name: 'JORIQUE Essential',
+    shortName: 'Essential',
+    tagline: 'Organic Everyday Luxury',
+    accent: '#7A8B72',
+  },
+  {
+    id: 'signature',
+    name: 'JORIQUE Signature',
+    shortName: 'Signature',
+    tagline: 'Masterpiece Weaves & Jacquards',
+    accent: '#243B64',
+  },
+  {
+    id: 'luxe',
+    name: 'JORIQUE Luxe',
+    shortName: 'Luxe',
+    tagline: 'Mulberry Silks & Couture Splendor',
+    accent: '#641F2D',
+  },
+];
+
+/**
+ * Robust helper to check if a product belongs to a collection
+ * Supports collection key ('essential', 'signature', 'luxe', etc.)
+ */
+export function isProductInCollection(
+  product: {
+    name?: string;
+    badge?: string;
+    sku?: string;
+    category?: string;
+    description?: string;
+  },
+  collectionKey?: string | null
+): boolean {
+  if (!collectionKey || collectionKey === 'all' || collectionKey === 'All') return true;
+  const col = collectionKey.toLowerCase().trim();
+  const badgeLower = (product.badge || '').toLowerCase();
+  const skuUpper = (product.sku || '').toUpperCase();
+  const nameLower = (product.name || '').toLowerCase();
+  const descLower = (product.description || '').toLowerCase();
+
+  if (col === 'essential' || col.includes('essential')) {
+    return (
+      badgeLower.includes('essential') ||
+      skuUpper.includes('ESS') ||
+      nameLower.includes('essential') ||
+      descLower.includes('essential')
+    );
+  }
+
+  if (col === 'signature' || col.includes('signature')) {
+    return (
+      badgeLower.includes('signature') ||
+      skuUpper.includes('SIR') ||
+      skuUpper.includes('SIG') ||
+      nameLower.includes('signature') ||
+      descLower.includes('signature')
+    );
+  }
+
+  if (col === 'luxe' || col.includes('luxe')) {
+    return (
+      badgeLower.includes('luxe') ||
+      skuUpper.includes('LUX') ||
+      nameLower.includes('luxe') ||
+      descLower.includes('luxe')
+    );
+  }
+
+  if (col === 'souvenir' || col.includes('souvenir')) {
+    return (
+      badgeLower.includes('souvenir') ||
+      skuUpper.includes('SOU') ||
+      nameLower.includes('souvenir')
+    );
+  }
+
+  if (col === 'hospitality' || col.includes('hospitality')) {
+    return (
+      badgeLower.includes('hospitality') ||
+      skuUpper.includes('HOS') ||
+      nameLower.includes('hospitality')
+    );
+  }
+
+  return badgeLower.includes(col) || nameLower.includes(col);
+}

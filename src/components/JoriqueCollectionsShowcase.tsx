@@ -58,7 +58,7 @@ const TIERS: TierItem[] = [
       { name: 'Warm Ivory', hex: '#F5EDE3' },
       { name: 'Natural Sand', hex: '#D8CEBE' },
     ],
-    link: '/shop?category=bedsheets',
+    link: '/shop?collection=essential',
   },
   {
     id: 'signature',
@@ -85,7 +85,7 @@ const TIERS: TierItem[] = [
       { name: 'Imperial Gold', hex: '#C6A96B' },
       { name: 'Pristine Cream', hex: '#EDE8DF' },
     ],
-    link: '/shop?category=cushions',
+    link: '/shop?collection=signature',
   },
   {
     id: 'luxe',
@@ -112,7 +112,7 @@ const TIERS: TierItem[] = [
       { name: 'Champagne Gilt', hex: '#C6A96B' },
       { name: 'Deep Obsidian', hex: '#1C1917' },
     ],
-    link: '/shop?category=apparel',
+    link: '/shop?collection=luxe',
   },
 ];
 
@@ -306,7 +306,7 @@ export default function JoriqueCollectionsShowcase() {
 
                   <Link to={activeTier.link}>
                     <button className="group inline-flex items-center gap-2.5 px-7 py-3.5 rounded-full bg-[#1A1A1A] hover:bg-[#0B5F61] dark:bg-[#C6A96B] dark:hover:bg-[#E5C158] text-white dark:text-black font-semibold text-xs uppercase tracking-[0.2em] transition-all duration-300 shadow-md hover:shadow-lg cursor-pointer">
-                      <span>Explore {activeTier.shortSubtitle}</span>
+                      <span>Explore {activeTier.title}</span>
                       <ArrowRight size={14} className="group-hover:translate-x-1 transition-transform" />
                     </button>
                   </Link>
