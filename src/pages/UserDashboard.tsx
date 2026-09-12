@@ -27,6 +27,7 @@ import SEO from '../components/SEO';
 import { useAuth } from '../context/AuthContext';
 import { dashboardRequest } from '../lib/api';
 import { orderService, StoredOrder } from '../lib/api/orders';
+import LoadingMasterpiece from '../components/LoadingMasterpiece';
 
 interface UserDashboardData {
   welcome: string;
@@ -261,12 +262,7 @@ export default function UserDashboard() {
           {error && <p className="p-4 rounded-xl bg-red-500/10 border border-red-500/20 text-xs text-red-600 dark:text-red-400">{error}</p>}
 
           {loading ? (
-            <div className="py-24 flex flex-col items-center justify-center space-y-3">
-              <Loader2 size={28} className="animate-spin text-[#C6A96B] dark:text-[#D4AF37]" />
-              <p className="text-xs uppercase tracking-widest text-secondary dark:text-white/60 font-semibold">
-                Accessing Client Ledger...
-              </p>
-            </div>
+            <LoadingMasterpiece fullScreen={false} message="ACCESSING CLIENT LEDGER" className="py-24" />
           ) : (
             <>
               {/* TAB 1: OVERVIEW */}

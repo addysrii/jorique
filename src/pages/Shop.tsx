@@ -10,6 +10,7 @@ import { Product } from '../types';
 import ShopDealsBannerCarousel from '../components/ShopDealsBannerCarousel';
 import SEO from '../components/SEO';
 import { supabase } from '../lib/supabase';
+import LoadingMasterpiece from '../components/LoadingMasterpiece';
 import {
   CORE_BRAND_COLLECTIONS,
   isProductInCollection,
@@ -701,9 +702,7 @@ export default function Shop() {
 
           {/* Products Grid */}
           {loading ? (
-            <div className="flex justify-center py-24">
-              <div className="w-10 h-10 border-2 border-primary dark:border-[#D4AF37] border-t-transparent rounded-full animate-spin" />
-            </div>
+            <LoadingMasterpiece fullScreen={false} className="py-24" />
           ) : filteredProducts.length === 0 ? (
             <div className="text-center py-24 bg-white dark:bg-[#1A1816] rounded-3xl border border-dashed border-border dark:border-[#2E2925] p-12">
               <p className="text-primary dark:text-white text-base font-medium mb-1">

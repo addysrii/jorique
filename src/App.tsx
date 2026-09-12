@@ -9,6 +9,7 @@ import WhatsAppCheckoutModal from './components/WhatsAppCheckoutModal';
 import ErrorBoundary from './components/ErrorBoundary';
 import ProtectedRoute from './components/ProtectedRoute';
 import ProductMergeLoader from './components/ProductMergeLoader';
+import LoadingMasterpiece from './components/LoadingMasterpiece';
 import Home from './pages/Home';
 
 // Lazy-loaded routes for performance & code splitting
@@ -31,7 +32,7 @@ const GiftPage = lazy(() => import('./pages/GiftPage'));
 const ReturnPolicy = lazy(() => import('./pages/ReturnPolicy'));
 
 function PageLoader() {
-  return <ProductMergeLoader autoExitDelay={600} showSkip={true} />;
+  return <LoadingMasterpiece />;
 }
 
 function InitialIntroLoader() {

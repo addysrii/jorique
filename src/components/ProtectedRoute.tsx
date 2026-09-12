@@ -1,7 +1,7 @@
 import { Navigate, useLocation } from 'react-router-dom';
-import { Loader2 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import type { AppUser } from '../types';
+import LoadingMasterpiece from './LoadingMasterpiece';
 
 interface ProtectedRouteProps {
   children: React.ReactNode;
@@ -13,11 +13,7 @@ export default function ProtectedRoute({ children, role }: ProtectedRouteProps) 
   const location = useLocation();
 
   if (loading) {
-    return (
-      <div className="min-h-screen bg-background dark:bg-[#12100E] flex items-center justify-center">
-        <Loader2 size={24} className="animate-spin text-primary dark:text-[#D4AF37]" />
-      </div>
-    );
+    return <LoadingMasterpiece />;
   }
 
   if (!user) {

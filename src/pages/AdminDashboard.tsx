@@ -23,6 +23,7 @@ import BadgeManager from '../components/BadgeManager';
 import SkuSeriesManager from '../components/SkuSeriesManager';
 import InStoreBillingPOS from '../components/InStoreBillingPOS';
 import CouponManager from '../components/CouponManager';
+import LoadingMasterpiece from '../components/LoadingMasterpiece';
 import { JORIQUE_COLLECTION_LIST, getBadgeColors } from '../lib/constants/collections';
 
 type AdminTab = 'overview' | 'billing' | 'products' | 'inventory' | 'orders' | 'gifts' | 'reviews' | 'suppliers' | 'barcodes' | 'coupons' | 'sku-series' | 'categories' | 'badges';
@@ -461,10 +462,7 @@ To ensure protection under our Return & Exchange Policy, please record a continu
           </div>
 
           {loading ? (
-            <div className="py-24 flex flex-col items-center justify-center gap-3">
-              <Loader2 size={32} className="animate-spin text-primary dark:text-[#D4AF37]" />
-              <p className="text-xs text-secondary dark:text-white/60 tracking-widest uppercase">Loading JORIQUE OS Data...</p>
-            </div>
+            <LoadingMasterpiece fullScreen={false} message="LOADING JORIQUE OS" className="py-24" />
           ) : (
             <>
               {/* TAB 1: OVERVIEW */}

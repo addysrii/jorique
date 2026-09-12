@@ -17,6 +17,7 @@ import { Link } from 'react-router-dom';
 import { useCart } from '../../context/CartContext';
 import { productService } from '../../lib/api/products';
 import { Product } from '../../types';
+import LoadingMasterpiece from '../LoadingMasterpiece';
 
 // Synthesize authentic physical paper rustle sound using Web Audio API
 function playPaperTurnSound() {
@@ -564,12 +565,7 @@ export default function Isometric3DCatalogue() {
             LOADING / ERROR STATE
         ───────────────────────────────────────────────────────────── */}
         {loading && (
-          <div className="max-w-5xl mx-auto py-16 flex flex-col items-center justify-center space-y-4">
-            <Loader2 className="w-8 h-8 animate-spin text-[#0B5F61] dark:text-[#D4AF37]" />
-            <span className="text-xs font-mono uppercase tracking-widest text-secondary dark:text-white/60">
-              Loading Atelier Catalogue from Backend...
-            </span>
-          </div>
+          <LoadingMasterpiece fullScreen={false} message="LOADING ATELIER CATALOGUE" className="py-16" />
         )}
 
         {!loading && error && (
