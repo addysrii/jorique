@@ -365,7 +365,7 @@ export default function Shop() {
                 </span>
               </div>
 
-              <h1 className="text-3xl sm:text-4xl lg:text-5xl font-light text-primary dark:text-white tracking-wide">
+              <h1 className="font-mainlogo text-3xl sm:text-4xl lg:text-5xl font-normal text-primary dark:text-white tracking-[0.20em] uppercase">
                 {currentCollectionTheme
                   ? currentCollectionTheme.name
                   : selectedCategory !== 'All'

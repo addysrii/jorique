@@ -32,8 +32,8 @@ export default function LoadingMasterpiece({
       } text-[#1A1A1A] dark:text-[#FCFAF7] flex flex-col items-center justify-center gap-5 selection:bg-[#C6A96B]/30 transition-colors duration-500 select-none ${className}`}
     >
       {/* "LOADING" in CAPSLOCK with Sequential Blinking Dots */}
-      <div className="flex items-center font-mono mt-1">
-        <span className="text-xs sm:text-sm font-semibold tracking-[0.35em] uppercase text-[#1A1A1A] dark:text-[#FCFAF7]">
+      <div className="flex items-center font-mainlogo mt-1">
+        <span className="text-sm sm:text-base font-normal tracking-[0.25em] uppercase text-[#1A1A1A] dark:text-[#FCFAF7]">
           {message}
         </span>
 
