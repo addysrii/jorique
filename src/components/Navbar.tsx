@@ -20,7 +20,6 @@ import { useAuth } from '../context/AuthContext';
 import { useTheme } from '../context/ThemeContext';
 import { useCart } from '../context/CartContext';
 import { supabase } from '../lib/supabase';
-import { CORE_BRAND_COLLECTIONS } from '../lib/constants/collections';
 
 interface NavbarProps {
   cartCount?: number;
@@ -31,10 +30,8 @@ export default function Navbar({ }: NavbarProps) {
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [userMenuOpen, setUserMenuOpen] = useState(false);
-  const [collectionsMenuOpen, setCollectionsMenuOpen] = useState(false);
   const [categories, setCategories] = useState<string[]>([]);
   const userMenuRef = useRef<HTMLDivElement>(null);
-  const collectionsMenuRef = useRef<HTMLDivElement>(null);
   const location = useLocation();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
@@ -54,7 +51,6 @@ export default function Navbar({ }: NavbarProps) {
   useEffect(() => {
     setMobileOpen(false);
     setUserMenuOpen(false);
-    setCollectionsMenuOpen(false);
   }, [location.pathname, location.search]);
 
   // Prevent background scroll on mobile open
@@ -65,20 +61,17 @@ export default function Navbar({ }: NavbarProps) {
     };
   }, [mobileOpen]);
 
-  // Click outside user and collections dropdowns
+  // Click outside user dropdown
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
       const target = e.target as Node;
       if (userMenuRef.current && !userMenuRef.current.contains(target)) {
         setUserMenuOpen(false);
       }
-      if (collectionsMenuRef.current && !collectionsMenuRef.current.contains(target)) {
-        setCollectionsMenuOpen(false);
-      }
     };
-    if (userMenuOpen || collectionsMenuOpen) document.addEventListener('mousedown', handleClickOutside);
+    if (userMenuOpen) document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
-  }, [userMenuOpen, collectionsMenuOpen]);
+  }, [userMenuOpen]);
 
   // Fetch real categories from database & active products
   useEffect(() => {
@@ -188,102 +181,13 @@ export default function Navbar({ }: NavbarProps) {
               />
             </Link>
 
-            {/* Desktop Nav: Collections & Categories */}
+            {/* Desktop Nav: Categories */}
             <nav className="hidden md:flex items-center gap-5 lg:gap-8 flex-wrap">
 
-              {/* Collections Dropdown Menu */}
-              <div
-                className="relative"
-                ref={collectionsMenuRef}
-                onMouseEnter={() => setCollectionsMenuOpen(true)}
-                onMouseLeave={() => setCollectionsMenuOpen(false)}
-              >
-                <button
-                  onClick={() => setCollectionsMenuOpen((v) => !v)}
-                  aria-label="JORIQUE Collections Menu"
-                  className={`text-xs font-semibold tracking-widest uppercase transition-colors duration-200 relative group py-1 flex items-center gap-1 cursor-pointer ${transparent
-                    ? 'text-white/90 hover:text-white'
-                    : 'text-secondary dark:text-white/70 hover:text-primary dark:hover:text-[#D4AF37]'
-                    } ${location.pathname === '/shop' && searchParams.get('collection') ? (transparent ? 'text-white' : 'text-primary dark:text-[#D4AF37]') : ''}`}
-                >
-                  <span>Collections</span>
-                  <ChevronDown
-                    size={13}
-                    strokeWidth={2}
-                    className={`transition-transform duration-200 ${collectionsMenuOpen ? 'rotate-180' : ''}`}
-                  />
-                  <span
-                    className={`absolute -bottom-0.5 left-0 h-0.5 transition-all duration-300 ${transparent ? 'bg-white' : 'bg-primary dark:bg-[#D4AF37]'
-                      } ${location.pathname === '/shop' && searchParams.get('collection') ? 'w-full' : 'w-0 group-hover:w-full'}`}
-                  />
-                </button>
-
-                {/* Dropdown Menu Panel */}
-                <AnimatePresence>
-                  {collectionsMenuOpen && (
-                    <motion.div
-                      initial={{ opacity: 0, scale: 0.95, y: -6 }}
-                      animate={{ opacity: 1, scale: 1, y: 0 }}
-                      exit={{ opacity: 0, scale: 0.95, y: -6 }}
-                      transition={{ duration: 0.18, ease: [0.22, 1, 0.36, 1] }}
-                      className="absolute left-0 top-full mt-2 w-72 bg-white dark:bg-[#1A1816] rounded-2xl border border-border dark:border-[#2E2925] shadow-2xl overflow-hidden z-50 p-2 space-y-1 divide-y divide-border/40 dark:divide-[#2E2925]"
-                    >
-                      <div className="space-y-1 pb-1">
-                        <div className="px-3 py-1.5 text-[10px] font-bold uppercase tracking-widest text-secondary/60 dark:text-white/40">
-                          Brand Collections
-                        </div>
-                        {CORE_BRAND_COLLECTIONS.map((col) => {
-                          const activeColParam = searchParams.get('collection');
-                          const isColActive =
-                            location.pathname === '/shop' &&
-                            activeColParam?.toLowerCase() === col.id.toLowerCase();
-
-                          return (
-                            <Link
-                              key={col.id}
-                              to={`/shop?collection=${col.id}`}
-                              onClick={() => setCollectionsMenuOpen(false)}
-                              className={`flex items-start gap-3 px-3 py-2.5 rounded-xl transition-all ${isColActive
-                                ? 'bg-cream/80 dark:bg-white/10'
-                                : 'hover:bg-cream/40 dark:hover:bg-white/5'
-                                }`}
-                            >
-                              <span
-                                className="w-3.5 h-3.5 rounded-full mt-0.5 shrink-0 shadow-xs border border-black/10 dark:border-white/20"
-                                style={{ backgroundColor: col.accent }}
-                              />
-                              <div className="flex flex-col">
-                                <span className="text-xs font-bold text-primary dark:text-white tracking-wide">
-                                  {col.name}
-                                </span>
-                                <span className="text-[10.5px] text-secondary/70 dark:text-white/50 leading-tight mt-0.5">
-                                  {col.tagline}
-                                </span>
-                              </div>
-                            </Link>
-                          );
-                        })}
-                      </div>
-                      <div className="pt-1.5 px-1">
-                        <Link
-                          to="/shop"
-                          onClick={() => setCollectionsMenuOpen(false)}
-                          className="w-full block text-center py-2 text-[11px] font-semibold uppercase tracking-wider text-[#0B5F61] dark:text-[#D4AF37] hover:underline"
-                        >
-                          Explore All Collections →
-                        </Link>
-                      </div>
-                    </motion.div>
-                  )}
-                </AnimatePresence>
-              </div>
-
-              {/* Categories */}
               {categories.map((cat) => {
                 const activeCatParam = searchParams.get('category');
                 const isCatActive =
                   location.pathname === '/shop' &&
-                  !searchParams.get('collection') &&
                   activeCatParam?.toLowerCase() === cat.toLowerCase();
 
                 return (
@@ -519,48 +423,8 @@ export default function Navbar({ }: NavbarProps) {
             className="fixed inset-0 z-40 bg-white dark:bg-[#100E0D] pt-24 px-6 flex flex-col justify-between pb-8 md:hidden"
           >
             <div className="flex flex-col gap-5 overflow-y-auto max-h-[72vh] pr-2">
-              {/* Flagship Brand Collections */}
-              <div className="pt-1 space-y-2.5">
-                <span className="text-[10px] font-bold uppercase tracking-[0.25em] text-secondary/60 dark:text-white/40 block">
-                  Flagship Collections
-                </span>
-                <div className="grid grid-cols-1 gap-2">
-                  {CORE_BRAND_COLLECTIONS.map((col) => {
-                    const activeColParam = searchParams.get('collection');
-                    const isColActive =
-                      location.pathname === '/shop' &&
-                      activeColParam?.toLowerCase() === col.id.toLowerCase();
-
-                    return (
-                      <Link
-                        key={col.id}
-                        to={`/shop?collection=${col.id}`}
-                        onClick={() => setMobileOpen(false)}
-                        className={`flex items-center gap-3 px-3.5 py-2.5 rounded-xl border transition-all ${isColActive
-                          ? 'bg-cream dark:bg-white/10 border-primary/40 dark:border-[#D4AF37]'
-                          : 'bg-cream/40 dark:bg-white/5 border-border/70 dark:border-[#2E2925] hover:border-primary/40 dark:hover:border-[#D4AF37]'
-                          }`}
-                      >
-                        <span
-                          className="w-3.5 h-3.5 rounded-full shrink-0 shadow-xs border border-black/10 dark:border-white/20"
-                          style={{ backgroundColor: col.accent }}
-                        />
-                        <div className="flex flex-col">
-                          <span className="text-xs font-bold text-primary dark:text-white">
-                            {col.name}
-                          </span>
-                          <span className="text-[10px] text-secondary/70 dark:text-white/50">
-                            {col.tagline}
-                          </span>
-                        </div>
-                      </Link>
-                    );
-                  })}
-                </div>
-              </div>
-
               {/* Categories */}
-              <div className="pt-2 border-t border-border/60 dark:border-[#2E2925] space-y-3">
+              <div className="pt-1 space-y-3">
                 <span className="text-[10px] font-bold uppercase tracking-[0.25em] text-secondary/60 dark:text-white/40 block">
                   Categories
                 </span>
