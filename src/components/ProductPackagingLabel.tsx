@@ -45,11 +45,10 @@ export default function ProductPackagingLabel({
 
   const cleanBadge = (badge || '').replace(/[★*✦•]/g, '').trim();
 
-  const scanUrl = `${
-    typeof window !== 'undefined' && window.location.origin
+  const scanUrl = `${typeof window !== 'undefined' && window.location.origin
       ? window.location.origin
       : 'https://jorique.in'
-  }/scan?serial=${encodeURIComponent(unitSku)}`;
+    }/scan?serial=${encodeURIComponent(unitSku)}`;
 
   return (
     <div
@@ -60,13 +59,13 @@ export default function ProductPackagingLabel({
     >
       {/* ── Inner Inset Fine Gold Frame ── */}
       <div className="relative border border-[#D0BD97] rounded-[18px] overflow-hidden bg-[#F5EDE3] flex flex-col justify-between">
-        
+
         {/* ── Main Content Area ── */}
         <div className="p-4 sm:p-5 flex flex-col justify-between">
-          
+
           {/* 1. Header: Brand Logo & Tagline */}
           <div className="text-center">
-            <h1 className="font-serif font-normal text-3xl sm:text-4xl tracking-[0.20em] uppercase text-[#11312D] leading-none">
+            <h1 className="font-mainlogo font-normal text-3xl sm:text-4xl tracking-[0.20em] uppercase text-[#11312D] leading-none">
               {brandName}
             </h1>
 
@@ -133,7 +132,7 @@ export default function ProductPackagingLabel({
 
           {/* 5. Perfectly Placed Price & Barcode/QR Section */}
           <div className="grid grid-cols-1 sm:grid-cols-12 gap-2.5 items-stretch">
-            
+
             {/* Price Box - Dedicated & Spacious (No Overflow!) */}
             <div className="sm:col-span-5 border border-[#CBB58F] rounded-xl p-3 bg-[#F5EDE3] shadow-xs flex flex-col items-center justify-center text-center">
               <span className="block text-[8px] sm:text-[8.5px] font-bold uppercase tracking-[0.18em] font-sans text-[#9E8254]">

@@ -27,6 +27,7 @@ export default function Footer() {
           <nav className="flex flex-wrap items-center gap-x-6 sm:gap-x-8 gap-y-3">
             {[
               { label: 'Collections', href: '/#collections' },
+              { label: 'Souvenir (Bulk)', href: '/souvenir' },
               { label: 'About', href: '/about' },
               { label: 'The JORIQUE Experience', href: '/#experience' },
               { label: 'Contact', href: '/connect' },

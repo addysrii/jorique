@@ -59,7 +59,7 @@ export default function FlagshipDuoBeyond() {
 
             {/* Action Button */}
             <div className="pt-4">
-              <Link to="/gift">
+              <Link to="/souvenir">
                 <button className="inline-flex items-center gap-2.5 px-6 py-2.5 rounded-full border border-white/60 bg-white/10 hover:bg-white hover:text-black backdrop-blur-xs text-white text-[10px] sm:text-[11px] font-semibold tracking-[0.2em] uppercase transition-all duration-300 shadow-lg cursor-pointer">
                   <span>EXPLORE SOUVENIR</span>
                   <ArrowRight size={13} className="transform group-hover:translate-x-1 transition-transform" />

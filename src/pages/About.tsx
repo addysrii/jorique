@@ -494,9 +494,7 @@ export default function About() {
         </div>
 
         <div className="max-w-2xl mx-auto space-y-6 relative z-10">
-          <div className="inline-flex items-center gap-2 text-xs font-mono tracking-[0.25em] text-[#C6A96B] uppercase">
-            <span>The Luxury Atelier</span>
-          </div>
+          
 
           <h2 className="font-serif text-3xl sm:text-5xl font-light text-[#1A1816] dark:text-white tracking-wide">
             Experience JORIQUE

@@ -29,6 +29,7 @@ const AddNewProducts = lazy(() => import('./pages/AddNewProducts'));
 const ScanPage = lazy(() => import('./pages/Scan'));
 const ReviewPage = lazy(() => import('./pages/Review'));
 const GiftPage = lazy(() => import('./pages/GiftPage'));
+const Souvenir = lazy(() => import('./pages/Souvenir'));
 const ReturnPolicy = lazy(() => import('./pages/ReturnPolicy'));
 
 function PageLoader() {
@@ -154,6 +155,15 @@ function AnimatedRoutes() {
               </PageTransition>
             }
           />
+          <Route
+            path="/souvenir"
+            element={
+              <PageTransition>
+                <Souvenir />
+              </PageTransition>
+            }
+          />
+          <Route path="/souvenirs" element={<Navigate to="/souvenir" replace />} />
           <Route
             path="/coming-soon"
             element={

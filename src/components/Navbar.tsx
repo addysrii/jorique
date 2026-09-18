@@ -14,6 +14,7 @@ import {
   PhoneCall,
   LogIn,
   Package,
+  Gift,
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useAuth } from '../context/AuthContext';
@@ -207,6 +208,10 @@ export default function Navbar({ }: NavbarProps) {
                   </Link>
                 );
               })}
+
+
+
+
             </nav>
 
             {/* Right Actions (Theme, Cart, Profile) */}
@@ -474,6 +479,18 @@ export default function Navbar({ }: NavbarProps) {
                       <LogIn size={15} /> Sign In / Register
                     </Link>
                   )}
+                  <Link
+                    to="/souvenir"
+                    onClick={() => setMobileOpen(false)}
+                    className="text-primary dark:text-white hover:underline flex items-center justify-between font-semibold"
+                  >
+                    <span className="flex items-center gap-2">
+                      <Gift size={15} className="text-[#C6A96B]" /> Souvenir (Bulk Gifting)
+                    </span>
+                    <span className="text-[10px] px-2 py-0.5 rounded-full bg-[#C6A96B]/20 text-[#C6A96B] font-mono">
+                      Min 25 pcs
+                    </span>
+                  </Link>
                   <Link
                     to="/about"
                     onClick={() => setMobileOpen(false)}

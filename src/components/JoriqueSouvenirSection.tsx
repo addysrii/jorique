@@ -71,14 +71,14 @@ export default function JoriqueSouvenirSection() {
 
           {/* Quick Actions */}
           <div className="flex flex-wrap items-center gap-3">
-            <Link to="/gift">
+            <Link to="/souvenir">
               <button className="group inline-flex items-center gap-2.5 px-7 py-3.5 rounded-full bg-[#1A1A1A] hover:bg-[#0B5F61] dark:bg-[#C6A96B] dark:hover:bg-[#E5C158] text-white dark:text-black font-semibold text-xs uppercase tracking-[0.2em] transition-all duration-300 shadow-md hover:shadow-lg cursor-pointer">
                 <Gift size={14} />
-                <span>Explore Gifting Atelier</span>
+                <span>Explore Souvenir Atelier</span>
                 <ArrowRight size={14} className="group-hover:translate-x-1 transition-transform" />
               </button>
             </Link>
-            <Link to="/connect">
+            <Link to="/souvenir#enquiry-form">
               <button className="inline-flex items-center gap-2 px-6 py-3.5 rounded-full border border-[#E8DFD3] dark:border-[#332922] hover:border-[#C6A96B] bg-white/50 dark:bg-white/5 text-primary dark:text-white font-semibold text-xs uppercase tracking-[0.2em] transition-all cursor-pointer">
                 <span>Custom Order Inquiry</span>
               </button>
