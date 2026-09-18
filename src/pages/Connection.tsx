@@ -215,11 +215,10 @@ END:VCARD`;
                               className="p-1 focus:outline-none transition-transform hover:scale-110 cursor-pointer"
                             >
                               <Star
-                                className={`w-6 h-6 ${
-                                  star <= (hoverRating || rating)
-                                    ? 'fill-current text-[#C09A58]'
-                                    : 'text-[#D5C7B5] dark:text-white/20'
-                                }`}
+                                className={`w-6 h-6 ${star <= (hoverRating || rating)
+                                  ? 'fill-current text-[#C09A58]'
+                                  : 'text-[#D5C7B5] dark:text-white/20'
+                                  }`}
                               />
                             </button>
                           ))}
@@ -330,7 +329,7 @@ END:VCARD`;
               <motion.h1
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
-                className="text-4xl md:text-5xl font-serif tracking-[0.25em] pl-[0.25em] text-[#1C1817] dark:text-[#FCFAF7] font-normal uppercase text-center"
+                className="text-4xl md:text-5xl font-mainlogo tracking-[0.25em] pl-[0.25em] text-[#1C1817] dark:text-[#FCFAF7] font-normal uppercase text-center"
               >
                 JORIQUE
               </motion.h1>
@@ -445,7 +444,7 @@ END:VCARD`;
                 <BookUser className="w-6 h-6" />
               </div>
               <div>
-                <h3 className="text-sm font-bold text-[#1C1817] dark:text-white">Save JORIQUE Contact</h3>
+                <h3 className="font-mainlogo text-sm font-bold text-[#1C1817] dark:text-white">Save JORIQUE Contact</h3>
                 <p className="text-xs text-[#6E635B] dark:text-white/70 font-light leading-snug mt-0.5">
                   All our contact details in one tap. Save to your phone instantly.
                 </p>
