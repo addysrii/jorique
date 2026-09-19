@@ -15,6 +15,7 @@ import {
   LogIn,
   Package,
   Gift,
+  Building2,
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useAuth } from '../context/AuthContext';
@@ -489,6 +490,18 @@ export default function Navbar({ }: NavbarProps) {
                     </span>
                     <span className="text-[10px] px-2 py-0.5 rounded-full bg-[#C6A96B]/20 text-[#C6A96B] font-mono">
                       Min 25 pcs
+                    </span>
+                  </Link>
+                  <Link
+                    to="/hospitality"
+                    onClick={() => setMobileOpen(false)}
+                    className="text-primary dark:text-white hover:underline flex items-center justify-between font-semibold"
+                  >
+                    <span className="flex items-center gap-2">
+                      <Building2 size={15} className="text-[#855331] dark:text-[#C6A96B]" /> Hospitality (B2B Bulk)
+                    </span>
+                    <span className="text-[10px] px-2 py-0.5 rounded-full bg-[#855331]/15 text-[#855331] dark:text-[#C6A96B] font-mono">
+                      Commercial
                     </span>
                   </Link>
                   <Link

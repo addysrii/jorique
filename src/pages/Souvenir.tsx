@@ -54,28 +54,36 @@ const PERSONALIZATION_OPTIONS = [
 const BEDDING_SETS = [
   {
     id: 'bedding-3pc',
-    title: '3 PIECE SET',
+    title: '3 Piece Set',
+    badge: '3 piece set',
+    formattedIncludes: '1 Bedsheet<br />+ 2 Pillow Covers',
     includes: '1 Bedsheet + 2 Pillow Covers',
     description: 'A perfect everyday gifting choice.',
     image: '/images/souvenir-set-bedding-3pc.png',
   },
   {
     id: 'bedding-4pc',
-    title: '4 PIECE SET',
+    title: '4 Piece Set',
+    badge: '4 piece set',
+    formattedIncludes: '3 Piece Set<br />+ 1 Comforter',
     includes: '3 Piece Set + 1 Comforter',
     description: 'Added comfort for a complete feel.',
     image: '/images/souvenir-set-bedding-4pc.png',
   },
   {
     id: 'bedding-5pc',
-    title: '5 PIECE SET',
+    title: '5 Piece Set',
+    badge: '5 piece set',
+    formattedIncludes: '3 Piece Set<br />+ 2 Cushion Covers',
     includes: '3 Piece Set + 2 Cushion Covers',
     description: 'A stylish and useful gifting set.',
     image: '/images/souvenir-set-bedding-5pc.png',
   },
   {
     id: 'bedding-6pc',
-    title: '6 PIECE SET',
+    title: '6 Piece Set',
+    badge: '6 piece set',
+    formattedIncludes: '5 Piece Set<br />+ 1 Comforter',
     includes: '5 Piece Set + 1 Comforter',
     description: 'A complete home gifting experience.',
     image: '/images/souvenir-set-bedding-6pc.png',
@@ -86,21 +94,27 @@ const BEDDING_SETS = [
 const TOWEL_SETS = [
   {
     id: 'towel-2pc',
-    title: '2 PIECE SET',
+    title: '2 Piece Set',
+    badge: '2 piece set',
+    formattedIncludes: '2 Bath Towels<br /><span class="invisible select-none">+ 0</span>',
     includes: '2 Bath Towels',
     description: 'A thoughtful and practical gift.',
     image: '/images/souvenir-set-towel-2pc.png',
   },
   {
     id: 'towel-4pc',
-    title: '4 PIECE SET',
+    title: '4 Piece Set',
+    badge: '4 piece set',
+    formattedIncludes: '2 Piece Set<br />+ 2 Hand Towels',
     includes: '2 Piece Set + 2 Hand Towels',
     description: 'Everyday essentials for every home.',
     image: '/images/souvenir-set-towel-4pc.png',
   },
   {
     id: 'towel-6pc',
-    title: '6 PIECE SET',
+    title: '6 Piece Set',
+    badge: '6 piece set',
+    formattedIncludes: '4 Piece Set<br />+ 2 Face Towels',
     includes: '4 Piece Set + 2 Face Towels',
     description: 'A complete wellness gifting set.',
     image: '/images/souvenir-set-towel-6pc.png',
@@ -141,8 +155,6 @@ export default function Souvenir() {
   const emailInputId = useId();
   const consentInputId = useId();
 
-  const [copied, setCopied] = useState(false);
-
   // Form State
   const [formData, setFormData] = useState({
     occasion: 'Wedding',
@@ -163,7 +175,6 @@ export default function Souvenir() {
 
   // Errors state
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
-  const [submitted, setSubmitted] = useState(false);
 
   // Dynamic set options based on category
   const getSetOptions = () => {
@@ -371,13 +382,6 @@ Thank you!`;
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleCopyMessage = () => {
-    const textToCopy = getWhatsAppBody();
-    navigator.clipboard.writeText(textToCopy);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2500);
-  };
-
   const handleOpenWhatsApp = () => {
     if (!validateForm()) {
       return;
@@ -414,357 +418,309 @@ Thank you!`;
       <Navbar />
 
       {/* ─────────────────────────────────────────────────────────────
-          01. HERO SECTION (Exact Match to Design Mockup)
+          01. HERO SECTION (Exact Match to User HTML/CSS Specification)
       ───────────────────────────────────────────────────────────── */}
-      <header className="relative pt-28 pb-16 lg:pt-36 lg:pb-20 px-5 sm:px-8 lg:px-12 overflow-hidden border-b border-[#E8DFD3] dark:border-[#2E2925] bg-[#FAF7F2] dark:bg-[#12100E]">
-        {/* Subtle decorative warm glow */}
-        <div className="absolute top-12 left-1/3 -translate-x-1/2 w-[700px] h-[350px] bg-[#C6A96B]/10 dark:bg-[#C6A96B]/5 rounded-full blur-3xl pointer-events-none" />
+      <header className="relative pt-28 lg:pt-32 pb-4 sm:pb-6 overflow-hidden border-b border-[#e6dccb] dark:border-[#2e261f] bg-[linear-gradient(100deg,#faf6ee_0%,#f3eadb_55%,#e9dcc6_100%)] dark:bg-[linear-gradient(100deg,#181411_0%,#1c1713_55%,#15120f_100%)]">
+        <div className="max-w-[1240px] mx-auto px-5 sm:px-8">
+          <div className="grid grid-cols-1 lg:grid-cols-[1.02fr_1fr] gap-6 lg:gap-8 items-center pt-8 sm:pt-10 lg:pt-14 pb-9">
 
-        <div className="max-w-7xl mx-auto">
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-12 items-center">
-
-            {/* Hero Left Content */}
-            <div className="lg:col-span-6 space-y-6">
-
-              {/* Eyebrow Label */}
-              <motion.div
-                initial={{ opacity: 0, y: 12 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5 }}
-                className="text-[11px] sm:text-xs font-sans font-medium tracking-[0.25em] text-[#9A643E] dark:text-[#D4AF37] uppercase"
-              >
-                PERSONALIZED BEDDING & TOWEL GIFT COLLECTION
-              </motion.div>
-
-              {/* Main Brand Title & Tagline */}
-              <motion.div
-                initial={{ opacity: 0, y: 16 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5, delay: 0.1 }}
-                className="space-y-4"
-              >
-                <div className="leading-none">
-                  <h1 className="font-mainlogo text-5xl sm:text-6xl lg:text-7xl font-normal text-[#241F1C] dark:text-[#FCFAF7] tracking-[0.03em] uppercase">
-                    JORIQUE
-                  </h1>
-                  <span className="block font-serif italic text-6xl sm:text-7xl lg:text-8xl text-[#9A643E] dark:text-[#E5C158] font-normal leading-[0.95] mt-1">
-                    Souvenir
-                  </span>
-                </div>
-
-                <p className="font-serif text-2xl sm:text-3xl text-[#241F1C] dark:text-white font-normal pt-1">
-                  Your occasion. Your identity. Your gift.
-                </p>
-              </motion.div>
-
-              {/* Description */}
-              <motion.p
-                initial={{ opacity: 0, y: 16 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5, delay: 0.2 }}
-                className="text-sm sm:text-[15px] text-[#5C554F] dark:text-white/75 font-light leading-relaxed max-w-lg"
-              >
-                Thoughtfully crafted bedding and towel gifting sets for weddings, corporate gifting,
-                festive celebrations and meaningful moments.
-              </motion.p>
-
-              {/* Bulk Orders Card Box */}
-              <motion.div
-                initial={{ opacity: 0, y: 16 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5, delay: 0.25 }}
-                className="border border-[#E5DACD] dark:border-[#382E26] bg-[#FDFBF7] dark:bg-white/5 rounded-xl px-5 py-3.5 max-w-md shadow-xs"
-              >
-                <div className="text-xs font-bold tracking-[0.14em] text-[#241F1C] dark:text-[#FCFAF7] uppercase">
+            {/* Left Content */}
+            <div>
+              <p className="font-['Jost',sans-serif] text-[12px] tracking-[0.16em] uppercase text-[#a67c45] font-medium">
+                Personalized bedding &amp; towel gift collection
+              </p>
+              <p className="font-mainlogo text-[34px] sm:text-[38px] tracking-[0.08em] font-medium leading-none mt-[18px] text-[#231f1a] dark:text-[#f3eadb]">
+                JORIQUE
+              </p>
+              <h1 className="font-['Cormorant_Garamond',Georgia,serif] italic text-[64px] sm:text-[88px] leading-[0.95] text-[#8a6230] dark:text-[#d4a86a] font-medium tracking-[-0.01em]">
+                Souvenir
+              </h1>
+              <p className="font-['Cormorant_Garamond',Georgia,serif] text-[24px] sm:text-[30px] font-semibold mt-[26px] leading-[1.2] text-[#231f1a] dark:text-[#f3eadb]">
+                Your occasion. Your identity. Your gift.
+              </p>
+              <p className="max-w-[430px] text-[#5f574c] dark:text-[#c4b9a8] mt-[14px] text-[15px] sm:text-[16px] font-['Jost',sans-serif] leading-[1.55]">
+                Thoughtfully crafted bedding and towel gifting sets for weddings, corporate gifting, festive celebrations and meaningful moments.
+              </p>
+              <div className="inline-block mt-[24px] bg-[rgba(255,253,249,0.85)] dark:bg-[#201a15] border border-[#e6dccb] dark:border-[#3a3227] rounded-[6px] px-[20px] py-[12px]">
+                <b className="block text-[14px] sm:text-[15px] tracking-[0.06em] text-[#231f1a] dark:text-white font-['Jost',sans-serif] font-semibold">
                   BULK ORDERS · MINIMUM 25 PIECES
-                </div>
-                <div className="text-[11px] text-[#786E65] dark:text-white/70 mt-0.5 font-light">
+                </b>
+                <span className="text-[12px] sm:text-[13px] text-[#5f574c] dark:text-[#a89e90] font-['Jost',sans-serif]">
                   Prices will vary according to your quantity and quality.
-                </div>
-              </motion.div>
-
-              {/* CTA Button */}
-              <motion.div
-                initial={{ opacity: 0, y: 16 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5, delay: 0.3 }}
-                className="pt-1"
-              >
+                </span>
+              </div>
+              <div>
                 <button
+                  type="button"
                   onClick={() => scrollToForm()}
-                  className="group inline-flex items-center gap-2.5 px-7 py-3.5 rounded-lg bg-[#855331] hover:bg-[#6F4324] dark:bg-[#C6A96B] dark:hover:bg-[#D4B87C] text-white dark:text-black font-bold text-xs uppercase tracking-[0.18em] transition-all duration-300 shadow-md hover:shadow-lg cursor-pointer"
+                  className="inline-flex items-center gap-2 mt-[22px] bg-[#8a6230] hover:bg-[#6f4e22] text-white font-medium tracking-[0.06em] text-[14px] px-[26px] py-[14px] rounded-[4px] transition-colors font-['Jost',sans-serif] cursor-pointer shadow-xs"
                 >
-                  <span>START YOUR ENQUIRY</span>
-                  <ArrowRight size={15} className="group-hover:translate-x-1 transition-transform" />
+                  START YOUR ENQUIRY →
                 </button>
-              </motion.div>
-
-              {/* Trust Attributes Row */}
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ duration: 0.6, delay: 0.4 }}
-                className="grid grid-cols-2 sm:grid-cols-4 gap-4 pt-4 border-t border-[#E8DFD3] dark:border-[#2E2925]"
-              >
-                {[
-                  { icon: <Leaf size={18} className="text-[#9A643E] dark:text-[#C6A96B] shrink-0" />, label: 'Premium Quality Fabrics' },
-                  { icon: <Pencil size={18} className="text-[#9A643E] dark:text-[#C6A96B] shrink-0" />, label: 'Fully Customizable' },
-                  { icon: <Gift size={18} className="text-[#9A643E] dark:text-[#C6A96B] shrink-0" />, label: 'Elegant Packaging' },
-                  { icon: <Heart size={18} className="text-[#9A643E] dark:text-[#C6A96B] shrink-0" />, label: 'Thoughtful Gifting' },
-                ].map((item, idx) => (
-                  <div key={idx} className="flex items-center gap-2 text-xs text-[#3E3731] dark:text-white/80 font-medium">
-                    {item.icon}
-                    <span className="leading-tight">{item.label}</span>
-                  </div>
-                ))}
-              </motion.div>
-
+              </div>
             </div>
 
-            {/* Hero Right Visual Showcase */}
-            <motion.div
-              initial={{ opacity: 0, scale: 0.96 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 0.7, delay: 0.2 }}
-              className="lg:col-span-6 relative"
-            >
-              <div className="relative rounded-2xl overflow-hidden shadow-2xl border border-[#E5DACD] dark:border-[#382E26] bg-[#F3ECE1] dark:bg-[#1C1613]">
-                <img
-                  src="/images/costume pack.jpg"
-                  alt="JORIQUE Souvenir personalized bedding and towel gift sets packaging and presentation box"
-                  className="w-full h-auto object-cover"
-                />
-              </div>
-            </motion.div>
+            {/* Right Hero Art / Image Showcase */}
+            <div className="w-full flex items-center justify-center p-1 sm:p-2">
+              <img
+                src="/images/costume pack.jpg"
+                alt="JORIQUE Souvenir personalized bedding and towel gift collection presentation box"
+                className="w-full max-h-[440px] object-contain rounded-md"
+              />
+            </div>
 
           </div>
+
+          {/* Trust Row */}
+          <div className="border-t border-[#e6dccb]/70 dark:border-[#2e261f]">
+            <ul className="flex flex-wrap gap-x-[34px] gap-y-[12px] py-[18px] pb-[28px]">
+              <li className="flex items-center gap-[10px] text-[13px] text-[#5f574c] dark:text-[#b8ad9e] font-['Jost',sans-serif]">
+                <svg viewBox="0 0 32 32" className="w-[28px] h-[28px] stroke-[#a67c45] fill-none stroke-[1.4] stroke-linecap-round stroke-linejoin-round shrink-0">
+                  <path d="M6 26 C6 12 14 6 26 6 C26 18 18 26 6 26Z M6 26 L18 14" />
+                </svg>
+                <span>Premium Quality<br className="hidden sm:inline" /> Fabrics</span>
+              </li>
+              <li className="flex items-center gap-[10px] text-[13px] text-[#5f574c] dark:text-[#b8ad9e] font-['Jost',sans-serif]">
+                <svg viewBox="0 0 32 32" className="w-[28px] h-[28px] stroke-[#a67c45] fill-none stroke-[1.4] stroke-linecap-round stroke-linejoin-round shrink-0">
+                  <path d="M6 26 l2-7 14-14 5 5-14 14z M20 7l5 5" />
+                </svg>
+                <span>Fully Customizable</span>
+              </li>
+              <li className="flex items-center gap-[10px] text-[13px] text-[#5f574c] dark:text-[#b8ad9e] font-['Jost',sans-serif]">
+                <svg viewBox="0 0 32 32" className="w-[28px] h-[28px] stroke-[#a67c45] fill-none stroke-[1.4] stroke-linecap-round stroke-linejoin-round shrink-0">
+                  <rect x="5" y="12" width="22" height="15" /><path d="M4 8h24v4H4z M16 8v19 M16 8c-3-5-8-4-6-1 M16 8c3-5 8-4 6-1" />
+                </svg>
+                <span>Elegant Packaging</span>
+              </li>
+              <li className="flex items-center gap-[10px] text-[13px] text-[#5f574c] dark:text-[#b8ad9e] font-['Jost',sans-serif]">
+                <svg viewBox="0 0 32 32" className="w-[28px] h-[28px] stroke-[#a67c45] fill-none stroke-[1.4] stroke-linecap-round stroke-linejoin-round shrink-0">
+                  <path d="M16 27 C4 18 5 8 11 8 c3 0 5 2 5 4 0-2 2-4 5-4 6 0 7 10-5 19z" />
+                </svg>
+                <span>Thoughtful Gifting</span>
+              </li>
+            </ul>
+          </div>
+
         </div>
       </header>
 
       {/* ─────────────────────────────────────────────────────────────
-          02. SOUVENIR EXPERIENCE SECTION (Exact Match to Design Mockup)
+          02. SOUVENIR EXPERIENCE SECTION (Exact Match to User HTML/CSS Specification)
       ───────────────────────────────────────────────────────────── */}
-      <section className="py-16 lg:py-20 px-5 sm:px-8 lg:px-12 bg-white/70 dark:bg-[#14100D] border-b border-[#E8DFD3] dark:border-[#2E2925]">
-        <div className="max-w-7xl mx-auto space-y-12">
-
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-12 items-start">
-            {/* Left Header */}
-            <div className="lg:col-span-6 space-y-2">
-              <span className="text-[11px] font-sans font-medium tracking-[0.25em] text-[#9A643E] dark:text-[#D4AF37] uppercase block">
-                THE JORIQUE SOUVENIR EXPERIENCE
-              </span>
-              <h2 className="font-serif text-3xl sm:text-4xl lg:text-5xl font-normal text-[#241F1C] dark:text-white tracking-tight leading-tight">
+      <section className="py-[44px] pb-[34px] bg-[#faf7f1] dark:bg-[#14100D]">
+        <div className="max-w-[1240px] mx-auto px-5 sm:px-8">
+          <div className="grid grid-cols-1 lg:grid-cols-[1.1fr_1fr] gap-[18px] lg:gap-[40px] items-end">
+            <div>
+              <p className="font-['Jost',sans-serif] text-[12px] tracking-[0.16em] uppercase text-[#a67c45] font-medium">
+                The JORIQUE Souvenir experience
+              </p>
+              <h2 className="font-['Cormorant_Garamond',Georgia,serif] font-medium text-[32px] sm:text-[40px] leading-[1.1] mt-[8px] text-[#231f1a] dark:text-[#f3eadb]">
                 Made for your moments. Designed around you.
               </h2>
             </div>
+            <p className="text-[14.5px] text-[#5f574c] dark:text-[#c4b9a8] font-['Jost',sans-serif] leading-[1.55]">
+              A premium gift collection where your identity becomes the visual hero. Customize names, logos, event details, dates, messages, colors and artwork, while JORIQUE remains the quiet signature of quality.
+            </p>
+          </div>
 
-            {/* Right Subtitle */}
-            <div className="lg:col-span-6 lg:pt-6">
-              <p className="text-xs sm:text-sm text-[#5C554F] dark:text-white/75 font-light leading-relaxed">
-                A premium gift collection where your identity becomes the visual hero. Customize names,
-                logos, event details, dates, messages, colors and artwork, while JORIQUE remains the quiet signature of quality.
-              </p>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 mt-[34px] gap-y-[22px] sm:gap-y-[22px] lg:gap-y-0">
+            {/* Pillar 1 */}
+            <div className="flex gap-[16px] py-[6px] lg:pr-[22px]">
+              <svg viewBox="0 0 44 44" className="w-[44px] h-[44px] shrink-0 stroke-[#a67c45] fill-none stroke-[1.3] stroke-linecap-round stroke-linejoin-round">
+                <circle cx="22" cy="15" r="7" /><path d="M8 38c0-8 6-13 14-13s14 5 14 13z" />
+              </svg>
+              <div>
+                <h3 className="font-['Jost',sans-serif] text-[12px] tracking-[0.14em] uppercase font-semibold text-[#231f1a] dark:text-white">
+                  Personalized
+                </h3>
+                <p className="font-['Jost',sans-serif] text-[13.5px] text-[#5f574c] dark:text-[#a89e90] mt-[4px] leading-[1.4]">
+                  Your name, logo, event or message.
+                </p>
+              </div>
+            </div>
+
+            {/* Pillar 2 */}
+            <div className="flex gap-[16px] py-[6px] sm:pl-[22px] lg:px-[22px] sm:border-l border-[#e6dccb] dark:border-[#2e261f]">
+              <svg viewBox="0 0 44 44" className="w-[44px] h-[44px] shrink-0 stroke-[#a67c45] fill-none stroke-[1.3] stroke-linecap-round stroke-linejoin-round">
+                <path d="M6 22 22 8l16 14M10 20v18h24V20M18 38V27h8v11" />
+              </svg>
+              <div>
+                <h3 className="font-['Jost',sans-serif] text-[12px] tracking-[0.14em] uppercase font-semibold text-[#231f1a] dark:text-white">
+                  Useful
+                </h3>
+                <p className="font-['Jost',sans-serif] text-[13.5px] text-[#5f574c] dark:text-[#a89e90] mt-[4px] leading-[1.4]">
+                  Premium home textiles for everyday living.
+                </p>
+              </div>
+            </div>
+
+            {/* Pillar 3 */}
+            <div className="flex gap-[16px] py-[6px] lg:px-[22px] lg:border-l border-[#e6dccb] dark:border-[#2e261f]">
+              <svg viewBox="0 0 44 44" className="w-[44px] h-[44px] shrink-0 stroke-[#a67c45] fill-none stroke-[1.3] stroke-linecap-round stroke-linejoin-round">
+                <rect x="7" y="17" width="30" height="21" /><path d="M5 12h34v5H5z M22 12v26 M22 12c-4-7-11-5-8-1 M22 12c4-7 11-5 8-1" />
+              </svg>
+              <div>
+                <h3 className="font-['Jost',sans-serif] text-[12px] tracking-[0.14em] uppercase font-semibold text-[#231f1a] dark:text-white">
+                  Presentable
+                </h3>
+                <p className="font-['Jost',sans-serif] text-[13.5px] text-[#5f574c] dark:text-[#a89e90] mt-[4px] leading-[1.4]">
+                  A complete gifting experience.
+                </p>
+              </div>
+            </div>
+
+            {/* Pillar 4 */}
+            <div className="flex gap-[16px] py-[6px] sm:pl-[22px] lg:pl-[22px] sm:border-l border-[#e6dccb] dark:border-[#2e261f]">
+              <svg viewBox="0 0 44 44" className="w-[44px] h-[44px] shrink-0 stroke-[#a67c45] fill-none stroke-[1.3] stroke-linecap-round stroke-linejoin-round">
+                <path d="M22 36c-8-4-10-12-6-20 3 4 5 8 6 12 1-4 3-8 6-12 4 8 2 16-6 20z M22 36c-14 0-18-8-16-14 6 0 12 3 16 14z M22 36c14 0 18-8 16-14-6 0-12 3-16 14z" />
+              </svg>
+              <div>
+                <h3 className="font-['Jost',sans-serif] text-[12px] tracking-[0.14em] uppercase font-semibold text-[#231f1a] dark:text-white">
+                  Thoughtfully branded
+                </h3>
+                <p className="font-['Jost',sans-serif] text-[13.5px] text-[#5f574c] dark:text-[#a89e90] mt-[4px] leading-[1.4]">
+                  Your identity leads, JORIQUE appears subtly.
+                </p>
+              </div>
             </div>
           </div>
-
-          {/* 4 Feature Columns */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 pt-4">
-            {[
-              {
-                icon: <User className="w-8 h-8 text-[#9A643E] dark:text-[#C6A96B] stroke-[1.3]" />,
-                title: 'PERSONALIZED',
-                desc: 'Your name, logo, event or message.',
-              },
-              {
-                icon: <Home className="w-8 h-8 text-[#9A643E] dark:text-[#C6A96B] stroke-[1.3]" />,
-                title: 'USEFUL',
-                desc: 'Premium home textiles for everyday living.',
-              },
-              {
-                icon: <Gift className="w-8 h-8 text-[#9A643E] dark:text-[#C6A96B] stroke-[1.3]" />,
-                title: 'PRESENTABLE',
-                desc: 'A complete gifting experience.',
-              },
-              {
-                icon: <LotusIcon className="w-8 h-8 text-[#9A643E] dark:text-[#C6A96B]" />,
-                title: 'THOUGHTFULLY BRANDED',
-                desc: 'Your identity leads, JORIQUE appears subtly.',
-              },
-            ].map((feat, idx) => (
-              <motion.div
-                key={idx}
-                initial={{ opacity: 0, y: 16 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.4, delay: idx * 0.08 }}
-                className="flex items-start gap-4"
-              >
-                <div className="shrink-0 mt-0.5">
-                  {feat.icon}
-                </div>
-                <div className="space-y-1">
-                  <h3 className="text-xs font-bold tracking-[0.14em] text-[#241F1C] dark:text-white uppercase">
-                    {feat.title}
-                  </h3>
-                  <p className="text-xs text-[#6C635B] dark:text-white/70 font-light leading-relaxed">
-                    {feat.desc}
-                  </p>
-                </div>
-              </motion.div>
-            ))}
-          </div>
-
         </div>
       </section>
 
       {/* ─────────────────────────────────────────────────────────────
-          03. CHOOSE YOUR SET SECTION (Exact Match to Design Mockup)
+          03. CHOOSE YOUR SET SECTION (Exact Match to User HTML/CSS Specification)
       ───────────────────────────────────────────────────────────── */}
-      <section className="py-16 lg:py-20 px-5 sm:px-8 lg:px-12 bg-[#FAF7F2] dark:bg-[#100E0D] border-b border-[#E8DFD3] dark:border-[#2E2925]">
-        <div className="max-w-7xl mx-auto space-y-8">
-
-          {/* Section Header */}
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 lg:gap-12 items-end pb-2">
-            <div className="lg:col-span-7 space-y-1.5">
-              <span className="text-[11px] font-sans font-medium tracking-[0.25em] text-[#9A643E] dark:text-[#D4AF37] uppercase block">
-                CHOOSE YOUR SET
-              </span>
-              <h2 className="font-serif text-3xl sm:text-4xl lg:text-5xl font-normal text-[#241F1C] dark:text-white tracking-tight">
+      <section className="py-[34px] pb-[60px] border-t border-[#e6dccb] dark:border-[#2e261f] bg-[#faf7f1] dark:bg-[#12100E]" id="sets">
+        <div className="max-w-[1260px] mx-auto px-5 sm:px-8">
+          <div className="flex justify-between items-end gap-[30px] flex-wrap">
+            <div>
+              <p className="font-['Jost',sans-serif] text-[12px] tracking-[0.16em] uppercase text-[#a67c45] font-medium">
+                Choose your set
+              </p>
+              <h2 className="font-['Cormorant_Garamond',Georgia,serif] font-medium text-[32px] sm:text-[40px] leading-[1.1] mt-[8px] text-[#231f1a] dark:text-[#f3eadb]">
                 Thoughtfully curated sets for every occasion.
               </h2>
             </div>
-
-            <div className="lg:col-span-5">
-              <p className="text-xs sm:text-sm text-[#5C554F] dark:text-white/75 font-light leading-relaxed">
-                These are our suggested combinations. We can also create a custom set based on your{' '}
-                <button
-                  type="button"
-                  onClick={() => scrollToForm('Both', 'Custom Combination')}
-                  className="underline font-medium text-[#9A643E] dark:text-[#C6A96B] hover:text-[#7A4C2E] cursor-pointer"
-                >
-                  specific requirements
-                </button>
-                .
-              </p>
-            </div>
+            <p className="max-w-[300px] text-[13.5px] text-[#5f574c] dark:text-[#c4b9a8] font-['Jost',sans-serif] leading-[1.55]">
+              These are our suggested combinations. We can also create a custom set based on your{' '}
+              <button
+                type="button"
+                onClick={() => scrollToForm('Both', 'Custom Combination')}
+                className="text-[#231f1a] dark:text-white underline hover:text-[#8a6230] cursor-pointer font-medium"
+              >
+                specific requirements
+              </button>
+              .
+            </p>
           </div>
 
-          {/* Side-by-Side Dual Containers Grid */}
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch">
-
-            {/* Container 1: BEDDING GIFT SETS (7 cols on lg) */}
-            <div className="lg:col-span-7 border border-[#E5DACD] dark:border-[#332922] bg-[#F8F3EC]/50 dark:bg-[#181412] rounded-2xl p-4 sm:p-5 flex flex-col justify-between">
-              <div>
-                <div className="flex items-center gap-2.5 mb-4">
-                  <div className="w-7 h-7 rounded-lg bg-[#855331] dark:bg-[#C6A96B] flex items-center justify-center text-white dark:text-black shadow-xs">
-                    <Bed size={15} />
-                  </div>
-                  <h3 className="text-xs font-bold tracking-[0.16em] uppercase text-[#241F1C] dark:text-[#FCFAF7]">
-                    BEDDING GIFT SETS
-                  </h3>
-                </div>
-
-                <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-                  {BEDDING_SETS.map((set) => {
-                    const isSelected = formData.category === 'Bedding Sets' && formData.set === set.title;
-                    return (
-                      <div
-                        key={set.id}
-                        onClick={() => scrollToForm('Bedding Sets', set.title)}
-                        className={`bg-white dark:bg-[#201A16] border rounded-xl p-3 text-center flex flex-col items-center justify-between transition-all duration-300 hover:border-[#855331] dark:hover:border-[#C6A96B] hover:shadow-md cursor-pointer group relative ${isSelected
-                          ? 'border-[#855331] dark:border-[#C6A96B] ring-2 ring-[#855331]/30 dark:ring-[#C6A96B]/30 shadow-sm'
-                          : 'border-[#E8DFD3] dark:border-[#332922]'
-                          }`}
-                      >
-
-
-
-                        <div className="w-full aspect-[3/4] my-2 overflow-hidden rounded-xl bg-[#FAF5EE] dark:bg-black/20 relative">
-                          <img
-                            src={set.image}
-                            alt={set.title}
-                            className="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-500"
-                          />
-                        </div>
-
-                        <div className="space-y-1 w-full">
-                          <h4 className="text-[11px] sm:text-xs font-bold text-[#241F1C] dark:text-white leading-tight">
-                            {set.includes}
-                          </h4>
-                          <p className="text-[10px] text-[#786E65] dark:text-white/60 font-light leading-snug">
-                            {set.description}
-                          </p>
-                        </div>
+          <div className="grid grid-cols-1 lg:grid-cols-[1.35fr_1fr] gap-4 sm:gap-5 mt-[26px]">
+            {/* BEDDING GROUP */}
+            <div className="bg-[#f6f0e4] dark:bg-[#1a1612] border border-[#e6dccb] dark:border-[#2e261f] rounded-[8px] p-[18px_14px_14px] sm:p-[20px_16px_16px]">
+              <h3 className="font-['Jost',sans-serif] text-[15px] tracking-[0.16em] uppercase font-semibold p-[0_6px_16px] flex items-center gap-[12px] text-[#231f1a] dark:text-white">
+                <svg viewBox="0 0 28 28" className="w-[28px] h-[28px] stroke-[#a67c45] fill-none stroke-[1.4] shrink-0">
+                  <path d="M3 21V8 M3 17h22v4 M25 17v-4c0-3-2-4-5-4H10v8" />
+                </svg>
+                Bedding gift sets
+              </h3>
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 sm:gap-3">
+                {BEDDING_SETS.map((set) => {
+                  const isSelected = formData.category === 'Bedding Sets' && formData.set === set.title;
+                  return (
+                    <div
+                      key={set.id}
+                      onClick={() => scrollToForm('Bedding Sets', set.title)}
+                      className={`bg-[#fffdf9] dark:bg-[#201a16] border rounded-[6px] p-[14px_8px] sm:p-[16px_10px] text-center flex flex-col items-center justify-between cursor-pointer transition-all duration-200 hover:shadow-md group relative ${isSelected
+                        ? 'border-[#8a6230] ring-2 ring-[#8a6230]/30 shadow-sm'
+                        : 'border-[#efe6d6] dark:border-[#352c23] hover:border-[#a67c45]'
+                        }`}
+                    >
+                      <div className="font-['Jost',sans-serif] text-[11.5px] tracking-[0.14em] uppercase font-semibold text-[#8a6230] dark:text-[#d4a86a]">
+                        {set.badge}
                       </div>
-                    );
-                  })}
-                </div>
+
+                      <div className="w-full aspect-square my-3 overflow-hidden rounded-md bg-[#FAF5EE] dark:bg-black/20 relative">
+                        <img
+                          src={set.image}
+                          alt={set.title}
+                          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                        />
+                      </div>
+
+                      <div className="mt-auto w-full">
+                        <strong
+                          className="block font-['Cormorant_Garamond',Georgia,serif] text-[16.5px] font-semibold leading-[1.25] text-[#231f1a] dark:text-white"
+                          dangerouslySetInnerHTML={{ __html: set.formattedIncludes }}
+                        />
+                        <span className="block font-['Jost',sans-serif] text-[12.5px] text-[#5f574c] dark:text-[#a89e90] mt-[8px] leading-[1.35]">
+                          {set.description}
+                        </span>
+                      </div>
+                    </div>
+                  );
+                })}
               </div>
             </div>
 
-            {/* Container 2: TOWEL GIFT SETS (5 cols on lg) */}
-            <div className="lg:col-span-5 border border-[#E5DACD] dark:border-[#332922] bg-[#F8F3EC]/50 dark:bg-[#181412] rounded-2xl p-4 sm:p-5 flex flex-col justify-between">
-              <div>
-                <div className="flex items-center gap-2.5 mb-4">
-                  <div className="w-7 h-7 rounded-lg bg-[#855331] dark:bg-[#C6A96B] flex items-center justify-center text-white dark:text-black shadow-xs">
-                    <Package size={15} />
-                  </div>
-                  <h3 className="text-xs font-bold tracking-[0.16em] uppercase text-[#241F1C] dark:text-[#FCFAF7]">
-                    TOWEL GIFT SETS
-                  </h3>
-                </div>
-
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                  {TOWEL_SETS.map((set) => {
-                    const isSelected = formData.category === 'Towel Sets' && formData.set === set.title;
-                    return (
-                      <div
-                        key={set.id}
-                        onClick={() => scrollToForm('Towel Sets', set.title)}
-                        className={`bg-white dark:bg-[#201A16] border rounded-xl p-3 text-center flex flex-col items-center justify-between transition-all duration-300 hover:border-[#855331] dark:hover:border-[#C6A96B] hover:shadow-md cursor-pointer group relative ${isSelected
-                          ? 'border-[#855331] dark:border-[#C6A96B] ring-2 ring-[#855331]/30 dark:ring-[#C6A96B]/30 shadow-sm'
-                          : 'border-[#E8DFD3] dark:border-[#332922]'
-                          }`}
-                      >
-
-
-                        <div className="w-full aspect-[3/4] my-2 overflow-hidden rounded-xl bg-[#FAF5EE] dark:bg-black/20 relative">
-                          <img
-                            src={set.image}
-                            alt={set.title}
-                            className="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-500"
-                          />
-                        </div>
-
-                        <div className="space-y-1 w-full">
-                          <h4 className="text-[11px] sm:text-xs font-bold text-[#241F1C] dark:text-white leading-tight">
-                            {set.includes}
-                          </h4>
-                          <p className="text-[10px] text-[#786E65] dark:text-white/60 font-light leading-snug">
-                            {set.description}
-                          </p>
-                        </div>
+            {/* TOWEL GROUP */}
+            <div className="bg-[#f6f0e4] dark:bg-[#1a1612] border border-[#e6dccb] dark:border-[#2e261f] rounded-[8px] p-[18px_14px_14px] sm:p-[20px_16px_16px]">
+              <h3 className="font-['Jost',sans-serif] text-[15px] tracking-[0.16em] uppercase font-semibold p-[0_6px_16px] flex items-center gap-[12px] text-[#231f1a] dark:text-white">
+                <svg viewBox="0 0 28 28" className="w-[28px] h-[28px] stroke-[#a67c45] fill-none stroke-[1.4] shrink-0">
+                  <rect x="4" y="9" width="20" height="14" rx="2" /><path d="M8 9V5h12v4 M4 15h20" />
+                </svg>
+                Towel gift sets
+              </h3>
+              <div className="grid grid-cols-2 sm:grid-cols-3 gap-2.5 sm:gap-3">
+                {TOWEL_SETS.map((set) => {
+                  const isSelected = formData.category === 'Towel Sets' && formData.set === set.title;
+                  return (
+                    <div
+                      key={set.id}
+                      onClick={() => scrollToForm('Towel Sets', set.title)}
+                      className={`bg-[#fffdf9] dark:bg-[#201a16] border rounded-[6px] p-[14px_8px] sm:p-[16px_10px] text-center flex flex-col items-center justify-between cursor-pointer transition-all duration-200 hover:shadow-md group relative ${isSelected
+                        ? 'border-[#8a6230] ring-2 ring-[#8a6230]/30 shadow-sm'
+                        : 'border-[#efe6d6] dark:border-[#352c23] hover:border-[#a67c45]'
+                        }`}
+                    >
+                      <div className="font-['Jost',sans-serif] text-[11.5px] tracking-[0.14em] uppercase font-semibold text-[#8a6230] dark:text-[#d4a86a]">
+                        {set.badge}
                       </div>
-                    );
-                  })}
-                </div>
+
+                      <div className="w-full aspect-square my-3 overflow-hidden rounded-md bg-[#FAF5EE] dark:bg-black/20 relative">
+                        <img
+                          src={set.image}
+                          alt={set.title}
+                          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                        />
+                      </div>
+
+                      <div className="mt-auto w-full">
+                        <strong
+                          className="block font-['Cormorant_Garamond',Georgia,serif] text-[16.5px] font-semibold leading-[1.25] text-[#231f1a] dark:text-white"
+                          dangerouslySetInnerHTML={{ __html: set.formattedIncludes }}
+                        />
+                        <span className="block font-['Jost',sans-serif] text-[12.5px] text-[#5f574c] dark:text-[#a89e90] mt-[8px] leading-[1.35]">
+                          {set.description}
+                        </span>
+                      </div>
+                    </div>
+                  );
+                })}
               </div>
             </div>
-
           </div>
 
           {/* Custom Set Note Banner */}
-          <div className="p-5 rounded-xl bg-white/80 dark:bg-[#1C1613] border border-[#E5DACD] dark:border-[#332922] flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div className="mt-[20px] p-[16px_20px] rounded-[8px] bg-[#f6f0e4] dark:bg-[#1a1612] border border-[#e6dccb] dark:border-[#2e261f] flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <div className="flex items-center gap-3">
-              <SlidersHorizontal className="text-[#855331] dark:text-[#C6A96B] shrink-0" size={18} />
-              <p className="text-xs sm:text-sm text-[#5C554F] dark:text-white/80 font-light">
-                Designs & quality may vary by occasion and requirement.
-                For available designs, pricing and customization details, WhatsApp or email us.
+              <SlidersHorizontal className="text-[#8a6230] dark:text-[#d4a86a] shrink-0" size={18} />
+              <p className="text-[13px] sm:text-[13.5px] text-[#5f574c] dark:text-[#c4b9a8] font-['Jost',sans-serif] leading-relaxed">
+                Designs &amp; quality may vary by occasion and requirement. For available designs, pricing and customization details, WhatsApp or email us.
               </p>
             </div>
             <button
               onClick={() => scrollToForm('Both', 'Custom Combination')}
-              className="px-5 py-2.5 rounded-lg bg-[#855331] hover:bg-[#6F4324] dark:bg-[#C6A96B] dark:hover:bg-[#E5C158] text-white dark:text-black text-xs font-semibold uppercase tracking-wider transition-colors shrink-0 cursor-pointer"
+              className="px-4 py-2 rounded-[4px] bg-[#8a6230] hover:bg-[#6f4e22] text-white text-[12px] font-semibold uppercase tracking-[0.08em] transition-colors shrink-0 cursor-pointer font-['Jost',sans-serif] whitespace-nowrap"
             >
               Request Custom Combination
             </button>
@@ -774,16 +730,16 @@ Thank you!`;
       </section>
 
       {/* ─────────────────────────────────────────────────────────────
-          04. BULK ORDER ENQUIRY FORM & LIVE MESSAGE PREVIEW
+          04. BULK ORDER ENQUIRY
       ───────────────────────────────────────────────────────────── */}
       <section
         id="enquiry-form"
-        className="py-16 lg:py-24 px-5 sm:px-8 lg:px-12 bg-white/70 dark:bg-[#14100D] border-b border-[#E8DFD3] dark:border-[#2E2925] scroll-mt-20"
+        className="py-16 lg:py-24 px-5 sm:px-8 lg:px-12 bg-[#FAF7F2] dark:bg-[#14100D] border-b border-[#E8DFD3] dark:border-[#2E2925] scroll-mt-20"
       >
-        <div className="max-w-7xl mx-auto space-y-12">
+        <div className="max-w-4xl mx-auto space-y-10">
 
           {/* Section Header */}
-          <div className="max-w-2xl mx-auto text-center space-y-2.5">
+          <div className="max-w-2xl mx-auto text-center space-y-2">
             <span className="text-[11px] font-sans font-medium tracking-[0.25em] text-[#9A643E] dark:text-[#D4AF37] uppercase block">
               BULK ORDER ENQUIRY
             </span>
@@ -791,10 +747,11 @@ Thank you!`;
               Tell us what you're planning.
             </h2>
             <p className="text-sm text-[#5C554F] dark:text-white/75 font-light">
-              Select your gifting preferences and submit directly via WhatsApp or Email with your customized enquiry pre-filled.
+              Fill in your details below and click directly to send via WhatsApp or Email with your customized message prefilled.
             </p>
           </div>
 
+          {/* Centered Form */}
           <div className="max-w-3xl mx-auto">
             <form
               onSubmit={handleFormSubmit}
@@ -1116,8 +1073,8 @@ Thank you!`;
                 </div>
               </div>
 
-              {/* Consent & Submit */}
-              <div className="space-y-4 pt-2 border-t border-[#E8DFD3] dark:border-[#332922]">
+              {/* Consent & Direct Action Buttons */}
+              <div className="space-y-5 pt-4 border-t border-[#E8DFD3] dark:border-[#332922]">
                 <label htmlFor={consentInputId} className="flex items-start gap-3 text-xs text-[#5C554F] dark:text-white/75 cursor-pointer">
                   <input
                     id={consentInputId}
@@ -1132,52 +1089,37 @@ Thank you!`;
                 </label>
                 {errors.consent && <p className="text-xs text-rose-500">{errors.consent}</p>}
 
-                {/* Direct WhatsApp & Email Action Buttons */}
-                <div className="pt-4 border-t border-[#E8DFD3] dark:border-[#332922] space-y-4">
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
-                    <button
-                      type="button"
-                      onClick={handleOpenWhatsApp}
-                      className="w-full py-4 px-6 rounded-xl bg-[#25D366] hover:bg-[#1EBE5D] text-white font-bold text-xs uppercase tracking-[0.16em] transition-all duration-300 shadow-md hover:shadow-lg flex items-center justify-center gap-2.5 cursor-pointer group"
-                    >
-                      <MessageSquare size={18} className="shrink-0 transition-transform group-hover:scale-110" />
-                      <span>Send via WhatsApp</span>
-                    </button>
+                {/* Direct Action Options */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5 pt-2">
+                  <button
+                    type="button"
+                    onClick={handleOpenWhatsApp}
+                    className="w-full py-4 px-6 rounded-xl bg-[#25D366] hover:bg-[#1EBE5D] text-white font-bold text-xs uppercase tracking-[0.14em] transition-all duration-300 shadow-md hover:shadow-lg cursor-pointer flex items-center justify-center gap-2.5"
+                  >
+                    <MessageSquare size={16} />
+                    <span>Send via WhatsApp</span>
+                  </button>
 
-                    <button
-                      type="button"
-                      onClick={handleOpenEmail}
-                      className="w-full py-4 px-6 rounded-xl bg-[#855331] hover:bg-[#6F4324] dark:bg-[#C6A96B] dark:hover:bg-[#E5C158] text-white dark:text-black font-bold text-xs uppercase tracking-[0.16em] transition-all duration-300 shadow-md hover:shadow-lg flex items-center justify-center gap-2.5 cursor-pointer group"
-                    >
-                      <Mail size={18} className="shrink-0 transition-transform group-hover:scale-110" />
-                      <span>Send via Email</span>
-                    </button>
-                  </div>
+                  <button
+                    type="button"
+                    onClick={handleOpenEmail}
+                    className="w-full py-4 px-6 rounded-xl bg-[#855331] hover:bg-[#6F4324] dark:bg-[#C6A96B] dark:hover:bg-[#E5C158] text-white dark:text-black font-bold text-xs uppercase tracking-[0.14em] transition-all duration-300 shadow-md hover:shadow-lg cursor-pointer flex items-center justify-center gap-2.5"
+                  >
+                    <Mail size={16} />
+                    <span>Send via Email</span>
+                  </button>
+                </div>
 
-                  <div className="flex flex-col sm:flex-row items-center justify-between gap-3 pt-2 text-center sm:text-left">
-                    <button
-                      type="button"
-                      onClick={handleCopyMessage}
-                      className="inline-flex items-center gap-1.5 text-xs text-[#786E65] dark:text-white/60 hover:text-[#855331] dark:hover:text-[#C6A96B] transition-colors cursor-pointer py-1"
-                    >
-                      {copied ? <Check size={14} className="text-emerald-600" /> : <Copy size={14} />}
-                      <span>{copied ? 'Copied enquiry text!' : 'Copy enquiry text to clipboard'}</span>
-                    </button>
-
-                    <p className="text-[11px] text-[#786E65] dark:text-white/60 font-light">
-                      Prices vary by quantity & fabric choice. No public pricing.
-                    </p>
-                  </div>
-
-                  <div className="text-center pt-3 border-t border-[#E8DFD3]/60 dark:border-[#2E2925]">
-                    <p className="text-xs text-[#5C554F] dark:text-white/70">
-                      Prefer to speak directly? Call{' '}
-                      <a href="tel:9919388211" className="text-[#855331] dark:text-[#C6A96B] font-bold hover:underline">
-                        9919388211
-                      </a>{' '}
-                      for queries, bulk orders or custom options.
-                    </p>
-                  </div>
+                <div className="flex flex-col sm:flex-row items-center justify-between gap-3 pt-3 border-t border-[#E8DFD3]/60 dark:border-[#2E2925] text-[11px] text-[#786E65] dark:text-white/60">
+                  <p className="font-light">
+                    Prices will vary according to quantity and quality specifications.
+                  </p>
+                  <p>
+                    Direct call:{' '}
+                    <a href="tel:9919388211" className="text-[#855331] dark:text-[#C6A96B] font-bold hover:underline">
+                      9919388211
+                    </a>
+                  </p>
                 </div>
               </div>
 
@@ -1190,7 +1132,7 @@ Thank you!`;
       {/* ─────────────────────────────────────────────────────────────
           05. HOW IT WORKS
       ───────────────────────────────────────────────────────────── */}
-      <section className="py-16 lg:py-24 px-5 sm:px-8 lg:px-12 bg-[#FAF7F2] dark:bg-[#100E0D] border-b border-[#E8DFD3] dark:border-[#2E2925]">
+      < section className="py-16 lg:py-24 px-5 sm:px-8 lg:px-12 bg-[#FAF7F2] dark:bg-[#100E0D] border-b border-[#E8DFD3] dark:border-[#2E2925]" >
         <div className="max-w-7xl mx-auto space-y-12">
 
           <div className="text-center max-w-2xl mx-auto space-y-2">
@@ -1243,12 +1185,12 @@ Thank you!`;
           </div>
 
         </div>
-      </section>
+      </section >
 
       {/* ─────────────────────────────────────────────────────────────
           06. CLOSING CTA SECTION
       ───────────────────────────────────────────────────────────── */}
-      <section className="py-16 lg:py-20 px-5 sm:px-8 lg:px-12 bg-[#201A16] dark:bg-[#181412] text-white relative overflow-hidden">
+      < section className="py-16 lg:py-20 px-5 sm:px-8 lg:px-12 bg-[#201A16] dark:bg-[#181412] text-white relative overflow-hidden" >
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[300px] bg-[#C6A96B]/10 rounded-full blur-3xl pointer-events-none" />
 
         <div className="max-w-5xl mx-auto relative z-10 flex flex-col md:flex-row items-center justify-between gap-8 text-center md:text-left">
@@ -1279,12 +1221,12 @@ Thank you!`;
             </a>
           </div>
         </div>
-      </section>
+      </section >
 
       {/* ─────────────────────────────────────────────────────────────
           07. FOOTER
       ───────────────────────────────────────────────────────────── */}
-      <Footer />
-    </div>
+      < Footer />
+    </div >
   );
 }

@@ -28,6 +28,7 @@ export default function Footer() {
             {[
               { label: 'Collections', href: '/#collections' },
               { label: 'Souvenir (Bulk)', href: '/souvenir' },
+              { label: 'Hospitality (B2B)', href: '/hospitality' },
               { label: 'About', href: '/about' },
               { label: 'The JORIQUE Experience', href: '/#experience' },
               { label: 'Contact', href: '/connect' },

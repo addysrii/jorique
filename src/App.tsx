@@ -30,6 +30,7 @@ const ScanPage = lazy(() => import('./pages/Scan'));
 const ReviewPage = lazy(() => import('./pages/Review'));
 const GiftPage = lazy(() => import('./pages/GiftPage'));
 const Souvenir = lazy(() => import('./pages/Souvenir'));
+const Hospitality = lazy(() => import('./pages/Hospitality'));
 const ReturnPolicy = lazy(() => import('./pages/ReturnPolicy'));
 
 function PageLoader() {
@@ -164,6 +165,14 @@ function AnimatedRoutes() {
             }
           />
           <Route path="/souvenirs" element={<Navigate to="/souvenir" replace />} />
+          <Route
+            path="/hospitality"
+            element={
+              <PageTransition>
+                <Hospitality />
+              </PageTransition>
+            }
+          />
           <Route
             path="/coming-soon"
             element={

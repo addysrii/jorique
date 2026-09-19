@@ -129,7 +129,7 @@ export default function BeyondLivingSection() {
 
             {/* Bottom Button */}
             <div className="p-6 sm:p-8 border-t border-[#E8DFD3] dark:border-[#332922] bg-white/40 dark:bg-white/[0.02]">
-              <Link to="/connect" className="block">
+              <Link to="/hospitality" className="block">
                 <button className="w-full py-3.5 px-6 rounded-2xl flex items-center justify-between text-xs font-semibold uppercase tracking-[0.2em] transition-all duration-300 border border-[#4B5563] text-[#4B5563] dark:text-white hover:bg-[#4B5563] hover:text-white cursor-pointer shadow-xs hover:shadow-md">
                   <span>EXPLORE HOSPITALITY</span>
                   <ArrowRight size={14} className="group-hover:translate-x-1.5 transition-transform" />

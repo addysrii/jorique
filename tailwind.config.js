@@ -47,6 +47,7 @@ export default {
         serif: ['"Cormorant Garamond"', 'Georgia', 'serif'],
         times: ['"Cormorant Garamond"', 'Georgia', 'serif'],
         sans: ['"Manrope"', '-apple-system', 'BlinkMacSystemFont', 'sans-serif'],
+        jost: ['"Jost"', '"Manrope"', 'sans-serif'],
         heading: ['"Cormorant Garamond"', 'Georgia', 'serif'],
         body: ['"Manrope"', '-apple-system', 'BlinkMacSystemFont', 'sans-serif'],
         logo: ['"Cormorant Garamond"', 'Georgia', 'serif'],
