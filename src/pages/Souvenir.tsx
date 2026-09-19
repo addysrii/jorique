@@ -141,8 +141,6 @@ export default function Souvenir() {
   const emailInputId = useId();
   const consentInputId = useId();
 
-  // Preview tab: 'email' or 'whatsapp'
-  const [previewTab, setPreviewTab] = useState<'email' | 'whatsapp'>('whatsapp');
   const [copied, setCopied] = useState(false);
 
   // Form State
@@ -374,7 +372,7 @@ Thank you!`;
   };
 
   const handleCopyMessage = () => {
-    const textToCopy = previewTab === 'email' ? getEmailBody() : getWhatsAppBody();
+    const textToCopy = getWhatsAppBody();
     navigator.clipboard.writeText(textToCopy);
     setCopied(true);
     setTimeout(() => setCopied(false), 2500);
@@ -399,13 +397,7 @@ Thank you!`;
 
   const handleFormSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (validateForm()) {
-      setSubmitted(true);
-      const previewElem = document.getElementById('enquiry-preview');
-      if (previewElem) {
-        previewElem.scrollIntoView({ behavior: 'smooth' });
-      }
-    }
+    handleOpenWhatsApp();
   };
 
   return (
@@ -538,7 +530,7 @@ Thank you!`;
             >
               <div className="relative rounded-2xl overflow-hidden shadow-2xl border border-[#E5DACD] dark:border-[#382E26] bg-[#F3ECE1] dark:bg-[#1C1613]">
                 <img
-                  src="/images/souvenir-hero-mockup.jpg"
+                  src="/images/costume pack.jpg"
                   alt="JORIQUE Souvenir personalized bedding and towel gift sets packaging and presentation box"
                   className="w-full h-auto object-cover"
                 />
@@ -680,19 +672,18 @@ Thank you!`;
                         key={set.id}
                         onClick={() => scrollToForm('Bedding Sets', set.title)}
                         className={`bg-white dark:bg-[#201A16] border rounded-xl p-3 text-center flex flex-col items-center justify-between transition-all duration-300 hover:border-[#855331] dark:hover:border-[#C6A96B] hover:shadow-md cursor-pointer group relative ${isSelected
-                            ? 'border-[#855331] dark:border-[#C6A96B] ring-2 ring-[#855331]/30 dark:ring-[#C6A96B]/30 shadow-sm'
-                            : 'border-[#E8DFD3] dark:border-[#332922]'
+                          ? 'border-[#855331] dark:border-[#C6A96B] ring-2 ring-[#855331]/30 dark:ring-[#C6A96B]/30 shadow-sm'
+                          : 'border-[#E8DFD3] dark:border-[#332922]'
                           }`}
                       >
-                        <span className="text-[9px] sm:text-[10px] font-bold tracking-wider uppercase text-[#855331] dark:text-[#C6A96B] bg-[#FAF6F0] dark:bg-white/5 border border-[#E8DFD3]/60 dark:border-white/10 px-2 py-0.5 rounded-md">
-                          {set.title}
-                        </span>
 
-                        <div className="h-20 sm:h-24 w-full flex items-center justify-center my-2 overflow-hidden">
+
+
+                        <div className="w-full aspect-[3/4] my-2 overflow-hidden rounded-xl bg-[#FAF5EE] dark:bg-black/20 relative">
                           <img
                             src={set.image}
                             alt={set.title}
-                            className="max-h-full max-w-full object-contain group-hover:scale-105 transition-transform duration-300"
+                            className="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-500"
                           />
                         </div>
 
@@ -731,19 +722,17 @@ Thank you!`;
                         key={set.id}
                         onClick={() => scrollToForm('Towel Sets', set.title)}
                         className={`bg-white dark:bg-[#201A16] border rounded-xl p-3 text-center flex flex-col items-center justify-between transition-all duration-300 hover:border-[#855331] dark:hover:border-[#C6A96B] hover:shadow-md cursor-pointer group relative ${isSelected
-                            ? 'border-[#855331] dark:border-[#C6A96B] ring-2 ring-[#855331]/30 dark:ring-[#C6A96B]/30 shadow-sm'
-                            : 'border-[#E8DFD3] dark:border-[#332922]'
+                          ? 'border-[#855331] dark:border-[#C6A96B] ring-2 ring-[#855331]/30 dark:ring-[#C6A96B]/30 shadow-sm'
+                          : 'border-[#E8DFD3] dark:border-[#332922]'
                           }`}
                       >
-                        <span className="text-[9px] sm:text-[10px] font-bold tracking-wider uppercase text-[#855331] dark:text-[#C6A96B] bg-[#FAF6F0] dark:bg-white/5 border border-[#E8DFD3]/60 dark:border-white/10 px-2 py-0.5 rounded-md">
-                          {set.title}
-                        </span>
 
-                        <div className="h-20 sm:h-24 w-full flex items-center justify-center my-2 overflow-hidden">
+
+                        <div className="w-full aspect-[3/4] my-2 overflow-hidden rounded-xl bg-[#FAF5EE] dark:bg-black/20 relative">
                           <img
                             src={set.image}
                             alt={set.title}
-                            className="max-h-full max-w-full object-contain group-hover:scale-105 transition-transform duration-300"
+                            className="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-500"
                           />
                         </div>
 
@@ -769,7 +758,8 @@ Thank you!`;
             <div className="flex items-center gap-3">
               <SlidersHorizontal className="text-[#855331] dark:text-[#C6A96B] shrink-0" size={18} />
               <p className="text-xs sm:text-sm text-[#5C554F] dark:text-white/80 font-light">
-                Need a bespoke pairing of both bedding and towels? Select <strong>Custom Combination</strong> in the enquiry form below.
+                Designs & quality may vary by occasion and requirement.
+                For available designs, pricing and customization details, WhatsApp or email us.
               </p>
             </div>
             <button
@@ -793,7 +783,7 @@ Thank you!`;
         <div className="max-w-7xl mx-auto space-y-12">
 
           {/* Section Header */}
-          <div className="max-w-3xl space-y-2">
+          <div className="max-w-2xl mx-auto text-center space-y-2.5">
             <span className="text-[11px] font-sans font-medium tracking-[0.25em] text-[#9A643E] dark:text-[#D4AF37] uppercase block">
               BULK ORDER ENQUIRY
             </span>
@@ -801,510 +791,386 @@ Thank you!`;
               Tell us what you're planning.
             </h2>
             <p className="text-sm text-[#5C554F] dark:text-white/75 font-light">
-              Answer a few questions and we'll prepare your enquiry email and WhatsApp message in real time.
+              Select your gifting preferences and submit directly via WhatsApp or Email with your customized enquiry pre-filled.
             </p>
           </div>
 
-          {/* Two-Column Grid: Form (Left) & Live Preview (Right) */}
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-12 items-start">
+          <div className="max-w-3xl mx-auto">
+            <form
+              onSubmit={handleFormSubmit}
+              className="bg-white dark:bg-[#1A1816] p-6 sm:p-10 rounded-2xl border border-[#E5DACD] dark:border-[#332922] shadow-sm space-y-7"
+            >
 
-            {/* Left Column: Form */}
-            <div className="lg:col-span-7">
-              <form
-                onSubmit={handleFormSubmit}
-                className="bg-white dark:bg-[#1A1816] p-6 sm:p-8 rounded-2xl border border-[#E5DACD] dark:border-[#332922] shadow-sm space-y-7"
-              >
-
-                {/* 1. Occasion */}
-                <div className="space-y-3">
-                  <div className="flex items-center justify-between">
-                    <label htmlFor={occasionInputId} className="text-xs font-bold uppercase tracking-wider text-[#241F1C] dark:text-white flex items-center gap-1.5">
-                      <span className="text-[#9A643E] font-mono">1.</span> What is the occasion?
-                      <span className="text-rose-500">*</span>
-                    </label>
-                  </div>
-                  <div className="flex flex-wrap gap-2">
-                    {OCCASIONS.map((occ) => {
-                      const isSelected = formData.occasion === occ;
-                      return (
-                        <button
-                          key={occ}
-                          type="button"
-                          onClick={() => setFormData((p) => ({ ...p, occasion: occ }))}
-                          className={`px-3.5 py-1.5 rounded-full text-xs font-medium transition-all cursor-pointer ${isSelected
-                              ? 'bg-[#855331] text-white dark:bg-[#C6A96B] dark:text-black font-semibold shadow-xs'
-                              : 'bg-[#FAF6F0] dark:bg-white/5 text-[#5C554F] dark:text-white/75 border border-[#E8DFD3] dark:border-[#332922] hover:border-[#855331]'
-                            }`}
-                        >
-                          {occ}
-                        </button>
-                      );
-                    })}
-                  </div>
-                  {formData.occasion === 'Other' && (
-                    <input
-                      id={occasionInputId}
-                      type="text"
-                      placeholder="Please specify occasion"
-                      value={formData.occasion === 'Other' ? '' : formData.occasion}
-                      onChange={(e) => setFormData((p) => ({ ...p, occasion: e.target.value }))}
-                      className="w-full mt-2 px-4 py-2.5 rounded-xl border border-[#E8DFD3] dark:border-[#332922] bg-[#FAF7F2] dark:bg-[#100E0D] text-xs text-[#241F1C] dark:text-white focus:outline-none focus:border-[#855331]"
-                    />
-                  )}
+              {/* 1. Occasion */}
+              <div className="space-y-3">
+                <div className="flex items-center justify-between">
+                  <label htmlFor={occasionInputId} className="text-xs font-bold uppercase tracking-wider text-[#241F1C] dark:text-white flex items-center gap-1.5">
+                    <span className="text-[#9A643E] font-mono">1.</span> What is the occasion?
+                    <span className="text-rose-500">*</span>
+                  </label>
                 </div>
-
-                {/* 2. Quantity (min 25) */}
-                <div className="space-y-2">
-                  <div className="flex items-center justify-between">
-                    <label htmlFor={quantityInputId} className="text-xs font-bold uppercase tracking-wider text-[#241F1C] dark:text-white flex items-center gap-1.5">
-                      <span className="text-[#9A643E] font-mono">2.</span> How many pieces do you need?
-                      <span className="text-rose-500">*</span>
-                    </label>
-                    <span className="text-[11px] font-mono text-[#9A643E] dark:text-[#C6A96B]">Minimum: 25 pieces</span>
-                  </div>
+                <div className="flex flex-wrap gap-2">
+                  {OCCASIONS.map((occ) => {
+                    const isSelected = formData.occasion === occ;
+                    return (
+                      <button
+                        key={occ}
+                        type="button"
+                        onClick={() => setFormData((p) => ({ ...p, occasion: occ }))}
+                        className={`px-3.5 py-1.5 rounded-full text-xs font-medium transition-all cursor-pointer ${isSelected
+                          ? 'bg-[#855331] text-white dark:bg-[#C6A96B] dark:text-black font-semibold shadow-xs'
+                          : 'bg-[#FAF6F0] dark:bg-white/5 text-[#5C554F] dark:text-white/75 border border-[#E8DFD3] dark:border-[#332922] hover:border-[#855331]'
+                          }`}
+                      >
+                        {occ}
+                      </button>
+                    );
+                  })}
+                </div>
+                {formData.occasion === 'Other' && (
                   <input
-                    id={quantityInputId}
-                    type="number"
-                    min="25"
-                    value={formData.quantity}
-                    onChange={(e) => {
-                      setFormData((p) => ({ ...p, quantity: e.target.value }));
-                      if (errors.quantity) {
-                        setErrors((prev) => ({ ...prev, quantity: '' }));
-                      }
-                    }}
-                    placeholder="Enter quantity (min 25)"
-                    className={`w-full px-4 py-3 rounded-xl border bg-[#FAF7F2] dark:bg-[#100E0D] text-sm text-[#241F1C] dark:text-white focus:outline-none transition-colors ${errors.quantity
-                        ? 'border-rose-500 focus:border-rose-500'
-                        : 'border-[#E8DFD3] dark:border-[#332922] focus:border-[#855331]'
-                      }`}
+                    id={occasionInputId}
+                    type="text"
+                    placeholder="Please specify occasion"
+                    value={formData.occasion === 'Other' ? '' : formData.occasion}
+                    onChange={(e) => setFormData((p) => ({ ...p, occasion: e.target.value }))}
+                    className="w-full mt-2 px-4 py-2.5 rounded-xl border border-[#E8DFD3] dark:border-[#332922] bg-[#FAF7F2] dark:bg-[#100E0D] text-xs text-[#241F1C] dark:text-white focus:outline-none focus:border-[#855331]"
                   />
-                  {errors.quantity && (
-                    <p className="text-xs text-rose-500 font-medium">{errors.quantity}</p>
-                  )}
-                </div>
+                )}
+              </div>
 
-                {/* 3. Product Category */}
-                <div className="space-y-3">
+              {/* 2. Quantity (min 25) */}
+              <div className="space-y-2">
+                <div className="flex items-center justify-between">
+                  <label htmlFor={quantityInputId} className="text-xs font-bold uppercase tracking-wider text-[#241F1C] dark:text-white flex items-center gap-1.5">
+                    <span className="text-[#9A643E] font-mono">2.</span> How many pieces do you need?
+                    <span className="text-rose-500">*</span>
+                  </label>
+                  <span className="text-[11px] font-mono text-[#9A643E] dark:text-[#C6A96B]">Minimum: 25 pieces</span>
+                </div>
+                <input
+                  id={quantityInputId}
+                  type="number"
+                  min="25"
+                  value={formData.quantity}
+                  onChange={(e) => {
+                    setFormData((p) => ({ ...p, quantity: e.target.value }));
+                    if (errors.quantity) {
+                      setErrors((prev) => ({ ...prev, quantity: '' }));
+                    }
+                  }}
+                  placeholder="Enter quantity (min 25)"
+                  className={`w-full px-4 py-3 rounded-xl border bg-[#FAF7F2] dark:bg-[#100E0D] text-sm text-[#241F1C] dark:text-white focus:outline-none transition-colors ${errors.quantity
+                    ? 'border-rose-500 focus:border-rose-500'
+                    : 'border-[#E8DFD3] dark:border-[#332922] focus:border-[#855331]'
+                    }`}
+                />
+                {errors.quantity && (
+                  <p className="text-xs text-rose-500 font-medium">{errors.quantity}</p>
+                )}
+              </div>
+
+              {/* 3. Product Category */}
+              <div className="space-y-3">
+                <label className="text-xs font-bold uppercase tracking-wider text-[#241F1C] dark:text-white flex items-center gap-1.5">
+                  <span className="text-[#9A643E] font-mono">3.</span> Which product category are you interested in?
+                  <span className="text-rose-500">*</span>
+                </label>
+                <div className="grid grid-cols-3 gap-2.5">
+                  {(['Bedding Sets', 'Towel Sets', 'Both'] as const).map((cat) => {
+                    const isSelected = formData.category === cat;
+                    return (
+                      <button
+                        key={cat}
+                        type="button"
+                        onClick={() => handleCategoryChange(cat)}
+                        className={`py-2.5 px-3 rounded-xl text-xs font-semibold tracking-wider uppercase transition-all cursor-pointer text-center ${isSelected
+                          ? 'bg-[#855331] text-white dark:bg-[#C6A96B] dark:text-black shadow-xs'
+                          : 'bg-[#FAF6F0] dark:bg-white/5 text-[#5C554F] dark:text-white/70 border border-[#E8DFD3] dark:border-[#332922] hover:border-[#855331]'
+                          }`}
+                      >
+                        {cat}
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+
+              {/* 4. Which set are you considering? */}
+              <div className="space-y-2">
+                <label htmlFor={setInputId} className="text-xs font-bold uppercase tracking-wider text-[#241F1C] dark:text-white flex items-center gap-1.5">
+                  <span className="text-[#9A643E] font-mono">4.</span> Which set are you considering?
+                  <span className="text-rose-500">*</span>
+                </label>
+                <select
+                  id={setInputId}
+                  value={formData.set}
+                  onChange={(e) => setFormData((p) => ({ ...p, set: e.target.value }))}
+                  className="w-full px-4 py-3 rounded-xl border border-[#E8DFD3] dark:border-[#332922] bg-[#FAF7F2] dark:bg-[#100E0D] text-xs sm:text-sm text-[#241F1C] dark:text-white focus:outline-none focus:border-[#855331]"
+                >
+                  {getSetOptions().map((opt) => (
+                    <option key={opt} value={opt} className="bg-white dark:bg-[#1A1816]">
+                      {opt}
+                    </option>
+                  ))}
+                </select>
+
+                {formData.set === 'Custom Combination' && (
+                  <input
+                    type="text"
+                    placeholder="Describe your custom combination (e.g. 1 Bed sheet + 2 Bath towels)"
+                    value={formData.customSet}
+                    onChange={(e) => setFormData((p) => ({ ...p, customSet: e.target.value }))}
+                    className="w-full mt-2 px-4 py-2.5 rounded-xl border border-[#E8DFD3] dark:border-[#332922] bg-white dark:bg-[#100E0D] text-xs text-[#241F1C] dark:text-white focus:outline-none focus:border-[#855331]"
+                  />
+                )}
+              </div>
+
+              {/* 5. What would you like to personalize? */}
+              <div className="space-y-3">
+                <div className="flex items-center justify-between">
                   <label className="text-xs font-bold uppercase tracking-wider text-[#241F1C] dark:text-white flex items-center gap-1.5">
-                    <span className="text-[#9A643E] font-mono">3.</span> Which product category are you interested in?
-                    <span className="text-rose-500">*</span>
+                    <span className="text-[#9A643E] font-mono">5.</span> What would you like to personalize?
                   </label>
-                  <div className="grid grid-cols-3 gap-2.5">
-                    {(['Bedding Sets', 'Towel Sets', 'Both'] as const).map((cat) => {
-                      const isSelected = formData.category === cat;
-                      return (
-                        <button
-                          key={cat}
-                          type="button"
-                          onClick={() => handleCategoryChange(cat)}
-                          className={`py-2.5 px-3 rounded-xl text-xs font-semibold tracking-wider uppercase transition-all cursor-pointer text-center ${isSelected
-                              ? 'bg-[#855331] text-white dark:bg-[#C6A96B] dark:text-black shadow-xs'
-                              : 'bg-[#FAF6F0] dark:bg-white/5 text-[#5C554F] dark:text-white/70 border border-[#E8DFD3] dark:border-[#332922] hover:border-[#855331]'
-                            }`}
-                        >
-                          {cat}
-                        </button>
-                      );
-                    })}
-                  </div>
+                  <span className="text-[11px] text-[#786E65] dark:text-white/50">Optional · Multi-select</span>
                 </div>
+                <div className="flex flex-wrap gap-2">
+                  {PERSONALIZATION_OPTIONS.map((item) => {
+                    const isChecked = formData.personalizations.includes(item);
+                    return (
+                      <button
+                        key={item}
+                        type="button"
+                        onClick={() => togglePersonalization(item)}
+                        className={`px-3.5 py-1.5 rounded-full text-xs font-medium transition-all cursor-pointer flex items-center gap-1.5 ${isChecked
+                          ? 'bg-[#855331] text-white dark:bg-[#C6A96B] dark:text-black font-semibold'
+                          : 'bg-[#FAF6F0] dark:bg-white/5 text-[#5C554F] dark:text-white/70 border border-[#E8DFD3] dark:border-[#332922] hover:border-[#855331]'
+                          }`}
+                      >
+                        {isChecked && <Check size={12} />}
+                        <span>{item}</span>
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
 
-                {/* 4. Which set are you considering? */}
+              {/* 6. Tell us about your idea */}
+              <div className="space-y-2">
+                <div className="flex items-center justify-between">
+                  <label htmlFor={ideaInputId} className="text-xs font-bold uppercase tracking-wider text-[#241F1C] dark:text-white flex items-center gap-1.5">
+                    <span className="text-[#9A643E] font-mono">6.</span> Tell us about your idea
+                  </label>
+                  <span className="text-[11px] text-[#786E65] dark:text-white/50">Optional</span>
+                </div>
+                <textarea
+                  id={ideaInputId}
+                  rows={3}
+                  placeholder="Share names, message, theme, colors, artwork or any special requirements..."
+                  value={formData.idea}
+                  onChange={(e) => setFormData((p) => ({ ...p, idea: e.target.value }))}
+                  className="w-full px-4 py-3 rounded-xl border border-[#E8DFD3] dark:border-[#332922] bg-[#FAF7F2] dark:bg-[#100E0D] text-xs sm:text-sm text-[#241F1C] dark:text-white focus:outline-none focus:border-[#855331] resize-none"
+                />
+              </div>
+
+              {/* 7 & 8: Required By Date & Delivery Location */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <label htmlFor={setInputId} className="text-xs font-bold uppercase tracking-wider text-[#241F1C] dark:text-white flex items-center gap-1.5">
-                    <span className="text-[#9A643E] font-mono">4.</span> Which set are you considering?
+                  <label htmlFor={dateInputId} className="text-xs font-bold uppercase tracking-wider text-[#241F1C] dark:text-white flex items-center gap-1.5">
+                    <span className="text-[#9A643E] font-mono">7.</span> When do you need it?
                     <span className="text-rose-500">*</span>
                   </label>
-                  <select
-                    id={setInputId}
-                    value={formData.set}
-                    onChange={(e) => setFormData((p) => ({ ...p, set: e.target.value }))}
-                    className="w-full px-4 py-3 rounded-xl border border-[#E8DFD3] dark:border-[#332922] bg-[#FAF7F2] dark:bg-[#100E0D] text-xs sm:text-sm text-[#241F1C] dark:text-white focus:outline-none focus:border-[#855331]"
-                  >
-                    {getSetOptions().map((opt) => (
-                      <option key={opt} value={opt} className="bg-white dark:bg-[#1A1816]">
-                        {opt}
-                      </option>
-                    ))}
-                  </select>
-
-                  {formData.set === 'Custom Combination' && (
+                  <div className="relative">
                     <input
-                      type="text"
-                      placeholder="Describe your custom combination (e.g. 1 Bed sheet + 2 Bath towels)"
-                      value={formData.customSet}
-                      onChange={(e) => setFormData((p) => ({ ...p, customSet: e.target.value }))}
-                      className="w-full mt-2 px-4 py-2.5 rounded-xl border border-[#E8DFD3] dark:border-[#332922] bg-white dark:bg-[#100E0D] text-xs text-[#241F1C] dark:text-white focus:outline-none focus:border-[#855331]"
+                      id={dateInputId}
+                      type="date"
+                      value={formData.date}
+                      onChange={(e) => {
+                        setFormData((p) => ({ ...p, date: e.target.value }));
+                        if (errors.date) setErrors((prev) => ({ ...prev, date: '' }));
+                      }}
+                      className={`w-full px-4 py-3 rounded-xl border bg-[#FAF7F2] dark:bg-[#100E0D] text-xs text-[#241F1C] dark:text-white focus:outline-none ${errors.date ? 'border-rose-500' : 'border-[#E8DFD3] dark:border-[#332922] focus:border-[#855331]'
+                        }`}
                     />
-                  )}
+                    <Calendar size={15} className="absolute right-3.5 top-1/2 -translate-y-1/2 text-secondary pointer-events-none" />
+                  </div>
+                  {errors.date && <p className="text-xs text-rose-500">{errors.date}</p>}
                 </div>
 
-                {/* 5. What would you like to personalize? */}
-                <div className="space-y-3">
-                  <div className="flex items-center justify-between">
-                    <label className="text-xs font-bold uppercase tracking-wider text-[#241F1C] dark:text-white flex items-center gap-1.5">
-                      <span className="text-[#9A643E] font-mono">5.</span> What would you like to personalize?
-                    </label>
-                    <span className="text-[11px] text-[#786E65] dark:text-white/50">Optional · Multi-select</span>
+                <div className="space-y-2">
+                  <label htmlFor={deliveryInputId} className="text-xs font-bold uppercase tracking-wider text-[#241F1C] dark:text-white flex items-center gap-1.5">
+                    <span className="text-[#9A643E] font-mono">8.</span> Where should we deliver?
+                    <span className="text-rose-500">*</span>
+                  </label>
+                  <div className="relative">
+                    <input
+                      id={deliveryInputId}
+                      type="text"
+                      placeholder="City / State"
+                      value={formData.location}
+                      onChange={(e) => {
+                        setFormData((p) => ({ ...p, location: e.target.value }));
+                        if (errors.location) setErrors((prev) => ({ ...prev, location: '' }));
+                      }}
+                      className={`w-full px-4 py-3 rounded-xl border bg-[#FAF7F2] dark:bg-[#100E0D] text-xs text-[#241F1C] dark:text-white focus:outline-none ${errors.location ? 'border-rose-500' : 'border-[#E8DFD3] dark:border-[#332922] focus:border-[#855331]'
+                        }`}
+                    />
+                    <MapPin size={15} className="absolute right-3.5 top-1/2 -translate-y-1/2 text-secondary pointer-events-none" />
                   </div>
-                  <div className="flex flex-wrap gap-2">
-                    {PERSONALIZATION_OPTIONS.map((item) => {
-                      const isChecked = formData.personalizations.includes(item);
-                      return (
-                        <button
-                          key={item}
-                          type="button"
-                          onClick={() => togglePersonalization(item)}
-                          className={`px-3.5 py-1.5 rounded-full text-xs font-medium transition-all cursor-pointer flex items-center gap-1.5 ${isChecked
-                              ? 'bg-[#855331] text-white dark:bg-[#C6A96B] dark:text-black font-semibold'
-                              : 'bg-[#FAF6F0] dark:bg-white/5 text-[#5C554F] dark:text-white/70 border border-[#E8DFD3] dark:border-[#332922] hover:border-[#855331]'
-                            }`}
-                        >
-                          {isChecked && <Check size={12} />}
-                          <span>{item}</span>
-                        </button>
-                      );
-                    })}
+                  {errors.location && <p className="text-xs text-rose-500">{errors.location}</p>}
+                </div>
+              </div>
+
+              {/* 9 & 10: Name & Company */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <label htmlFor={nameInputId} className="text-xs font-bold uppercase tracking-wider text-[#241F1C] dark:text-white flex items-center gap-1.5">
+                    <span className="text-[#9A643E] font-mono">9.</span> Your Name
+                    <span className="text-rose-500">*</span>
+                  </label>
+                  <div className="relative">
+                    <input
+                      id={nameInputId}
+                      type="text"
+                      placeholder="Full Name"
+                      value={formData.name}
+                      onChange={(e) => {
+                        setFormData((p) => ({ ...p, name: e.target.value }));
+                        if (errors.name) setErrors((prev) => ({ ...prev, name: '' }));
+                      }}
+                      className={`w-full px-4 py-3 rounded-xl border bg-[#FAF7F2] dark:bg-[#100E0D] text-xs text-[#241F1C] dark:text-white focus:outline-none ${errors.name ? 'border-rose-500' : 'border-[#E8DFD3] dark:border-[#332922] focus:border-[#855331]'
+                        }`}
+                    />
+                    <User size={15} className="absolute right-3.5 top-1/2 -translate-y-1/2 text-secondary pointer-events-none" />
                   </div>
+                  {errors.name && <p className="text-xs text-rose-500">{errors.name}</p>}
                 </div>
 
-                {/* 6. Tell us about your idea */}
                 <div className="space-y-2">
                   <div className="flex items-center justify-between">
-                    <label htmlFor={ideaInputId} className="text-xs font-bold uppercase tracking-wider text-[#241F1C] dark:text-white flex items-center gap-1.5">
-                      <span className="text-[#9A643E] font-mono">6.</span> Tell us about your idea
+                    <label htmlFor={companyInputId} className="text-xs font-bold uppercase tracking-wider text-[#241F1C] dark:text-white flex items-center gap-1.5">
+                      <span className="text-[#9A643E] font-mono">10.</span> Company / Org
                     </label>
                     <span className="text-[11px] text-[#786E65] dark:text-white/50">Optional</span>
                   </div>
-                  <textarea
-                    id={ideaInputId}
-                    rows={3}
-                    placeholder="Share names, message, theme, colors, artwork or any special requirements..."
-                    value={formData.idea}
-                    onChange={(e) => setFormData((p) => ({ ...p, idea: e.target.value }))}
-                    className="w-full px-4 py-3 rounded-xl border border-[#E8DFD3] dark:border-[#332922] bg-[#FAF7F2] dark:bg-[#100E0D] text-xs sm:text-sm text-[#241F1C] dark:text-white focus:outline-none focus:border-[#855331] resize-none"
-                  />
-                </div>
-
-                {/* 7 & 8: Required By Date & Delivery Location */}
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  <div className="space-y-2">
-                    <label htmlFor={dateInputId} className="text-xs font-bold uppercase tracking-wider text-[#241F1C] dark:text-white flex items-center gap-1.5">
-                      <span className="text-[#9A643E] font-mono">7.</span> When do you need it?
-                      <span className="text-rose-500">*</span>
-                    </label>
-                    <div className="relative">
-                      <input
-                        id={dateInputId}
-                        type="date"
-                        value={formData.date}
-                        onChange={(e) => {
-                          setFormData((p) => ({ ...p, date: e.target.value }));
-                          if (errors.date) setErrors((prev) => ({ ...prev, date: '' }));
-                        }}
-                        className={`w-full px-4 py-3 rounded-xl border bg-[#FAF7F2] dark:bg-[#100E0D] text-xs text-[#241F1C] dark:text-white focus:outline-none ${errors.date ? 'border-rose-500' : 'border-[#E8DFD3] dark:border-[#332922] focus:border-[#855331]'
-                          }`}
-                      />
-                      <Calendar size={15} className="absolute right-3.5 top-1/2 -translate-y-1/2 text-secondary pointer-events-none" />
-                    </div>
-                    {errors.date && <p className="text-xs text-rose-500">{errors.date}</p>}
-                  </div>
-
-                  <div className="space-y-2">
-                    <label htmlFor={deliveryInputId} className="text-xs font-bold uppercase tracking-wider text-[#241F1C] dark:text-white flex items-center gap-1.5">
-                      <span className="text-[#9A643E] font-mono">8.</span> Where should we deliver?
-                      <span className="text-rose-500">*</span>
-                    </label>
-                    <div className="relative">
-                      <input
-                        id={deliveryInputId}
-                        type="text"
-                        placeholder="City / State"
-                        value={formData.location}
-                        onChange={(e) => {
-                          setFormData((p) => ({ ...p, location: e.target.value }));
-                          if (errors.location) setErrors((prev) => ({ ...prev, location: '' }));
-                        }}
-                        className={`w-full px-4 py-3 rounded-xl border bg-[#FAF7F2] dark:bg-[#100E0D] text-xs text-[#241F1C] dark:text-white focus:outline-none ${errors.location ? 'border-rose-500' : 'border-[#E8DFD3] dark:border-[#332922] focus:border-[#855331]'
-                          }`}
-                      />
-                      <MapPin size={15} className="absolute right-3.5 top-1/2 -translate-y-1/2 text-secondary pointer-events-none" />
-                    </div>
-                    {errors.location && <p className="text-xs text-rose-500">{errors.location}</p>}
-                  </div>
-                </div>
-
-                {/* 9 & 10: Name & Company */}
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  <div className="space-y-2">
-                    <label htmlFor={nameInputId} className="text-xs font-bold uppercase tracking-wider text-[#241F1C] dark:text-white flex items-center gap-1.5">
-                      <span className="text-[#9A643E] font-mono">9.</span> Your Name
-                      <span className="text-rose-500">*</span>
-                    </label>
-                    <div className="relative">
-                      <input
-                        id={nameInputId}
-                        type="text"
-                        placeholder="Full Name"
-                        value={formData.name}
-                        onChange={(e) => {
-                          setFormData((p) => ({ ...p, name: e.target.value }));
-                          if (errors.name) setErrors((prev) => ({ ...prev, name: '' }));
-                        }}
-                        className={`w-full px-4 py-3 rounded-xl border bg-[#FAF7F2] dark:bg-[#100E0D] text-xs text-[#241F1C] dark:text-white focus:outline-none ${errors.name ? 'border-rose-500' : 'border-[#E8DFD3] dark:border-[#332922] focus:border-[#855331]'
-                          }`}
-                      />
-                      <User size={15} className="absolute right-3.5 top-1/2 -translate-y-1/2 text-secondary pointer-events-none" />
-                    </div>
-                    {errors.name && <p className="text-xs text-rose-500">{errors.name}</p>}
-                  </div>
-
-                  <div className="space-y-2">
-                    <div className="flex items-center justify-between">
-                      <label htmlFor={companyInputId} className="text-xs font-bold uppercase tracking-wider text-[#241F1C] dark:text-white flex items-center gap-1.5">
-                        <span className="text-[#9A643E] font-mono">10.</span> Company / Org
-                      </label>
-                      <span className="text-[11px] text-[#786E65] dark:text-white/50">Optional</span>
-                    </div>
-                    <div className="relative">
-                      <input
-                        id={companyInputId}
-                        type="text"
-                        placeholder="Company or Family Name"
-                        value={formData.company}
-                        onChange={(e) => setFormData((p) => ({ ...p, company: e.target.value }))}
-                        className="w-full px-4 py-3 rounded-xl border border-[#E8DFD3] dark:border-[#332922] bg-[#FAF7F2] dark:bg-[#100E0D] text-xs text-[#241F1C] dark:text-white focus:outline-none focus:border-[#855331]"
-                      />
-                      <Building size={15} className="absolute right-3.5 top-1/2 -translate-y-1/2 text-secondary pointer-events-none" />
-                    </div>
-                  </div>
-                </div>
-
-                {/* 11 & 12: Phone / WhatsApp & Email */}
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  <div className="space-y-2">
-                    <label htmlFor={phoneInputId} className="text-xs font-bold uppercase tracking-wider text-[#241F1C] dark:text-white flex items-center gap-1.5">
-                      <span className="text-[#9A643E] font-mono">11.</span> Phone / WhatsApp
-                      <span className="text-rose-500">*</span>
-                    </label>
-                    <div className="relative">
-                      <input
-                        id={phoneInputId}
-                        type="tel"
-                        placeholder="+91 98765 43210"
-                        value={formData.phone}
-                        onChange={(e) => {
-                          setFormData((p) => ({ ...p, phone: e.target.value }));
-                          if (errors.phone) setErrors((prev) => ({ ...prev, phone: '' }));
-                        }}
-                        className={`w-full px-4 py-3 rounded-xl border bg-[#FAF7F2] dark:bg-[#100E0D] text-xs text-[#241F1C] dark:text-white focus:outline-none ${errors.phone ? 'border-rose-500' : 'border-[#E8DFD3] dark:border-[#332922] focus:border-[#855331]'
-                          }`}
-                      />
-                      <Phone size={15} className="absolute right-3.5 top-1/2 -translate-y-1/2 text-secondary pointer-events-none" />
-                    </div>
-                    {errors.phone && <p className="text-xs text-rose-500">{errors.phone}</p>}
-                  </div>
-
-                  <div className="space-y-2">
-                    <label htmlFor={emailInputId} className="text-xs font-bold uppercase tracking-wider text-[#241F1C] dark:text-white flex items-center gap-1.5">
-                      <span className="text-[#9A643E] font-mono">12.</span> Email Address
-                      <span className="text-rose-500">*</span>
-                    </label>
-                    <div className="relative">
-                      <input
-                        id={emailInputId}
-                        type="email"
-                        placeholder="yourname@domain.com"
-                        value={formData.email}
-                        onChange={(e) => {
-                          setFormData((p) => ({ ...p, email: e.target.value }));
-                          if (errors.email) setErrors((prev) => ({ ...prev, email: '' }));
-                        }}
-                        className={`w-full px-4 py-3 rounded-xl border bg-[#FAF7F2] dark:bg-[#100E0D] text-xs text-[#241F1C] dark:text-white focus:outline-none ${errors.email ? 'border-rose-500' : 'border-[#E8DFD3] dark:border-[#332922] focus:border-[#855331]'
-                          }`}
-                      />
-                      <Mail size={15} className="absolute right-3.5 top-1/2 -translate-y-1/2 text-secondary pointer-events-none" />
-                    </div>
-                    {errors.email && <p className="text-xs text-rose-500">{errors.email}</p>}
-                  </div>
-                </div>
-
-                {/* Consent & Submit */}
-                <div className="space-y-4 pt-2 border-t border-[#E8DFD3] dark:border-[#332922]">
-                  <label htmlFor={consentInputId} className="flex items-start gap-3 text-xs text-[#5C554F] dark:text-white/75 cursor-pointer">
+                  <div className="relative">
                     <input
-                      id={consentInputId}
-                      type="checkbox"
-                      checked={formData.consent}
-                      onChange={(e) => setFormData((p) => ({ ...p, consent: e.target.checked }))}
-                      className="mt-0.5 rounded text-[#855331] focus:ring-[#855331] accent-[#855331]"
+                      id={companyInputId}
+                      type="text"
+                      placeholder="Company or Family Name"
+                      value={formData.company}
+                      onChange={(e) => setFormData((p) => ({ ...p, company: e.target.value }))}
+                      className="w-full px-4 py-3 rounded-xl border border-[#E8DFD3] dark:border-[#332922] bg-[#FAF7F2] dark:bg-[#100E0D] text-xs text-[#241F1C] dark:text-white focus:outline-none focus:border-[#855331]"
                     />
-                    <span>
-                      I agree that JORIQUE may contact me regarding this bulk order enquiry.
-                    </span>
+                    <Building size={15} className="absolute right-3.5 top-1/2 -translate-y-1/2 text-secondary pointer-events-none" />
+                  </div>
+                </div>
+              </div>
+
+              {/* 11 & 12: Phone / WhatsApp & Email */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <label htmlFor={phoneInputId} className="text-xs font-bold uppercase tracking-wider text-[#241F1C] dark:text-white flex items-center gap-1.5">
+                    <span className="text-[#9A643E] font-mono">11.</span> Phone / WhatsApp
+                    <span className="text-rose-500">*</span>
                   </label>
-                  {errors.consent && <p className="text-xs text-rose-500">{errors.consent}</p>}
-
-                  {submitted && (
-                    <motion.div
-                      initial={{ opacity: 0, y: -8 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      className="p-3 rounded-xl bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-500/30 text-emerald-800 dark:text-emerald-300 text-xs text-center font-medium"
-                    >
-                      ✓ Enquiry generated! Review your message preview on the right to send via WhatsApp or Email.
-                    </motion.div>
-                  )}
-
-                  <button
-                    type="submit"
-                    className="w-full py-3.5 rounded-xl bg-[#855331] hover:bg-[#6F4324] dark:bg-[#C6A96B] dark:hover:bg-[#E5C158] text-white dark:text-black font-bold text-xs uppercase tracking-[0.2em] transition-all duration-300 shadow-md hover:shadow-lg cursor-pointer flex items-center justify-center gap-2"
-                  >
-                    <span>GENERATE MY ENQUIRY →</span>
-                  </button>
-
-                  <div className="text-center">
-                    <p className="text-[11px] text-[#786E65] dark:text-white/60 font-light">
-                      Prices will vary according to your quantity and quality. No public pricing.
-                    </p>
+                  <div className="relative">
+                    <input
+                      id={phoneInputId}
+                      type="tel"
+                      placeholder="+91 98765 43210"
+                      value={formData.phone}
+                      onChange={(e) => {
+                        setFormData((p) => ({ ...p, phone: e.target.value }));
+                        if (errors.phone) setErrors((prev) => ({ ...prev, phone: '' }));
+                      }}
+                      className={`w-full px-4 py-3 rounded-xl border bg-[#FAF7F2] dark:bg-[#100E0D] text-xs text-[#241F1C] dark:text-white focus:outline-none ${errors.phone ? 'border-rose-500' : 'border-[#E8DFD3] dark:border-[#332922] focus:border-[#855331]'
+                        }`}
+                    />
+                    <Phone size={15} className="absolute right-3.5 top-1/2 -translate-y-1/2 text-secondary pointer-events-none" />
                   </div>
+                  {errors.phone && <p className="text-xs text-rose-500">{errors.phone}</p>}
                 </div>
 
-              </form>
-            </div>
-
-            {/* Right Column: Live Message Preview Card (Sticky on desktop) */}
-            <div id="enquiry-preview" className="lg:col-span-5 lg:sticky lg:top-28 space-y-6">
-
-              <div className="bg-white dark:bg-[#1A1816] rounded-2xl border border-[#E5DACD] dark:border-[#332922] shadow-xl overflow-hidden flex flex-col">
-
-                {/* Preview Header */}
-                <div className="p-6 border-b border-[#E8DFD3] dark:border-[#332922] space-y-4">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <span className="text-[10px] font-mono uppercase tracking-widest text-[#9A643E] dark:text-[#C6A96B] font-bold">
-                        YOUR ENQUIRY PREVIEW
-                      </span>
-                      <h3 className="font-serif text-xl text-[#241F1C] dark:text-white">
-                        Your messages, ready to send.
-                      </h3>
-                    </div>
-
-                    <AnimatePresence>
-                      {copied && (
-                        <motion.span
-                          initial={{ opacity: 0, scale: 0.9 }}
-                          animate={{ opacity: 1, scale: 1 }}
-                          exit={{ opacity: 0 }}
-                          className="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-emerald-100 text-emerald-800 text-[10px] font-semibold"
-                        >
-                          <Check size={12} /> Copied!
-                        </motion.span>
-                      )}
-                    </AnimatePresence>
+                <div className="space-y-2">
+                  <label htmlFor={emailInputId} className="text-xs font-bold uppercase tracking-wider text-[#241F1C] dark:text-white flex items-center gap-1.5">
+                    <span className="text-[#9A643E] font-mono">12.</span> Email Address
+                    <span className="text-rose-500">*</span>
+                  </label>
+                  <div className="relative">
+                    <input
+                      id={emailInputId}
+                      type="email"
+                      placeholder="yourname@domain.com"
+                      value={formData.email}
+                      onChange={(e) => {
+                        setFormData((p) => ({ ...p, email: e.target.value }));
+                        if (errors.email) setErrors((prev) => ({ ...prev, email: '' }));
+                      }}
+                      className={`w-full px-4 py-3 rounded-xl border bg-[#FAF7F2] dark:bg-[#100E0D] text-xs text-[#241F1C] dark:text-white focus:outline-none ${errors.email ? 'border-rose-500' : 'border-[#E8DFD3] dark:border-[#332922] focus:border-[#855331]'
+                        }`}
+                    />
+                    <Mail size={15} className="absolute right-3.5 top-1/2 -translate-y-1/2 text-secondary pointer-events-none" />
                   </div>
+                  {errors.email && <p className="text-xs text-rose-500">{errors.email}</p>}
+                </div>
+              </div>
 
-                  <p className="text-xs text-[#5C554F] dark:text-white/70 font-light leading-relaxed">
-                    Review your message below. You can copy it or open it directly in your email or WhatsApp.
-                  </p>
+              {/* Consent & Submit */}
+              <div className="space-y-4 pt-2 border-t border-[#E8DFD3] dark:border-[#332922]">
+                <label htmlFor={consentInputId} className="flex items-start gap-3 text-xs text-[#5C554F] dark:text-white/75 cursor-pointer">
+                  <input
+                    id={consentInputId}
+                    type="checkbox"
+                    checked={formData.consent}
+                    onChange={(e) => setFormData((p) => ({ ...p, consent: e.target.checked }))}
+                    className="mt-0.5 rounded text-[#855331] focus:ring-[#855331] accent-[#855331]"
+                  />
+                  <span>
+                    I agree that JORIQUE may contact me regarding this bulk order enquiry.
+                  </span>
+                </label>
+                {errors.consent && <p className="text-xs text-rose-500">{errors.consent}</p>}
 
-                  {/* Toggle Preview Format */}
-                  <div className="grid grid-cols-2 p-1 rounded-xl bg-[#FAF6F0] dark:bg-white/5 border border-[#E8DFD3] dark:border-[#332922]">
+                {/* Direct WhatsApp & Email Action Buttons */}
+                <div className="pt-4 border-t border-[#E8DFD3] dark:border-[#332922] space-y-4">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
                     <button
                       type="button"
-                      onClick={() => setPreviewTab('whatsapp')}
-                      className={`py-2 rounded-lg text-xs font-semibold tracking-wider transition-all flex items-center justify-center gap-1.5 cursor-pointer ${previewTab === 'whatsapp'
-                          ? 'bg-[#25D366] text-white shadow-xs'
-                          : 'text-[#5C554F] dark:text-white/60 hover:text-primary'
-                        }`}
+                      onClick={handleOpenWhatsApp}
+                      className="w-full py-4 px-6 rounded-xl bg-[#25D366] hover:bg-[#1EBE5D] text-white font-bold text-xs uppercase tracking-[0.16em] transition-all duration-300 shadow-md hover:shadow-lg flex items-center justify-center gap-2.5 cursor-pointer group"
                     >
-                      <MessageSquare size={13} />
-                      <span>WhatsApp Preview</span>
+                      <MessageSquare size={18} className="shrink-0 transition-transform group-hover:scale-110" />
+                      <span>Send via WhatsApp</span>
                     </button>
+
                     <button
                       type="button"
-                      onClick={() => setPreviewTab('email')}
-                      className={`py-2 rounded-lg text-xs font-semibold tracking-wider transition-all flex items-center justify-center gap-1.5 cursor-pointer ${previewTab === 'email'
-                          ? 'bg-[#855331] text-white dark:bg-[#C6A96B] dark:text-black shadow-xs'
-                          : 'text-[#5C554F] dark:text-white/60 hover:text-primary'
-                        }`}
+                      onClick={handleOpenEmail}
+                      className="w-full py-4 px-6 rounded-xl bg-[#855331] hover:bg-[#6F4324] dark:bg-[#C6A96B] dark:hover:bg-[#E5C158] text-white dark:text-black font-bold text-xs uppercase tracking-[0.16em] transition-all duration-300 shadow-md hover:shadow-lg flex items-center justify-center gap-2.5 cursor-pointer group"
                     >
-                      <Mail size={13} />
-                      <span>Email Preview</span>
+                      <Mail size={18} className="shrink-0 transition-transform group-hover:scale-110" />
+                      <span>Send via Email</span>
                     </button>
                   </div>
-                </div>
 
-                {/* Preview Message Box */}
-                <div className="p-6 bg-[#FAF7F2] dark:bg-[#12100E] max-h-[420px] overflow-y-auto space-y-4 font-mono text-xs leading-relaxed">
-                  {previewTab === 'email' ? (
-                    <div className="space-y-3">
-                      <div className="pb-3 border-b border-[#E8DFD3] dark:border-[#2E2925] space-y-1 text-[11px]">
-                        <p className="text-[#5C554F] dark:text-white/60">
-                          <strong className="text-[#241F1C] dark:text-white font-semibold">To:</strong> care@jorique.in
-                        </p>
-                        <p className="text-[#5C554F] dark:text-white/60 truncate">
-                          <strong className="text-[#241F1C] dark:text-white font-semibold">Subject:</strong> {getEmailSubject()}
-                        </p>
-                      </div>
-                      <pre className="whitespace-pre-wrap font-sans text-xs text-[#241F1C] dark:text-[#E8DFD3] leading-relaxed">
-                        {getEmailBody()}
-                      </pre>
-                    </div>
-                  ) : (
-                    <div className="space-y-3">
-                      <div className="p-4 rounded-2xl rounded-tl-xs bg-[#E7FFDB] dark:bg-[#075E54]/30 border border-[#25D366]/20 shadow-xs text-[#241F1C] dark:text-[#FCFAF7] space-y-2">
-                        <div className="flex items-center justify-between pb-1 border-b border-black/5 dark:border-white/10 text-[10px] text-[#075E54] dark:text-[#25D366] font-bold">
-                          <span>Message to JORIQUE Concierge</span>
-                          <span>9919388211</span>
-                        </div>
-                        <pre className="whitespace-pre-wrap font-sans text-xs text-[#241F1C] dark:text-white leading-relaxed">
-                          {getWhatsAppBody()}
-                        </pre>
-                        <div className="flex items-center justify-end gap-1 text-[10px] text-secondary dark:text-white/50 pt-1">
-                          <span>Just now</span>
-                          <Check size={12} className="text-[#34B7F1]" />
-                        </div>
-                      </div>
-                    </div>
-                  )}
-                </div>
-
-                {/* Action Buttons */}
-                <div className="p-5 border-t border-[#E8DFD3] dark:border-[#332922] bg-white dark:bg-[#1A1816] space-y-3">
-                  <div className="grid grid-cols-2 gap-3">
+                  <div className="flex flex-col sm:flex-row items-center justify-between gap-3 pt-2 text-center sm:text-left">
                     <button
                       type="button"
                       onClick={handleCopyMessage}
-                      className="py-3 px-4 rounded-xl border border-[#E8DFD3] dark:border-[#332922] hover:border-[#855331] dark:hover:border-[#C6A96B] bg-white dark:bg-white/5 text-[#241F1C] dark:text-white font-semibold text-xs tracking-wider uppercase transition-all flex items-center justify-center gap-2 cursor-pointer"
+                      className="inline-flex items-center gap-1.5 text-xs text-[#786E65] dark:text-white/60 hover:text-[#855331] dark:hover:text-[#C6A96B] transition-colors cursor-pointer py-1"
                     >
                       {copied ? <Check size={14} className="text-emerald-600" /> : <Copy size={14} />}
-                      <span>{copied ? 'Copied!' : 'Copy Message'}</span>
+                      <span>{copied ? 'Copied enquiry text!' : 'Copy enquiry text to clipboard'}</span>
                     </button>
 
-                    {previewTab === 'whatsapp' ? (
-                      <button
-                        type="button"
-                        onClick={handleOpenWhatsApp}
-                        className="py-3 px-4 rounded-xl bg-[#25D366] hover:bg-[#1EBE5D] text-white font-semibold text-xs tracking-wider uppercase transition-all flex items-center justify-center gap-2 shadow-sm hover:shadow-md cursor-pointer"
-                      >
-                        <Send size={14} />
-                        <span>Open In WhatsApp</span>
-                      </button>
-                    ) : (
-                      <button
-                        type="button"
-                        onClick={handleOpenEmail}
-                        className="py-3 px-4 rounded-xl bg-[#855331] hover:bg-[#6F4324] dark:bg-[#C6A96B] dark:hover:bg-[#E5C158] text-white dark:text-black font-semibold text-xs tracking-wider uppercase transition-all flex items-center justify-center gap-2 shadow-sm hover:shadow-md cursor-pointer"
-                      >
-                        <Mail size={14} />
-                        <span>Open In Email</span>
-                      </button>
-                    )}
+                    <p className="text-[11px] text-[#786E65] dark:text-white/60 font-light">
+                      Prices vary by quantity & fabric choice. No public pricing.
+                    </p>
                   </div>
 
-                  <div className="text-center pt-2 border-t border-[#E8DFD3]/60 dark:border-[#2E2925]">
-                    <p className="text-[11px] text-[#786E65] dark:text-white/60">
+                  <div className="text-center pt-3 border-t border-[#E8DFD3]/60 dark:border-[#2E2925]">
+                    <p className="text-xs text-[#5C554F] dark:text-white/70">
                       Prefer to speak directly? Call{' '}
                       <a href="tel:9919388211" className="text-[#855331] dark:text-[#C6A96B] font-bold hover:underline">
                         9919388211
@@ -1313,11 +1179,9 @@ Thank you!`;
                     </p>
                   </div>
                 </div>
-
               </div>
 
-            </div>
-
+            </form>
           </div>
 
         </div>
