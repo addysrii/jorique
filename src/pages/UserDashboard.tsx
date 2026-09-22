@@ -391,9 +391,9 @@ export default function UserDashboard() {
                         Access bespoke monogramming, express courier priority, and exclusive previews of curated handloom weaves.
                       </p>
                       <div className="space-y-3 text-xs text-secondary dark:text-white/70">
-                        <p className="flex items-center gap-2">✦ Early access to seasonal drops</p>
-                        <p className="flex items-center gap-2">✦ Direct WhatsApp artisan concierge</p>
-                        <p className="flex items-center gap-2">✦ Complimentary shipping on all orders</p>
+                        <p className="flex items-center gap-2"> Early access to seasonal drops</p>
+                        <p className="flex items-center gap-2">Direct WhatsApp artisan concierge</p>
+                        <p className="flex items-center gap-2">Complimentary shipping on all orders</p>
                       </div>
                     </div>
 

@@ -504,7 +504,7 @@ export default function AddProductForm() {
   const onSubmit = async (data: ProductFormValues) => {
     try {
       setIsSubmitting(true);
-      
+
       if (!token) throw new Error('You must be signed in as an admin to create a product.');
 
       const tagsArray = data.tags
@@ -656,7 +656,7 @@ export default function AddProductForm() {
       });
       setBatchCreatedProducts([]);
       setIsSuccess(true);
-      
+
       if (serials.length > 0) {
         setShowQRModal(true);
       }
@@ -695,13 +695,13 @@ export default function AddProductForm() {
         </header>
 
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-6 bg-white dark:bg-[#1A1816] p-8 shadow-sm rounded-3xl border border-border dark:border-[#2E2925]">
-          
+
           {/* Images upload */}
           <div>
             <label className="block text-xs font-semibold uppercase tracking-wider text-secondary dark:text-white/70 mb-2">
               Product Images
             </label>
-            
+
             <div className="border-2 border-dashed border-border dark:border-[#2E2925] rounded-2xl p-6 text-center hover:border-primary/40 dark:hover:border-white/40 transition-colors bg-cream/20 dark:bg-white/5">
               <input
                 type="file"
@@ -750,11 +750,10 @@ export default function AddProductForm() {
                     return (
                       <div
                         key={index}
-                        className={`relative group rounded-xl overflow-hidden border aspect-square ${
-                          isLighting
+                        className={`relative group rounded-xl overflow-hidden border aspect-square ${isLighting
                             ? 'border-amber-500/80 ring-2 ring-amber-500/30'
                             : 'border-border dark:border-[#2E2925]'
-                        }`}
+                          }`}
                       >
                         <img
                           src={url}
@@ -810,8 +809,8 @@ export default function AddProductForm() {
                 </option>
                 {dbCategories.length > 0
                   ? dbCategories.map(cat => (
-                      <option key={cat.id} value={cat.name} className="dark:bg-[#1A1816]">{cat.name}</option>
-                    ))
+                    <option key={cat.id} value={cat.name} className="dark:bg-[#1A1816]">{cat.name}</option>
+                  ))
                   : (
                     <>
                       <option value="Bedsheets" className="dark:bg-[#1A1816]">Bedsheets</option>
@@ -829,55 +828,55 @@ export default function AddProductForm() {
 
           {/* Subcategory & Size Inputs */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
-              {category ? (
-                <div>
-                  <label className="block text-xs font-semibold uppercase tracking-wider text-secondary dark:text-white/70 mb-1.5">
-                    Subcategory
-                    {filteredSubs.length === 0 && category && !loadingCats && (
-                      <span className="ml-2 normal-case font-normal text-secondary dark:text-white/40">(none defined)</span>
-                    )}
-                  </label>
-                  <select
-                    {...register('subcategory')}
-                    disabled={filteredSubs.length === 0 || loadingCats}
-                    className={`w-full rounded-xl border border-border dark:border-[#2E2925] bg-cream/30 dark:bg-[#100E0D] px-4 py-3 text-sm text-primary dark:text-white outline-none focus:border-primary dark:focus:border-[#D4AF37] transition-colors ${filteredSubs.length === 0 ? 'opacity-50 cursor-not-allowed' : ''}`}
-                  >
-                    <option value="" className="dark:bg-[#1A1816]">
-                      {filteredSubs.length === 0 ? 'No subcategories for this category' : 'Select Subcategory (optional)'}
-                    </option>
-                    {filteredSubs.map(sub => (
-                      <option key={sub.id} value={sub.name} className="dark:bg-[#1A1816]">{sub.name}</option>
-                    ))}
-                  </select>
-                </div>
-              ) : null}
-
-              <div className={!category ? 'sm:col-span-2' : ''}>
-                <label className="block text-xs font-semibold uppercase tracking-wider text-secondary dark:text-white/70 mb-1.5 flex items-center justify-between">
-                  <span>Product Size / Dimensions</span>
-                  <span className="text-[10px] text-secondary dark:text-white/40 font-normal normal-case">Optional • Shown on label</span>
+            {category ? (
+              <div>
+                <label className="block text-xs font-semibold uppercase tracking-wider text-secondary dark:text-white/70 mb-1.5">
+                  Subcategory
+                  {filteredSubs.length === 0 && category && !loadingCats && (
+                    <span className="ml-2 normal-case font-normal text-secondary dark:text-white/40">(none defined)</span>
+                  )}
                 </label>
-                <input
-                  type="text"
-                  {...register('size')}
-                  placeholder="e.g. King (108 x 108 in), Double, Free Size, L"
-                  className="w-full rounded-xl border border-border dark:border-[#2E2925] bg-cream/30 dark:bg-[#100E0D] px-4 py-3 text-sm text-primary dark:text-white outline-none focus:border-primary dark:focus:border-[#D4AF37] transition-colors"
-                />
-                {/* Quick Size Preset Chips */}
-                <div className="flex flex-wrap gap-1.5 mt-2">
-                  {['King', 'Queen', 'Double', 'Single', 'Free Size', 'S', 'M', 'L', 'XL'].map(presetSize => (
-                    <button
-                      key={presetSize}
-                      type="button"
-                      onClick={() => setValue('size', presetSize, { shouldDirty: true })}
-                      className="px-2 py-0.5 rounded-lg text-[10px] font-semibold border border-border dark:border-[#2E2925] bg-white dark:bg-[#151311] hover:border-[#D4AF37] dark:hover:border-[#D4AF37] text-secondary dark:text-white/70 hover:text-primary transition-colors"
-                    >
-                      {presetSize}
-                    </button>
+                <select
+                  {...register('subcategory')}
+                  disabled={filteredSubs.length === 0 || loadingCats}
+                  className={`w-full rounded-xl border border-border dark:border-[#2E2925] bg-cream/30 dark:bg-[#100E0D] px-4 py-3 text-sm text-primary dark:text-white outline-none focus:border-primary dark:focus:border-[#D4AF37] transition-colors ${filteredSubs.length === 0 ? 'opacity-50 cursor-not-allowed' : ''}`}
+                >
+                  <option value="" className="dark:bg-[#1A1816]">
+                    {filteredSubs.length === 0 ? 'No subcategories for this category' : 'Select Subcategory (optional)'}
+                  </option>
+                  {filteredSubs.map(sub => (
+                    <option key={sub.id} value={sub.name} className="dark:bg-[#1A1816]">{sub.name}</option>
                   ))}
-                </div>
+                </select>
+              </div>
+            ) : null}
+
+            <div className={!category ? 'sm:col-span-2' : ''}>
+              <label className="block text-xs font-semibold uppercase tracking-wider text-secondary dark:text-white/70 mb-1.5 flex items-center justify-between">
+                <span>Product Size / Dimensions</span>
+                <span className="text-[10px] text-secondary dark:text-white/40 font-normal normal-case">Optional • Shown on label</span>
+              </label>
+              <input
+                type="text"
+                {...register('size')}
+                placeholder="e.g. King (108 x 108 in), Double, Free Size, L"
+                className="w-full rounded-xl border border-border dark:border-[#2E2925] bg-cream/30 dark:bg-[#100E0D] px-4 py-3 text-sm text-primary dark:text-white outline-none focus:border-primary dark:focus:border-[#D4AF37] transition-colors"
+              />
+              {/* Quick Size Preset Chips */}
+              <div className="flex flex-wrap gap-1.5 mt-2">
+                {['King', 'Queen', 'Double', 'Single', 'Free Size', 'S', 'M', 'L', 'XL'].map(presetSize => (
+                  <button
+                    key={presetSize}
+                    type="button"
+                    onClick={() => setValue('size', presetSize, { shouldDirty: true })}
+                    className="px-2 py-0.5 rounded-lg text-[10px] font-semibold border border-border dark:border-[#2E2925] bg-white dark:bg-[#151311] hover:border-[#D4AF37] dark:hover:border-[#D4AF37] text-secondary dark:text-white/70 hover:text-primary transition-colors"
+                  >
+                    {presetSize}
+                  </button>
+                ))}
               </div>
             </div>
+          </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-5">
             <div>
@@ -1061,11 +1060,10 @@ export default function AddProductForm() {
                           type="button"
                           disabled={isAdded}
                           onClick={() => addColorPreset(preset)}
-                          className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-medium border transition-all ${
-                            isAdded
+                          className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-medium border transition-all ${isAdded
                               ? 'opacity-40 cursor-not-allowed bg-cream/40 dark:bg-white/5 border-border dark:border-[#2E2925] text-secondary dark:text-white/40'
                               : 'bg-white dark:bg-[#151311] border-border dark:border-[#2E2925] hover:border-[#D4AF37] dark:hover:border-[#D4AF37] hover:shadow-xs text-primary dark:text-white'
-                          }`}
+                            }`}
                         >
                           <span
                             className="w-3 h-3 rounded-full border border-black/20 shadow-inner"
@@ -1299,8 +1297,8 @@ export default function AddProductForm() {
                               {variantUploadLoading === variant.id
                                 ? 'Uploading...'
                                 : variant.images.length > 0
-                                ? `${variant.images.length} photo(s)`
-                                : 'Add Photos'}
+                                  ? `${variant.images.length} photo(s)`
+                                  : 'Add Photos'}
                             </span>
                             <input
                               type="file"
@@ -1373,33 +1371,30 @@ export default function AddProductForm() {
                 <button
                   type="button"
                   onClick={() => setSkuMode('auto')}
-                  className={`px-3 py-1.5 rounded-lg font-semibold transition-all ${
-                    skuMode === 'auto'
+                  className={`px-3 py-1.5 rounded-lg font-semibold transition-all ${skuMode === 'auto'
                       ? 'bg-primary dark:bg-[#D4AF37] text-white dark:text-black shadow-xs'
                       : 'text-secondary dark:text-white/60 hover:text-primary dark:hover:text-white'
-                  }`}
+                    }`}
                 >
                   Auto Standard
                 </button>
                 <button
                   type="button"
                   onClick={() => setSkuMode('series')}
-                  className={`px-3 py-1.5 rounded-lg font-semibold transition-all ${
-                    skuMode === 'series'
+                  className={`px-3 py-1.5 rounded-lg font-semibold transition-all ${skuMode === 'series'
                       ? 'bg-primary dark:bg-[#D4AF37] text-white dark:text-black shadow-xs'
                       : 'text-secondary dark:text-white/60 hover:text-primary dark:hover:text-white'
-                  }`}
+                    }`}
                 >
                   Manual Series
                 </button>
                 <button
                   type="button"
                   onClick={() => setSkuMode('manual')}
-                  className={`px-3 py-1.5 rounded-lg font-semibold transition-all ${
-                    skuMode === 'manual'
+                  className={`px-3 py-1.5 rounded-lg font-semibold transition-all ${skuMode === 'manual'
                       ? 'bg-primary dark:bg-[#D4AF37] text-white dark:text-black shadow-xs'
                       : 'text-secondary dark:text-white/60 hover:text-primary dark:hover:text-white'
-                  }`}
+                    }`}
                 >
                   Direct Custom SKU
                 </button>
@@ -1523,7 +1518,7 @@ export default function AddProductForm() {
             <p className="text-xs text-secondary dark:text-white/70 mb-3">
               Master Model SKU: <span className="font-mono font-bold text-primary dark:text-[#D4AF37]">{effectiveSku || 'PENDING'}</span> • Unique Unit SKUs for each of the {previewSerials.length} physical units:
             </p>
-            
+
             <div className="grid gap-2 text-xs text-primary sm:grid-cols-2">
               {(showAllSerials ? previewSerials : previewSerials.slice(0, 4)).map((serial, idx) => (
                 <div key={serial} className="flex items-center justify-between bg-white dark:bg-[#100E0D] px-3 py-2 rounded-xl border border-border dark:border-[#2E2925] font-mono text-[11px] shadow-sm text-primary dark:text-white">
@@ -1693,11 +1688,10 @@ export default function AddProductForm() {
                         key={col.id}
                         type="button"
                         onClick={() => setSelectedLabelCollection(col.id)}
-                        className={`px-2.5 py-1 rounded-lg text-xs font-semibold whitespace-nowrap transition-all flex items-center gap-1.5 ${
-                          selectedLabelCollection === col.id
+                        className={`px-2.5 py-1 rounded-lg text-xs font-semibold whitespace-nowrap transition-all flex items-center gap-1.5 ${selectedLabelCollection === col.id
                             ? 'shadow-xs font-bold ring-2 ring-[#D4AF37]'
                             : 'opacity-70 hover:opacity-100'
-                        }`}
+                          }`}
                         style={{
                           backgroundColor: col.background,
                           color: col.primaryText,
@@ -1747,11 +1741,10 @@ export default function AddProductForm() {
                   <button
                     type="button"
                     onClick={() => setSelectedBatchVariantIndex('all')}
-                    className={`px-3 py-1 rounded-lg text-xs font-semibold transition-all shrink-0 ${
-                      selectedBatchVariantIndex === 'all'
+                    className={`px-3 py-1 rounded-lg text-xs font-semibold transition-all shrink-0 ${selectedBatchVariantIndex === 'all'
                         ? 'bg-primary dark:bg-[#D4AF37] text-white dark:text-black shadow-xs font-bold'
                         : 'bg-white dark:bg-[#1A1816] text-secondary dark:text-white/70 border border-border dark:border-[#2E2925]'
-                    }`}
+                      }`}
                   >
                     All Colors ({generatedSerials.length})
                   </button>
@@ -1760,11 +1753,10 @@ export default function AddProductForm() {
                       key={bp.id}
                       type="button"
                       onClick={() => setSelectedBatchVariantIndex(bIdx)}
-                      className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-lg text-xs font-semibold transition-all border shrink-0 ${
-                        selectedBatchVariantIndex === bIdx
+                      className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-lg text-xs font-semibold transition-all border shrink-0 ${selectedBatchVariantIndex === bIdx
                           ? 'bg-primary dark:bg-[#D4AF37] text-white dark:text-black border-transparent shadow-xs font-bold'
                           : 'bg-white dark:bg-[#1A1816] text-secondary dark:text-white/70 border-border dark:border-[#2E2925] hover:border-[#D4AF37]'
-                      }`}
+                        }`}
                     >
                       {bp.colorHex && (
                         <span
@@ -1785,9 +1777,9 @@ export default function AddProductForm() {
                     (selectedBatchVariantIndex === 'all'
                       ? batchCreatedProducts.flatMap(bp => bp.serials.map(s => ({ ...bp, serial: s })))
                       : (batchCreatedProducts[selectedBatchVariantIndex]?.serials || []).map(s => ({
-                          ...batchCreatedProducts[selectedBatchVariantIndex],
-                          serial: s,
-                        }))
+                        ...batchCreatedProducts[selectedBatchVariantIndex],
+                        serial: s,
+                      }))
                     ).map((item) => (
                       <ProductPackagingLabel
                         key={item.serial}

@@ -67,7 +67,7 @@ export default function CustomerStoriesSection() {
             <div className="pt-2">
               <p className="text-xs sm:text-sm font-mono tracking-wider text-secondary dark:text-white/60 uppercase">
                 <span className="font-semibold text-primary dark:text-white">{author}</span>
-                <span className="mx-2 text-[#C6A96B]">✦</span>
+               
                 <span>{roleOrTag}</span>
               </p>
             </div>

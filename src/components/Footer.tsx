@@ -110,7 +110,7 @@ export default function Footer() {
               }}
               className="text-xs text-[#C6A96B] hover:text-[#0B5F61] dark:hover:text-[#E5C158] font-medium tracking-wider flex items-center gap-1.5 transition-colors cursor-pointer"
             >
-              <span>✦</span> Replay Brand Intro
+            
             </button>
             <p className="tracking-widest font-mono text-[11px]">
               &copy; {new Date().getFullYear()} JORIQUE

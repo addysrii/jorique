@@ -15,6 +15,7 @@ import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import { Link } from 'react-router-dom';
 import SEO from '../components/SEO';
+import ExploreByCategorySection from '../components/home/ExploreByCategorySection';
 
 export default function About() {
   const aboutStructuredData = {
@@ -233,9 +234,7 @@ export default function About() {
             >
               <div className="relative rounded-3xl p-6 sm:p-8 bg-gradient-to-b from-[#F7F2E7] to-[#EDE5D5] dark:from-[#1E1B18] dark:to-[#141210] border border-[#C6A96B]/30 shadow-xl overflow-hidden text-center">
                 {/* Background filigree star */}
-                <div className="absolute -top-6 -right-6 text-[#C6A96B]/15 text-8xl font-serif pointer-events-none select-none">
-                  ✦
-                </div>
+
 
                 <div className="relative z-10 space-y-6">
                   <div className="w-28 h-28 mx-auto flex items-center justify-center rounded-full bg-white/70 dark:bg-white/5 border border-[#C6A96B]/30 shadow-inner">
@@ -431,72 +430,19 @@ export default function About() {
       {/* ═══════════════════════════════════════════════════════════════
           SIGNATURE CATEGORY SHOWCASE: Visual Explore
           ═══════════════════════════════════════════════════════════════ */}
-      <section className="py-20 lg:py-28 px-6">
-        <div className="max-w-6xl mx-auto space-y-12">
-          <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 border-b border-[#E8E1D5] dark:border-[#2E2925] pb-6">
-            <div>
-              <span className="text-[11px] font-bold uppercase tracking-[0.3em] text-[#0B5F61] dark:text-[#D4AF37]">
-                The Portfolio
-              </span>
-              <h2 className="font-serif text-2xl sm:text-4xl font-normal text-[#1A1816] dark:text-white mt-1">
-                Explore The Collections
-              </h2>
-            </div>
-            <Link to="/shop" className="group inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-widest text-[#0B5F61] dark:text-[#D4AF37]">
-              <span>View Entire Catalogue</span>
-              <ArrowRight size={14} className="group-hover:translate-x-1 transition-transform" />
-            </Link>
-          </div>
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            {categories.map((cat, idx) => (
-              <Link
-                key={idx}
-                to={cat.link}
-                className="group relative rounded-3xl p-6 bg-white/70 dark:bg-white/5 border border-[#E8E1D5] dark:border-[#2E2925] hover:border-[#C6A96B] transition-all duration-300 flex flex-col items-center text-center shadow-xs hover:shadow-lg"
-              >
-                {/* <span className="absolute top-4 left-4 text-[9px] font-mono tracking-widest uppercase text-[#8A8177] dark:text-white/40">
-                  {cat.tag}
-                </span> */}
-
-                <div className="w-full h-44 sm:h-48 my-4 flex items-center justify-center overflow-hidden">
-                  <img
-                    src={cat.image}
-                    alt={cat.title}
-                    className="max-h-full max-w-full object-contain group-hover:scale-108 transition-transform duration-500 pointer-events-none select-none drop-shadow-sm"
-                  />
-                </div>
-
-                <div className="space-y-1 w-full pt-2 border-t border-[#E8E1D5]/70 dark:border-[#2E2925]/70">
-                  <h3 className="font-serif text-base text-[#1A1816] dark:text-white group-hover:text-[#0B5F61] dark:group-hover:text-[#D4AF37] transition-colors">
-                    {cat.title}
-                  </h3>
-                  {/* <p className="text-[11px] text-[#7A7168] dark:text-white/60 font-light">
-                    {cat.subtitle}
-                  </p> */}
-                </div>
-              </Link>
-            ))}
-          </div>
-        </div>
-      </section>
+      <ExploreByCategorySection />
 
       {/* ═══════════════════════════════════════════════════════════════
           GRAND ATELIER BANNER & CLOSING CALL TO ACTION
           ═══════════════════════════════════════════════════════════════ */}
       <section className="py-24 px-6 text-center border-t border-[#E8E1D5] dark:border-[#2E2925] bg-gradient-to-b from-[#FBF8F2] via-[#F6F0E4] to-[#EFE7D8] dark:from-[#100E0D] dark:via-[#161311] dark:to-[#1C1815] relative overflow-hidden">
         {/* Subtle decorative corner stars */}
-        <div className="absolute top-8 left-8 text-[#C6A96B] text-xl opacity-30 font-serif pointer-events-none select-none">
-          ✦
-        </div>
-        <div className="absolute bottom-8 right-8 text-[#C6A96B] text-xl opacity-30 font-serif pointer-events-none select-none">
-          ✦
-        </div>
+
 
         <div className="max-w-2xl mx-auto space-y-6 relative z-10">
-          
 
-          <h2 className="font-serif text-3xl sm:text-5xl font-light text-[#1A1816] dark:text-white tracking-wide">
+
+          <h2 className="font-mainlogo text-3xl sm:text-5xl font-light text-[#1A1816] dark:text-white tracking-wide">
             Experience JORIQUE
           </h2>
 

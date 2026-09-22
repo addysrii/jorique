@@ -418,14 +418,27 @@ Thank you!`;
       <Navbar />
 
       {/* ─────────────────────────────────────────────────────────────
-          01. HERO SECTION (Exact Match to User HTML/CSS Specification)
+          01. HERO SECTION (Full Banner with Text on White Side)
       ───────────────────────────────────────────────────────────── */}
-      <header className="relative pt-28 lg:pt-32 pb-4 sm:pb-6 overflow-hidden border-b border-[#e6dccb] dark:border-[#2e261f] bg-[linear-gradient(100deg,#faf6ee_0%,#f3eadb_55%,#e9dcc6_100%)] dark:bg-[linear-gradient(100deg,#181411_0%,#1c1713_55%,#15120f_100%)]">
-        <div className="max-w-[1240px] mx-auto px-5 sm:px-8">
-          <div className="grid grid-cols-1 lg:grid-cols-[1.02fr_1fr] gap-6 lg:gap-8 items-center pt-8 sm:pt-10 lg:pt-14 pb-9">
+      <header className="relative pt-28 lg:pt-32 pb-4 sm:pb-6 overflow-hidden border-b border-[#e6dccb] dark:border-[#2e261f] bg-[#FAF6F0] dark:bg-[#14100D]">
+        {/* Background Banner Image: Aligned to the right, showing the luxury gift sets with seamless ivory on the left */}
+        <div className="absolute inset-0 z-0 pointer-events-none select-none overflow-hidden">
+          <img
+            src="/images/smb.png"
+            alt="JORIQUE Souvenir personalized bedding and towel gift collection presentation box"
+            className="w-full h-full object-cover object-right"
+          />
+          {/* Subtle gradient feather to ensure flawless blending across text on smaller viewports */}
+          <div className="absolute inset-0 bg-gradient-to-r from-[#FAF6F0] via-[#FAF6F0]/95 sm:via-[#FAF6F0]/80 md:via-[#FAF6F0]/50 to-transparent lg:w-[58%] dark:hidden" />
+          {/* Dark mode overlay so text remains crisp and legible */}
+          <div className="hidden dark:block absolute inset-0 bg-gradient-to-r from-[#14100D] via-[#14100D]/95 sm:via-[#14100D]/85 to-[#14100D]/30" />
+        </div>
 
-            {/* Left Content */}
-            <div>
+        <div className="w-full max-w-[1440px] mx-auto px-5 sm:px-8 lg:px-12 xl:px-16 relative z-10">
+          <div className="grid grid-cols-1 lg:grid-cols-[1fr_1.15fr] gap-6 lg:gap-12 items-center pt-8 sm:pt-10 lg:pt-14 pb-9">
+
+            {/* Left Content: Shifted to the left on the white/ivory side of the image */}
+            <div className="max-w-[460px] lg:max-w-[480px] lg:mr-auto">
               <p className="font-['Jost',sans-serif] text-[12px] tracking-[0.16em] uppercase text-[#a67c45] font-medium">
                 Personalized bedding &amp; towel gift collection
               </p>
@@ -441,7 +454,7 @@ Thank you!`;
               <p className="max-w-[430px] text-[#5f574c] dark:text-[#c4b9a8] mt-[14px] text-[15px] sm:text-[16px] font-['Jost',sans-serif] leading-[1.55]">
                 Thoughtfully crafted bedding and towel gifting sets for weddings, corporate gifting, festive celebrations and meaningful moments.
               </p>
-              <div className="inline-block mt-[24px] bg-[rgba(255,253,249,0.85)] dark:bg-[#201a15] border border-[#e6dccb] dark:border-[#3a3227] rounded-[6px] px-[20px] py-[12px]">
+              <div className="inline-block mt-[24px] bg-[rgba(255,253,249,0.85)] dark:bg-[#201a15]/90 border border-[#e6dccb] dark:border-[#3a3227] rounded-[6px] px-[20px] py-[12px] backdrop-blur-xs">
                 <b className="block text-[14px] sm:text-[15px] tracking-[0.06em] text-[#231f1a] dark:text-white font-['Jost',sans-serif] font-semibold">
                   BULK ORDERS · MINIMUM 25 PIECES
                 </b>
@@ -460,13 +473,21 @@ Thank you!`;
               </div>
             </div>
 
-            {/* Right Hero Art / Image Showcase */}
-            <div className="w-full flex items-center justify-center p-1 sm:p-2">
-              <img
-                src="/images/costume pack.jpg"
-                alt="JORIQUE Souvenir personalized bedding and towel gift collection presentation box"
-                className="w-full max-h-[440px] object-contain rounded-md"
-              />
+            {/* Right Hero Spacer on desktop (allows background gift box to shine through) & Mobile Image */}
+            <div className="w-full">
+              {/* Desktop: Spacer to let the background hero banner be fully visible */}
+              <div className="hidden lg:block min-h-[460px] pointer-events-none" />
+
+              {/* Mobile / Tablet: Image container for smaller screens */}
+              <div className="block lg:hidden pt-4">
+                <div className="rounded-2xl overflow-hidden border border-[#e6dccb] dark:border-[#2e261f] shadow-md bg-white dark:bg-[#1A1816]">
+                  <img
+                    src="/images/souvenir-hero-banner.png"
+                    alt="JORIQUE Souvenir personalized bedding and towel gift collection presentation box"
+                    className="w-full h-auto object-cover object-right"
+                  />
+                </div>
+              </div>
             </div>
 
           </div>

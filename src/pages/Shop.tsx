@@ -324,7 +324,7 @@ export default function Shop() {
         {/* Dynamic Parallax Atmospheric Header */}
         <div className="relative overflow-hidden bg-transparent text-primary dark:text-white py-10 lg:py-14 px-6 transition-colors duration-300">
           <div className="absolute inset-0 opacity-15 dark:opacity-20 pointer-events-none bg-[radial-gradient(#8D867F_1px,transparent_1px)] [background-size:24px_24px]" />
-          
+
           {/* Subtle Ambient Radial Glow tailored to collection */}
           <div
             className="absolute -top-24 -right-24 w-96 h-96 rounded-full blur-3xl pointer-events-none opacity-30 transition-all duration-700"
@@ -369,8 +369,8 @@ export default function Shop() {
                 {currentCollectionTheme
                   ? currentCollectionTheme.name
                   : selectedCategory !== 'All'
-                  ? `${selectedCategory} Collection`
-                  : 'All Collections'}
+                    ? `${selectedCategory} Collection`
+                    : 'All Collections'}
               </h1>
 
               <p className="text-secondary dark:text-white/70 text-sm sm:text-base font-light mt-3 leading-relaxed max-w-2xl">
@@ -409,11 +409,10 @@ export default function Shop() {
               <button
                 id="collection-filter-all"
                 onClick={() => handleCollectionChange('all')}
-                className={`relative px-4 py-2 rounded-full text-xs font-bold uppercase tracking-wider transition-all duration-200 shrink-0 border ${
-                  selectedCollection === 'all'
+                className={`relative px-4 py-2 rounded-full text-xs font-bold uppercase tracking-wider transition-all duration-200 shrink-0 border ${selectedCollection === 'all'
                     ? 'border-primary bg-primary text-white dark:bg-[#D4AF37] dark:text-black shadow-md'
                     : 'border-border dark:border-[#2E2925] bg-white/70 dark:bg-white/5 text-secondary dark:text-white/70 hover:border-primary/40 hover:text-primary dark:hover:text-white'
-                }`}
+                  }`}
               >
                 <span>All Collections</span>
                 <span className="ml-1.5 text-[10px] opacity-75">({products.length})</span>
@@ -429,11 +428,10 @@ export default function Shop() {
                     key={col.id}
                     id={`collection-filter-${col.id}`}
                     onClick={() => handleCollectionChange(col.id)}
-                    className={`relative flex items-center gap-2 px-4 py-2 rounded-full text-xs font-bold uppercase tracking-wider transition-all duration-200 shrink-0 border ${
-                      isActive
+                    className={`relative flex items-center gap-2 px-4 py-2 rounded-full text-xs font-bold uppercase tracking-wider transition-all duration-200 shrink-0 border ${isActive
                         ? 'border-transparent text-white shadow-md'
                         : 'border-border dark:border-[#2E2925] bg-white/70 dark:bg-white/5 text-secondary dark:text-white/70 hover:border-primary/40 hover:text-primary dark:hover:text-white'
-                    }`}
+                      }`}
                     style={{
                       backgroundColor: isActive ? col.accent : undefined,
                       borderColor: isActive ? col.accent : undefined,
@@ -483,19 +481,17 @@ export default function Shop() {
                     key={cat}
                     id={`category-filter-${cat.toLowerCase().replace(/\s+/g, '-')}`}
                     onClick={() => handleCategoryChange(cat)}
-                    className={`relative inline-flex items-center gap-1.5 px-4 py-2 rounded-2xl text-xs font-semibold uppercase tracking-wider transition-all duration-200 shrink-0 border ${
-                      isActive
+                    className={`relative inline-flex items-center gap-1.5 px-4 py-2 rounded-2xl text-xs font-semibold uppercase tracking-wider transition-all duration-200 shrink-0 border ${isActive
                         ? 'border-[#0B5F61] dark:border-[#D4AF37] bg-[#0B5F61] text-white dark:bg-[#D4AF37] dark:text-black shadow-sm font-bold'
                         : 'border-border/70 dark:border-[#2E2925] bg-cream/40 dark:bg-white/5 text-secondary dark:text-white/70 hover:border-primary/40 hover:text-primary dark:hover:text-white'
-                    }`}
+                      }`}
                   >
                     <span>{cat === 'All' ? 'All Categories' : cat}</span>
                     <span
-                      className={`text-[10px] px-1.5 py-0.5 rounded-full ${
-                        isActive
+                      className={`text-[10px] px-1.5 py-0.5 rounded-full ${isActive
                           ? 'bg-white/20 text-white dark:bg-black/15 dark:text-black'
                           : 'bg-black/5 dark:bg-white/10 text-secondary dark:text-white/60'
-                      }`}
+                        }`}
                     >
                       {count}
                     </span>
@@ -542,11 +538,10 @@ export default function Shop() {
                       key={badge}
                       id={`badge-filter-${badge.toLowerCase().replace(/\s+/g, '-')}`}
                       onClick={() => handleBadgeToggle(badge)}
-                      className={`relative inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-[11px] font-bold tracking-[0.08em] transition-all duration-200 border ${
-                        isActive
+                      className={`relative inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-[11px] font-bold tracking-[0.08em] transition-all duration-200 border ${isActive
                           ? 'border-transparent text-white dark:text-[#100E0D] shadow-md shadow-[#0B5F61]/20 dark:shadow-[#D4AF37]/20'
                           : 'border-[#E0D8CE] dark:border-white/10 bg-white/60 dark:bg-white/5 text-[#5C5248] dark:text-white/60 hover:border-[#0B5F61]/40 hover:text-[#0B5F61] dark:hover:text-[#D4AF37]'
-                      }`}
+                        }`}
                     >
                       {isActive && (
                         <motion.div
@@ -555,13 +550,7 @@ export default function Shop() {
                           transition={{ type: 'spring', stiffness: 420, damping: 32 }}
                         />
                       )}
-                      <span
-                        className={`relative z-10 text-[9px] ${
-                          isActive ? 'opacity-100' : 'opacity-40'
-                        }`}
-                      >
-                        ✦
-                      </span>
+
                       <span className="relative z-10 uppercase">{badge}</span>
                       {isActive && (
                         <span className="relative z-10 text-[10px] opacity-70">✕</span>
@@ -596,11 +585,10 @@ export default function Shop() {
                   <button
                     key={badge}
                     onClick={() => handleBadgeToggle(badge)}
-                    className={`inline-flex items-center gap-1.5 px-4 py-2 text-xs font-bold uppercase tracking-wider rounded-xl transition-all duration-200 ${
-                      selectedBadge === badge
+                    className={`inline-flex items-center gap-1.5 px-4 py-2 text-xs font-bold uppercase tracking-wider rounded-xl transition-all duration-200 ${selectedBadge === badge
                         ? 'bg-gradient-to-r from-[#0B5F61] to-[#0E7A7D] dark:from-[#D4AF37] dark:to-[#C09A30] text-white dark:text-black shadow-md'
                         : 'bg-white/60 dark:bg-white/5 text-[#0B5F61] dark:text-[#D4AF37]/80 border border-[#E0D8CE] dark:border-white/10 hover:border-[#0B5F61]/40'
-                    }`}
+                      }`}
                   >
                     {badge}
                   </button>

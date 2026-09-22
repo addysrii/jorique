@@ -43,11 +43,12 @@ export default function ProductPackagingLabel({
     maximumFractionDigits: 2,
   });
 
+  
   const cleanBadge = (badge || '').replace(/[★*✦•]/g, '').trim();
 
   const scanUrl = `${typeof window !== 'undefined' && window.location.origin
-      ? window.location.origin
-      : 'https://jorique.in'
+    ? window.location.origin
+    : 'https://jorique.in'
     }/scan?serial=${encodeURIComponent(unitSku)}`;
 
   return (

@@ -168,7 +168,7 @@ export default function FlagshipCollectionsHero() {
             <div className="relative z-10 p-6 sm:p-8 lg:p-10 pointer-events-none">
               <div className="flex items-center justify-between text-[10px] font-mono tracking-[0.2em] uppercase text-white/70">
                 {/* <span className="opacity-70">0{idx + 1}</span>
-                <span className="opacity-70">✦</span> */}
+                */}
               </div>
             </div>
 

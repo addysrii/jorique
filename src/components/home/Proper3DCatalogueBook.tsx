@@ -317,7 +317,7 @@ export default function Proper3DCatalogueBook() {
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[900px] h-[550px] bg-radial from-[#C6A96B]/12 via-transparent to-transparent blur-3xl pointer-events-none" />
 
       <div className="max-w-[1300px] mx-auto space-y-10 sm:space-y-14 relative z-10">
-        
+
         {/* Section Title Header */}
         <div className="text-center max-w-2xl mx-auto space-y-3">
           <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/80 dark:bg-white/5 border border-[#C6A96B]/30 text-[#0B5F61] dark:text-[#D4AF37] text-[10px] sm:text-[11px] font-mono tracking-[0.3em] uppercase shadow-xs">
@@ -338,13 +338,13 @@ export default function Proper3DCatalogueBook() {
             THE REALISTIC 3D PHYSICAL BOOK STAGE
         ───────────────────────────────────────────────────────────── */}
         <div className="relative max-w-5xl mx-auto select-none" style={{ perspective: '2200px' }}>
-          
+
           {/* Stacked Paper Edge Shadows (Multi-sheet book depth effect) */}
           <div className="absolute -inset-2.5 sm:-inset-4 rounded-[32px] sm:rounded-[40px] bg-[#E3DDD1] dark:bg-[#15110E] shadow-[0_35px_80px_-15px_rgba(0,0,0,0.45)] dark:shadow-[0_40px_90px_-20px_rgba(0,0,0,0.85)] border border-[#D5CCC0] dark:border-[#2A211B]" />
 
           {/* Hardcover Leather Bevel Frame */}
           <div className="relative rounded-[26px] sm:rounded-[34px] bg-[#EFE9DF] dark:bg-[#1A1613] p-2.5 sm:p-5 lg:p-6 border-2 border-[#D8CFC2] dark:border-[#352B24] overflow-hidden">
-            
+
             {/* Center Book Spine Stitch & Leather Crease */}
             <div className="hidden lg:block absolute inset-y-0 left-1/2 -translate-x-1/2 w-12 pointer-events-none z-40">
               {/* Deep central gutter gradient */}
@@ -361,14 +361,14 @@ export default function Proper3DCatalogueBook() {
             {/* ─────────────────────────────────────────────────────────
                 TWO FACING PAGES CONTAINER (Spread View)
             ───────────────────────────────────────────────────────── */}
-            <div 
+            <div
               className="relative w-full grid grid-cols-1 lg:grid-cols-2 rounded-2xl bg-[#FCFAF7] dark:bg-[#14100E] border border-[#E5DDD0] dark:border-[#2D2520] min-h-[580px] sm:min-h-[620px] lg:min-h-[600px] overflow-hidden shadow-inner"
               style={{ transformStyle: 'preserve-3d' }}
             >
-              
+
               {/* ── LEFT FACING PAGE: PLATE VISUAL ── */}
               <div className="relative p-6 sm:p-8 lg:p-10 flex flex-col justify-between border-b lg:border-b-0 lg:border-r border-[#E8DFD3] dark:border-[#2E2925] bg-[#FCFAF7] dark:bg-[#14100E]">
-                
+
                 {/* Plate Header */}
                 <div className="flex items-center justify-between pb-3 border-b border-[#E8DFD3] dark:border-[#2E2925] text-[10px] font-mono tracking-[0.25em] uppercase text-secondary dark:text-white/50">
                   <span>JORIQUE • ARCHIVAL EDITION</span>
@@ -397,7 +397,7 @@ export default function Proper3DCatalogueBook() {
                   {/* Bottom Plate Caption Tag */}
                   <div className="absolute bottom-3 left-3 right-3 text-white text-[10px] font-mono tracking-wider uppercase drop-shadow flex items-center justify-between">
                     <span className="truncate">{spread.leftPage.motifStamp}</span>
-                    <span className="text-[#C6A96B] shrink-0">✦</span>
+
                   </div>
                 </div>
 
@@ -426,7 +426,7 @@ export default function Proper3DCatalogueBook() {
 
               {/* ── RIGHT FACING PAGE: SPECIFICATION DOSSIER ── */}
               <div className="relative p-6 sm:p-8 lg:p-10 flex flex-col justify-between bg-[#F5EDE3] dark:bg-[#161210]">
-                
+
                 {/* Right Header */}
                 <div className="flex items-center justify-between pb-3 border-b border-[#E8DFD3] dark:border-[#2E2925] text-[10px] font-mono tracking-[0.25em] uppercase text-secondary dark:text-white/50">
                   <span>ATELIER SPECIFICATION</span>
@@ -607,7 +607,7 @@ export default function Proper3DCatalogueBook() {
               CATALOGUE CONTROLS & SPREAD TRACKER
           ───────────────────────────────────────────────────────────── */}
           <div className="mt-8 flex flex-col sm:flex-row items-center justify-between gap-4 px-2">
-            
+
             {/* Audio Rustle Toggle */}
             <button
               onClick={() => setSoundEnabled(!soundEnabled)}
@@ -637,11 +637,10 @@ export default function Proper3DCatalogueBook() {
                         setIsFlipping(false);
                       }, 500);
                     }}
-                    className={`h-2 rounded-full transition-all duration-300 cursor-pointer ${
-                      idx === currentSpread
+                    className={`h-2 rounded-full transition-all duration-300 cursor-pointer ${idx === currentSpread
                         ? 'w-7 bg-[#C6A96B]'
                         : 'w-2 bg-[#E8DFD3] dark:bg-white/20 hover:bg-[#8A847D]'
-                    }`}
+                      }`}
                     title={`Go to Spread ${idx + 1}`}
                   />
                 ))}
@@ -653,11 +652,10 @@ export default function Proper3DCatalogueBook() {
               <button
                 onClick={turnPrev}
                 disabled={currentSpread === 0 || isFlipping}
-                className={`inline-flex items-center gap-2 px-5 py-2.5 rounded-full border text-xs font-semibold uppercase tracking-wider transition-all cursor-pointer ${
-                  currentSpread === 0 || isFlipping
+                className={`inline-flex items-center gap-2 px-5 py-2.5 rounded-full border text-xs font-semibold uppercase tracking-wider transition-all cursor-pointer ${currentSpread === 0 || isFlipping
                     ? 'opacity-30 cursor-not-allowed border-[#E8DFD3] dark:border-[#332922] text-secondary'
                     : 'bg-white/80 dark:bg-white/5 border-[#E8DFD3] dark:border-[#332922] hover:border-[#C6A96B] text-primary dark:text-white shadow-xs hover:shadow-md'
-                }`}
+                  }`}
               >
                 <ChevronLeft size={16} />
                 <span>Turn Left</span>
@@ -666,11 +664,10 @@ export default function Proper3DCatalogueBook() {
               <button
                 onClick={turnNext}
                 disabled={currentSpread === totalSpreads - 1 || isFlipping}
-                className={`inline-flex items-center gap-2 px-5 py-2.5 rounded-full text-xs font-semibold uppercase tracking-wider transition-all cursor-pointer ${
-                  currentSpread === totalSpreads - 1 || isFlipping
+                className={`inline-flex items-center gap-2 px-5 py-2.5 rounded-full text-xs font-semibold uppercase tracking-wider transition-all cursor-pointer ${currentSpread === totalSpreads - 1 || isFlipping
                     ? 'opacity-30 cursor-not-allowed bg-secondary/20 text-secondary'
                     : 'bg-[#1A1A1A] dark:bg-[#C6A96B] text-white dark:text-black shadow-md hover:shadow-lg'
-                }`}
+                  }`}
               >
                 <span>Turn Right</span>
                 <ChevronRight size={16} />

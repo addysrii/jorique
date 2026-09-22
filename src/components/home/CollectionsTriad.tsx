@@ -161,7 +161,7 @@ export default function CollectionsTriad() {
                 {/* Bottom Micro Tag inside photo */}
                 <div className="absolute bottom-3 left-4 right-4 flex items-center justify-between text-[9px] font-mono tracking-[0.2em] text-white/90 uppercase drop-shadow-md">
                   <span>{col.microTag}</span>
-                  <span className="text-[#C6A96B]">✦</span>
+                 
                 </div>
               </div>
 

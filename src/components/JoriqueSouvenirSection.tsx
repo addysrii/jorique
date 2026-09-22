@@ -1,11 +1,11 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { 
-  Gift, 
-  Sparkles, 
-  Heart, 
-  Flame, 
-  Package, 
+import {
+  Gift,
+  Sparkles,
+  Heart,
+  Flame,
+  Package,
   ArrowRight,
   Sparkle
 } from 'lucide-react';
@@ -38,15 +38,10 @@ export default function JoriqueSouvenirSection() {
   return (
     <section className="py-20 lg:py-28 px-4 sm:px-6 lg:px-10 bg-[#F5EDE3]/60 dark:bg-[#12100E] text-primary dark:text-[#FCFAF7] relative overflow-hidden border-t border-[#E8DFD3] dark:border-[#2E2925] transition-colors duration-500">
       {/* Delicate Filigree Accents */}
-      <div className="absolute top-8 left-8 text-[#C6A96B] text-xl opacity-30 font-serif pointer-events-none select-none">
-        ✦
-      </div>
-      <div className="absolute bottom-8 right-8 text-[#C6A96B] text-xl opacity-30 font-serif pointer-events-none select-none">
-        ✦
-      </div>
+
 
       <div className="max-w-7xl mx-auto relative z-10 space-y-12 sm:space-y-16">
-        
+
         {/* Header Block */}
         <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-8 border-b border-[#E8DFD3] dark:border-[#332922] pb-8">
           <div className="max-w-2xl space-y-3">
@@ -64,7 +59,7 @@ export default function JoriqueSouvenirSection() {
             </p>
 
             <p className="text-xs sm:text-sm text-secondary dark:text-white/75 font-light leading-relaxed max-w-xl">
-              Gift-giving is an art of intimacy and gratitude. JORIQUE Souvenir curates heirloom home textiles, 
+              Gift-giving is an art of intimacy and gratitude. JORIQUE Souvenir curates heirloom home textiles,
               monogrammed cushion pairs, and scented candle harmonies presented in collector-grade keepsake cases.
             </p>
           </div>
