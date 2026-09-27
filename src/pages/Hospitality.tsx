@@ -95,9 +95,9 @@ const PRODUCT_FAMILIES = [
     description:
       'Premium bed linen for guest rooms, suites and institutional bedrooms. Available in a wide range of sizes, fabrics, GSM / thread count, colors, constructions and finishing options.',
     specs: 'Size · Fabric · GSM / Thread Count · Construction · Color · Pattern · Finishing · Branding',
-    image: '/images/hospitality/image.png',
+    image: '/images/hospitality/bed-linen-exact.jpg',
     tag: 'GUEST ROOMS & SUITES',
-    hasEmbeddedTag: true,
+    hasEmbeddedTag: false,
     icon: Bed,
     features: [
       {
@@ -129,7 +129,7 @@ const PRODUCT_FAMILIES = [
     description:
       'Premium bath and wellness textiles for guest rooms, suites and institutional spaces. Available in a wide range of sizes, GSM, fabrics, colors, borders, embroidery and branding options.',
     specs: 'Towel size · GSM · Fabric · Color · Border / Design · Embroidery · Branding',
-    image: '/images/hospitality/image copy.png',
+    image: '/images/hospitality/bath-linen-exact.jpg',
     tag: 'BATH & WELLNESS',
     hasEmbeddedTag: false,
     icon: Bath,
@@ -622,7 +622,7 @@ Thank you.`;
                   }`}
               >
                 {/* Image Area */}
-                <div className="relative w-full aspect-[5/6] overflow-hidden bg-[#FAF7F2] dark:bg-black/20">
+                <div className="relative w-full aspect-[4/3] overflow-hidden bg-[#FAF7F2] dark:bg-black/20">
                   <img
                     src={fam.image}
                     alt={fam.title}
