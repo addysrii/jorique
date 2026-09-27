@@ -24,6 +24,8 @@ import {
   Eye,
   RefreshCw,
   Leaf,
+  Shield,
+  SlidersHorizontal,
   Send,
   ExternalLink,
 } from 'lucide-react';
@@ -41,51 +43,118 @@ const BUSINESS_TYPES = [
   'Other',
 ];
 
+// Custom Feature Icons matching spec mockup line-art
+const LeafFeatureIcon = ({ className = 'w-6 h-6 sm:w-7 sm:h-7' }: { className?: string }) => (
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" className={className}>
+    <path d="M3 21.5c1-3.5 2.5-6.5 6-9 4-3 9.5-4 13-3.5-.5 3.5-1.5 9-5.5 12.5-3.5 3-7 4-10 4.5l-3.5-4.5z" />
+    <path d="M4.5 20L15.5 8.5" />
+  </svg>
+);
+
+const ShieldFeatureIcon = ({ className = 'w-6 h-6 sm:w-7 sm:h-7' }: { className?: string }) => (
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" className={className}>
+    <path d="M12 2.5C7.5 4.5 4 4 4 4v7c0 5.5 3.5 10 8 11.5 4.5-1.5 8-6 8-11.5V4s-3.5.5-8-1.5z" />
+  </svg>
+);
+
+const SlidersFeatureIcon = ({ className = 'w-6 h-6 sm:w-7 sm:h-7' }: { className?: string }) => (
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" className={className}>
+    <line x1="2" y1="5.5" x2="9" y2="5.5" />
+    <circle cx="12" cy="5.5" r="2.5" />
+    <line x1="15" y1="5.5" x2="22" y2="5.5" />
+    <line x1="2" y1="12" x2="16" y2="12" />
+    <circle cx="19" cy="12" r="2.5" />
+    <line x1="2" y1="18.5" x2="9" y2="18.5" />
+    <circle cx="12" cy="18.5" r="2.5" />
+    <line x1="15" y1="18.5" x2="22" y2="18.5" />
+  </svg>
+);
+
+const HotelFeatureIcon = ({ className = 'w-6 h-6 sm:w-7 sm:h-7' }: { className?: string }) => (
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" className={className}>
+    <line x1="2" y1="21.5" x2="22" y2="21.5" />
+    <path d="M5 6.5h11" />
+    <rect x="7" y="3" width="7" height="3.5" rx="0.5" />
+    <path d="M5 6.5v15" />
+    <path d="M16 6.5v15" />
+    <path d="M16 10h4a1 1 0 0 1 1 1v10.5" />
+    <circle cx="8.5" cy="10.5" r="0.75" fill="currentColor" />
+    <circle cx="12.5" cy="10.5" r="0.75" fill="currentColor" />
+    <circle cx="8.5" cy="15" r="0.75" fill="currentColor" />
+    <circle cx="12.5" cy="15" r="0.75" fill="currentColor" />
+    <path d="M9.5 21.5v-3.5a1 1 0 0 1 1-1h1a1 1 0 0 1 1 1v3.5" />
+  </svg>
+);
+
 // Product Families (matching Page 3 of Spec)
 const PRODUCT_FAMILIES = [
   {
     id: 'bed-linen',
-    title: 'BED LINEN',
-    subitems: 'Bedsheets · Pillow Covers · Duvet Covers',
+    title: 'Bed Linen',
+    subitems: 'BEDSHEETS · PILLOW COVERS · DUVET COVERS',
     description:
-      'For guest rooms, suites and institutional bedrooms. Collect required size, fabric, GSM / thread count, color, construction and finishing.',
+      'Premium bed linen for guest rooms, suites and institutional bedrooms. Available in a wide range of sizes, fabrics, GSM / thread count, colors, constructions and finishing options.',
     specs: 'Size · Fabric · GSM / Thread Count · Construction · Color · Pattern · Finishing · Branding',
-    image: '/images/hospitality/bed-linen.jpeg',
-    tag: 'Guest Rooms & Suites',
+    image: '/images/hospitality/image.png',
+    tag: 'GUEST ROOMS & SUITES',
+    hasEmbeddedTag: true,
     icon: Bed,
+    features: [
+      {
+        icon: LeafFeatureIcon,
+        line1: 'Premium',
+        line2: 'Quality Fabrics',
+      },
+      {
+        icon: ShieldFeatureIcon,
+        line1: 'Contract',
+        line2: 'Grade',
+      },
+      {
+        icon: SlidersFeatureIcon,
+        line1: 'Fully',
+        line2: 'Customizable',
+      },
+      {
+        icon: HotelFeatureIcon,
+        line1: 'For Hotels,',
+        line2: 'Resorts & Institutions',
+      },
+    ],
   },
   {
     id: 'bath-linen',
-    title: 'BATH LINEN',
-    subitems: 'Bath Towels · Hand Towels · Face Towels · Bathrobes · Bath Mats',
+    title: 'Bath Linen',
+    subitems: 'BATH TOWELS · HAND TOWELS · FACE TOWELS · BATHROBES · BATH MATS',
     description:
-      'Collect towel size, GSM, fabric, color, border / design, embroidery and branding requirements.',
+      'Premium bath and wellness textiles for guest rooms, suites and institutional spaces. Available in a wide range of sizes, GSM, fabrics, colors, borders, embroidery and branding options.',
     specs: 'Towel size · GSM · Fabric · Color · Border / Design · Embroidery · Branding',
-    image: '/images/hospitality/bath-linen.jpeg',
-    tag: 'Bath & Wellness',
+    image: '/images/hospitality/image copy.png',
+    tag: 'BATH & WELLNESS',
+    hasEmbeddedTag: false,
     icon: Bath,
-  },
-  {
-    id: 'room-textiles',
-    title: 'ROOM TEXTILES',
-    subitems: 'Bed Runners · Cushion Covers · Floor Runners · Rugs · Shower Curtains',
-    description:
-      'Collect dimensions, fabric / material, color, pattern, construction and finishing requirements.',
-    specs: 'Dimensions · Material · Color · Pattern · Construction · Finishing',
-    image: '/images/hospitality/room-textiles.png',
-    tag: 'Aesthetic Accent',
-    icon: Palette,
-  },
-  {
-    id: 'bedding-sleep',
-    title: 'BEDDING & SLEEP',
-    subitems: 'Duvets · Quilts · Pillows · Cushions · Mattresses',
-    description:
-      'Collect dimensions, fill, weight, construction, fabric, firmness and other property-specific requirements.',
-    specs: 'Duvet / Quilt fill · Weight · Dimensions · Fabric · Construction · Mattress & Pillow specs',
-    image: '/images/hospitality/bed-linen.jpeg',
-    tag: 'Comfort Core',
-    icon: Layers,
+    features: [
+      {
+        icon: LeafFeatureIcon,
+        line1: '100% Combed',
+        line2: 'Long-Staple Cotton',
+      },
+      {
+        icon: ShieldFeatureIcon,
+        line1: 'Commercial',
+        line2: 'Wash Durability',
+      },
+      {
+        icon: SlidersFeatureIcon,
+        line1: 'Bespoke GSM',
+        line2: '& Custom Borders',
+      },
+      {
+        icon: HotelFeatureIcon,
+        line1: 'For Luxury Spas,',
+        line2: 'Hotels & Resorts',
+      },
+    ],
   },
 ];
 
@@ -103,14 +172,8 @@ const SPECIFICATIONS = [
     family: 'Bedding',
     details: 'Duvet / Quilt fill · Weight · Dimensions · Fabric · Construction · Pillow / Cushion specification',
   },
-  {
-    family: 'Mattresses',
-    details: 'Size · Construction · Foam / spring preference · Firmness · Fabric / FR requirement · Quantity',
-  },
-  {
-    family: 'Room Textiles',
-    details: 'Dimensions · Material · Color · Pattern · Construction · Finishing',
-  },
+
+
 ];
 
 // Customization options (matching Page 4 & 5 of Spec)
@@ -195,10 +258,11 @@ export default function Hospitality() {
   };
 
   const handleSelectProductFamily = (familyName: string) => {
-    const cleanName = familyName === 'BED LINEN' ? 'Bed Linen' :
-      familyName === 'BATH LINEN' ? 'Bath Linen' :
-        familyName === 'ROOM TEXTILES' ? 'Room Textiles' :
-          familyName === 'BEDDING & SLEEP' ? 'Bedding & Sleep' : familyName;
+    const cleanName =
+      familyName.toLowerCase().includes('bed') ? 'Bed Linen' :
+        familyName.toLowerCase().includes('bath') ? 'Bath Linen' :
+          familyName.toLowerCase().includes('room') ? 'Room Textiles' :
+            familyName.toLowerCase().includes('bedding') ? 'Bedding & Sleep' : familyName;
 
     if (!formData.productsRequired.includes(cleanName)) {
       setFormData((prev) => ({
@@ -524,60 +588,12 @@ Thank you.`;
           FLAGSHIP PACKAGING & INSTITUTIONAL PRESENTATION SHOWCASE
           (Featuring user's newly added image from Page 2 of Spec)
       ───────────────────────────────────────────────────────────── */}
-      <section className="py-14 sm:py-20 px-5 sm:px-8 max-w-[1240px] mx-auto">
-        <div className="rounded-3xl overflow-hidden border border-[#E8DFD3] dark:border-[#332922] bg-white dark:bg-[#181412] shadow-xl p-6 sm:p-10 lg:p-12 grid grid-cols-1 lg:grid-cols-[1.1fr_0.9fr] gap-8 lg:gap-12 items-center">
 
-          <div className="relative rounded-2xl overflow-hidden border border-[#E8DFD3] dark:border-[#332922] shadow-md group">
-            <img
-              src="/images/hospitality/main1.jpeg"
-              alt="JORIQUE Hospitality Bespoke Packaged Bedding with Custom Inlay Presentation"
-              className="w-full h-auto object-cover group-hover:scale-103 transition-transform duration-700"
-            />
-          </div>
-
-          <div className="space-y-5">
-            <div className="space-y-2">
-              <span className="text-[11px] font-mono tracking-[0.22em] uppercase text-[#8A6230] dark:text-[#C6A96B] font-bold block">
-                Above The Fold · Packaging &amp; Presentation
-              </span>
-              <h2 className="font-['Cormorant_Garamond',Georgia,serif] text-3xl sm:text-4xl font-normal text-[#1A1A1A] dark:text-white leading-snug">
-                Bespoke institutional packaging with complete brand customization.
-              </h2>
-            </div>
-
-            <p className="text-xs sm:text-sm text-[#5C554F] dark:text-white/75 font-light leading-relaxed">
-              Every bulk order can be prepared with customized insert cards, property crest monogramming, barcode inventory tagging, and premium zippered luggage presentation packs tailored for commercial receiving and luxury room turnover.
-            </p>
-
-            <div className="grid grid-cols-2 gap-3 pt-2">
-              <div className="p-3 rounded-xl bg-[#FAF7F2] dark:bg-white/5 border border-[#E8DFD3] dark:border-[#332922]">
-                <span className="block font-semibold text-xs text-[#1A1A1A] dark:text-white">Property Monogramming</span>
-                <span className="block text-[11px] text-[#786E65] dark:text-white/60 font-light mt-0.5">Custom crest &amp; logo embroidery</span>
-              </div>
-              <div className="p-3 rounded-xl bg-[#FAF7F2] dark:bg-white/5 border border-[#E8DFD3] dark:border-[#332922]">
-                <span className="block font-semibold text-xs text-[#1A1A1A] dark:text-white">Inventory Control</span>
-                <span className="block text-[11px] text-[#786E65] dark:text-white/60 font-light mt-0.5">Room &amp; unit carton labeling</span>
-              </div>
-            </div>
-
-            <div className="pt-2">
-              <a
-                href="#enquiry-form"
-                className="inline-flex items-center gap-2 text-xs font-bold tracking-widest text-[#8A6230] dark:text-[#C6A96B] hover:text-[#1A1A1A] dark:hover:text-white uppercase transition-colors"
-              >
-                <span>Discuss Custom Branding &amp; Packaging</span>
-                <ArrowRight size={13} />
-              </a>
-            </div>
-          </div>
-
-        </div>
-      </section>
 
       {/* ─────────────────────────────────────────────────────────────
           02. PRODUCT RANGE (4 Strong Visual Families from Page 3 of Spec)
       ───────────────────────────────────────────────────────────── */}
-      <section className="py-16 lg:py-24 px-5 sm:px-8 max-w-[1240px] mx-auto space-y-12">
+      <section className="py-16 lg:py-24 px-4 sm:px-6 lg:px-8 max-w-[1300px] mx-auto space-y-12">
         <div className="max-w-2xl mx-auto text-center space-y-3">
           <span className="text-[11px] font-mono tracking-[0.25em] uppercase text-[#8A6230] dark:text-[#C6A96B] font-bold block">
             02 / PRODUCT RANGE
@@ -590,64 +606,118 @@ Thank you.`;
           </p>
         </div>
 
-        {/* 4 Cards Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+        {/* Product Cards Grid */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-8">
           {PRODUCT_FAMILIES.map((fam) => {
-            const isSelected = formData.productsRequired.includes(
-              fam.title === 'BED LINEN' ? 'Bed Linen' :
-                fam.title === 'BATH LINEN' ? 'Bath Linen' :
-                  fam.title === 'ROOM TEXTILES' ? 'Room Textiles' : 'Bedding & Sleep'
+            const isSelected = formData.productsRequired.some(
+              (p) => p.toLowerCase().includes(fam.id.split('-')[0])
             );
 
             return (
               <div
                 key={fam.id}
-                className={`bg-white dark:bg-[#1A1816] rounded-3xl border transition-all duration-300 flex flex-col group overflow-hidden shadow-sm hover:shadow-xl ${isSelected
-                  ? 'border-[#8A6230] dark:border-[#C6A96B] ring-1 ring-[#8A6230]/30'
-                  : 'border-[#E8DFD3] dark:border-[#332922] hover:border-[#8A6230]/50'
+                className={`bg-[#FAF8F2] dark:bg-[#1A1816] rounded-[28px] sm:rounded-[32px] border transition-all duration-300 flex flex-col group overflow-hidden shadow-xs hover:shadow-xl ${isSelected
+                  ? 'border-[#8E6236] dark:border-[#C6A96B] ring-1 ring-[#8E6236]/30'
+                  : 'border-[#E7DCCD] dark:border-[#332922] hover:border-[#8E6236]/50'
                   }`}
               >
-                {/* Image */}
-                <div className="relative w-full aspect-[5/4] overflow-hidden bg-[#FAF7F2] dark:bg-black/20">
+                {/* Image Area */}
+                <div className="relative w-full aspect-[5/6] overflow-hidden bg-[#FAF7F2] dark:bg-black/20">
                   <img
                     src={fam.image}
                     alt={fam.title}
-                    className="absolute inset-0 w-full h-full object-contain scale-[1.07] group-hover:scale-[1.07] transition-transform duration-700 ease-out"
+                    className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-105"
                   />
 
-                  <div className="absolute top-4 left-4 px-3 py-1 rounded-full bg-white/90 dark:bg-black/80 backdrop-blur-xs text-[10px] font-mono tracking-wider text-[#8A6230] dark:text-[#C6A96B] uppercase font-bold border border-[#E8DFD3] dark:border-white/10">
-                    {fam.tag}
+                  {/* Badge (Rendered cleanly for cards that do not have embedded image tag) */}
+
+                  <div className="absolute top-4 left-4 sm:top-5 sm:left-5 inline-flex items-center gap-2 px-3.5 sm:px-4 py-1.5 rounded-full bg-[#FAF5EE]/95 dark:bg-[#1C1814]/90 backdrop-blur-md text-[10px] sm:text-[11px] font-['Jost',sans-serif] tracking-[0.18em] uppercase font-medium text-[#6E4B30] dark:text-[#E2C799] border border-[#D5C6B5] dark:border-white/10 shadow-xs">
+                    <fam.icon className="w-3.5 h-3.5 text-[#8E6236] dark:text-[#D4A86A]" strokeWidth={2} />
+                    <span>{fam.tag}</span>
                   </div>
+
+
+                  {isSelected && (
+                    <div className="absolute top-4 right-4 sm:top-5 sm:right-5 px-3 py-1 rounded-full bg-[#8E6236] dark:bg-[#C6A96B] text-white dark:text-black text-[10px] font-bold uppercase tracking-wider shadow-sm">
+                      In Enquiry
+                    </div>
+                  )}
                 </div>
+
                 {/* Card Body */}
-                <div className="p-6 sm:p-8 flex-1 flex flex-col justify-between space-y-5">
-                  <div className="space-y-2">
-                    <div className="flex items-baseline justify-between">
-                      <h3 className="font-['Cormorant_Garamond',Georgia,serif] text-2xl sm:text-3xl font-medium tracking-tight text-[#1A1A1A] dark:text-white">
+                <div className="p-5 sm:p-6 lg:p-7 flex flex-col justify-start">
+                  <div>
+                    {/* Title + Action Row */}
+                    <div className="flex flex-col sm:flex-row sm:items-baseline justify-between gap-3 sm:gap-4">
+                      <h3 className="font-['Cormorant_Garamond',Georgia,serif] text-4xl sm:text-5xl lg:text-[50px] font-normal tracking-[-0.01em] text-[#211F1F] dark:text-white leading-[1.05]">
                         {fam.title}
                       </h3>
-                      {isSelected && (
-                        <span className="px-2 py-0.5 rounded-md bg-[#8A6230]/10 text-[#8A6230] dark:bg-[#C6A96B]/20 dark:text-[#C6A96B] text-[10px] font-bold uppercase tracking-wider">
-                          In Enquiry
-                        </span>
-                      )}
+                      <button
+                        type="button"
+                        onClick={() => handleSelectProductFamily(fam.title)}
+                        className="inline-flex items-center justify-center gap-2.5 px-6 sm:px-7 py-2.5 sm:py-3 rounded-[12px] bg-[#8E6236] hover:bg-[#78512A] active:scale-[0.98] text-white text-xs sm:text-[13px] font-['Jost',sans-serif] font-medium tracking-[0.14em] uppercase transition-all duration-200 cursor-pointer shrink-0 self-start sm:self-auto shadow-none"
+                      >
+                        <span>ENQUIRE NOW</span>
+                        <span className="text-base leading-none select-none">→</span>
+                      </button>
                     </div>
-                    <p className="text-xs font-semibold text-[#8A6230] dark:text-[#D4A86A] uppercase tracking-wider">
+
+                    {/* Subtitle / Subitems */}
+                    <p className="text-xs sm:text-[12.5px] font-['Jost',sans-serif] font-medium tracking-[0.18em] uppercase text-[#986F45] dark:text-[#D4A86A] mt-2 sm:mt-2.5">
                       {fam.subitems}
                     </p>
-                    <p className="text-sm text-[#5C554F] dark:text-white/75 font-light leading-relaxed pt-1">
+
+                    {/* Description */}
+                    <p className="font-['Manrope',sans-serif] text-[14px] sm:text-[15px] font-light text-[#666059] dark:text-[#C5BEB5] leading-[1.6] mt-2.5 sm:mt-3">
                       {fam.description}
                     </p>
                   </div>
 
-                  <div className="pt-2 border-t border-[#E8DFD3] dark:border-[#332922]">
-                    <button
-                      type="button"
-                      onClick={() => handleSelectProductFamily(fam.title)}
-                      className="inline-flex items-center gap-2 text-xs font-bold tracking-[0.15em] text-[#8A6230] dark:text-[#C6A96B] hover:text-[#1A1A1A] dark:hover:text-white uppercase transition-colors group-hover:underline cursor-pointer"
-                    >
-                      <span>ENQUIRE ABOUT THIS RANGE →</span>
-                    </button>
+                  {/* Horizontal Divider */}
+                  <div className="w-full h-px bg-[#E7DCCD] dark:bg-[#332922] my-4 sm:my-5" />
+
+                  {/* Features Highlights Row - Mobile (2x2 Grid) */}
+                  <div className="grid grid-cols-2 gap-x-4 gap-y-3 sm:hidden">
+                    {fam.features?.map((feat, idx) => {
+                      const IconComp = feat.icon;
+                      return (
+                        <div key={idx} className="flex items-center gap-2">
+                          <div className="shrink-0 text-[#986F45] dark:text-[#D4A86A]">
+                            <IconComp className="w-5 h-5" />
+                          </div>
+                          <div className="font-['Manrope',sans-serif] text-[11px] font-normal text-[#4A433D] dark:text-[#EAE5DF] leading-tight">
+                            <div>{feat.line1}</div>
+                            <div>{feat.line2}</div>
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+
+                  {/* Features Highlights Row - Desktop/Tablet (Proportional Content-Aware Flex with Dividers) */}
+                  <div className="hidden sm:flex items-center justify-between divide-x divide-[#E7DCCD] dark:divide-[#332922] w-full">
+                    {fam.features?.map((feat, idx) => {
+                      const IconComp = feat.icon;
+                      return (
+                        <div
+                          key={idx}
+                          className={`flex items-center gap-1.5 sm:gap-2 min-w-0 ${idx === 0
+                            ? 'pr-2 lg:pr-2.5 xl:pr-3'
+                            : idx === fam.features.length - 1
+                              ? 'pl-2 lg:pl-2.5 xl:pl-3'
+                              : 'px-2 lg:px-2.5 xl:px-3'
+                            }`}
+                        >
+                          <div className="shrink-0 text-[#986F45] dark:text-[#D4A86A]">
+                            <IconComp className="w-5 h-5 sm:w-5 sm:h-5" />
+                          </div>
+                          <div className="font-['Manrope',sans-serif] text-[10px] sm:text-[10.5px] lg:text-[11px] xl:text-[11.5px] font-normal text-[#4A433D] dark:text-[#EAE5DF] leading-[1.25] min-w-0">
+                            <div className="whitespace-nowrap">{feat.line1}</div>
+                            <div className="whitespace-nowrap lg:whitespace-normal xl:whitespace-nowrap">{feat.line2}</div>
+                          </div>
+                        </div>
+                      );
+                    })}
                   </div>
                 </div>
               </div>
