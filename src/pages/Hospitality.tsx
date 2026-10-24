@@ -596,7 +596,7 @@ Thank you.`;
       <section className="py-16 lg:py-24 px-4 sm:px-6 lg:px-8 max-w-[1300px] mx-auto space-y-12">
         <div className="max-w-2xl mx-auto text-center space-y-3">
           <span className="text-[11px] font-mono tracking-[0.25em] uppercase text-[#8A6230] dark:text-[#C6A96B] font-bold block">
-            02 / PRODUCT RANGE
+            PRODUCT RANGE
           </span>
           <h2 className="font-['Cormorant_Garamond',Georgia,serif] text-3xl sm:text-4xl lg:text-5xl font-normal text-[#1A1A1A] dark:text-white tracking-tight">
             Built around the needs of hospitality spaces.
@@ -744,7 +744,7 @@ Thank you.`;
 
           <div className="max-w-2xl mx-auto text-center space-y-3">
             <span className="text-[11px] font-mono tracking-[0.25em] uppercase text-[#8A6230] dark:text-[#D4A86A] font-bold block">
-              03 / SPECIFICATION
+              SPECIFICATION
             </span>
             <h2 className="font-['Cormorant_Garamond',Georgia,serif] text-3xl sm:text-4xl lg:text-5xl font-normal text-[#1A1A1A] dark:text-white tracking-tight">
               Every property has different requirements.
@@ -827,7 +827,7 @@ Thank you.`;
       >
         <div className="max-w-2xl mx-auto text-center space-y-3">
           <span className="text-[11px] font-mono tracking-[0.25em] uppercase text-[#8A6230] dark:text-[#D4A86A] font-bold block">
-            04 / BULK ENQUIRY
+            BULK ENQUIRY
           </span>
           <h2 className="font-['Cormorant_Garamond',Georgia,serif] text-3xl sm:text-4xl lg:text-5xl font-normal text-[#1A1A1A] dark:text-white tracking-tight">
             Tell us what your property needs.
@@ -1207,7 +1207,7 @@ Thank you.`;
 
           <div className="max-w-2xl mx-auto text-center space-y-3">
             <span className="text-[11px] font-mono tracking-[0.25em] uppercase text-[#8A6230] dark:text-[#D4A86A] font-bold block">
-              06 / FULL PAGE FLOW
+              HOW IT WORKS
             </span>
             <h2 className="font-['Cormorant_Garamond',Georgia,serif] text-3xl sm:text-4xl lg:text-5xl font-normal text-[#1A1A1A] dark:text-white tracking-tight">
               The Hospitality experience.

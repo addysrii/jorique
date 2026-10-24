@@ -1,13 +1,13 @@
 import { useState, useEffect, useMemo } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Filter, Search, X, Sparkles, Layers, RotateCcw } from 'lucide-react';
+import { Filter, Search, X, Layers, RotateCcw } from 'lucide-react';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import ProductCard from '../components/ProductCard';
 import { productService } from '../lib/api/products';
 import { Product } from '../types';
-import ShopDealsBannerCarousel from '../components/ShopDealsBannerCarousel';
+// import ShopDealsBannerCarousel from '../components/ShopDealsBannerCarousel';
 import SEO from '../components/SEO';
 import { supabase } from '../lib/supabase';
 import LoadingMasterpiece from '../components/LoadingMasterpiece';
@@ -296,7 +296,8 @@ export default function Shop() {
       <Navbar />
 
       <div className="pt-20 lg:pt-24">
-        {/* 🏷️ Top Running Deals Banner Carousel (At the very top of Shop) */}
+        {/* 🏷️ Top Running Deals Banner Carousel (Hidden for now) */}
+        {/*
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-12 pt-4 sm:pt-6 pb-4">
           <ShopDealsBannerCarousel
             onSelectFilter={(target) => {
@@ -320,6 +321,7 @@ export default function Shop() {
             }}
           />
         </div>
+        */}
 
         {/* Dynamic Parallax Atmospheric Header */}
         <div className="relative overflow-hidden bg-transparent text-primary dark:text-white py-10 lg:py-14 px-6 transition-colors duration-300">
@@ -343,27 +345,6 @@ export default function Shop() {
               transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
               className="max-w-3xl"
             >
-              <div
-                className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full backdrop-blur-md border text-[11px] font-bold tracking-[0.25em] uppercase mb-3 shadow-xs transition-colors"
-                style={{
-                  backgroundColor: currentCollectionTheme
-                    ? `${currentCollectionTheme.background}18`
-                    : 'rgba(255,255,255,0.85)',
-                  borderColor: currentCollectionTheme
-                    ? `${currentCollectionTheme.background}40`
-                    : 'rgba(0,0,0,0.1)',
-                  color: currentCollectionTheme
-                    ? currentCollectionTheme.background
-                    : '#0B5F61',
-                }}
-              >
-                <Sparkles size={12} />
-                <span>
-                  {currentCollectionTheme
-                    ? currentCollectionTheme.name
-                    : 'Curated Living Catalog'}
-                </span>
-              </div>
 
               <h1 className="font-mainlogo text-3xl sm:text-4xl lg:text-5xl font-normal text-primary dark:text-white tracking-[0.20em] uppercase">
                 {currentCollectionTheme
