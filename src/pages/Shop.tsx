@@ -354,11 +354,6 @@ export default function Shop() {
                     : 'All Collections'}
               </h1>
 
-              <p className="text-secondary dark:text-white/70 text-sm sm:text-base font-light mt-3 leading-relaxed max-w-2xl">
-                {currentCollectionTheme
-                  ? currentCollectionTheme.description
-                  : 'Discover bespoke bedding, artisanal decor, and textural essentials designed to elevate your everyday living.'}
-              </p>
             </motion.div>
           </div>
         </div>
