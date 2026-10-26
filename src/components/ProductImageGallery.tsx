@@ -147,7 +147,9 @@ export default function ProductImageGallery({
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
                 transition={{ duration: 0.3 }}
-                className="w-full h-full object-cover transition-transform duration-150 ease-out"
+                className={`w-full h-full transition-transform duration-150 ease-out ${
+                  isLightingComparisonImage(currentImage) ? 'object-contain bg-white dark:bg-[#1A1816]' : 'object-cover'
+                }`}
                 style={{
                   transformOrigin: `${zoomPos.x}% ${zoomPos.y}%`,
                   transform: isZoomed ? 'scale(2.2)' : 'scale(1)',
@@ -243,17 +245,17 @@ export default function ProductImageGallery({
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-50 bg-black/95 backdrop-blur-md flex items-center justify-center p-4 sm:p-8 select-none"
+            className="fixed inset-0 z-[100] bg-black/95 backdrop-blur-md flex items-center justify-center p-4 sm:p-8 select-none"
             onClick={() => setIsLightboxOpen(false)}
           >
             {/* Close button */}
             <button
               type="button"
               onClick={() => setIsLightboxOpen(false)}
-              className="absolute top-6 right-6 p-3 rounded-full bg-white/10 text-white hover:bg-white/20 transition-colors z-30"
+              className="absolute top-6 right-6 p-3 rounded-full bg-white/10 text-white hover:bg-white/20 transition-colors z-30 cursor-pointer"
               aria-label="Close fullscreen"
             >
-              <X size={22} />
+              <X size={24} />
             </button>
 
             {/* Navigation in Lightbox */}
@@ -265,10 +267,10 @@ export default function ProductImageGallery({
                     e.stopPropagation();
                     handlePrev();
                   }}
-                  className="absolute left-6 top-1/2 -translate-y-1/2 p-3.5 rounded-full bg-white/10 text-white hover:bg-white/25 transition-all z-30 cursor-pointer"
+                  className="absolute left-4 sm:left-8 top-1/2 -translate-y-1/2 p-3.5 rounded-full bg-white/10 text-white hover:bg-white/25 transition-all z-30 cursor-pointer shadow-xl hover:scale-110"
                   aria-label="Previous image"
                 >
-                  <ChevronLeft size={24} />
+                  <ChevronLeft size={28} />
                 </button>
                 <button
                   type="button"
@@ -276,30 +278,30 @@ export default function ProductImageGallery({
                     e.stopPropagation();
                     handleNext();
                   }}
-                  className="absolute right-6 top-1/2 -translate-y-1/2 p-3.5 rounded-full bg-white/10 text-white hover:bg-white/25 transition-all z-30 cursor-pointer"
+                  className="absolute right-4 sm:right-8 top-1/2 -translate-y-1/2 p-3.5 rounded-full bg-white/10 text-white hover:bg-white/25 transition-all z-30 cursor-pointer shadow-xl hover:scale-110"
                   aria-label="Next image"
                 >
-                  <ChevronRight size={24} />
+                  <ChevronRight size={28} />
                 </button>
               </>
             )}
 
-            {/* Main Lightbox Photo */}
+            {/* Main Lightbox Photo Wrapper */}
             <motion.div
               initial={{ scale: 0.95 }}
               animate={{ scale: 1 }}
               exit={{ scale: 0.95 }}
-              className="relative max-w-5xl max-h-[85vh] rounded-2xl overflow-hidden shadow-2xl"
+              className="relative w-full max-w-4xl h-[85vh] flex items-center justify-center"
               onClick={(e) => e.stopPropagation()}
             >
               <img
                 src={currentImage}
                 alt={productName}
-                className="w-full h-full object-contain max-h-[85vh]"
+                className="max-w-full max-h-full w-auto h-auto object-contain rounded-2xl shadow-2xl"
               />
 
               {/* Counter */}
-              <div className="absolute bottom-4 left-1/2 -translate-x-1/2 px-4 py-1.5 rounded-full bg-black/70 backdrop-blur-md text-white text-xs font-mono">
+              <div className="absolute bottom-4 left-1/2 -translate-x-1/2 px-4 py-1.5 rounded-full bg-black/75 backdrop-blur-md text-white text-xs font-mono border border-white/10 shadow-lg">
                 {activeIndex + 1} / {displayImages.length}
               </div>
             </motion.div>
