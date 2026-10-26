@@ -192,38 +192,74 @@ function getProductSizes(product: Product): SizeOption[] {
 }
 
 const COLOR_HEX_MAP: Record<string, string> = {
-  'eternal glow': '#C6A96B',
-  'royal ivory': '#F5EDE3',
-  'ivory': '#F5EDE3',
-  'cream': '#F5EDE3',
-  'champagne': '#EAD7BA',
+  // Purples & Lilacs
+  'lavender purple': '#967BB6',
+  'lavender': '#B57EDC',
+  'purple': '#7E57C2',
+  'lilac': '#C8A2C8',
+  'violet': '#7F00FF',
+  'plum': '#8E4585',
+  'magenta': '#C71585',
+
+  // Pinks & Reds
   'blushing pink': '#E8A898',
   'pink': '#D88579',
+  'rose': '#E07A5F',
+  'flirty red': '#8B0000',
+  'red': '#C62828',
+  'velvet wine': '#641F2D',
+  'wine': '#641F2D',
+  'burgundy': '#641F2D',
+  'maroon': '#800000',
+
+  // Blues
   'dreamy blue': '#4A6B82',
   'midnight navy': '#1B2A4A',
   'navy': '#1B2A4A',
   'blue': '#243B64',
+  'ocean blue': '#243B64',
+  'sky blue': '#87CEEB',
+  'teal': '#008080',
+  'cyan': '#00BCD4',
+
+  // Greens
   'emerald green': '#0B5F61',
   'emerald': '#0B5F61',
   'green': '#2D5A27',
   'olive oasis': '#556B2F',
   'olive': '#556B2F',
-  'flirty red': '#8B0000',
-  'velvet wine': '#641F2D',
-  'wine': '#641F2D',
-  'burgundy': '#641F2D',
+  'mint': '#52B2BF',
+  'sage': '#9CAF88',
+
+  // Neutrals, Golds & Browns
+  'royal ivory': '#F5EDE3',
+  'ivory': '#F5EDE3',
+  'cream': '#F5EDE3',
+  'champagne': '#EAD7BA',
+  'beige': '#F5F5DC',
+  'ecru': '#E5DFD5',
+  'eternal glow': '#C6A96B',
+  'gold': '#D4AF37',
+  'mustard': '#C99B26',
+  'orange': '#E8652B',
+  'peach': '#FFDAB9',
   'melted caramel': '#B77443',
+  'hot chocolate': '#3E2723',
+  'brown': '#5D4037',
+
+  // Greys, Whites, Blacks
   'harbour mist grey': '#7A8288',
   'grey': '#6B7280',
-  'hot chocolate': '#3E2723',
+  'gray': '#6B7280',
+  'classic charcoal': '#2B2825',
+  'charcoal': '#2B2825',
   'midnight black': '#1A1A1A',
   'black': '#1A1A1A',
-  'classic charcoal': '#2B2825',
   'pristine white': '#FFFFFF',
   'white': '#FFFFFF',
 };
 
-// Real SKU to authentic catalog color mapping
+// Real SKU to authentic catalog color mapping (for legacy demo products)
 const SKU_COLOR_MAP: Record<string, { colorName: string; colorHex: string }> = {
   'JR-ESS-WU-001': { colorName: 'Royal Plum Magenta', colorHex: '#892C4E' },
   'JR-ESS-WU-002': { colorName: 'Olive Green', colorHex: '#4D5838' },
@@ -241,71 +277,63 @@ const SKU_COLOR_MAP: Record<string, { colorName: string; colorHex: string }> = {
   'JR-MAT-2026-001': { colorName: 'Natural Ecru', colorHex: '#E5DFD5' },
 };
 
-function getColorInfo(product: Product | null | undefined): { colorName: string; colorHex: string } {
-  if (!product) return { colorName: 'Signature Shade', colorHex: '#C6A96B' };
+function getColorInfo(product: Product | null | undefined): { colorName: string; colorHex: string } | null {
+  if (!product) return null;
 
   const sku = (product.sku || '').toUpperCase().trim();
   if (SKU_COLOR_MAP[sku]) {
     return SKU_COLOR_MAP[sku];
   }
 
-  // 1. Check title for " - Color"
+  // 1. Check tags for direct hex or colorway markers
+  if (product.tags && Array.isArray(product.tags)) {
+    const hasColorwayTag = product.tags.some(
+      (t) => t.toLowerCase() === 'colorway' || t.toLowerCase() === 'variant'
+    );
+    const directHexTag = product.tags.find((t) => /^#[0-9A-Fa-f]{6}$/.test(t.trim()));
+
+    if (directHexTag) {
+      const hex = directHexTag.trim().toUpperCase();
+      const namePart = product.name && product.name.includes(' - ')
+        ? product.name.split(' - ')[1].trim()
+        : product.tags.find((t) =>
+            !/^#[0-9A-Fa-f]{6}$/.test(t.trim()) &&
+            !['colorway', 'variant', 'cotton', 'silk', 'linen'].includes(t.toLowerCase().trim()) &&
+            !t.toLowerCase().startsWith('size:')
+          );
+      if (namePart) {
+        return { colorName: namePart, colorHex: hex };
+      }
+    }
+
+    if (hasColorwayTag) {
+      for (const tag of product.tags) {
+        const lower = tag.toLowerCase().trim();
+        if (COLOR_HEX_MAP[lower]) {
+          return {
+            colorName: tag.charAt(0).toUpperCase() + tag.slice(1),
+            colorHex: COLOR_HEX_MAP[lower],
+          };
+        }
+      }
+    }
+  }
+
+  // 2. Check title for standard variant delimiter " - ColorName"
   if (product.name && product.name.includes(' - ')) {
     const rawColor = product.name.split(' - ')[1].trim();
     const lower = rawColor.toLowerCase();
-    let hex = '#C6A96B';
     for (const [k, v] of Object.entries(COLOR_HEX_MAP)) {
       if (lower.includes(k)) {
-        hex = v;
-        break;
+        return { colorName: rawColor, colorHex: v };
       }
     }
-    return { colorName: rawColor, colorHex: hex };
+    // If not in hex map, still return if rawColor looks like a valid color name
+    return { colorName: rawColor, colorHex: '#C6A96B' };
   }
 
-  // 2. Check description for "Colours:" or "Color:"
-  if (product.description) {
-    const lines = product.description.split(/\r?\n/);
-    for (const line of lines) {
-      const match = line.match(/^colou?rs?:\s*(.+)$/i);
-      if (match && match[1]) {
-        const descColor = match[1].trim();
-        const firstPart = descColor.split(/[,&]/)[0].trim();
-        const lower = firstPart.toLowerCase();
-        let hex = '#C6A96B';
-        for (const [k, v] of Object.entries(COLOR_HEX_MAP)) {
-          if (lower.includes(k)) {
-            hex = v;
-            break;
-          }
-        }
-        return { colorName: firstPart, colorHex: hex };
-      }
-    }
-  }
-
-  // 3. Check tags for direct hex or named colors
-  if (product.tags && Array.isArray(product.tags)) {
-    const directHexTag = product.tags.find(t => /^#[0-9A-Fa-f]{6}$/.test(t.trim()));
-    if (directHexTag) {
-      const colorTitle = product.name && product.name.includes(' - ')
-        ? product.name.split(' - ')[1].trim()
-        : 'Signature Shade';
-      return { colorName: colorTitle, colorHex: directHexTag.trim().toUpperCase() };
-    }
-
-    for (const tag of product.tags) {
-      const lower = tag.toLowerCase().trim();
-      if (COLOR_HEX_MAP[lower]) {
-        return {
-          colorName: tag.charAt(0).toUpperCase() + tag.slice(1),
-          colorHex: COLOR_HEX_MAP[lower],
-        };
-      }
-    }
-  }
-
-  return { colorName: 'Signature Shade', colorHex: '#C6A96B' };
+  // If no explicit color was chosen/created, return null (do not show color section)
+  return null;
 }
 
 export default function ProductDetails() {
@@ -606,20 +634,33 @@ export default function ProductDetails() {
                 </div> */}
               </div>
 
-              {/* Sibling Colorways Swatches (Stoa Paris Swatch System) */}
+              {/* Sibling Colorways Swatches (ONLY RENDERED IF PRODUCT HAS SIBLINGS OR EXPLICIT COLOR CHOSEN) */}
               {product && (() => {
                 const currentColor = getColorInfo(product);
+                if (!currentColor) return null;
+
                 const activeColorKey = currentColor.colorName.toLowerCase();
                 const seen = new Set<string>([activeColorKey]);
                 const uniqueSiblings: Array<{ product: Product; colorInfo: { colorName: string; colorHex: string } }> = [];
 
                 for (const sib of siblingColorways) {
                   const info = getColorInfo(sib);
+                  if (!info) continue;
                   const key = info.colorName.toLowerCase();
                   if (!seen.has(key)) {
                     seen.add(key);
                     uniqueSiblings.push({ product: sib, colorInfo: info });
                   }
+                }
+
+                // If there are no sibling colorways to switch between, only show if explicitly set as a colorway variant
+                const hasExplicitColorway =
+                  (product.tags && product.tags.some((t) => t.toLowerCase() === 'colorway' || /^#[0-9A-Fa-f]{6}$/.test(t.trim()))) ||
+                  (product.name && product.name.includes(' - ')) ||
+                  Boolean(product.sku && SKU_COLOR_MAP[product.sku.toUpperCase().trim()]);
+
+                if (uniqueSiblings.length === 0 && !hasExplicitColorway) {
+                  return null;
                 }
 
                 return (
