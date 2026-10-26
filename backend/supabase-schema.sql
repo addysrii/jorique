@@ -199,3 +199,79 @@ create policy coupons_public_read on public.coupons for select using (true);
 drop policy if exists coupons_public_all on public.coupons;
 create policy coupons_public_all on public.coupons for all using (true) with check (true);
 
+-- Categories table
+create table if not exists public.categories (
+  id uuid primary key default gen_random_uuid(),
+  name text not null,
+  slug text not null,
+  description text,
+  created_at timestamptz not null default now()
+);
+
+-- Subcategories table
+create table if not exists public.subcategories (
+  id uuid primary key default gen_random_uuid(),
+  category_id uuid not null references public.categories(id) on delete cascade,
+  name text not null,
+  slug text not null,
+  description text,
+  created_at timestamptz not null default now()
+);
+
+-- Badges table
+create table if not exists public.badges (
+  id uuid primary key default gen_random_uuid(),
+  label text not null,
+  color text,
+  text_color text,
+  description text,
+  created_at timestamptz not null default now()
+);
+
+-- Missing columns on products
+alter table public.products add column if not exists cost decimal(10,2);
+alter table public.products add column if not exists brand_id text;
+alter table public.products add column if not exists badge text;
+alter table public.products add column if not exists subcategory text;
+
+-- Missing columns on product_serials
+alter table public.product_serials add column if not exists barcode text;
+alter table public.product_serials add column if not exists qr_code text;
+alter table public.product_serials add column if not exists scanned_count integer default 0;
+alter table public.product_serials add column if not exists last_scanned_at timestamptz;
+alter table public.product_serials add column if not exists order_id uuid;
+alter table public.product_serials add column if not exists reviewed boolean default false;
+alter table public.product_serials add column if not exists customer_id uuid references public.profiles(id);
+
+-- Missing columns on reviews
+alter table public.reviews add column if not exists customer_name text;
+alter table public.reviews add column if not exists customer_email text;
+alter table public.reviews add column if not exists serial_id text;
+alter table public.reviews add column if not exists status text default 'pending';
+
+-- Missing columns on orders
+alter table public.orders add column if not exists shipping_address jsonb;
+alter table public.orders add column if not exists payment_method text;
+alter table public.orders add column if not exists payment_status text default 'pending';
+alter table public.orders add column if not exists updated_at timestamptz default now();
+
+-- Policies
+alter table public.categories enable row level security;
+drop policy if exists categories_public_read on public.categories;
+create policy categories_public_read on public.categories for select using (true);
+drop policy if exists categories_public_all on public.categories;
+create policy categories_public_all on public.categories for all using (true) with check (true);
+
+alter table public.subcategories enable row level security;
+drop policy if exists subcategories_public_read on public.subcategories;
+create policy subcategories_public_read on public.subcategories for select using (true);
+drop policy if exists subcategories_public_all on public.subcategories;
+create policy subcategories_public_all on public.subcategories for all using (true) with check (true);
+
+alter table public.badges enable row level security;
+drop policy if exists badges_public_read on public.badges;
+create policy badges_public_read on public.badges for select using (true);
+drop policy if exists badges_public_all on public.badges;
+create policy badges_public_all on public.badges for all using (true) with check (true);
+
+

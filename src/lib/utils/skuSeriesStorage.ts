@@ -30,12 +30,12 @@ export async function fetchSkuSeriesList(): Promise<SkuSeries[]> {
       .select('*')
       .order('created_at', { ascending: false });
 
-    if (error || !data || data.length === 0) {
-      // Supabase table may not exist yet or is empty; use local storage with default presets
+    if (error) {
+      console.warn('[skuSeriesStorage] Supabase fetch error (using local storage fallback):', error.message || error);
       return getLocalSeries();
     }
 
-    const mapped: SkuSeries[] = data.map((item: any) => ({
+    const mapped: SkuSeries[] = (data || []).map((item: any) => ({
       id: item.id,
       name: item.name,
       prefix: item.prefix,
@@ -50,18 +50,103 @@ export async function fetchSkuSeriesList(): Promise<SkuSeries[]> {
       createdAt: item.created_at || new Date().toISOString(),
     }));
 
-    // Merge with any local series that aren't in Supabase
+    // Auto-sync: if Supabase table is live, upload any locally saved series that are not yet in Supabase
+    const localList = getLocalSeries();
+    const unsynced = localList.filter(
+      (local) => !mapped.some((db) => db.id === local.id || (db.name.toLowerCase() === local.name.toLowerCase() && db.prefix === local.prefix))
+    );
+
+    if (unsynced.length > 0) {
+      for (const item of unsynced) {
+        try {
+          const { data: inserted, error: insertErr } = await supabase
+            .from('sku_series')
+            .insert({
+              name: item.name,
+              prefix: item.prefix,
+              separator: item.separator,
+              include_year: item.includeYear,
+              padding: item.padding,
+              current_counter: item.currentCounter,
+              suffix: item.suffix || null,
+              category: item.category || null,
+              description: item.description || null,
+              is_active: item.isActive,
+            })
+            .select()
+            .maybeSingle();
+
+          if (!insertErr && inserted) {
+            mapped.unshift({
+              id: inserted.id,
+              name: inserted.name,
+              prefix: inserted.prefix,
+              separator: inserted.separator ?? '-',
+              includeYear: inserted.include_year ?? true,
+              padding: inserted.padding ?? 3,
+              currentCounter: inserted.current_counter ?? 1,
+              suffix: inserted.suffix ?? '',
+              category: inserted.category ?? '',
+              description: inserted.description ?? '',
+              isActive: inserted.is_active ?? true,
+              createdAt: inserted.created_at || new Date().toISOString(),
+            });
+          }
+        } catch {
+          // ignore individual sync errors
+        }
+      }
+    }
+
+    // Persist full synchronized list locally
     saveLocalSeries(mapped);
     return mapped;
-  } catch {
+  } catch (err) {
+    console.warn('[skuSeriesStorage] Unexpected error fetching SKU series, fallback to local:', err);
     return getLocalSeries();
   }
 }
 
 export async function saveSkuSeries(seriesData: Omit<SkuSeries, 'id' | 'createdAt'> & { id?: string }): Promise<SkuSeries> {
   const localList = getLocalSeries();
-  const id = seriesData.id || `series-${Date.now()}-${Math.random().toString(36).substring(2, 7)}`;
+  const isValidUuid = Boolean(
+    seriesData.id &&
+    /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(seriesData.id)
+  );
+  let id = seriesData.id || `series-${Date.now()}-${Math.random().toString(36).substring(2, 7)}`;
   const now = new Date().toISOString();
+
+  const dbPayload = {
+    name: seriesData.name,
+    prefix: seriesData.prefix,
+    separator: seriesData.separator,
+    include_year: seriesData.includeYear,
+    padding: seriesData.padding,
+    current_counter: seriesData.currentCounter,
+    suffix: seriesData.suffix || null,
+    category: seriesData.category || null,
+    description: seriesData.description || null,
+    is_active: seriesData.isActive,
+  };
+
+  // 1. Try Supabase
+  try {
+    if (isValidUuid) {
+      const { error } = await supabase.from('sku_series').update(dbPayload).eq('id', seriesData.id);
+      if (error) {
+        console.warn('Supabase sku_series update warning:', error);
+      }
+    } else {
+      const { data, error } = await supabase.from('sku_series').insert(dbPayload).select().maybeSingle();
+      if (error) {
+        console.warn('Supabase sku_series insert warning:', error);
+      } else if (data?.id) {
+        id = data.id;
+      }
+    }
+  } catch (err) {
+    console.warn('Supabase sku_series write skipped (using local fallback):', err);
+  }
 
   const newSeries: SkuSeries = {
     ...seriesData,
@@ -69,36 +154,8 @@ export async function saveSkuSeries(seriesData: Omit<SkuSeries, 'id' | 'createdA
     createdAt: now,
   };
 
-  // 1. Try Supabase
-  try {
-    const dbPayload = {
-      id: seriesData.id || undefined,
-      name: seriesData.name,
-      prefix: seriesData.prefix,
-      separator: seriesData.separator,
-      include_year: seriesData.includeYear,
-      padding: seriesData.padding,
-      current_counter: seriesData.currentCounter,
-      suffix: seriesData.suffix || null,
-      category: seriesData.category || null,
-      description: seriesData.description || null,
-      is_active: seriesData.isActive,
-    };
-
-    if (seriesData.id) {
-      await supabase.from('sku_series').update(dbPayload).eq('id', seriesData.id);
-    } else {
-      const { data } = await supabase.from('sku_series').insert(dbPayload).select().maybeSingle();
-      if (data?.id) {
-        newSeries.id = data.id;
-      }
-    }
-  } catch (err) {
-    console.warn('Supabase sku_series write skipped (using local fallback):', err);
-  }
-
   // 2. Persist locally
-  const index = localList.findIndex((s) => s.id === newSeries.id);
+  const index = localList.findIndex((s) => s.id === newSeries.id || s.name.toLowerCase() === newSeries.name.toLowerCase());
   let updatedList: SkuSeries[];
   if (index >= 0) {
     updatedList = [...localList];
@@ -123,7 +180,10 @@ export async function incrementSeriesCounter(seriesId: string): Promise<number> 
   }
 
   try {
-    await supabase.from('sku_series').update({ current_counter: nextCounter }).eq('id', seriesId);
+    const isValidUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(seriesId);
+    if (isValidUuid) {
+      await supabase.from('sku_series').update({ current_counter: nextCounter }).eq('id', seriesId);
+    }
   } catch {
     // silently ignore if offline/unconfigured
   }
@@ -136,7 +196,10 @@ export async function deleteSkuSeries(seriesId: string): Promise<void> {
   saveLocalSeries(localList);
 
   try {
-    await supabase.from('sku_series').delete().eq('id', seriesId);
+    const isValidUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(seriesId);
+    if (isValidUuid) {
+      await supabase.from('sku_series').delete().eq('id', seriesId);
+    }
   } catch {
     // silently ignore
   }
