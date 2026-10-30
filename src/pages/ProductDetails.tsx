@@ -259,48 +259,31 @@ const COLOR_HEX_MAP: Record<string, string> = {
   'white': '#FFFFFF',
 };
 
-// Real SKU to authentic catalog color mapping (for legacy demo products)
-const SKU_COLOR_MAP: Record<string, { colorName: string; colorHex: string }> = {
-  'JR-ESS-WU-001': { colorName: 'Royal Plum Magenta', colorHex: '#892C4E' },
-  'JR-ESS-WU-002': { colorName: 'Olive Green', colorHex: '#4D5838' },
-  'JR-ESS-WU-003': { colorName: 'Royal Indigo Blue', colorHex: '#1C3B68' },
-  'JR-ESS-WU-004': { colorName: 'Tangerine Orange', colorHex: '#E8652B' },
-  'JR-ESS-WU-005': { colorName: 'Mustard Gold', colorHex: '#C99B26' },
-  'JR-ESS-WU-006': { colorName: 'Rani Fuchsia Pink', colorHex: '#C71585' },
-  'JR-ESS-WU-007': { colorName: 'Onyx Black & Pink', colorHex: '#1E1E1E' },
-  'JR-ESS-WU-008': { colorName: 'Ivory Cream & Black', colorHex: '#EDE8DF' },
-  'JR-TOW-2026-001': { colorName: 'Ocean Blue', colorHex: '#243B64' },
-  'JR-PIL-2026-002': { colorName: 'Purple Iris', colorHex: '#6A4B82' },
-  'JR-BED-2026-001': { colorName: 'Royal Ivory', colorHex: '#F5EDE3' },
-  'JR-BED-2026-002': { colorName: 'Mint & Pastel Multicolour', colorHex: '#52B2BF' },
-  'JR-MT-2026-002': { colorName: 'Classic White & Grey', colorHex: '#ECEAE6' },
-  'JR-MAT-2026-001': { colorName: 'Natural Ecru', colorHex: '#E5DFD5' },
-};
-
 function getColorInfo(product: Product | null | undefined): { colorName: string; colorHex: string } | null {
   if (!product) return null;
 
-  const sku = (product.sku || '').toUpperCase().trim();
-  if (SKU_COLOR_MAP[sku]) {
-    return SKU_COLOR_MAP[sku];
-  }
-
-  // 1. Check tags for direct hex or colorway markers
+  // 1. Check tags for direct hex or explicit colorway markers
   if (product.tags && Array.isArray(product.tags)) {
+    const directHexTag = product.tags.find((t) => /^#[0-9A-Fa-f]{3,6}$/.test(t.trim()));
     const hasColorwayTag = product.tags.some(
       (t) => t.toLowerCase() === 'colorway' || t.toLowerCase() === 'variant'
     );
-    const directHexTag = product.tags.find((t) => /^#[0-9A-Fa-f]{6}$/.test(t.trim()));
 
     if (directHexTag) {
       const hex = directHexTag.trim().toUpperCase();
-      const namePart = product.name && product.name.includes(' - ')
-        ? product.name.split(' - ')[1].trim()
-        : product.tags.find((t) =>
-            !/^#[0-9A-Fa-f]{6}$/.test(t.trim()) &&
-            !['colorway', 'variant', 'cotton', 'silk', 'linen'].includes(t.toLowerCase().trim()) &&
-            !t.toLowerCase().startsWith('size:')
-          );
+      let namePart = product.name && product.name.includes(' - ')
+        ? product.name.split(' - ').slice(1).join(' - ').trim()
+        : '';
+
+      if (!namePart) {
+        const found = product.tags.find((t) =>
+          !/^#[0-9A-Fa-f]{3,6}$/.test(t.trim()) &&
+          !['colorway', 'variant', 'cotton', 'silk', 'linen'].includes(t.toLowerCase().trim()) &&
+          !t.toLowerCase().startsWith('size:')
+        );
+        if (found) namePart = found.trim();
+      }
+
       if (namePart) {
         return { colorName: namePart, colorHex: hex };
       }
@@ -321,18 +304,16 @@ function getColorInfo(product: Product | null | undefined): { colorName: string;
 
   // 2. Check title for standard variant delimiter " - ColorName"
   if (product.name && product.name.includes(' - ')) {
-    const rawColor = product.name.split(' - ')[1].trim();
+    const rawColor = product.name.split(' - ').slice(1).join(' - ').trim();
     const lower = rawColor.toLowerCase();
     for (const [k, v] of Object.entries(COLOR_HEX_MAP)) {
-      if (lower.includes(k)) {
+      if (lower.includes(k) || k.includes(lower)) {
         return { colorName: rawColor, colorHex: v };
       }
     }
-    // If not in hex map, still return if rawColor looks like a valid color name
-    return { colorName: rawColor, colorHex: '#C6A96B' };
   }
 
-  // If no explicit color was chosen/created, return null (do not show color section)
+  // If no explicit color was chosen/configured, return null
   return null;
 }
 
@@ -653,13 +634,9 @@ export default function ProductDetails() {
                   }
                 }
 
-                // If there are no sibling colorways to switch between, only show if explicitly set as a colorway variant
-                const hasExplicitColorway =
-                  (product.tags && product.tags.some((t) => t.toLowerCase() === 'colorway' || /^#[0-9A-Fa-f]{6}$/.test(t.trim()))) ||
-                  (product.name && product.name.includes(' - ')) ||
-                  Boolean(product.sku && SKU_COLOR_MAP[product.sku.toUpperCase().trim()]);
-
-                if (uniqueSiblings.length === 0 && !hasExplicitColorway) {
+                // Only render if there are actual sibling colorways for the customer to choose/switch between.
+                // If no color was chosen during product creation, or if only 1 color exists, do not render.
+                if (uniqueSiblings.length === 0) {
                   return null;
                 }
 
