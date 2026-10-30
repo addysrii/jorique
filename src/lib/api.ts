@@ -14,10 +14,37 @@ async function apiRequest<T>(path: string, options: ApiOptions = {}): Promise<T>
     headers.set('Authorization', `Bearer ${options.token}`);
   }
 
-  const response = await fetch(`${API_BASE_URL}${path}`, {
-    ...options,
-    headers,
-  });
+  let response: Response;
+  try {
+    response = await fetch(`${API_BASE_URL}${path}`, {
+      ...options,
+      headers,
+    });
+  } catch (netErr) {
+    if (API_BASE_URL.includes('localhost:5001')) {
+      const fallbackUrl = API_BASE_URL.replace(':5001', ':5000');
+      try {
+        response = await fetch(`${fallbackUrl}${path}`, {
+          ...options,
+          headers,
+        });
+      } catch {
+        throw netErr;
+      }
+    } else if (API_BASE_URL.includes('localhost:5000')) {
+      const fallbackUrl = API_BASE_URL.replace(':5000', ':5001');
+      try {
+        response = await fetch(`${fallbackUrl}${path}`, {
+          ...options,
+          headers,
+        });
+      } catch {
+        throw netErr;
+      }
+    } else {
+      throw netErr;
+    }
+  }
 
   const data = await response.json().catch(() => ({}));
 
@@ -173,6 +200,27 @@ export function createProductRequest(product: Record<string, unknown>, token: st
     body: JSON.stringify(product),
     token,
   });
+}
+
+export async function uploadProductImageRequest(file: File, token?: string | null): Promise<string> {
+  const base64 = await new Promise<string>((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(reader.result as string);
+    reader.onerror = reject;
+    reader.readAsDataURL(file);
+  });
+
+  const res = await apiRequest<{ success: boolean; url: string }>('/api/products/upload-image', {
+    method: 'POST',
+    token,
+    body: JSON.stringify({
+      fileName: file.name,
+      fileBase64: base64,
+      contentType: file.type || 'image/png',
+    }),
+  });
+
+  return res.url;
 }
 
 export function getProductsRequest(token?: string) {
@@ -364,6 +412,7 @@ export default {
   dashboardRequest,
   getDashboardDataRequest,
   createProductRequest,
+  uploadProductImageRequest,
   getProductsRequest,
   getProductByIdRequest,
   getProductWithSerialsRequest,

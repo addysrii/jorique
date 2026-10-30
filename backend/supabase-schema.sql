@@ -274,4 +274,30 @@ create policy badges_public_read on public.badges for select using (true);
 drop policy if exists badges_public_all on public.badges;
 create policy badges_public_all on public.badges for all using (true) with check (true);
 
+-- Storage configuration and policies for product-images
+insert into storage.buckets (id, name, public)
+values ('product-images', 'product-images', true)
+on conflict (id) do update set public = true;
+
+drop policy if exists "product_images_public_read" on storage.objects;
+create policy "product_images_public_read"
+on storage.objects for select
+using (bucket_id = 'product-images');
+
+drop policy if exists "product_images_public_insert" on storage.objects;
+create policy "product_images_public_insert"
+on storage.objects for insert
+with check (bucket_id = 'product-images');
+
+drop policy if exists "product_images_public_update" on storage.objects;
+create policy "product_images_public_update"
+on storage.objects for update
+using (bucket_id = 'product-images');
+
+drop policy if exists "product_images_public_delete" on storage.objects;
+create policy "product_images_public_delete"
+on storage.objects for delete
+using (bucket_id = 'product-images');
+
+
 

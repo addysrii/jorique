@@ -1,4 +1,5 @@
 import { Router } from 'express';
+import jwt from 'jsonwebtoken';
 import { supabase } from '../supabase.js';
 import { adminRequired, authRequired } from '../middleware/auth.js';
 import { createUniqueSKU, generateSerials } from '../utils/product.js';
@@ -86,6 +87,61 @@ router.get('/validate-sku/:sku', async (req, res) => {
     res.json({ success: true, available: true });
   } catch (error) {
     res.status(500).json({ success: false, message: errorMessage(error) });
+  }
+});
+
+router.post('/upload-image', async (req, res) => {
+  try {
+    const authHeader = req.headers.authorization || '';
+    const token = authHeader.startsWith('Bearer ') ? authHeader.slice(7) : '';
+    
+    // In production, require valid token and admin role
+    if (process.env.NODE_ENV === 'production' || token) {
+      if (!token) {
+        return res.status(401).json({ success: false, message: 'Authentication required.' });
+      }
+      try {
+        const payload = jwt.verify(token, process.env.JWT_SECRET);
+        const { data: profile } = await supabase
+          .from('profiles')
+          .select('id, role, is_verified')
+          .eq('id', payload.sub)
+          .maybeSingle();
+
+        if (!profile || profile.role !== 'admin') {
+          return res.status(403).json({ success: false, message: 'Admin access required.' });
+        }
+      } catch (err) {
+        return res.status(401).json({ success: false, message: 'Invalid or expired session.' });
+      }
+    }
+
+    const { fileName, fileBase64, contentType } = req.body || {};
+    if (!fileName || !fileBase64) {
+      return res.status(400).json({ success: false, message: 'Missing file data.' });
+    }
+
+    const cleanBase64 = fileBase64.replace(/^data:[^;]+;base64,/, '');
+    const buffer = Buffer.from(cleanBase64, 'base64');
+    const ext = fileName.split('.').pop() || 'png';
+    const filePath = `products/${Date.now()}-${Math.random().toString(36).substring(2)}.${ext}`;
+
+    const { error: uploadError } = await supabase.storage
+      .from('product-images')
+      .upload(filePath, buffer, {
+        contentType: contentType || 'image/png',
+        upsert: true,
+      });
+
+    if (uploadError) throw uploadError;
+
+    const { data: { publicUrl } } = supabase.storage
+      .from('product-images')
+      .getPublicUrl(filePath);
+
+    return res.json({ success: true, url: publicUrl });
+  } catch (error) {
+    return res.status(500).json({ success: false, message: errorMessage(error) });
   }
 });
 

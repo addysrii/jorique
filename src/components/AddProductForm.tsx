@@ -25,7 +25,7 @@ import ProductPackagingLabel from './ProductPackagingLabel';
 import ProductDescriptionGrid from './ProductDescriptionGrid';
 import { supabase } from '../lib/supabase';
 import { generateLightingComparisonCard, isLightingComparisonImage } from '../lib/generateLightingComparison';
-import { createProductRequest } from '../lib/api';
+import { createProductRequest, uploadProductImageRequest } from '../lib/api';
 import { generateSKU, generateSerials } from '../lib/utils/product';
 import { useAuth } from '../context/AuthContext';
 import type { ProductFormValues } from '../types/product';
@@ -245,17 +245,28 @@ export default function AddProductForm() {
         const fileName = `${Date.now()}-${Math.random().toString(36).substring(2)}.${fileExt}`;
         const filePath = `products/${fileName}`;
 
+        let publicUrl: string | null = null;
         const { error: uploadError } = await supabase.storage
           .from('product-images')
           .upload(filePath, file);
 
-        if (uploadError) throw uploadError;
+        if (uploadError) {
+          // If Supabase RLS policy or direct client upload rejects, fallback to backend upload
+          try {
+            publicUrl = await uploadProductImageRequest(file, token);
+          } catch {
+            throw uploadError;
+          }
+        } else {
+          const { data } = supabase.storage
+            .from('product-images')
+            .getPublicUrl(filePath);
+          publicUrl = data.publicUrl;
+        }
 
-        const { data: { publicUrl } } = supabase.storage
-          .from('product-images')
-          .getPublicUrl(filePath);
-
-        uploadedUrls.push(publicUrl);
+        if (publicUrl) {
+          uploadedUrls.push(publicUrl);
+        }
       }
 
       // Automatically synthesize True-Color Lighting Comparison Card if not already present
@@ -279,6 +290,12 @@ export default function AddProductForm() {
               .from('product-images')
               .getPublicUrl(cardFilePath);
             lightingCardUrl = cardPublicUrl;
+          } else {
+            try {
+              lightingCardUrl = await uploadProductImageRequest(lightingFile, token);
+            } catch {
+              console.warn('Auto-generation of lighting fidelity card skipped:', cardUploadErr);
+            }
           }
         } catch (cardErr) {
           console.warn('Auto-generation of lighting fidelity card skipped:', cardErr);
@@ -310,14 +327,22 @@ export default function AddProductForm() {
       const cardFileName = `lighting-fidelity-${Date.now()}-${Math.random().toString(36).substring(2)}.jpg`;
       const cardFilePath = `products/${cardFileName}`;
 
+      let cardPublicUrl: string | null = null;
       const { error: cardUploadErr } = await supabase.storage
         .from('product-images')
         .upload(cardFilePath, lightingFile);
-      if (cardUploadErr) throw cardUploadErr;
-
-      const { data: { publicUrl: cardPublicUrl } } = supabase.storage
-        .from('product-images')
-        .getPublicUrl(cardFilePath);
+      if (cardUploadErr) {
+        try {
+          cardPublicUrl = await uploadProductImageRequest(lightingFile, token);
+        } catch {
+          throw cardUploadErr;
+        }
+      } else {
+        const { data } = supabase.storage
+          .from('product-images')
+          .getPublicUrl(cardFilePath);
+        cardPublicUrl = data.publicUrl;
+      }
 
       // Remove existing lighting card and append fresh one
       const cleanList = images.filter((u) => !isLightingComparisonImage(u));
@@ -461,10 +486,21 @@ export default function AddProductForm() {
         const fileExt = file.name.split('.').pop();
         const fileName = `var-${Date.now()}-${Math.random().toString(36).substring(2)}.${fileExt}`;
         const filePath = `products/${fileName}`;
+        let publicUrl: string | null = null;
         const { error: uploadErr } = await supabase.storage.from('product-images').upload(filePath, file);
-        if (uploadErr) throw uploadErr;
-        const { data: { publicUrl } } = supabase.storage.from('product-images').getPublicUrl(filePath);
-        urls.push(publicUrl);
+        if (uploadErr) {
+          try {
+            publicUrl = await uploadProductImageRequest(file, token);
+          } catch {
+            throw uploadErr;
+          }
+        } else {
+          const { data } = supabase.storage.from('product-images').getPublicUrl(filePath);
+          publicUrl = data.publicUrl;
+        }
+        if (publicUrl) {
+          urls.push(publicUrl);
+        }
       }
 
       // Auto-generate lighting comparison card for the variant
@@ -482,6 +518,12 @@ export default function AddProductForm() {
               .from('product-images')
               .getPublicUrl(cardFilePath);
             variantLightingUrl = cardPublicUrl;
+          } else {
+            try {
+              variantLightingUrl = await uploadProductImageRequest(lightingFile, token);
+            } catch {
+              console.warn('Variant lighting card upload fallback failed');
+            }
           }
         } catch (e) {
           console.warn('Variant lighting card auto-generation skipped:', e);
