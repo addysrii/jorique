@@ -106,7 +106,7 @@ export default function AdminProductModifyButton({ product, onProductUpdated }: 
       onProductUpdated(updated);
       setIsOpen(false);
     } catch (err) {
-      setError('Failed to update product. Please try again.');
+      setError(err instanceof Error ? err.message : 'Failed to update product. Please try again.');
     } finally {
       setLoading(false);
     }

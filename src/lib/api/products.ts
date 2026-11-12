@@ -1,4 +1,5 @@
 import { supabase } from '../supabase';
+import { updateProductRequest, deleteProductRequest } from '../api';
 import type { Product, ProductResponse } from '../../types';
 
 // Transform database response to frontend Product type
@@ -277,6 +278,19 @@ export const productService = {
 
   async updateProduct(id: string, updates: Partial<Product>): Promise<Product> {
     try {
+      const token = localStorage.getItem('jorique_auth_token');
+      if (token) {
+        try {
+          const res = await updateProductRequest(id, updates as Record<string, unknown>, token);
+          if (res?.data) {
+            return toProduct(res.data);
+          }
+        } catch (apiErr) {
+          console.warn('Backend updateProduct failed, attempting direct Supabase fallback:', apiErr);
+        }
+      }
+
+      // Direct Supabase fallback
       const { data, error } = await supabase
         .from('products')
         .update(updates)
@@ -296,6 +310,19 @@ export const productService = {
 
   async deleteProduct(id: string): Promise<{ success: boolean; message: string }> {
     try {
+      const token = localStorage.getItem('jorique_auth_token');
+      if (token) {
+        try {
+          const res = await deleteProductRequest(id, token);
+          if (res?.success) {
+            return { success: true, message: res.message || 'Product deleted successfully' };
+          }
+        } catch (apiErr) {
+          console.warn('Backend deleteProduct failed, attempting direct Supabase fallback:', apiErr);
+        }
+      }
+
+      // Direct Supabase fallback
       const { error } = await supabase
         .from('products')
         .delete()
@@ -305,7 +332,7 @@ export const productService = {
       return { success: true, message: 'Product deleted successfully' };
     } catch (error) {
       console.error('Error deleting product:', error);
-      return { success: false, message: 'Failed to delete product' };
+      return { success: false, message: error instanceof Error ? error.message : 'Failed to delete product' };
     }
   },
 };

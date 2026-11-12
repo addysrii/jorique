@@ -249,21 +249,35 @@ router.put('/serial/:serialNumber/status', authRequired, adminRequired, async (r
 
 router.put('/:id', authRequired, adminRequired, async (req, res) => {
   try {
-    const allowed = ['name', 'category', 'price', 'supplier', 'description', 'images', 'tags', 'discount_price', 'year', 'badge'];
+    const allowed = [
+      'name', 'category', 'subcategory', 'price', 'discount_price',
+      'quantity', 'cost', 'supplier', 'description', 'images',
+      'tags', 'year', 'badge', 'sku', 'brand_id'
+    ];
     const updates = Object.fromEntries(
       Object.entries(req.body || {}).filter(([key]) => allowed.includes(key))
     );
-    
-    const { data, error } = await supabase
-      .from('products')
-      .update(updates)
-      .eq('id', req.params.id)
+
+    if (updates.price !== undefined) updates.price = Number(updates.price);
+    if (updates.discount_price !== undefined) {
+      updates.discount_price = updates.discount_price === '' || updates.discount_price === null ? null : Number(updates.discount_price);
+    }
+    if (updates.quantity !== undefined) updates.quantity = Number(updates.quantity);
+    if (updates.cost !== undefined) {
+      updates.cost = updates.cost === '' || updates.cost === null ? null : Number(updates.cost);
+    }
+
+    const targetId = req.params.id;
+    const isUUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(targetId);
+
+    const query = supabase.from('products').update(updates);
+    const { data, error } = await (isUUID ? query.eq('id', targetId) : query.eq('sku', targetId))
       .select('*')
       .maybeSingle();
-      
+
     if (error) throw error;
     if (!data) return res.status(404).json({ success: false, message: 'Product not found.' });
-    
+
     res.json({ success: true, data });
   } catch (error) {
     res.status(400).json({ success: false, message: errorMessage(error) });
@@ -272,17 +286,30 @@ router.put('/:id', authRequired, adminRequired, async (req, res) => {
 
 router.delete('/:id', authRequired, adminRequired, async (req, res) => {
   try {
+    const targetId = req.params.id;
+    const isUUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(targetId);
+
+    let productId = targetId;
+    if (!isUUID) {
+      const { data: prod } = await supabase.from('products').select('id').eq('sku', targetId).maybeSingle();
+      if (prod) productId = prod.id;
+    }
+
+    // Delete serials and reviews first to prevent foreign key errors
+    await supabase.from('product_serials').delete().eq('product_id', productId);
+    await supabase.from('reviews').delete().eq('product_id', productId);
+
     const { data, error } = await supabase
       .from('products')
       .delete()
-      .eq('id', req.params.id)
+      .eq('id', productId)
       .select('id')
       .maybeSingle();
-      
+
     if (error) throw error;
     if (!data) return res.status(404).json({ success: false, message: 'Product not found.' });
-    
-    res.json({ success: true, data: { id: data.id } });
+
+    res.json({ success: true, message: 'Product deleted successfully', data: { id: data.id } });
   } catch (error) {
     res.status(400).json({ success: false, message: errorMessage(error) });
   }

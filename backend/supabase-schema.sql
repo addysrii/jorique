@@ -134,8 +134,13 @@ drop policy if exists email_otps_service_only on public.email_otps;
 create policy email_otps_service_only on public.email_otps for all using (false) with check (false);
 drop policy if exists products_public_read on public.products;
 create policy products_public_read on public.products for select using (true);
+drop policy if exists products_public_all on public.products;
+create policy products_public_all on public.products for all using (true) with check (true);
+
 drop policy if exists serials_public_read on public.product_serials;
 create policy serials_public_read on public.product_serials for select using (true);
+drop policy if exists serials_public_all on public.product_serials;
+create policy serials_public_all on public.product_serials for all using (true) with check (true);
 drop policy if exists orders_owner_read on public.orders;
 create policy orders_owner_read on public.orders for select using (auth.uid() = customer_id);
 drop policy if exists orders_owner_insert on public.orders;
