@@ -173,8 +173,9 @@ app.use((err, _req, res, _next) => {
 });
 
 function startServer(port) {
-  const server = app.listen(port, () => {
-    console.log(`JORIQUE backend running on http://localhost:${port}`);
+  const host = process.env.HOST || "0.0.0.0";
+  const server = app.listen(port, host, () => {
+    console.log(`JORIQUE backend running on http://${host}:${port}`);
   });
 
   server.on("error", (error) => {
