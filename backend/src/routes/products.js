@@ -3,6 +3,7 @@ import jwt from 'jsonwebtoken';
 import { supabase } from '../supabase.js';
 import { adminRequired, authRequired } from '../middleware/auth.js';
 import { createUniqueSKU, generateSerials } from '../utils/product.js';
+import { logActivity } from '../services/activityLogger.js';
 
 const router = Router();
 const SERIAL_STATUSES = ['available', 'reserved', 'sold', 'returned', 'damaged'];
@@ -214,6 +215,15 @@ router.post('/', authRequired, adminRequired, async (req, res) => {
       await supabase.from('products').delete().eq('id', product.id);
       throw serialError;
     }
+
+    logActivity({
+      type: 'product',
+      action: 'product_created',
+      title: `Product Added: ${product.name}`,
+      description: `SKU: ${product.sku} • Price: ₹${product.price} • Quantity: ${quantity}`,
+      metadata: { id: product.id, sku: product.sku, price: product.price, category: product.category },
+      actor: 'admin',
+    }).catch(() => {});
     
     res.status(201).json({ 
       success: true, 
@@ -278,6 +288,15 @@ router.put('/:id', authRequired, adminRequired, async (req, res) => {
     if (error) throw error;
     if (!data) return res.status(404).json({ success: false, message: 'Product not found.' });
 
+    logActivity({
+      type: 'product',
+      action: 'product_updated',
+      title: `Product Updated: ${data.name || data.sku}`,
+      description: `Updated fields: ${Object.keys(updates).join(', ')}`,
+      metadata: { id: data.id, sku: data.sku, updates },
+      actor: 'admin',
+    }).catch(() => {});
+
     res.json({ success: true, data });
   } catch (error) {
     res.status(400).json({ success: false, message: errorMessage(error) });
@@ -291,7 +310,7 @@ router.delete('/:id', authRequired, adminRequired, async (req, res) => {
 
     let productId = targetId;
     if (!isUUID) {
-      const { data: prod } = await supabase.from('products').select('id').eq('sku', targetId).maybeSingle();
+      const { data: prod } = await supabase.from('products').select('id, name, sku').eq('sku', targetId).maybeSingle();
       if (prod) productId = prod.id;
     }
 
@@ -303,15 +322,96 @@ router.delete('/:id', authRequired, adminRequired, async (req, res) => {
       .from('products')
       .delete()
       .eq('id', productId)
-      .select('id')
+      .select('id, name, sku')
       .maybeSingle();
 
     if (error) throw error;
     if (!data) return res.status(404).json({ success: false, message: 'Product not found.' });
 
+    logActivity({
+      type: 'product',
+      action: 'product_deleted',
+      title: `Product Removed: ${data.name || data.sku || targetId}`,
+      description: 'Product and associated serials purged from catalogue',
+      metadata: { id: productId, target: targetId, name: data.name },
+      actor: 'admin',
+    }).catch(() => {});
+
     res.json({ success: true, message: 'Product deleted successfully', data: { id: data.id } });
   } catch (error) {
     res.status(400).json({ success: false, message: errorMessage(error) });
+  }
+});
+
+/**
+ * Meta / WhatsApp Commerce Catalog CSV Feed Export
+ */
+router.get('/export/meta-catalog.csv', async (_req, res) => {
+  try {
+    const { data: products, error } = await supabase
+      .from('products')
+      .select('*')
+      .order('created_at', { ascending: false });
+
+    if (error) throw error;
+
+    const frontendBase = (process.env.FRONTEND_URL || 'https://jorique.in').split(',')[0].trim().replace(/\/$/, '');
+
+    // Standard Meta / Facebook Catalog CSV header
+    const headers = [
+      'id',
+      'title',
+      'description',
+      'availability',
+      'condition',
+      'price',
+      'link',
+      'image_link',
+      'brand',
+      'google_product_category',
+      'fb_product_category',
+    ];
+
+    const escapeCsv = (str) => {
+      const s = String(str || '').replace(/"/g, '""');
+      return `"${s}"`;
+    };
+
+    const rows = (products || []).map((p) => {
+      const id = p.sku || p.id;
+      const title = p.name || 'JORIQUE Atelier Product';
+      const desc = p.description || `${title} - Handcrafted Luxury Homeware by JORIQUE.`;
+      const avail = Number(p.quantity || 0) > 0 ? 'in stock' : 'out of stock';
+      const condition = 'new';
+      const price = `${Number(p.price || 0).toFixed(2)} INR`;
+      const link = `${frontendBase}/product/${p.id}`;
+      const image_link = Array.isArray(p.images) && p.images[0] ? p.images[0] : '';
+      const brand = 'JORIQUE';
+      const gCategory = 'Home & Garden > Linens & Bedding';
+      const fbCategory = 'Home & Garden';
+
+      return [
+        escapeCsv(id),
+        escapeCsv(title),
+        escapeCsv(desc),
+        escapeCsv(avail),
+        escapeCsv(condition),
+        escapeCsv(price),
+        escapeCsv(link),
+        escapeCsv(image_link),
+        escapeCsv(brand),
+        escapeCsv(gCategory),
+        escapeCsv(fbCategory),
+      ].join(',');
+    });
+
+    const csvContent = [headers.join(','), ...rows].join('\n');
+
+    res.setHeader('Content-Type', 'text/csv');
+    res.setHeader('Content-Disposition', 'attachment; filename="jorique-meta-catalog.csv"');
+    res.status(200).send(csvContent);
+  } catch (error) {
+    res.status(500).json({ success: false, message: errorMessage(error) });
   }
 });
 

@@ -7,6 +7,7 @@ import {
   sendAdminNewOrderAlert,
   normalizePhoneNumber,
 } from '../services/whatsapp.js';
+import { logActivity } from '../services/activityLogger.js';
 
 const router = Router();
 const ORDER_STATUSES = ['pending', 'confirmed', 'processing', 'shipped', 'delivered', 'cancelled', 'returned'];
@@ -125,6 +126,15 @@ router.post('/', authRequired, async (req, res) => {
       }
     }
 
+    logActivity({
+      type: 'order',
+      action: 'order_placed',
+      title: `New Order Placed (#${orderNumber})`,
+      description: `Amount: ₹${Number(total || 0).toLocaleString('en-IN')} • Customer: ${customerName}`,
+      metadata: { orderNumber, customerPhone, total, itemsCount: itemsList.length },
+      actor: 'customer',
+    }).catch(() => {});
+
     res.status(201).json({ success: true, data });
   } catch (error) { res.status(400).json({ success: false, message: message(error) }); }
 });
@@ -186,6 +196,15 @@ router.put('/:id/status', authRequired, adminRequired, async (req, res) => {
         });
       }
     }
+
+    logActivity({
+      type: 'order',
+      action: 'order_status_updated',
+      title: `Order #${data.order_number} Status Updated`,
+      description: `Status changed to ${status.toUpperCase()}${tracking_number ? ` • Tracking: ${tracking_number}` : ''}`,
+      metadata: { orderId: req.params.id, orderNumber: data.order_number, status, tracking_number },
+      actor: req.user?.role || 'admin',
+    }).catch(() => {});
 
     res.json({ success: true, data, whatsapp: whatsappResult });
   } catch (error) { res.status(400).json({ success: false, message: message(error) }); }

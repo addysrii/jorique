@@ -9,6 +9,7 @@
  */
 
 import { supabase } from '../supabase.js';
+import { logActivity } from './activityLogger.js';
 
 export function normalizePhoneNumber(rawPhone) {
   if (!rawPhone) return '';
@@ -58,6 +59,14 @@ export async function sendWhatsAppMessage({ to, text }) {
       const resData = await response.json().catch(() => ({}));
       if (response.ok) {
         console.log(`[WHATSAPP CLOUD API] Message successfully dispatched to +${cleanPhone}`);
+        logActivity({
+          type: 'whatsapp',
+          action: 'whatsapp_dispatch',
+          title: `WhatsApp Dispatched to +${cleanPhone}`,
+          description: text.length > 90 ? `${text.slice(0, 90)}...` : text,
+          metadata: { to: cleanPhone, provider: 'meta_cloud', messageId: resData.messages?.[0]?.id },
+          actor: 'system',
+        }).catch(() => {});
         return { success: true, provider: 'meta_cloud', messageId: resData.messages?.[0]?.id, whatsappUrl: directWhatsAppUrl };
       }
       console.warn('[WHATSAPP CLOUD API] Error from Meta:', resData);
@@ -91,6 +100,14 @@ export async function sendWhatsAppMessage({ to, text }) {
       const twilioData = await twilioRes.json().catch(() => ({}));
       if (twilioRes.ok) {
         console.log(`[TWILIO WHATSAPP] Message dispatched to +${cleanPhone}`);
+        logActivity({
+          type: 'whatsapp',
+          action: 'whatsapp_dispatch',
+          title: `WhatsApp Dispatched to +${cleanPhone} (Twilio)`,
+          description: text.length > 90 ? `${text.slice(0, 90)}...` : text,
+          metadata: { to: cleanPhone, provider: 'twilio', messageId: twilioData.sid },
+          actor: 'system',
+        }).catch(() => {});
         return { success: true, provider: 'twilio', messageId: twilioData.sid, whatsappUrl: directWhatsAppUrl, whatsappWebUrl: directWhatsAppWebUrl };
       }
       console.warn('[TWILIO WHATSAPP] Error from Twilio:', twilioData);
@@ -139,6 +156,15 @@ export async function sendWhatsAppMessage({ to, text }) {
     console.log(text);
     console.log('======================================================\n');
   }
+
+  logActivity({
+    type: 'whatsapp',
+    action: 'whatsapp_dispatch',
+    title: `WhatsApp Concierge Sent to +${cleanPhone}`,
+    description: text.length > 90 ? `${text.slice(0, 90)}...` : text,
+    metadata: { to: cleanPhone, provider: 'dev_fallback', preview: text.slice(0, 160) },
+    actor: 'system',
+  }).catch(() => {});
 
   return {
     success: true,
@@ -305,6 +331,15 @@ export async function handleIncomingWhatsAppMessage({ from, text }) {
 
   console.log(`[WHATSAPP AUTOMATION BOT] Message from +${cleanPhone}: "${text}"`);
 
+  logActivity({
+    type: 'whatsapp',
+    action: 'whatsapp_inbound_bot',
+    title: `Inbound WhatsApp from +${cleanPhone}`,
+    description: `Customer sent: "${text}"`,
+    metadata: { from: cleanPhone, query: text },
+    actor: 'whatsapp_bot',
+  }).catch(() => {});
+
   // 1. Order Status Tracking
   if (
     userMsg.includes('order') ||
@@ -385,16 +420,21 @@ If your order is under a different number or email, please reply with your *Orde
   // 2. Browse Catalog / Collections
   if (
     userMsg.includes('catalog') ||
+    userMsg.includes('catalogue') ||
     userMsg.includes('collection') ||
     userMsg.includes('shop') ||
+    userMsg.includes('store') ||
     userMsg.includes('product') ||
     userMsg.includes('bedsheet') ||
     userMsg.includes('towel') ||
     userMsg === '2'
   ) {
-    const reply = `✨ *JORIQUE LUXURY COLLECTIONS*
+    const reply = `✨ *JORIQUE LUXURY CATALOGUE STORE*
 ────────────────────────────
-Explore our signature handcrafted homeware:
+Explore our signature handcrafted homeware & digital catalogue:
+
+📖 *Interactive Catalogue Store:*
+https://jorique.in/catalog
 
 🛏️ *Luxury Bedsheets:*
 https://jorique.in/shop?category=Bedsheet

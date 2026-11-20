@@ -423,8 +423,52 @@ export function getDashboardDataRequest(role: 'admin' | 'user', token: string) {
       stats: Array<{ label: string; value: string }>;
       activity?: string[];
       recentOrders?: Array<{ id: string; status: string; total: string }>;
+      recentLogs?: ActivityLogItem[];
     };
   }>(`/api/dashboard/${role}`, { token });
+}
+
+export interface ActivityLogItem {
+  id: string;
+  type: 'whatsapp' | 'order' | 'product' | 'pos' | 'inventory' | 'auth' | 'system';
+  action: string;
+  title: string;
+  description?: string;
+  metadata?: Record<string, any>;
+  actor: string;
+  created_at: string;
+}
+
+export function getActivityLogsRequest(token: string, params?: { type?: string; search?: string; limit?: number }) {
+  const query = new URLSearchParams();
+  if (params?.type && params.type !== 'all') query.set('type', params.type);
+  if (params?.search) query.set('search', params.search);
+  if (params?.limit) query.set('limit', String(params.limit));
+  const queryString = query.toString() ? `?${query.toString()}` : '';
+
+  return apiRequest<{
+    success: boolean;
+    count: number;
+    data: ActivityLogItem[];
+  }>(`/api/activity-logs${queryString}`, { token });
+}
+
+export function createActivityLogRequest(
+  log: { type?: string; action?: string; title: string; description?: string; metadata?: Record<string, any> },
+  token: string
+) {
+  return apiRequest<{ success: boolean; data: ActivityLogItem }>('/api/activity-logs', {
+    method: 'POST',
+    body: JSON.stringify(log),
+    token,
+  });
+}
+
+export function clearActivityLogsRequest(token: string) {
+  return apiRequest<{ success: boolean; message: string }>('/api/activity-logs', {
+    method: 'DELETE',
+    token,
+  });
 }
 
 export default {
@@ -438,6 +482,9 @@ export default {
   simulateWhatsAppRequest,
   getWhatsAppConfigRequest,
   sendCustomWhatsAppRequest,
+  getActivityLogsRequest,
+  createActivityLogRequest,
+  clearActivityLogsRequest,
   googleAuthRequest,
   meRequest,
   dashboardRequest,

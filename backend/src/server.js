@@ -8,6 +8,8 @@ import reviewsRouter from "./routes/reviews.js";
 import giftsRouter from "./routes/gifts.js";
 import analyticsRouter from "./routes/analytics.js";
 import whatsappRouter from "./routes/whatsapp.js";
+import activityLogsRouter from "./routes/activityLogs.js";
+import { getActivityLogs } from "./services/activityLogger.js";
 import { supabase } from "./supabase.js";
 
 if (!process.env.JWT_SECRET) {
@@ -61,6 +63,7 @@ app.use("/api/reviews", reviewsRouter);
 app.use("/api/gifts", giftsRouter);
 app.use("/api/analytics", analyticsRouter);
 app.use("/api/whatsapp", whatsappRouter);
+app.use("/api/activity-logs", activityLogsRouter);
 
 // Routes & Auth
 app.get("/api/health", (_req, res) => {
@@ -130,13 +133,8 @@ app.get("/api/dashboard/admin", authRequired, async (req, res) => {
 
     const revenue = (revenueRows || []).reduce((sum, order) => sum + Number(order.total || 0), 0);
 
-    const { data: latestOrders } = await supabase
-      .from('orders')
-      .select('order_number, created_at')
-      .order('created_at', { ascending: false })
-      .limit(3);
-
-    const activity = (latestOrders || []).map((o) => `New order ${o.order_number || 'placed'}`);
+    const recentLogs = await getActivityLogs({ limit: 8 });
+    const activity = recentLogs.map((o) => `${o.title}${o.description ? ` (${o.description})` : ''}`);
 
     res.json({
       stats: [
@@ -146,6 +144,7 @@ app.get("/api/dashboard/admin", authRequired, async (req, res) => {
         { label: "Products", value: String(productsCount || 0) },
       ],
       activity,
+      recentLogs,
     });
   } catch (error) {
     res.json({

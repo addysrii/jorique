@@ -210,8 +210,20 @@ export default function Navbar({ }: NavbarProps) {
                 );
               })}
 
-
-
+              {/* Digital Atelier Catalogue Store Link */}
+              <Link
+                to="/catalog"
+                className={`text-xs font-bold tracking-widest uppercase transition-colors duration-200 relative group py-1 ${transparent
+                  ? 'text-[#D4AF37] hover:text-white'
+                  : 'text-[#0B5F61] dark:text-[#D4AF37] hover:text-primary dark:hover:text-white'
+                  } ${location.pathname === '/catalog' ? (transparent ? 'text-white' : 'text-primary dark:text-[#D4AF37]') : ''}`}
+              >
+                Catalogue
+                <span
+                  className={`absolute -bottom-0.5 left-0 h-0.5 transition-all duration-300 ${transparent ? 'bg-white' : 'bg-[#D4AF37]'
+                    } ${location.pathname === '/catalog' ? 'w-full' : 'w-0 group-hover:w-full'}`}
+                />
+              </Link>
 
             </nav>
 
@@ -480,6 +492,19 @@ export default function Navbar({ }: NavbarProps) {
                       <LogIn size={15} /> Sign In / Register
                     </Link>
                   )}
+                  <Link
+                    to="/catalog"
+                    onClick={() => setMobileOpen(false)}
+                    className="text-primary dark:text-[#D4AF37] hover:underline flex items-center justify-between font-bold"
+                  >
+                    <span className="flex items-center gap-2">
+                      <BookOpen size={15} /> Atelier Catalogue Store
+                    </span>
+                    <span className="text-[10px] uppercase font-mono px-2 py-0.5 rounded-full bg-[#D4AF37]/20 text-[#D4AF37]">
+                      Digital
+                    </span>
+                  </Link>
+
                   <Link
                     to="/souvenir"
                     onClick={() => setMobileOpen(false)}

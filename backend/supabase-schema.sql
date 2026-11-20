@@ -304,5 +304,29 @@ create policy "product_images_public_delete"
 on storage.objects for delete
 using (bucket_id = 'product-images');
 
+-- ----------------------------------------------------
+-- Activity & Audit Logs (Events, WhatsApp dispatches, Catalogue changes)
+-- ----------------------------------------------------
+create table if not exists public.activity_logs (
+  id uuid primary key default gen_random_uuid(),
+  type text not null default 'system', -- 'whatsapp', 'order', 'product', 'pos', 'inventory', 'auth', 'system'
+  action text not null, -- e.g. 'order_placed', 'whatsapp_dispatch', 'whatsapp_inbound_bot', 'product_created', 'product_updated', 'product_deleted'
+  title text not null,
+  description text,
+  metadata jsonb default '{}'::jsonb,
+  actor text default 'system', -- 'admin', 'system', 'customer', 'whatsapp_bot'
+  created_at timestamp with time zone default now()
+);
+
+create index if not exists idx_activity_logs_created_at on public.activity_logs (created_at desc);
+create index if not exists idx_activity_logs_type on public.activity_logs (type);
+
+alter table public.activity_logs enable row level security;
+drop policy if exists activity_logs_public_read on public.activity_logs;
+create policy activity_logs_public_read on public.activity_logs for select using (true);
+drop policy if exists activity_logs_public_all on public.activity_logs;
+create policy activity_logs_public_all on public.activity_logs for all using (true) with check (true);
+
+
 
 

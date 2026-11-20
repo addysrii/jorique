@@ -32,6 +32,7 @@ const GiftPage = lazy(() => import('./pages/GiftPage'));
 const Souvenir = lazy(() => import('./pages/Souvenir'));
 const Hospitality = lazy(() => import('./pages/Hospitality'));
 const ReturnPolicy = lazy(() => import('./pages/ReturnPolicy'));
+const CatalogStore = lazy(() => import('./pages/CatalogStore'));
 
 function PageLoader() {
   return <LoadingMasterpiece />;
@@ -124,6 +125,16 @@ function AnimatedRoutes() {
               </PageTransition>
             }
           />
+          <Route
+            path="/catalog"
+            element={
+              <PageTransition>
+                <CatalogStore />
+              </PageTransition>
+            }
+          />
+          <Route path="/catalogue" element={<Navigate to="/catalog" replace />} />
+          <Route path="/store" element={<Navigate to="/catalog" replace />} />
           <Route
             path="/product/:id"
             element={
