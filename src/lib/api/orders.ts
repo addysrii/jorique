@@ -1,4 +1,5 @@
 import { supabase } from '../supabase';
+import { createOrderRequest } from '../api';
 
 export interface OrderItem {
   product_id: string;
@@ -92,6 +93,22 @@ export const orderService = {
         id: payload.order_number,
         ...orderData,
       });
+
+      // Call backend API with token to ensure service-role execution & automated WhatsApp dispatch
+      const token = localStorage.getItem('jorique_auth_token');
+      if (token) {
+        try {
+          const res = await createOrderRequest({
+            ...orderData,
+            customer_details: payload.customer_details,
+          }, token);
+          if (res?.data) {
+            return { success: true, data: res.data };
+          }
+        } catch (apiErr) {
+          console.warn('Backend order recording deferred, attempting direct fallback:', apiErr);
+        }
+      }
 
       const { data, error } = await supabase
         .from('orders')

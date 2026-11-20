@@ -23,10 +23,11 @@ import BadgeManager from '../components/BadgeManager';
 import SkuSeriesManager from '../components/SkuSeriesManager';
 import InStoreBillingPOS from '../components/InStoreBillingPOS';
 import CouponManager from '../components/CouponManager';
+import WhatsAppAutomationHub from '../components/WhatsAppAutomationHub';
 import LoadingMasterpiece from '../components/LoadingMasterpiece';
 import { JORIQUE_COLLECTION_LIST, getBadgeColors } from '../lib/constants/collections';
 
-type AdminTab = 'overview' | 'billing' | 'products' | 'inventory' | 'orders' | 'gifts' | 'reviews' | 'suppliers' | 'barcodes' | 'coupons' | 'sku-series' | 'categories' | 'badges';
+type AdminTab = 'overview' | 'billing' | 'products' | 'inventory' | 'orders' | 'whatsapp' | 'gifts' | 'reviews' | 'suppliers' | 'barcodes' | 'coupons' | 'sku-series' | 'categories' | 'badges';
 
 interface ProductSerialRow {
   id: string;
@@ -437,6 +438,7 @@ To ensure protection under our Return & Exchange Policy, please record a continu
               { id: 'products', label: `Products (${products.length})`, icon: <Boxes size={14} /> },
               { id: 'inventory', label: `Inventory Matrix (${serials.length})`, icon: <Layers size={14} /> },
               { id: 'orders', label: `Orders (${orders.length})`, icon: <ShoppingCart size={14} /> },
+              { id: 'whatsapp', label: 'WhatsApp Automation', icon: <MessageCircle size={14} className="text-[#25D366]" /> },
               { id: 'coupons', label: 'Coupons', icon: <Ticket size={14} /> },
               { id: 'gifts', label: `Gift Redemptions (${giftClaims.length})`, icon: <Gift size={14} /> },
               { id: 'reviews', label: `Reviews (${reviews.length})`, icon: <Star size={14} /> },
@@ -1007,6 +1009,11 @@ To ensure protection under our Return & Exchange Policy, please record a continu
                     </div>
                   )}
                 </div>
+              )}
+
+              {/* TAB: WHATSAPP AUTOMATION HUB */}
+              {activeTab === 'whatsapp' && (
+                <WhatsAppAutomationHub token={token} />
               )}
 
               {/* TAB 5: GIFT REDEMPTIONS */}

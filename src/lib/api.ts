@@ -132,6 +132,34 @@ export function updateOrderStatusWithWhatsAppRequest(
   );
 }
 
+export function simulateWhatsAppRequest(message: string, phone?: string) {
+  return apiRequest<{ success: boolean; result: { success: boolean; provider: string; whatsappUrl?: string } }>(
+    '/api/whatsapp/simulate',
+    {
+      method: 'POST',
+      body: JSON.stringify({ message, phone }),
+    }
+  );
+}
+
+export function getWhatsAppConfigRequest(token: string) {
+  return apiRequest<{
+    success: boolean;
+    meta_configured: boolean;
+    twilio_configured: boolean;
+    admin_phone: string;
+    webhook_verify_token: string;
+  }>('/api/whatsapp/config', { token });
+}
+
+export function sendCustomWhatsAppRequest(phone: string, message: string, token: string) {
+  return apiRequest<{ success: boolean; result: any }>('/api/whatsapp/send-custom', {
+    method: 'POST',
+    body: JSON.stringify({ phone, message }),
+    token,
+  });
+}
+
 export function verifyOtpRequest(email: string, otp: string) {
   return apiRequest<AuthResponse>('/api/auth/verify-otp', {
     method: 'POST',
@@ -407,6 +435,9 @@ export default {
   verifyWhatsAppOtpRequest,
   sendOrderWhatsAppNotificationRequest,
   updateOrderStatusWithWhatsAppRequest,
+  simulateWhatsAppRequest,
+  getWhatsAppConfigRequest,
+  sendCustomWhatsAppRequest,
   googleAuthRequest,
   meRequest,
   dashboardRequest,

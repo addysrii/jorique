@@ -1,10 +1,14 @@
 /**
- * JORIQUE Luxury Concierge - WhatsApp Integration Service
+ * JORIQUE Luxury Concierge - WhatsApp Integration & Automation Service
  * Supports:
  * 1. Meta WhatsApp Business Cloud API (Graph API)
  * 2. Twilio WhatsApp API
  * 3. Direct wa.me link generation and dev console fallback
+ * 4. Automated 24/7 inbound AI/keyword auto-responder
+ * 5. Automated Order Confirmation & Admin Alerts
  */
+
+import { supabase } from '../supabase.js';
 
 export function normalizePhoneNumber(rawPhone) {
   if (!rawPhone) return '';
@@ -212,4 +216,279 @@ Questions? Reach our concierge at care@jorique.in.
 Thank you for choosing JORIQUE.`;
 
   return await sendWhatsAppMessage({ to: customerPhone, text: body });
+}
+
+/**
+ * Automated Order Confirmation on Placement
+ */
+export async function sendOrderConfirmationWhatsApp({
+  orderNumber,
+  customerPhone,
+  customerName = 'Valued Patron',
+  total,
+  items = [],
+  shippingAddress = '',
+}) {
+  const itemsList = Array.isArray(items) ? items : [items];
+  const itemsText = itemsList
+    .slice(0, 5)
+    .map((i, idx) => {
+      const name = i.name || i.product_name || 'Handcrafted Luxury Piece';
+      const qty = i.quantity || 1;
+      const price = i.price ? `₹${Number(i.price).toLocaleString('en-IN')}` : '';
+      return `${idx + 1}. *${name}* (Qty: ${qty}${price ? ` • ${price}` : ''})`;
+    })
+    .join('\n');
+
+  const moreItemsText = itemsList.length > 5 ? `\n...and ${itemsList.length - 5} more item(s)` : '';
+
+  const body = `⚜️ *JORIQUE ATELIER — ORDER CONFIRMATION*
+────────────────────────────
+Dear *${customerName}*,
+
+Thank you for choosing JORIQUE. Your order has been placed successfully and scheduled for master artisan preparation.
+
+📋 *Order ID:* #${orderNumber}
+💰 *Total Amount:* ₹${Number(total || 0).toLocaleString('en-IN')}
+🚚 *Delivery:* FREE Express Delivery
+${shippingAddress ? `📍 *Deliver to:* ${shippingAddress}\n` : ''}
+📦 *Order Summary:*
+${itemsText}${moreItemsText}
+
+────────────────────────────
+✨ *Fulfillment Stages:*
+1. Quality inspection & sequential serial tagging.
+2. Courier handover with real-time tracking link.
+3. As part of our luxury guarantee, please record a continuous 360° unboxing video upon parcel delivery.
+
+Questions? Reply directly to this WhatsApp concierge or email care@jorique.in.
+_Where Comfort Meets Design_`;
+
+  return await sendWhatsAppMessage({ to: customerPhone, text: body });
+}
+
+/**
+ * Automated Admin / Store Owner Alert on New Order
+ */
+export async function sendAdminNewOrderAlert({
+  orderNumber,
+  customerName = 'Valued Customer',
+  customerPhone = 'Not provided',
+  total,
+  itemsCount = 1,
+  city = '',
+}) {
+  const adminPhone = process.env.WHATSAPP_ADMIN_PHONE || process.env.WHATSAPP_CONCIERGE_NUMBER || '919919388211';
+  const body = `🚨 *NEW JORIQUE ORDER RECEIVED!*
+────────────────────────────
+📋 *Order ID:* #${orderNumber}
+👤 *Customer:* ${customerName} (+${normalizePhoneNumber(customerPhone)})
+💰 *Amount:* ₹${Number(total || 0).toLocaleString('en-IN')}
+📦 *Items:* ${itemsCount} Piece(s)
+${city ? `📍 *Destination:* ${city}\n` : ''}────────────────────────────
+View and fulfill this order in the JORIQUE OS Admin Dashboard:
+https://jorique.in/admin`;
+
+  try {
+    return await sendWhatsAppMessage({ to: adminPhone, text: body });
+  } catch (err) {
+    console.warn('[WHATSAPP ADMIN ALERT] Failed to notify admin:', err.message);
+  }
+}
+
+/**
+ * Automated 24/7 Inbound AI / Keyword Auto-Responder
+ */
+export async function handleIncomingWhatsAppMessage({ from, text }) {
+  const cleanPhone = normalizePhoneNumber(from);
+  const userMsg = String(text || '').trim().toLowerCase();
+
+  console.log(`[WHATSAPP AUTOMATION BOT] Message from +${cleanPhone}: "${text}"`);
+
+  // 1. Order Status Tracking
+  if (
+    userMsg.includes('order') ||
+    userMsg.includes('track') ||
+    userMsg.includes('status') ||
+    userMsg.startsWith('jrq-') ||
+    userMsg === '1'
+  ) {
+    const orderMatch = text.match(/jrq-[\w-]+/i);
+    let order = null;
+
+    if (orderMatch) {
+      const orderNum = orderMatch[0].toUpperCase();
+      const { data } = await supabase
+        .from('orders')
+        .select('*')
+        .ilike('order_number', `%${orderNum}%`)
+        .maybeSingle();
+      order = data;
+    } else {
+      // Look up by customer phone number
+      const { data } = await supabase
+        .from('orders')
+        .select('*')
+        .order('created_at', { ascending: false });
+
+      if (data && data.length > 0) {
+        order = data.find((o) => {
+          const p = (
+            o.items?.customer_phone ||
+            o.items?.phone ||
+            o.items?.customer_details?.phone ||
+            o.shipping_address ||
+            ''
+          ).replace(/\D/g, '');
+          return p.includes(cleanPhone.slice(-10));
+        });
+      }
+    }
+
+    if (order) {
+      const statusLabels = {
+        pending: '⏳ Pending Confirmation',
+        confirmed: '✨ Confirmed & In Atelier Curation',
+        processing: '🧵 In Crafting & Quality Inspection',
+        shipped: '📦 Dispatched via Express Courier',
+        delivered: '🏡 Delivered to Your Doorstep',
+        cancelled: '❌ Cancelled',
+        returned: '🔄 Exchange / Return Request',
+      };
+      const label = statusLabels[order.status?.toLowerCase()] || order.status;
+      const orderDate = new Date(order.created_at).toLocaleDateString('en-IN', {
+        day: '2-digit',
+        month: 'short',
+        year: 'numeric',
+      });
+
+      const reply = `⚜️ *ORDER STATUS — JORIQUE*
+────────────────────────────
+Order ID: *#${order.order_number}*
+Status: *${label}*
+Total: ₹${Number(order.total || 0).toLocaleString('en-IN')}
+Placed On: ${orderDate}
+
+${order.status === 'shipped' ? '⚠️ *Reminder:* Please record a continuous 360° unboxing video upon parcel arrival.\n' : ''}────────────────────────────
+Need concierge assistance? Reply with *4* or type your question.`;
+
+      return await sendWhatsAppMessage({ to: cleanPhone, text: reply });
+    } else {
+      const reply = `⚜️ *JORIQUE ORDER TRACKING*
+We could not locate an active order registered under this phone number (+${cleanPhone}).
+
+If your order is under a different number or email, please reply with your *Order Number* (e.g. *JRQ-123456*) and our concierge will look it up immediately!`;
+      return await sendWhatsAppMessage({ to: cleanPhone, text: reply });
+    }
+  }
+
+  // 2. Browse Catalog / Collections
+  if (
+    userMsg.includes('catalog') ||
+    userMsg.includes('collection') ||
+    userMsg.includes('shop') ||
+    userMsg.includes('product') ||
+    userMsg.includes('bedsheet') ||
+    userMsg.includes('towel') ||
+    userMsg === '2'
+  ) {
+    const reply = `✨ *JORIQUE LUXURY COLLECTIONS*
+────────────────────────────
+Explore our signature handcrafted homeware:
+
+🛏️ *Luxury Bedsheets:*
+https://jorique.in/shop?category=Bedsheet
+
+🛋️ *Artisan Cushion Covers:*
+https://jorique.in/shop?category=Cushion+Cover
+
+🧣 *Super-Soft Towels:*
+https://jorique.in/shop?category=Towel
+
+👗 *Designer Suits:*
+https://jorique.in/shop?category=Suits
+
+🎁 *Complimentary Souvenir Gift Page:*
+https://jorique.in/souvenir
+
+Reply *1* to track an order, or *4* for personalized concierge recommendations.`;
+
+    return await sendWhatsAppMessage({ to: cleanPhone, text: reply });
+  }
+
+  // 3. Fabric Care & Maintenance Guide
+  if (
+    userMsg.includes('care') ||
+    userMsg.includes('wash') ||
+    userMsg.includes('clean') ||
+    userMsg.includes('fabric') ||
+    userMsg === '3'
+  ) {
+    const reply = `🧵 *JORIQUE FABRIC CARE & LONGEVITY GUIDE*
+────────────────────────────
+To preserve the tactile luster of your Egyptian cotton & luxury linens:
+
+• *Machine Wash:* Gentle cycle with cold or lukewarm water (max 30°C).
+• *Detergent:* Mild liquid detergent. Avoid chlorine bleach or harsh brighteners.
+• *Drying:* Line dry in shaded breeze or tumble dry low heat.
+• *Ironing:* Warm iron on reverse side while slightly damp.
+• *Dark Colours:* Wash dark and light tones separately on first wash.
+
+_Where Comfort Meets Design_`;
+
+    return await sendWhatsAppMessage({ to: cleanPhone, text: reply });
+  }
+
+  // 4. Return, Exchange & Damage Claims
+  if (
+    userMsg.includes('return') ||
+    userMsg.includes('exchange') ||
+    userMsg.includes('refund') ||
+    userMsg.includes('defect') ||
+    userMsg.includes('damage') ||
+    userMsg === '5'
+  ) {
+    const reply = `📦 *JORIQUE RETURN & EXCHANGE GUARANTEE*
+────────────────────────────
+Every JORIQUE piece is pre-dispatch inspected by master artisans.
+
+⚠️ *MANDATORY FOR CLAIMS:*
+To protect your order, please record a continuous, unedited *360° unboxing video* starting before parcel seals are broken.
+
+• Transit defect or damage claims must be submitted within *48 hours* of delivery.
+• Send video & order ID to *care@jorique.in* or upload directly in this chat.
+
+Our concierge team will review and arrange an immediate replacement.`;
+
+    return await sendWhatsAppMessage({ to: cleanPhone, text: reply });
+  }
+
+  // 5. Connect to Human Stylist / Concierge
+  if (userMsg.includes('human') || userMsg.includes('agent') || userMsg.includes('help') || userMsg.includes('stylist') || userMsg === '4') {
+    const reply = `⚜️ *JORIQUE CONCIERGE ASSISTANCE*
+────────────────────────────
+Thank you for reaching out. A dedicated JORIQUE client advisor has been notified and will assist you in this chat shortly.
+
+Atelier Hours: 10:00 AM – 7:00 PM IST (Mon – Sat).
+For urgent inquiries, email: care@jorique.in.`;
+
+    return await sendWhatsAppMessage({ to: cleanPhone, text: reply });
+  }
+
+  // 6. Default Welcome Menu
+  const reply = `⚜️ *WELCOME TO JORIQUE LUXURY ATELIER*
+_Where Comfort Meets Design_
+────────────────────────────
+Hello! How may our concierge assist you today?
+
+Reply with a number:
+*1* — 📦 Track My Order
+*2* — 🛍️ Browse Luxury Collections
+*3* — 🧵 Fabric Care Guide
+*4* — 💬 Connect with Client Stylist
+*5* — 🔄 Return & Exchange Policy
+
+Or simply type your question and an advisor will assist you.`;
+
+  return await sendWhatsAppMessage({ to: cleanPhone, text: reply });
 }

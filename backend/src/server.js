@@ -7,6 +7,7 @@ import ordersRouter from "./routes/orders.js";
 import reviewsRouter from "./routes/reviews.js";
 import giftsRouter from "./routes/gifts.js";
 import analyticsRouter from "./routes/analytics.js";
+import whatsappRouter from "./routes/whatsapp.js";
 import { supabase } from "./supabase.js";
 
 if (!process.env.JWT_SECRET) {
@@ -51,6 +52,7 @@ app.use(
 );
 
 app.use(express.json({ limit: "10mb" }));
+app.use(express.urlencoded({ extended: true, limit: "10mb" }));
 
 // Route handlers
 app.use("/api/products", productsRouter);
@@ -58,6 +60,7 @@ app.use("/api/orders", ordersRouter);
 app.use("/api/reviews", reviewsRouter);
 app.use("/api/gifts", giftsRouter);
 app.use("/api/analytics", analyticsRouter);
+app.use("/api/whatsapp", whatsappRouter);
 
 // Routes & Auth
 app.get("/api/health", (_req, res) => {
