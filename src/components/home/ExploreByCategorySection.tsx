@@ -65,7 +65,7 @@ export default function ExploreByCategorySection() {
               Explore The Collections
             </h2>
           </div>
-          <Link to="/catalog" className="group inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-widest text-[#0B5F61] dark:text-[#D4AF37]">
+          <Link to="/shop" className="group inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-widest text-[#0B5F61] dark:text-[#D4AF37]">
             <span>View Entire Catalogue</span>
             <ArrowRight size={14} className="group-hover:translate-x-1 transition-transform" />
           </Link>

@@ -417,7 +417,7 @@ If your order is under a different number or email, please reply with your *Orde
     }
   }
 
-  // 2. Browse Catalog / Collections
+  // 2. Browse Collections
   if (
     userMsg.includes('catalog') ||
     userMsg.includes('catalogue') ||
@@ -429,12 +429,9 @@ If your order is under a different number or email, please reply with your *Orde
     userMsg.includes('towel') ||
     userMsg === '2'
   ) {
-    const reply = `✨ *JORIQUE LUXURY CATALOGUE STORE*
+    const reply = `✨ *JORIQUE LUXURY COLLECTIONS*
 ────────────────────────────
-Explore our signature handcrafted homeware & digital catalogue:
-
-📖 *Interactive Catalogue Store:*
-https://jorique.in/catalog
+Explore our signature handcrafted homeware:
 
 🛏️ *Luxury Bedsheets:*
 https://jorique.in/shop?category=Bedsheet

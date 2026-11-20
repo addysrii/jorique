@@ -125,16 +125,9 @@ function AnimatedRoutes() {
               </PageTransition>
             }
           />
-          <Route
-            path="/catalog"
-            element={
-              <PageTransition>
-                <CatalogStore />
-              </PageTransition>
-            }
-          />
-          <Route path="/catalogue" element={<Navigate to="/catalog" replace />} />
-          <Route path="/store" element={<Navigate to="/catalog" replace />} />
+          <Route path="/catalog" element={<Navigate to="/shop" replace />} />
+          <Route path="/catalogue" element={<Navigate to="/shop" replace />} />
+          <Route path="/store" element={<Navigate to="/shop" replace />} />
           <Route
             path="/product/:id"
             element={

@@ -449,7 +449,6 @@ To ensure protection under our Return & Exchange Policy, please record a continu
             {[
               { id: 'overview', label: 'Dashboard', icon: <WalletCards size={14} /> },
               { id: 'billing', label: 'In-Store Billing (POS)', icon: <Receipt size={14} /> },
-              { id: 'catalogue', label: 'Catalogue Store', icon: <BookOpen size={14} className="text-[#D4AF37]" /> },
               { id: 'activity', label: 'Activity Log', icon: <Activity size={14} className="text-amber-500" /> },
               { id: 'products', label: `Products (${products.length})`, icon: <Boxes size={14} /> },
               { id: 'inventory', label: `Inventory Matrix (${serials.length})`, icon: <Layers size={14} /> },
@@ -577,100 +576,63 @@ To ensure protection under our Return & Exchange Policy, please record a continu
                     </div>
                   </div>
 
-                  {/* Catalogue Store & Live Action Stream 2-Column Banner */}
-                  <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                    {/* Catalogue Storefront Card */}
-                    <div className="p-6 rounded-3xl bg-gradient-to-br from-stone-900 to-[#1F1B18] text-white border border-[#D4AF37]/30 shadow-md flex flex-col justify-between">
-                      <div>
-                        <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#D4AF37]/20 text-[#D4AF37] text-[10px] font-bold uppercase tracking-wider mb-3">
-                          <BookOpen size={12} />
-                          <span>Digital Storefront</span>
+                  {/* Live Store Action & Activity Stream */}
+                  <div className="p-6 rounded-3xl bg-white dark:bg-[#1A1816] border border-border dark:border-[#2E2925] shadow-sm flex flex-col justify-between">
+                    <div>
+                      <div className="flex items-center justify-between mb-3">
+                        <div className="flex items-center gap-2">
+                          <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+                          <h4 className="text-xs font-bold uppercase tracking-widest text-primary dark:text-white flex items-center gap-1.5">
+                            <Activity size={14} className="text-[#D4AF37]" />
+                            Live Store Activity Feed
+                          </h4>
                         </div>
-                        <h4 className="text-lg font-serif tracking-wide text-[#F3EFE6] mb-1">
-                          JORIQUE Digital Catalogue Store
-                        </h4>
-                        <p className="text-xs text-stone-300 leading-relaxed mb-4">
-                          Share your interactive catalogue lookbook with WhatsApp patrons, interior designers, and retail buyers.
-                        </p>
-                      </div>
-
-                      <div className="pt-4 border-t border-white/10 flex flex-wrap items-center gap-2">
-                        <Link
-                          to="/catalog"
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-bold bg-[#D4AF37] text-black hover:bg-[#C29E30] transition-all shadow-xs uppercase tracking-wider"
-                        >
-                          <ExternalLink size={13} />
-                          <span>View /catalog</span>
-                        </Link>
-                        <button
-                          onClick={() => setActiveTab('catalogue')}
-                          className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-semibold bg-white/10 hover:bg-white/20 text-white border border-white/20 transition-all"
-                        >
-                          <span>Catalogue Store Hub →</span>
-                        </button>
-                      </div>
-                    </div>
-
-                    {/* Live Store Action & Activity Stream */}
-                    <div className="p-6 rounded-3xl bg-white dark:bg-[#1A1816] border border-border dark:border-[#2E2925] shadow-sm flex flex-col justify-between">
-                      <div>
-                        <div className="flex items-center justify-between mb-3">
-                          <div className="flex items-center gap-2">
-                            <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-                            <h4 className="text-xs font-bold uppercase tracking-widest text-primary dark:text-white flex items-center gap-1.5">
-                              <Activity size={14} className="text-[#D4AF37]" />
-                              Live Store Activity Feed
-                            </h4>
-                          </div>
-                          <button
-                            onClick={() => setActiveTab('activity')}
-                            className="text-xs text-primary dark:text-[#D4AF37] hover:underline font-semibold"
-                          >
-                            View All Logs →
-                          </button>
-                        </div>
-
-                        {overviewLogs.length === 0 ? (
-                          <div className="py-6 text-center text-xs text-secondary dark:text-white/50">
-                            Activity events will automatically stream here.
-                          </div>
-                        ) : (
-                          <div className="space-y-2 mt-2">
-                            {overviewLogs.slice(0, 3).map((log) => (
-                              <div
-                                key={log.id}
-                                className="p-2.5 rounded-xl bg-stone-50 dark:bg-white/2 border border-border/60 dark:border-white/5 flex items-start justify-between gap-2 text-xs"
-                              >
-                                <div className="min-w-0">
-                                  <p className="font-semibold text-primary dark:text-white truncate">
-                                    {log.title}
-                                  </p>
-                                  {log.description && (
-                                    <p className="text-[11px] text-secondary dark:text-white/60 truncate mt-0.5">
-                                      {log.description}
-                                    </p>
-                                  )}
-                                </div>
-                                <span className="text-[10px] text-secondary/60 dark:text-white/40 whitespace-nowrap flex-shrink-0">
-                                  {log.created_at ? new Date(log.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : ''}
-                                </span>
-                              </div>
-                            ))}
-                          </div>
-                        )}
-                      </div>
-
-                      <div className="pt-3 border-t border-border/60 dark:border-[#2E2925] mt-4 flex items-center justify-between text-[11px] text-secondary dark:text-white/50">
-                        <span>Tracks WhatsApp, Orders, Catalogue & POS</span>
                         <button
                           onClick={() => setActiveTab('activity')}
-                          className="font-semibold text-[#D4AF37] hover:underline"
+                          className="text-xs text-primary dark:text-[#D4AF37] hover:underline font-semibold"
                         >
-                          Full Audit Trail ({overviewLogs.length})
+                          View All Logs →
                         </button>
                       </div>
+
+                      {overviewLogs.length === 0 ? (
+                        <div className="py-6 text-center text-xs text-secondary dark:text-white/50">
+                          Activity events will automatically stream here.
+                        </div>
+                      ) : (
+                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 mt-3">
+                          {overviewLogs.slice(0, 4).map((log) => (
+                            <div
+                              key={log.id}
+                              className="p-3 rounded-2xl bg-stone-50 dark:bg-white/2 border border-border/60 dark:border-white/5 flex flex-col justify-between gap-2 text-xs"
+                            >
+                              <div className="min-w-0">
+                                <p className="font-semibold text-primary dark:text-white truncate">
+                                  {log.title}
+                                </p>
+                                {log.description && (
+                                  <p className="text-[11px] text-secondary dark:text-white/60 line-clamp-2 mt-0.5">
+                                    {log.description}
+                                  </p>
+                                )}
+                              </div>
+                              <span className="text-[10px] text-secondary/60 dark:text-white/40 whitespace-nowrap">
+                                {log.created_at ? new Date(log.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : ''}
+                              </span>
+                            </div>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+
+                    <div className="pt-3 border-t border-border/60 dark:border-[#2E2925] mt-4 flex items-center justify-between text-[11px] text-secondary dark:text-white/50">
+                      <span>Tracks WhatsApp, Orders, Products & POS</span>
+                      <button
+                        onClick={() => setActiveTab('activity')}
+                        className="font-semibold text-[#D4AF37] hover:underline"
+                      >
+                        Full Audit Trail ({overviewLogs.length}) →
+                      </button>
                     </div>
                   </div>
                 </div>
